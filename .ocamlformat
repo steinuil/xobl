@@ -1,6 +1,1 @@
-profile = ocamlformat
-let-open = auto
-space-around-records = true
-sequence-style = terminator
-break-infix = fit-or-vertical
-field-space = loose
+profile = conventional
