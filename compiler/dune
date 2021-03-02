@@ -1,0 +1,6 @@
+(library
+ (name xobl_compiler)
+ (libraries patche)
+ (inline_tests)
+ (preprocess
+  (pps ppx_inline_test ppx_deriving.show lwt_ppx)))
