@@ -1,8 +1,5 @@
 (*
 
-- Resolve all identifiers to structs and enums and all types.
-  i.e. some of them specify the module they're in, but some don't.
-
 - Some list fields don't explicitly specify a length field even though they
   need one (e.g. QueryTextExtents in xproto), so we need to infer it somehow.
   There's some code in xcbgen that does this apparently.

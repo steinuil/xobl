@@ -1,5 +1,5 @@
 (tests
- (names parser_output)
+ (names parser_output elaborate_output)
  (libraries xobl_compiler)
  (deps
   (glob_files ../xml-xcb/*.xml)))
