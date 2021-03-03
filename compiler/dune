@@ -1,5 +1,6 @@
 (library
  (name xobl_compiler)
+ (public_name xobl.compiler)
  (libraries patche)
  (inline_tests)
  (preprocess

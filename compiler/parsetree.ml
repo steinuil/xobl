@@ -1,5 +1,8 @@
+(** The AST of the parsed X11 XML specification files. *)
+
 (**
-Here's an explaination of some of the most puzzling aspects of the X11 spec.
+Here follows an explaination of some of the most puzzling aspects of the X11
+spec.
 
 {2 Types}
 
@@ -17,7 +20,7 @@ type in the output bindings.
 The [void] type is used for defining fields in which the type doesn't matter,
 like padding, or where it cannot be known in advance, like in [GetProperty].
 
-{3 Composite types]
+{3 Composite types}
 
 Composite types are aggregations of basic types in the form of simple fields,
 lists, or expressions, and also padding and alignment information.

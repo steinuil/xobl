@@ -4,7 +4,8 @@ type error =
 type ('t, 'inp, 'err) parser =
   'inp -> ('t * 'inp, ([> error ] as 'err)) Result.t
 
-(* Basic parsers *)
+(** {2 Basic parsers} *)
+
 val return : 't -> ('t, 'inp, 'err) parser
 
 val error : 'err -> ('t, 'inp, 'err) parser
@@ -22,7 +23,8 @@ val from_result : ('t, 'err) result -> ('t, 'inp, 'err) parser
 
 val from_option : none:'err -> 't option -> ('t, 'inp, 'err) parser
 
-(* Monad *)
+(** {2 Monad} *)
+
 val bind :
   ('a, 'inp, 'err) parser ->
   ('a -> ('b, 'inp, 'err) parser) ->
@@ -41,18 +43,21 @@ val map_option :
   ('a, 'inp, 'err) parser ->
   ('b, 'inp, 'err) parser
 
-(* Choice *)
+(** {2 Alternative} *)
+
 val or_ :
   ('a, 'inp, 'err) parser -> ('a, 'inp, 'err) parser -> ('a, 'inp, 'err) parser
 
 val choice : ('a, 'inp, 'err) parser list -> ('a, 'inp, 'err) parser
 
-(* Recursion *)
+(** {2 Recursion} *)
+
 val fix :
   (('a, 'inp, 'err) parser -> ('a, 'inp, 'err) parser) ->
   ('a, 'inp, 'err) parser
 
-(* Sequencing *)
+(** {2 Sequencing} *)
+
 val discard_right :
   ('a, 'inp, 'err) parser -> (_, 'inp, 'err) parser -> ('a, 'inp, 'err) parser
 
@@ -135,27 +140,34 @@ module Infix : sig
     ('a, 'inp, 'err) parser ->
     ('a -> ('b, 'inp, 'err) parser) ->
     ('b, 'inp, 'err) parser
+  (** Alias of {!bind}. *)
 
   val ( <|> ) :
     ('a, 'inp, 'err) parser ->
     ('a, 'inp, 'err) parser ->
     ('a, 'inp, 'err) parser
+  (** Alias of {!or_}. *)
 
   val ( ->> ) : ('a, 'inp, 'err) parser -> ('a -> 'b) -> ('b, 'inp, 'err) parser
+  (** Flipped alias of {!map}. *)
 
   val ( ->= ) :
     ('a, 'inp, 'err) parser ->
     ('a -> ('b, 'err) result) ->
     ('b, 'inp, 'err) parser
+  (** Flipped alias of {!map_result}. *)
 
   val ( *> ) :
     (_, 'inp, 'err) parser -> ('a, 'inp, 'err) parser -> ('a, 'inp, 'err) parser
+  (** Alias of {!discard_left}. *)
 
   val ( *< ) :
     ('a, 'inp, 'err) parser -> (_, 'inp, 'err) parser -> ('a, 'inp, 'err) parser
+  (** Alias of {!discard_right}. *)
 
   val ( *<> ) :
     ('a, 'inp, 'err) parser ->
     ('b, 'inp, 'err) parser ->
     ('a * 'b, 'inp, 'err) parser
+  (** Alias of {!tuple2}. *)
 end

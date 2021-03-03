@@ -1,3 +1,17 @@
+(** Turn unions into switches. *)
+
+(** Since unions are a bad feature of the X11 spec and (excluding those in xkb)
+    there's only two in the entire spec, this module takes care of turning them
+    into proper switches simply by special-casing them.
+
+    {2 Why are unions bad?}
+
+    Because they're effectively switches, but with ad-hoc logic required to
+    discriminate between the cases. Both uses in the spec also have another
+    field in the same event that serves to discriminate the branch of the union
+    that should be used, so this module simply makes this connection explicit
+    by getting rid of the union and turning it into a switch. *)
+
 open Parsetree
 
 let xproto_clientmessage_to_switch decls =
