@@ -66,22 +66,15 @@ let resolve_ident (current_module_name, xcbs) (kind : id_kind) = function
       let current_module_declarations, imports =
         find_module_by_name xcbs current_module_name
       in
-      Printf.eprintf "%s.%s\n" current_module_name id_name;
       let module_ =
         if List.exists (id_exists kind id_name) current_module_declarations then
           current_module_name
         else
-          try
-            List.find
-              (fun module_ ->
-                let decls, _ = find_module_by_name xcbs module_ in
-                List.exists (id_exists kind id_name) decls)
-              (List.rev imports)
-          with Not_found ->
-            Printf.kprintf failwith "Cannot find id %s of kind %a in module %s"
-              id_name
-              (fun () -> show_id_kind)
-              kind current_module_name
+          List.find
+            (fun module_ ->
+              let decls, _ = find_module_by_name xcbs module_ in
+              List.exists (id_exists kind id_name) decls)
+            (List.rev imports)
       in
       { id_module = Some module_; id_name }
 

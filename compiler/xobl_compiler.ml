@@ -6,8 +6,5 @@ module Parser = struct
     |> Patche.Xml.make_input |> Patche.Xml.run Parser.xcb
 end
 
-let unions_to_switch = Elaborate_unions_to_switch.unions_to_switch
-
-let resolve = Elaborate_resolve.resolve
-
+module Elaborate = Elaborate
 module Parsetree = Parsetree
