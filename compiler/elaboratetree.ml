@@ -96,8 +96,6 @@ type field =
 type variant_item = { vi_name : string; vi_tag : int64; vi_fields : field list }
 [@@deriving show]
 
-type request_reply = { fields : field list } [@@deriving show]
-
 type declaration =
   | Type_alias of { name : string; type_ : type_ }
   | Struct of { name : string; fields : field list }
@@ -125,7 +123,7 @@ type declaration =
       opcode : int;
       combine_adjacent : bool;
       fields : field list;
-      reply : request_reply option;
+      reply : field list option;
     }
 [@@deriving show]
 

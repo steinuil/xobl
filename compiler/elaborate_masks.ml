@@ -4,18 +4,19 @@
   - hidden field for the mask
   - "Optional field"
 
-- Find switches with eq cases and turn the corresponding enum into
-  a variant.
-  Requires two additional types of fields:
-  - hidden field for the discriminant value
-  - variant field
-  Also needs a new type of declaration
+- [x] Find switches with eq cases and turn the corresponding enum into
+      a variant.
+      Requires two additional types of fields:
+      - hidden field for the discriminant value
+      - variant field
+      Also needs a new type of declaration
 
 
-- put imports into xcb
+- [x] put imports into xcb
 - figure out list length fields
-- add variants
+- [x] add variants
 - prune unused enums and masks
+- reorder some declarations that have dependencies above them (there's like 2)
 *)
 
 let conv_ident Parsetree.{ id_module; id_name } =
@@ -55,100 +56,162 @@ let conv_field_type Parsetree.{ ft_type; ft_allowed } =
       ft_allowed = Option.map conv_field_allowed ft_allowed;
     }
 
-let mask_switches_to_optional_fields' _ctx = function
-  | Parsetree.Field_switch
-      { sw_cond = Cond_bit_and (Field_ref cond_field); sw_name; sw_cases } ->
-      assert (
-        List.for_all
-          (fun Parsetree.{ cs_cond; _ } -> List.length cs_cond = 1)
-          sw_cases );
-      ignore cond_field;
-      ignore sw_name;
-      ignore sw_cases;
-      ()
-  | Field_switch { sw_cond = Cond_eq (Field_ref cond_field); sw_name; sw_cases }
-    ->
-      assert (
-        List.for_all
-          (fun Parsetree.{ cs_cond; _ } -> List.length cs_cond = 1)
-          sw_cases );
-      ignore cond_field;
-      ignore sw_name;
-      ignore sw_cases;
-      ()
-  | Field_switch { sw_cond = Cond_bit_and e; _ } ->
-      Printf.kprintf failwith "invalid bit switch cond: %a"
-        (fun () -> Parsetree.show_expression)
-        e
-  | Field_switch { sw_cond = Cond_eq e; _ } ->
-      Printf.kprintf failwith "invalid eq switch cond: %a"
-        (fun () -> Parsetree.show_expression)
-        e
-  (* | Field_list { name; length = Some e; _ } ->
-      Printf.printf "%s %s\n" name (Parsetree.show_expression e) *)
-  | _ -> ()
+let find_module xcbs n =
+  xcbs
+  |> List.find_map (function
+       | Parsetree.Core decls when n = "xproto" -> Some decls
+       | Extension { file_name; declarations; _ } when file_name = n ->
+           Some declarations
+       | _ -> None)
+  |> Option.get
 
-(* let ( let* ) = Option.bind *)
+let ( let* ) = Option.bind
 
-(* let mask_switches_to_optional_fields fields =
-  let* switch =
-    List.find_opt
-      (function
-      | Parsetree.Field_switch
-          { sw_cond = Cond_bit_and (Field_ref cond_field); sw_name; sw_cases } ->
-        
-  | Parsetree.Field_switch { sw_cond = Cond_bit_and e; _ } ->
-      Printf.kprintf failwith "invalid bit switch cond: %a"
-        (fun () -> Parsetree.show_expression)
-        e
-        | f -> f
-      )
-      fields
-  in *)
+let rec enum_switches_to_variants (curr_module, xcbs) fields =
+  let variants =
+    fields
+    |> List.filter_map (function
+         | Parsetree.Field_switch
+             { sw_cond = Cond_eq (Field_ref cond_field); sw_name; sw_cases } ->
+             let cond_enum =
+               fields
+               |> List.find_map (function
+                    | Parsetree.Field
+                        {
+                          name;
+                          type_ = { ft_allowed = Some (Allowed_enum enum); _ };
+                        }
+                      when name = cond_field ->
+                        Some enum
+                    | Field { name; _ } when name = cond_field ->
+                        failwith "unexpected"
+                    | _ -> None)
+               |> Option.get
+             in
+             let cond_enum_items =
+               find_module xcbs (Option.get cond_enum.id_module)
+               |> List.find_map (function
+                    | Parsetree.Enum { name; items; _ }
+                      when name = cond_enum.id_name ->
+                        Some items
+                    | _ -> None)
+               |> Option.get
+             in
+             let variant_items, additional_variants =
+               sw_cases
+               |> List.map (function
+                    | Parsetree.
+                        { cs_cond = [ Enum_ref { item; _ } ]; cs_fields; _ } ->
+                        let vi_tag =
+                          cond_enum_items
+                          |> List.find_map (function
+                               | name, Parsetree.Item_value v when name = item
+                                 ->
+                                   Some v
+                               | _ -> None)
+                          |> Option.get
+                        in
+                        let vi_fields, variants =
+                          cs_fields
+                          |> enum_switches_to_variants (curr_module, xcbs)
+                        in
+                        ( Elaboratetree.{ vi_name = item; vi_tag; vi_fields },
+                          variants )
+                    | _ -> failwith "lol, lmao")
+               |> List.split
+             in
+             let variant_name = cond_enum.id_name in
+             let additional_variants = List.flatten additional_variants in
+             Some
+               ( sw_name,
+                 cond_field,
+                 variant_name,
+                 variant_items,
+                 additional_variants )
+         | Parsetree.Field_switch { sw_cond = Cond_eq _; _ } as a ->
+             failwith (Parsetree.show_field a)
+         | _ -> None)
+  in
+  let fields, additional_variants =
+    fields
+    |> List.map (function
+         | Parsetree.Field_switch { sw_cond = Cond_eq _; sw_name; _ } ->
+             let name, _, variant_name, _, additional_variants =
+               List.find (fun (name, _, _, _, _) -> name = sw_name) variants
+             in
 
-(* let masks xcbs = *)
+             ( Elaboratetree.(
+                 Field_variant
+                   {
+                     name;
+                     variant =
+                       { id_module = curr_module; id_name = variant_name };
+                   }),
+               additional_variants )
+         | Field { name; type_ = { ft_type; _ } }
+           when List.exists
+                  (fun (_, cond_field, _, _, _) -> name = cond_field)
+                  variants ->
+             let field_name, _, _, _, _ =
+               List.find
+                 (fun (_, cond_field, _, _, _) -> name = cond_field)
+                 variants
+             in
+             ( Elaboratetree.Field_variant_tag
+                 { variant = field_name; type_ = conv_type ft_type },
+               [] )
+         | Field { name; type_ } ->
+             (Elaboratetree.Field { name; type_ = conv_field_type type_ }, [])
+         | Field_expr { name; type_; expr } ->
+             ( Elaboratetree.Field_expr
+                 {
+                   name;
+                   type_ = conv_field_type type_;
+                   expr = conv_expression expr;
+                 },
+               [] )
+         | Field_file_descriptor f -> (Elaboratetree.Field_file_descriptor f, [])
+         | Field_pad { pad; serialize } ->
+             (Elaboratetree.Field_pad { pad; serialize }, [])
+         | Field_list _ | Field_switch _ ->
+             (* FIXME *)
+             (Elaboratetree.Field_file_descriptor "a", []))
+    |> List.split
+  in
+  let variants =
+    List.map (fun (_, _, name, items, _) -> (name, items)) variants
+    @ List.flatten additional_variants
+  in
+  (fields, variants)
 
-(* let in_declaration ctx = function
-  | Parsetree.Union { members = fields; _ }
-  | Event { fields; _ }
-  | Error { fields; _ }
-  | Struct { fields; _ } ->
-      List.iter (mask_switches_to_optional_fields' ctx) fields
-  | Request { fields; reply; _ } ->
-      List.iter (mask_switches_to_optional_fields' ctx) fields;
-      Option.iter
-        (fun Parsetree.{ fields; _ } ->
-          List.iter (mask_switches_to_optional_fields' ctx) fields)
-        reply
-  | _ -> ()
+(** Because event structs use these despite everything else just using the
+    file name. *)
+let find_module_by_extension_name xcbs n =
+  xcbs
+  |> List.find_map (function
+       | Parsetree.Extension { name; file_name; declarations; _ } when name = n
+         ->
+           Some (file_name, declarations)
+       | _ -> None)
+  |> Option.get
 
-let in_xcb = function
-  | Parsetree.Core declarations ->
-      List.iter (in_declaration "xproto") declarations
-  | Extension { declarations; file_name; _ } ->
-      List.iter (in_declaration file_name) declarations *)
-
+(** Resolve event numbers to their idents. *)
 let resolve_allowed_event xcbs
-    Parsetree.{ ae_module; ae_is_xge; ae_opcode_range = { min; max } } =
-  let find_event ev_number =
+    Parsetree.{ ae_module; ae_opcode_range = { min; max }; _ } =
+  let find_event id_module ev_number =
     List.find_map (function
-      | Parsetree.Event { name; number; is_generic; _ }
-        when number = ev_number && ae_is_xge = is_generic ->
-          Some Elaboratetree.{ id_module = ae_module; id_name = name }
+      | Parsetree.Event { name; number; _ }
+      | Parsetree.Event_copy { name; ev_number = number; _ }
+        when number = ev_number ->
+          Some Elaboratetree.{ id_module; id_name = name }
       | _ -> None)
   in
+  let file_name, declarations = find_module_by_extension_name xcbs ae_module in
   List.init (max - min + 1) (fun x -> x + min)
-  |> List.map (fun n ->
-         xcbs
-         |> List.find_map (function
-              | Parsetree.Core decls when ae_module = "xproto" ->
-                  find_event n decls
-              | Parsetree.Extension { name = module_name; declarations; _ }
-                when module_name = ae_module ->
-                  find_event n declarations
-              | _ -> None)
-         |> Option.get)
+  |> List.map (fun n -> find_event file_name n declarations |> Option.get)
 
+(** Split enums in pure enums and masks, based on whether they only have value
+    items or also bit items. *)
 let split_enums name enum_items =
   if
     List.for_all
@@ -176,32 +239,109 @@ let split_enums name enum_items =
     in
     Elaboratetree.Mask { name; items; additional_values }
 
-let in_declarations (_, xcbs) decls =
+let variant_to_decl (name, items) = Elaboratetree.Variant { name; items }
+
+let in_declarations (curr_module, xcbs) decls =
   decls
   |> List.filter (function Parsetree.Import _ -> false | _ -> true)
   |> List.map (function
        | Parsetree.Xid name ->
-           Elaboratetree.(Type_alias { name; type_ = Type_primitive Xid })
+           [ Elaboratetree.(Type_alias { name; type_ = Type_primitive Xid }) ]
        | Typedef { name; type_ } ->
-           Elaboratetree.Type_alias { name; type_ = conv_type type_ }
+           [ Elaboratetree.Type_alias { name; type_ = conv_type type_ } ]
        | Xid_union { name; types } ->
-           Elaboratetree.(
-             Type_alias { name; type_ = Type_union (List.map conv_ident types) })
+           Elaboratetree.
+             [
+               Type_alias
+                 { name; type_ = Type_union (List.map conv_ident types) };
+             ]
        | Event_copy { name; event; ev_number = number } ->
-           Elaboratetree.Event_copy { name; event = conv_ident event; number }
+           [
+             Elaboratetree.Event_copy { name; event = conv_ident event; number };
+           ]
        | Error_copy { name; error; er_number = number } ->
-           Elaboratetree.Error_copy { name; error = conv_ident error; number }
+           [
+             Elaboratetree.Error_copy { name; error = conv_ident error; number };
+           ]
        | Event_struct { name; allowed_events } ->
            let events =
              allowed_events
              |> List.map (resolve_allowed_event xcbs)
              |> List.flatten
            in
-           Elaboratetree.Event_struct { name; events }
-       | Enum { name; items; doc = _ } -> split_enums name items
-       | Import _ -> failwith "unexpected"
-       | Union _ -> failwith "unexpected"
-       | _ -> failwith "a")
+           [ Elaboratetree.Event_struct { name; events } ]
+       | Enum { name; items; doc = _ } -> [ split_enums name items ]
+       | Import _ | Union _ ->
+           failwith "imports and unions should already have been pruned"
+       | Parsetree.Event
+           { name; number; is_generic; no_sequence_number; fields; doc = _ } ->
+           let fields, variants =
+             enum_switches_to_variants (curr_module, xcbs) fields
+           in
+           List.map variant_to_decl variants
+           @ [
+               Elaboratetree.Event
+                 {
+                   name;
+                   number;
+                   is_generic;
+                   is_serializable = false;
+                   no_sequence_number;
+                   fields;
+                 };
+             ]
+       | Parsetree.Error { name; number; fields } ->
+           let fields, variants =
+             enum_switches_to_variants (curr_module, xcbs) fields
+           in
+           List.map variant_to_decl variants
+           @ [ Elaboratetree.Error { name; number; fields } ]
+       | Parsetree.Struct { name; fields } ->
+           let fields, variants =
+             enum_switches_to_variants (curr_module, xcbs) fields
+           in
+           List.map variant_to_decl variants
+           @ [ Elaboratetree.Struct { name; fields } ]
+       | Parsetree.Request
+           {
+             name;
+             opcode;
+             combine_adjacent;
+             fields;
+             reply = Some reply;
+             doc = _;
+           } ->
+           let fields, variants =
+             enum_switches_to_variants (curr_module, xcbs) fields
+           in
+           let reply_fields, reply_variants =
+             enum_switches_to_variants (curr_module, xcbs) reply.fields
+           in
+           List.map variant_to_decl variants
+           @ List.map variant_to_decl reply_variants
+           @ Elaboratetree.
+               [
+                 Request
+                   {
+                     name;
+                     opcode;
+                     combine_adjacent;
+                     fields;
+                     reply = Some reply_fields;
+                   };
+               ]
+       | Parsetree.Request
+           { name; opcode; combine_adjacent; fields; reply = None; doc = _ } ->
+           let fields, variants =
+             enum_switches_to_variants (curr_module, xcbs) fields
+           in
+           List.map variant_to_decl variants
+           @ Elaboratetree.
+               [
+                 Request
+                   { name; opcode; combine_adjacent; fields; reply = None };
+               ])
+  |> List.flatten
 
 let in_xcb xcbs = function
   | Parsetree.Core declarations ->

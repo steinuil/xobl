@@ -287,7 +287,16 @@ let randr_notify_to_switch decls =
                                     {
                                       cs_name = None;
                                       cs_cond =
-                                        [ Enum_ref { enum; item = id_name } ];
+                                        [
+                                          Enum_ref
+                                            {
+                                              enum;
+                                              item =
+                                                ( if id_name = "LeaseNotify" then
+                                                  "Lease"
+                                                else id_name );
+                                            };
+                                        ];
                                       cs_fields = [ f ];
                                     }
                                 | _ -> failwith "unexpected");
@@ -540,7 +549,7 @@ let%expect_test _ =
                  [Parsetree.Enum_ref {
                     enum =
                     { Parsetree.id_module = (Some "randr"); id_name = "Notify" };
-                    item = "LeaseNotify"}
+                    item = "Lease"}
                    ];
                  cs_fields =
                  [Parsetree.Field {name = "lc";

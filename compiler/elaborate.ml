@@ -26,3 +26,5 @@ Need a change in the AST:
 let unions_to_switches = Elaborate_unions_to_switch.unions_to_switch
 
 let resolve_idents = Elaborate_resolve.resolve
+
+let do_stuff = Elaborate_masks.in_xcb

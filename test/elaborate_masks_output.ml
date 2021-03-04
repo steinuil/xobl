@@ -43,7 +43,12 @@ let parse_module m =
     close_in f;
     raise exn
 
-let () = ()
+let () =
+  let xcbs = modules |> List.map parse_module in
+  let xcbs = List.map Xobl_compiler.Elaborate.unions_to_switches xcbs in
+  let xcbs = Xobl_compiler.Elaborate.resolve_idents xcbs in
+  let xcbs = List.map (Xobl_compiler.Elaborate.do_stuff xcbs) xcbs in
+  ignore xcbs
 
 (* let () =
   let xcbs = modules |> List.map parse_module in *)
