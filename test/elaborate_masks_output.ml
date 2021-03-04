@@ -43,6 +43,8 @@ let parse_module m =
     close_in f;
     raise exn
 
-let () =
-  let xcbs = modules |> List.map parse_module in
-  List.iter Xobl_compiler__Elaborate_masks.in_xcb xcbs
+let () = ()
+
+(* let () =
+  let xcbs = modules |> List.map parse_module in *)
+(* List.iter Xobl_compiler__Elaborate_masks.in_xcb xcbs *)

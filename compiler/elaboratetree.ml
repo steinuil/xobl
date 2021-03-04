@@ -29,7 +29,11 @@ type prim = Parsetree.prim =
   | Xid  (** maps to a Card32 *)
 [@@deriving show]
 
-type type_ = Type_primitive of prim | Type_ref of ident [@@deriving show]
+type type_ =
+  | Type_primitive of prim
+  | Type_ref of ident
+  | Type_union of ident list
+[@@deriving show]
 
 type expression =
   | Binop of binop * expression * expression
@@ -96,8 +100,8 @@ type request_reply = { fields : field list } [@@deriving show]
 
 type declaration =
   | Type_alias of { name : string; type_ : type_ }
-  | Xid_union of { name : string; types : ident list }
   | Struct of { name : string; fields : field list }
+  | Event_struct of { name : string; events : ident list }
   | Variant of { name : string; items : variant_item list }
   | Enum of { name : string; items : (string * int64) list }
   | Mask of {
@@ -126,14 +130,14 @@ type declaration =
 [@@deriving show]
 
 type xcb =
-  | Core of declaration
+  | Core of declaration list
   | Extension of {
       name : string;
       file_name : string;
       query_name : string;
       multiword : bool;
       version : int * int;
-      import : string list;
+      imports : string list;
       declarations : declaration list;
     }
 [@@deriving show]
