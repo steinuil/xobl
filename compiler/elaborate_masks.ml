@@ -319,28 +319,26 @@ let in_declarations (curr_module, xcbs) decls =
            in
            List.map variant_to_decl variants
            @ List.map variant_to_decl reply_variants
-           @ Elaboratetree.
-               [
-                 Request
-                   {
-                     name;
-                     opcode;
-                     combine_adjacent;
-                     fields;
-                     reply = Some reply_fields;
-                   };
-               ]
+           @ [
+               Elaboratetree.Request
+                 {
+                   name;
+                   opcode;
+                   combine_adjacent;
+                   fields;
+                   reply = Some reply_fields;
+                 };
+             ]
        | Parsetree.Request
            { name; opcode; combine_adjacent; fields; reply = None; doc = _ } ->
            let fields, variants =
              enum_switches_to_variants (curr_module, xcbs) fields
            in
            List.map variant_to_decl variants
-           @ Elaboratetree.
-               [
-                 Request
-                   { name; opcode; combine_adjacent; fields; reply = None };
-               ])
+           @ [
+               Elaboratetree.Request
+                 { name; opcode; combine_adjacent; fields; reply = None };
+             ])
   |> List.flatten
 
 let in_xcb xcbs = function
