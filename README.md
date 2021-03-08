@@ -16,7 +16,7 @@ The X11 OCaml Bindings Library. A Pure OCaml implementation of the X11 protocol.
 - Elixir: [XEB](https://github.com/chrys-h/XEB)
 - Javascript (Node): [node-x11](https://github.com/sidorares/node-x11)
 - Clojure: [xcljb](https://github.com/geremih/xcljb)
-- Rust: [rust-xcb](https://github.com/sstewartgallus/rust-xcb)
+- Rust: [rust-xcb](https://github.com/sstewartgallus/rust-xcb), [x11rb](https://github.com/psychon/x11rb)
 - Ruby: [alembic](https://github.com/nbaum/alembic)
 - Go: [xgb](https://github.com/BurntSushi/xgb)
 
