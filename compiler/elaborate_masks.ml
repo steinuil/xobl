@@ -17,6 +17,7 @@
 - [x] add variants
 - prune unused enums and masks
 - reorder some declarations that have dependencies above them (there's like 2)
+- get rid of void types, which apparently are supposed to be void pointers
 *)
 
 let conv_ident Parsetree.{ id_module; id_name } =
@@ -67,7 +68,59 @@ let find_module xcbs n =
 
 let ( let* ) = Option.bind
 
-let rec enum_switches_to_variants (curr_module, xcbs) fields =
+(** Invert a simple expression containing a single field_ref. *)
+let invert expr =
+  let rec invert = function
+    | Parsetree.Binop (Add, e1, e2) ->
+        let e1, is_var1 = invert e1 in
+        let e2, is_var2 = invert e2 in
+        if is_var1 then (Elaboratetree.(Binop (Sub, e1, e2)), true)
+        else (Elaboratetree.(Binop (Sub, e2, e1)), is_var1 && is_var2)
+    | Binop (Sub, e1, e2) ->
+        let e1, is_var1 = invert e1 in
+        let e2, is_var2 = invert e2 in
+        (Elaboratetree.(Binop (Add, e1, e2)), is_var1 && is_var2)
+    | Binop (Mul, e1, e2) ->
+        let e1, is_var1 = invert e1 in
+        let e2, is_var2 = invert e2 in
+        if is_var1 then (Elaboratetree.(Binop (Div, e1, e2)), true)
+        else (Elaboratetree.(Binop (Div, e2, e1)), is_var1 && is_var2)
+    | Binop (Div, e1, e2) ->
+        let e1, is_var1 = invert e1 in
+        let e2, is_var2 = invert e2 in
+        (Elaboratetree.(Binop (Mul, e1, e2)), is_var1 && is_var2)
+    | Unop (Bit_not, e) ->
+        let e, is_var = invert e in
+        (Elaboratetree.(Unop (Bit_not, e)), is_var)
+    | Field_ref f -> (Elaboratetree.Field_ref f, true)
+    | Expr_value n -> (Elaboratetree.Expr_value n, false)
+    | Expr_bit b -> (Elaboratetree.Expr_bit b, false)
+    | e -> failwith (Parsetree.show_expression e)
+  in
+  invert expr |> fst
+
+let%test _ =
+  invert Parsetree.(Binop (Add, Expr_value 4L, Field_ref "test"))
+  = Elaboratetree.(Binop (Sub, Field_ref "test", Expr_value 4L))
+
+let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
+  (* Apply random fixes *)
+  let fields =
+    match (curr_module, struct_name) with
+    | "dri2", "GetBuffers" | "dri2", "GetBuffersWithFormat" ->
+        fields
+        |> List.map (function
+             | Parsetree.Field_list
+                 { name = "attachments"; type_; length = None } ->
+                 Parsetree.Field_list
+                   {
+                     name = "attachments";
+                     type_;
+                     length = Some (Parsetree.Field_ref "count");
+                   }
+             | f -> f)
+    | _ -> fields
+  in
   let variants =
     fields
     |> List.filter_map (function
@@ -114,6 +167,7 @@ let rec enum_switches_to_variants (curr_module, xcbs) fields =
                         let vi_fields, variants =
                           cs_fields
                           |> enum_switches_to_variants (curr_module, xcbs)
+                               (struct_name ^ "." ^ sw_name)
                         in
                         ( Elaboratetree.{ vi_name = item; vi_tag; vi_fields },
                           variants )
@@ -131,40 +185,6 @@ let rec enum_switches_to_variants (curr_module, xcbs) fields =
          | Parsetree.Field_switch { sw_cond = Cond_eq _; _ } as a ->
              failwith (Parsetree.show_field a)
          | _ -> None)
-  in
-  let _ayy =
-    List.filter_map
-      (function
-        | Parsetree.Field_list { length = Some e; _ } -> (
-            let rec traverse = function
-              | Parsetree.Binop (_, e1, e2) -> traverse e1 @ traverse e2
-              | Unop (_, e) -> traverse e
-              | Field_ref f -> [ f ]
-              | Param_ref { param = _; _ } ->
-                  (* There is a single case in which this happens
-                     and of course it's inside xinput. *)
-                  []
-              | Enum_ref _ | Pop_count _ | List_element_ref ->
-                  failwith "unreachable"
-              | Sum_of { field = _; _ } ->
-                  (* There are a few cases in xinput. *)
-                  []
-              | Expr_value _ | Expr_bit _ -> []
-            in
-            let x = traverse e in
-            match x with [ f ] -> Some f | _ -> None )
-        | _ -> None)
-      fields
-    |> List.map (function f ->
-           ( match
-               List.find_map
-                 (function
-                   | Parsetree.Field { name; _ } when name = f -> Some name
-                   | _ -> None)
-                 fields
-             with
-           | Some _ -> ()
-           | None -> Printf.eprintf "%s %s\n" curr_module f ))
   in
   let optional_fields =
     fields
@@ -203,7 +223,7 @@ let rec enum_switches_to_variants (curr_module, xcbs) fields =
                     | Parsetree.
                         {
                           cs_cond = [ Enum_ref { item; _ } ];
-                          cs_fields = [ Field { type_; _ } ];
+                          cs_fields = [ Field { type_; name } ];
                           cs_name = _;
                         } ->
                         let bit =
@@ -216,15 +236,98 @@ let rec enum_switches_to_variants (curr_module, xcbs) fields =
                         in
                         let type_ = conv_field_type type_ in
                         Elaboratetree.Field_optional
-                          { name = item; mask = cond_field; bit; type_ }
+                          { name; mask = cond_field; bit; type_ }
                     | case -> failwith (Parsetree.show_case case))
              in
              Some (sw_name, mask_items, cond_field)
          | _ -> None)
   in
+  (* So here we don't allow any list with an expression that contains a
+     non-reversible operation or has more than two referenced fields,
+     BUT we should allow them when all of the referenced fields are also
+     referenced in other list fields that have reversible operations in
+     the same struct. *)
+  let lists =
+    fields
+    |> List.filter_map (function
+         | Parsetree.Field_list { length = Some e; name = list_name; _ } -> (
+             let rec traverse = function
+               | Parsetree.Binop (Add, e1, e2)
+               | Binop (Sub, e1, e2)
+               | Binop (Mul, e1, e2)
+               | Binop (Div, e1, e2) ->
+                   let* e1 = traverse e1 in
+                   let* e2 = traverse e2 in
+                   Some (e1 @ e2)
+               | Unop (Bit_not, e) -> traverse e
+               | Field_ref f -> Some [ f ]
+               | Binop (_, _, _)
+               | Param_ref _ | Pop_count _ | Sum_of _ | List_element_ref
+               | Expr_value _ | Expr_bit _ | Enum_ref _ ->
+                   None
+             in
+             match traverse e with
+             | Some [ length_field ] ->
+                 List.find_map
+                   (function
+                     | Parsetree.Field { name; _ } when name = length_field ->
+                         Some (list_name, length_field, invert e)
+                     | _ -> None)
+                   fields
+             | _ -> None )
+         | _ -> None)
+  in
+  (* let _ayy =
+       fields
+       |> List.filter_map (function
+            | Parsetree.Field_list { length = Some e; name; _ } -> (
+                let rec traverse = function
+                  | Parsetree.Binop (_, e1, e2) -> traverse e1 @ traverse e2
+                  | Unop (_, e) -> traverse e
+                  | Field_ref f -> [ f ]
+                  | Param_ref { param = _; _ } ->
+                      (* There is a single case in which this happens
+                         and of course it's inside xinput. *)
+                      []
+                  | Enum_ref _ | Pop_count _ | List_element_ref ->
+                      failwith "unreachable"
+                  | Sum_of { field = _; _ } ->
+                      (* There are a few cases in xinput. *)
+                      []
+                  | Expr_value _ | Expr_bit _ -> []
+                in
+                let x = traverse e in
+                match x with
+                | [ f ] -> Some f
+                | _ ->
+                    Printf.eprintf
+                      "List with multiple fields referenced in length: %s.%s.%s\n"
+                      curr_module struct_name name;
+                    None )
+            | Parsetree.Field_list { length = None; name; _ } ->
+                Printf.eprintf "List with no length: %s.%s.%s\n" curr_module
+                  struct_name name;
+                None
+            | _ -> None)
+       |> List.map (function f ->
+              ( match
+                  List.find_map
+                    (function
+                      | Parsetree.Field { name; _ } when name = f -> Some name
+                      | _ -> None)
+                    fields
+                with
+              | Some _ -> ()
+              | None when f = "length" -> ()
+              | None ->
+                  Printf.eprintf
+                    "Field referenced in list length not found: %s.%s.%s\n"
+                    curr_module struct_name f ))
+     in *)
   let fields, additional_variants =
     fields
     |> List.map (function
+         (* Variants *)
          | Parsetree.Field_switch { sw_cond = Cond_eq _; sw_name; _ } ->
              let name, _, variant_name, _, additional_variants =
                List.find (fun (name, _, _, _, _) -> name = sw_name) variants
@@ -254,6 +357,7 @@ let rec enum_switches_to_variants (curr_module, xcbs) fields =
                    { variant = field_name; type_ = conv_type ft_type };
                ],
                [] )
+         (* Optional fields *)
          | Field_switch { sw_cond = Cond_bit_and _; sw_name; _ } ->
              let _, optional_fields, _ =
                List.find (fun (name, _, _) -> name = sw_name) optional_fields
@@ -268,6 +372,27 @@ let rec enum_switches_to_variants (curr_module, xcbs) fields =
                    { name; type_ = conv_type ft_type };
                ],
                [] )
+         (* Lists *)
+         | Field_list { name; type_; length = Some _ }
+           when List.exists (fun (list_name, _, _) -> name = list_name) lists ->
+             ( [
+                 Elaboratetree.Field_list_simple
+                   { name; type_ = conv_field_type type_ };
+               ],
+               [] )
+         | Field { name; type_ = { ft_type; _ } }
+           when List.exists
+                  (fun (_, length_field, _) -> name = length_field)
+                  lists ->
+             let list, _, expr =
+               List.find (fun (_, length_field, _) -> name = length_field) lists
+             in
+             ( [
+                 Elaboratetree.Field_list_length
+                   { list; type_ = conv_type ft_type; expr };
+               ],
+               [] )
+         (* Rest *)
          | Field { name; type_ } ->
              ( [ Elaboratetree.Field { name; type_ = conv_field_type type_ } ],
                [] )
@@ -285,9 +410,17 @@ let rec enum_switches_to_variants (curr_module, xcbs) fields =
              ([ Elaboratetree.Field_file_descriptor f ], [])
          | Field_pad { pad; serialize } ->
              ([ Elaboratetree.Field_pad { pad; serialize } ], [])
-         | Field_list _ ->
-             (* FIXME *)
-             ([], []))
+         | Field_list { name; type_; length } ->
+             (* Printf.eprintf "%s.%s.%s\n" curr_module struct_name name; *)
+             ( [
+                 Elaboratetree.Field_list
+                   {
+                     name;
+                     type_ = conv_field_type type_;
+                     length = Option.map conv_expression length;
+                   };
+               ],
+               [] ))
     |> List.split
   in
   let variants =
@@ -388,7 +521,7 @@ let in_declarations (curr_module, xcbs) decls =
        | Parsetree.Event
            { name; number; is_generic; no_sequence_number; fields; doc = _ } ->
            let fields, variants =
-             enum_switches_to_variants (curr_module, xcbs) fields
+             enum_switches_to_variants (curr_module, xcbs) name fields
            in
            List.map variant_to_decl variants
            @ [
@@ -404,13 +537,13 @@ let in_declarations (curr_module, xcbs) decls =
              ]
        | Parsetree.Error { name; number; fields } ->
            let fields, variants =
-             enum_switches_to_variants (curr_module, xcbs) fields
+             enum_switches_to_variants (curr_module, xcbs) name fields
            in
            List.map variant_to_decl variants
            @ [ Elaboratetree.Error { name; number; fields } ]
        | Parsetree.Struct { name; fields } ->
            let fields, variants =
-             enum_switches_to_variants (curr_module, xcbs) fields
+             enum_switches_to_variants (curr_module, xcbs) name fields
            in
            List.map variant_to_decl variants
            @ [ Elaboratetree.Struct { name; fields } ]
@@ -424,10 +557,11 @@ let in_declarations (curr_module, xcbs) decls =
              doc = _;
            } ->
            let fields, variants =
-             enum_switches_to_variants (curr_module, xcbs) fields
+             enum_switches_to_variants (curr_module, xcbs) name fields
            in
            let reply_fields, reply_variants =
-             enum_switches_to_variants (curr_module, xcbs) reply.fields
+             enum_switches_to_variants (curr_module, xcbs) (name ^ ".reply")
+               reply.fields
            in
            List.map variant_to_decl variants
            @ List.map variant_to_decl reply_variants
@@ -444,7 +578,7 @@ let in_declarations (curr_module, xcbs) decls =
        | Parsetree.Request
            { name; opcode; combine_adjacent; fields; reply = None; doc = _ } ->
            let fields, variants =
-             enum_switches_to_variants (curr_module, xcbs) fields
+             enum_switches_to_variants (curr_module, xcbs) name fields
            in
            List.map variant_to_decl variants
            @ [
