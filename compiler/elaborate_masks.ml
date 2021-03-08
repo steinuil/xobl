@@ -1,8 +1,8 @@
 (**
-- Find switches with bit cases and just turn them into optional fields.
-  Requires two additional types of fields:
-  - hidden field for the mask
-  - "Optional field"
+- [x] Find switches with bit cases and just turn them into optional fields.
+      Requires two additional types of fields:
+      - hidden field for the mask
+      - "Optional field"
 
 - [x] Find switches with eq cases and turn the corresponding enum into
       a variant.
