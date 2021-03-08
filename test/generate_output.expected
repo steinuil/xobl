@@ -1,0 +1,1235 @@
+module BigRequests = struct
+type Enable = { };;
+end
+module Composite = struct
+type Redirect = Automatic | Manual;;
+type QueryVersion = { client_major_version : int32; client_minor_version : int32; };;
+type RedirectWindow = { window : xproto.WINDOW; update : int; };;
+type RedirectSubwindows = { window : xproto.WINDOW; update : int; };;
+type UnredirectWindow = { window : xproto.WINDOW; update : int; };;
+type UnredirectSubwindows = { window : xproto.WINDOW; update : int; };;
+type CreateRegionFromBorderClip = { region : xfixes.REGION; window : xproto.WINDOW; };;
+type NameWindowPixmap = { window : xproto.WINDOW; pixmap : xproto.PIXMAP; };;
+type GetOverlayWindow = { window : xproto.WINDOW; };;
+type ReleaseOverlayWindow = { window : xproto.WINDOW; };;
+end
+module Damage = struct
+type DAMAGE = xid;;
+type ReportLevel = RawRectangles | DeltaRectangles | BoundingBox | NonEmpty;;
+type BadDamage = { };;
+type QueryVersion = { client_major_version : int32; client_minor_version : int32; };;
+type Create = { damage : damage.DAMAGE; drawable : xproto.DRAWABLE; level : int; };;
+type Destroy = { damage : damage.DAMAGE; };;
+type Subtract = { damage : damage.DAMAGE; repair : xfixes.REGION; parts : xfixes.REGION; };;
+type Add = { drawable : xproto.DRAWABLE; region : xfixes.REGION; };;
+type Notify = { level : int; drawable : xproto.DRAWABLE; damage : damage.DAMAGE; timestamp : xproto.TIMESTAMP; area : xproto.RECTANGLE; geometry : xproto.RECTANGLE; };;
+end
+module DPMS = struct
+type GetVersion = { client_major_version : int; client_minor_version : int; };;
+type Capable = { };;
+type GetTimeouts = { };;
+type SetTimeouts = { standby_timeout : int; suspend_timeout : int; off_timeout : int; };;
+type Enable = { };;
+type Disable = { };;
+type DPMSMode = On | Standby | Suspend | Off;;
+type ForceLevel = { power_level : int; };;
+type Info = { };;
+end
+module DRI2 = struct
+type Attachment = BufferFrontLeft | BufferBackLeft | BufferFrontRight | BufferBackRight | BufferDepth | BufferStencil | BufferAccum | BufferFakeFrontLeft | BufferFakeFrontRight | BufferDepthStencil | BufferHiz;;
+type DriverType = DRI | VDPAU;;
+type EventType = ExchangeComplete | BlitComplete | FlipComplete;;
+type DRI2Buffer = { attachment : int32; name : int32; pitch : int32; cpp : int32; flags : int32; };;
+type AttachFormat = { attachment : int32; format : int32; };;
+type QueryVersion = { major_version : int32; minor_version : int32; };;
+type Connect = { window : xproto.WINDOW; driver_type : int32; };;
+type Authenticate = { window : xproto.WINDOW; magic : int32; };;
+type CreateDrawable = { drawable : xproto.DRAWABLE; };;
+type DestroyDrawable = { drawable : xproto.DRAWABLE; };;
+type GetBuffers = { drawable : xproto.DRAWABLE; attachments : int32 list; };;
+type CopyRegion = { drawable : xproto.DRAWABLE; region : int32; dest : int32; src : int32; };;
+type GetBuffersWithFormat = { drawable : xproto.DRAWABLE; attachments : dri2.AttachFormat list; };;
+type SwapBuffers = { drawable : xproto.DRAWABLE; target_msc_hi : int32; target_msc_lo : int32; divisor_hi : int32; divisor_lo : int32; remainder_hi : int32; remainder_lo : int32; };;
+type GetMSC = { drawable : xproto.DRAWABLE; };;
+type WaitMSC = { drawable : xproto.DRAWABLE; target_msc_hi : int32; target_msc_lo : int32; divisor_hi : int32; divisor_lo : int32; remainder_hi : int32; remainder_lo : int32; };;
+type WaitSBC = { drawable : xproto.DRAWABLE; target_sbc_hi : int32; target_sbc_lo : int32; };;
+type SwapInterval = { drawable : xproto.DRAWABLE; interval : int32; };;
+type GetParam = { drawable : xproto.DRAWABLE; param : int32; };;
+type BufferSwapComplete = { event_type : int; drawable : xproto.DRAWABLE; ust_hi : int32; ust_lo : int32; msc_hi : int32; msc_lo : int32; sbc : int32; };;
+type InvalidateBuffers = { drawable : xproto.DRAWABLE; };;
+end
+module DRI3 = struct
+type QueryVersion = { major_version : int32; minor_version : int32; };;
+type Open = { drawable : xproto.DRAWABLE; provider : int32; };;
+type PixmapFromBuffer = { pixmap : xproto.PIXMAP; drawable : xproto.DRAWABLE; size : int32; width : int; height : int; stride : int; depth : int; bpp : int; pixmap_fd : file_descr; };;
+type BufferFromPixmap = { pixmap : xproto.PIXMAP; };;
+type FenceFromFD = { drawable : xproto.DRAWABLE; fence : int32; initially_triggered : bool; fence_fd : file_descr; };;
+type FDFromFence = { drawable : xproto.DRAWABLE; fence : int32; };;
+type GetSupportedModifiers = { window : int32; depth : int; bpp : int; };;
+type PixmapFromBuffers = { pixmap : xproto.PIXMAP; window : xproto.WINDOW; width : int; height : int; stride0 : int32; offset0 : int32; stride1 : int32; offset1 : int32; stride2 : int32; offset2 : int32; stride3 : int32; offset3 : int32; depth : int; bpp : int; modifier : int64; buffers : file_descr list; };;
+type BuffersFromPixmap = { pixmap : xproto.PIXMAP; };;
+end
+module GenericEvent = struct
+type QueryVersion = { client_major_version : int; client_minor_version : int; };;
+end
+module Glx = struct
+type PIXMAP = xid;;
+type CONTEXT = xid;;
+type PBUFFER = xid;;
+type WINDOW = xid;;
+type FBCONFIG = xid;;
+type DRAWABLE = xid;;
+type FLOAT32 = float;;
+type FLOAT64 = float;;
+type BOOL32 = int32;;
+type CONTEXT_TAG = int32;;
+type Generic = { bad_value : int32; minor_opcode : int; major_opcode : int; };;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+type PbufferClobber = { event_type : int; draw_type : int; drawable : glx.DRAWABLE; b_mask : int32; aux_buffer : int; x : int; y : int; width : int; height : int; count : int; };;
+type BufferSwapComplete = { event_type : int; drawable : glx.DRAWABLE; ust_hi : int32; ust_lo : int32; msc_hi : int32; msc_lo : int32; sbc : int32; };;
+type PBCET = Damaged | Saved;;
+type PBCDT = Window | Pbuffer;;
+type Render = { context_tag : glx.CONTEXT_TAG; data : char list; };;
+type RenderLarge = { context_tag : glx.CONTEXT_TAG; request_num : int; request_total : int; data : char list; };;
+type CreateContext = { context : glx.CONTEXT; visual : xproto.VISUALID; screen : int32; share_list : glx.CONTEXT; is_direct : bool; };;
+type DestroyContext = { context : glx.CONTEXT; };;
+type MakeCurrent = { drawable : glx.DRAWABLE; context : glx.CONTEXT; old_context_tag : glx.CONTEXT_TAG; };;
+type IsDirect = { context : glx.CONTEXT; };;
+type QueryVersion = { major_version : int32; minor_version : int32; };;
+type WaitGL = { context_tag : glx.CONTEXT_TAG; };;
+type WaitX = { context_tag : glx.CONTEXT_TAG; };;
+type CopyContext = { src : glx.CONTEXT; dest : glx.CONTEXT; mask : int32; src_context_tag : glx.CONTEXT_TAG; };;
+
+type SwapBuffers = { context_tag : glx.CONTEXT_TAG; drawable : glx.DRAWABLE; };;
+type UseXFont = { context_tag : glx.CONTEXT_TAG; font : xproto.FONT; first : int32; count : int32; list_base : int32; };;
+type CreateGLXPixmap = { screen : int32; visual : xproto.VISUALID; pixmap : xproto.PIXMAP; glx_pixmap : glx.PIXMAP; };;
+type GetVisualConfigs = { screen : int32; };;
+type DestroyGLXPixmap = { glx_pixmap : glx.PIXMAP; };;
+type VendorPrivate = { vendor_code : int32; context_tag : glx.CONTEXT_TAG; data : char list; };;
+type VendorPrivateWithReply = { vendor_code : int32; context_tag : glx.CONTEXT_TAG; data : char list; };;
+type QueryExtensionsString = { screen : int32; };;
+type QueryServerString = { screen : int32; name : int32; };;
+type ClientInfo = { major_version : int32; minor_version : int32; string : char list; };;
+type GetFBConfigs = { screen : int32; };;
+type CreatePixmap = { screen : int32; fbconfig : glx.FBCONFIG; pixmap : xproto.PIXMAP; glx_pixmap : glx.PIXMAP; num_attribs : int32; attribs : int32 list; };;
+type DestroyPixmap = { glx_pixmap : glx.PIXMAP; };;
+type CreateNewContext = { context : glx.CONTEXT; fbconfig : glx.FBCONFIG; screen : int32; render_type : int32; share_list : glx.CONTEXT; is_direct : bool; };;
+type QueryContext = { context : glx.CONTEXT; };;
+type MakeContextCurrent = { old_context_tag : glx.CONTEXT_TAG; drawable : glx.DRAWABLE; read_drawable : glx.DRAWABLE; context : glx.CONTEXT; };;
+type CreatePbuffer = { screen : int32; fbconfig : glx.FBCONFIG; pbuffer : glx.PBUFFER; num_attribs : int32; attribs : int32 list; };;
+type DestroyPbuffer = { pbuffer : glx.PBUFFER; };;
+type GetDrawableAttributes = { drawable : glx.DRAWABLE; };;
+type ChangeDrawableAttributes = { drawable : glx.DRAWABLE; num_attribs : int32; attribs : int32 list; };;
+type CreateWindow = { screen : int32; fbconfig : glx.FBCONFIG; window : xproto.WINDOW; glx_window : glx.WINDOW; num_attribs : int32; attribs : int32 list; };;
+type DeleteWindow = { glxwindow : glx.WINDOW; };;
+type SetClientInfoARB = { major_version : int32; minor_version : int32; num_versions : int32; gl_versions : int32 list; gl_extension_string : char list; glx_extension_string : char list; };;
+type CreateContextAttribsARB = { context : glx.CONTEXT; fbconfig : glx.FBCONFIG; screen : int32; share_list : glx.CONTEXT; is_direct : bool; num_attribs : int32; attribs : int32 list; };;
+type SetClientInfo2ARB = { major_version : int32; minor_version : int32; num_versions : int32; gl_versions : int32 list; gl_extension_string : char list; glx_extension_string : char list; };;
+type NewList = { context_tag : glx.CONTEXT_TAG; list : int32; mode : int32; };;
+type EndList = { context_tag : glx.CONTEXT_TAG; };;
+type DeleteLists = { context_tag : glx.CONTEXT_TAG; list : int32; range : int32; };;
+type GenLists = { context_tag : glx.CONTEXT_TAG; range : int32; };;
+type FeedbackBuffer = { context_tag : glx.CONTEXT_TAG; size : int32; type : int32; };;
+type SelectBuffer = { context_tag : glx.CONTEXT_TAG; size : int32; };;
+type RenderMode = { context_tag : glx.CONTEXT_TAG; mode : int32; };;
+type RM = GL_RENDER | GL_FEEDBACK | GL_SELECT;;
+type Finish = { context_tag : glx.CONTEXT_TAG; };;
+type PixelStoref = { context_tag : glx.CONTEXT_TAG; pname : int32; datum : glx.FLOAT32; };;
+type PixelStorei = { context_tag : glx.CONTEXT_TAG; pname : int32; datum : int32; };;
+type ReadPixels = { context_tag : glx.CONTEXT_TAG; x : int32; y : int32; width : int32; height : int32; format : int32; type : int32; swap_bytes : bool; lsb_first : bool; };;
+type GetBooleanv = { context_tag : glx.CONTEXT_TAG; pname : int32; };;
+type GetClipPlane = { context_tag : glx.CONTEXT_TAG; plane : int32; };;
+type GetDoublev = { context_tag : glx.CONTEXT_TAG; pname : int32; };;
+type GetError = { context_tag : glx.CONTEXT_TAG; };;
+type GetFloatv = { context_tag : glx.CONTEXT_TAG; pname : int32; };;
+type GetIntegerv = { context_tag : glx.CONTEXT_TAG; pname : int32; };;
+type GetLightfv = { context_tag : glx.CONTEXT_TAG; light : int32; pname : int32; };;
+type GetLightiv = { context_tag : glx.CONTEXT_TAG; light : int32; pname : int32; };;
+type GetMapdv = { context_tag : glx.CONTEXT_TAG; target : int32; query : int32; };;
+type GetMapfv = { context_tag : glx.CONTEXT_TAG; target : int32; query : int32; };;
+type GetMapiv = { context_tag : glx.CONTEXT_TAG; target : int32; query : int32; };;
+type GetMaterialfv = { context_tag : glx.CONTEXT_TAG; face : int32; pname : int32; };;
+type GetMaterialiv = { context_tag : glx.CONTEXT_TAG; face : int32; pname : int32; };;
+type GetPixelMapfv = { context_tag : glx.CONTEXT_TAG; map : int32; };;
+type GetPixelMapuiv = { context_tag : glx.CONTEXT_TAG; map : int32; };;
+type GetPixelMapusv = { context_tag : glx.CONTEXT_TAG; map : int32; };;
+type GetPolygonStipple = { context_tag : glx.CONTEXT_TAG; lsb_first : bool; };;
+type GetString = { context_tag : glx.CONTEXT_TAG; name : int32; };;
+type GetTexEnvfv = { context_tag : glx.CONTEXT_TAG; target : int32; pname : int32; };;
+type GetTexEnviv = { context_tag : glx.CONTEXT_TAG; target : int32; pname : int32; };;
+type GetTexGendv = { context_tag : glx.CONTEXT_TAG; coord : int32; pname : int32; };;
+type GetTexGenfv = { context_tag : glx.CONTEXT_TAG; coord : int32; pname : int32; };;
+type GetTexGeniv = { context_tag : glx.CONTEXT_TAG; coord : int32; pname : int32; };;
+type GetTexImage = { context_tag : glx.CONTEXT_TAG; target : int32; level : int32; format : int32; type : int32; swap_bytes : bool; };;
+type GetTexParameterfv = { context_tag : glx.CONTEXT_TAG; target : int32; pname : int32; };;
+type GetTexParameteriv = { context_tag : glx.CONTEXT_TAG; target : int32; pname : int32; };;
+type GetTexLevelParameterfv = { context_tag : glx.CONTEXT_TAG; target : int32; level : int32; pname : int32; };;
+type GetTexLevelParameteriv = { context_tag : glx.CONTEXT_TAG; target : int32; level : int32; pname : int32; };;
+type IsEnabled = { context_tag : glx.CONTEXT_TAG; capability : int32; };;
+type IsList = { context_tag : glx.CONTEXT_TAG; list : int32; };;
+type Flush = { context_tag : glx.CONTEXT_TAG; };;
+type AreTexturesResident = { context_tag : glx.CONTEXT_TAG; textures : int32 list; };;
+type DeleteTextures = { context_tag : glx.CONTEXT_TAG; textures : int32 list; };;
+type GenTextures = { context_tag : glx.CONTEXT_TAG; n : int32; };;
+type IsTexture = { context_tag : glx.CONTEXT_TAG; texture : int32; };;
+type GetColorTable = { context_tag : glx.CONTEXT_TAG; target : int32; format : int32; type : int32; swap_bytes : bool; };;
+type GetColorTableParameterfv = { context_tag : glx.CONTEXT_TAG; target : int32; pname : int32; };;
+type GetColorTableParameteriv = { context_tag : glx.CONTEXT_TAG; target : int32; pname : int32; };;
+type GetConvolutionFilter = { context_tag : glx.CONTEXT_TAG; target : int32; format : int32; type : int32; swap_bytes : bool; };;
+type GetConvolutionParameterfv = { context_tag : glx.CONTEXT_TAG; target : int32; pname : int32; };;
+type GetConvolutionParameteriv = { context_tag : glx.CONTEXT_TAG; target : int32; pname : int32; };;
+type GetSeparableFilter = { context_tag : glx.CONTEXT_TAG; target : int32; format : int32; type : int32; swap_bytes : bool; };;
+type GetHistogram = { context_tag : glx.CONTEXT_TAG; target : int32; format : int32; type : int32; swap_bytes : bool; reset : bool; };;
+type GetHistogramParameterfv = { context_tag : glx.CONTEXT_TAG; target : int32; pname : int32; };;
+type GetHistogramParameteriv = { context_tag : glx.CONTEXT_TAG; target : int32; pname : int32; };;
+type GetMinmax = { context_tag : glx.CONTEXT_TAG; target : int32; format : int32; type : int32; swap_bytes : bool; reset : bool; };;
+type GetMinmaxParameterfv = { context_tag : glx.CONTEXT_TAG; target : int32; pname : int32; };;
+type GetMinmaxParameteriv = { context_tag : glx.CONTEXT_TAG; target : int32; pname : int32; };;
+type GetCompressedTexImageARB = { context_tag : glx.CONTEXT_TAG; target : int32; level : int32; };;
+type DeleteQueriesARB = { context_tag : glx.CONTEXT_TAG; ids : int32 list; };;
+type GenQueriesARB = { context_tag : glx.CONTEXT_TAG; n : int32; };;
+type IsQueryARB = { context_tag : glx.CONTEXT_TAG; id : int32; };;
+type GetQueryivARB = { context_tag : glx.CONTEXT_TAG; target : int32; pname : int32; };;
+type GetQueryObjectivARB = { context_tag : glx.CONTEXT_TAG; id : int32; pname : int32; };;
+type GetQueryObjectuivARB = { context_tag : glx.CONTEXT_TAG; id : int32; pname : int32; };;
+end
+module Present = struct
+type Event = ConfigureNotify | CompleteNotify | IdleNotify | RedirectNotify;;
+
+
+
+type CompleteKind = Pixmap | NotifyMSC;;
+type CompleteMode = Copy | Flip | Skip | SuboptimalCopy;;
+type Notify = { window : xproto.WINDOW; serial : int32; };;
+type QueryVersion = { major_version : int32; minor_version : int32; };;
+type Pixmap = { window : xproto.WINDOW; pixmap : xproto.PIXMAP; serial : int32; valid : xfixes.REGION; update : xfixes.REGION; x_off : int; y_off : int; target_crtc : randr.CRTC; wait_fence : sync.FENCE; idle_fence : sync.FENCE; options : int32; target_msc : int64; divisor : int64; remainder : int64; notifies : present.Notify list; };;
+type NotifyMSC = { window : xproto.WINDOW; serial : int32; target_msc : int64; divisor : int64; remainder : int64; };;
+type EVENT = xid;;
+type SelectInput = { eid : present.EVENT; window : xproto.WINDOW; event_mask : int32; };;
+type QueryCapabilities = { target : int32; };;
+type Generic = { extension : int; length : int32; evtype : int; event : present.EVENT; };;
+type ConfigureNotify = { event : present.EVENT; window : xproto.WINDOW; x : int; y : int; width : int; height : int; off_x : int; off_y : int; pixmap_width : int; pixmap_height : int; pixmap_flags : int32; };;
+type CompleteNotify = { kind : int; mode : int; event : present.EVENT; window : xproto.WINDOW; serial : int32; ust : int64; msc : int64; };;
+type IdleNotify = { event : present.EVENT; window : xproto.WINDOW; serial : int32; pixmap : xproto.PIXMAP; idle_fence : sync.FENCE; };;
+type RedirectNotify = { update_window : bool; event : present.EVENT; event_window : xproto.WINDOW; window : xproto.WINDOW; pixmap : xproto.PIXMAP; serial : int32; valid_region : xfixes.REGION; update_region : xfixes.REGION; valid_rect : xproto.RECTANGLE; update_rect : xproto.RECTANGLE; x_off : int; y_off : int; target_crtc : randr.CRTC; wait_fence : sync.FENCE; idle_fence : sync.FENCE; options : int32; target_msc : int64; divisor : int64; remainder : int64; notifies : present.Notify list; };;
+end
+module RandR = struct
+type MODE = xid;;
+type CRTC = xid;;
+type OUTPUT = xid;;
+type PROVIDER = xid;;
+type LEASE = xid;;
+type BadOutput = { };;
+type BadCrtc = { };;
+type BadMode = { };;
+type BadProvider = { };;
+
+type ScreenSize = { width : int; height : int; mwidth : int; mheight : int; };;
+type RefreshRates = { rates : int list; };;
+type QueryVersion = { major_version : int32; minor_version : int32; };;
+type SetConfig = Success | InvalidConfigTime | InvalidTime | Failed;;
+type SetScreenConfig = { window : xproto.WINDOW; timestamp : xproto.TIMESTAMP; config_timestamp : xproto.TIMESTAMP; sizeID : int; rotation : int; rate : int; };;
+
+type SelectInput = { window : xproto.WINDOW; enable : int; };;
+type GetScreenInfo = { window : xproto.WINDOW; };;
+type GetScreenSizeRange = { window : xproto.WINDOW; };;
+type SetScreenSize = { window : xproto.WINDOW; width : int; height : int; mm_width : int32; mm_height : int32; };;
+
+type ModeInfo = { id : int32; width : int; height : int; dot_clock : int32; hsync_start : int; hsync_end : int; htotal : int; hskew : int; vsync_start : int; vsync_end : int; vtotal : int; name_len : int; mode_flags : int32; };;
+type GetScreenResources = { window : xproto.WINDOW; };;
+type Connection = Connected | Disconnected | Unknown;;
+type GetOutputInfo = { output : randr.OUTPUT; config_timestamp : xproto.TIMESTAMP; };;
+type ListOutputProperties = { output : randr.OUTPUT; };;
+type QueryOutputProperty = { output : randr.OUTPUT; property : xproto.ATOM; };;
+type ConfigureOutputProperty = { output : randr.OUTPUT; property : xproto.ATOM; pending : bool; range : bool; values : int32 list; };;
+type ChangeOutputProperty = { output : randr.OUTPUT; property : xproto.ATOM; type : xproto.ATOM; format : int; mode : int; num_units : int32; data : char list; };;
+type DeleteOutputProperty = { output : randr.OUTPUT; property : xproto.ATOM; };;
+type GetOutputProperty = { output : randr.OUTPUT; property : xproto.ATOM; type : xproto.ATOM; long_offset : int32; long_length : int32; delete : bool; pending : bool; };;
+type CreateMode = { window : xproto.WINDOW; mode_info : randr.ModeInfo; name : char list; };;
+type DestroyMode = { mode : randr.MODE; };;
+type AddOutputMode = { output : randr.OUTPUT; mode : randr.MODE; };;
+type DeleteOutputMode = { output : randr.OUTPUT; mode : randr.MODE; };;
+type GetCrtcInfo = { crtc : randr.CRTC; config_timestamp : xproto.TIMESTAMP; };;
+type SetCrtcConfig = { crtc : randr.CRTC; timestamp : xproto.TIMESTAMP; config_timestamp : xproto.TIMESTAMP; x : int; y : int; mode : randr.MODE; rotation : int; outputs : randr.OUTPUT list; };;
+type GetCrtcGammaSize = { crtc : randr.CRTC; };;
+type GetCrtcGamma = { crtc : randr.CRTC; };;
+type SetCrtcGamma = { crtc : randr.CRTC; red : int list; green : int list; blue : int list; };;
+type GetScreenResourcesCurrent = { window : xproto.WINDOW; };;
+
+type SetCrtcTransform = { crtc : randr.CRTC; transform : render.TRANSFORM; filter_name : char list; filter_params : render.FIXED list; };;
+type GetCrtcTransform = { crtc : randr.CRTC; };;
+type GetPanning = { crtc : randr.CRTC; };;
+type SetPanning = { crtc : randr.CRTC; timestamp : xproto.TIMESTAMP; left : int; top : int; width : int; height : int; track_left : int; track_top : int; track_width : int; track_height : int; border_left : int; border_top : int; border_right : int; border_bottom : int; };;
+type SetOutputPrimary = { window : xproto.WINDOW; output : randr.OUTPUT; };;
+type GetOutputPrimary = { window : xproto.WINDOW; };;
+type GetProviders = { window : xproto.WINDOW; };;
+
+type GetProviderInfo = { provider : randr.PROVIDER; config_timestamp : xproto.TIMESTAMP; };;
+type SetProviderOffloadSink = { provider : randr.PROVIDER; sink_provider : randr.PROVIDER; config_timestamp : xproto.TIMESTAMP; };;
+type SetProviderOutputSource = { provider : randr.PROVIDER; source_provider : randr.PROVIDER; config_timestamp : xproto.TIMESTAMP; };;
+type ListProviderProperties = { provider : randr.PROVIDER; };;
+type QueryProviderProperty = { provider : randr.PROVIDER; property : xproto.ATOM; };;
+type ConfigureProviderProperty = { provider : randr.PROVIDER; property : xproto.ATOM; pending : bool; range : bool; values : int32 list; };;
+type ChangeProviderProperty = { provider : randr.PROVIDER; property : xproto.ATOM; type : xproto.ATOM; format : int; mode : int; num_items : int32; data : char list; };;
+type DeleteProviderProperty = { provider : randr.PROVIDER; property : xproto.ATOM; };;
+type GetProviderProperty = { provider : randr.PROVIDER; property : xproto.ATOM; type : xproto.ATOM; long_offset : int32; long_length : int32; delete : bool; pending : bool; };;
+type ScreenChangeNotify = { rotation : int; timestamp : xproto.TIMESTAMP; config_timestamp : xproto.TIMESTAMP; root : xproto.WINDOW; request_window : xproto.WINDOW; sizeID : int; subpixel_order : int; width : int; height : int; mwidth : int; mheight : int; };;
+type Notify = CrtcChange | OutputChange | OutputProperty | ProviderChange | ProviderProperty | ResourceChange | Lease;;
+type CrtcChange = { timestamp : xproto.TIMESTAMP; window : xproto.WINDOW; crtc : randr.CRTC; mode : randr.MODE; rotation : int; x : int; y : int; width : int; height : int; };;
+type OutputChange = { timestamp : xproto.TIMESTAMP; config_timestamp : xproto.TIMESTAMP; window : xproto.WINDOW; output : randr.OUTPUT; crtc : randr.CRTC; mode : randr.MODE; rotation : int; connection : int; subpixel_order : int; };;
+type OutputProperty = { window : xproto.WINDOW; output : randr.OUTPUT; atom : xproto.ATOM; timestamp : xproto.TIMESTAMP; status : int; };;
+type ProviderChange = { timestamp : xproto.TIMESTAMP; window : xproto.WINDOW; provider : randr.PROVIDER; };;
+type ProviderProperty = { window : xproto.WINDOW; provider : randr.PROVIDER; atom : xproto.ATOM; timestamp : xproto.TIMESTAMP; state : int; };;
+type ResourceChange = { timestamp : xproto.TIMESTAMP; window : xproto.WINDOW; };;
+type MonitorInfo = { name : xproto.ATOM; primary : bool; automatic : bool; x : int; y : int; width : int; height : int; width_in_millimeters : int32; height_in_millimeters : int32; outputs : randr.OUTPUT list; };;
+type GetMonitors = { window : xproto.WINDOW; get_active : bool; };;
+type SetMonitor = { window : xproto.WINDOW; monitorinfo : randr.MonitorInfo; };;
+type DeleteMonitor = { window : xproto.WINDOW; name : xproto.ATOM; };;
+type CreateLease = { window : xproto.WINDOW; lid : randr.LEASE; crtcs : randr.CRTC list; outputs : randr.OUTPUT list; };;
+type FreeLease = { lid : randr.LEASE; terminate : char; };;
+type LeaseNotify = { timestamp : xproto.TIMESTAMP; window : xproto.WINDOW; lease : randr.LEASE; created : int; };;
+type Notify = CrtcChange of { cc : randr.CrtcChange; } | OutputChange of { oc : randr.OutputChange; } | OutputProperty of { op : randr.OutputProperty; } | ProviderChange of { pc : randr.ProviderChange; } | ProviderProperty of { pp : randr.ProviderProperty; } | ResourceChange of { rc : randr.ResourceChange; } | Lease of { lc : randr.LeaseNotify; };;
+type Notify = { };;
+end
+module Record = struct
+type CONTEXT = xid;;
+type Range8 = { first : int; last : int; };;
+type Range16 = { first : int; last : int; };;
+type ExtRange = { major : record.Range8; minor : record.Range16; };;
+type Range = { core_requests : record.Range8; core_replies : record.Range8; ext_requests : record.ExtRange; ext_replies : record.ExtRange; delivered_events : record.Range8; device_events : record.Range8; errors : record.Range8; client_started : bool; client_died : bool; };;
+type ElementHeader = int;;
+
+type ClientSpec = int32;;
+type CS = CurrentClients | FutureClients | AllClients;;
+type ClientInfo = { client_resource : record.ClientSpec; ranges : record.Range list; };;
+type BadContext = { invalid_record : int32; };;
+type QueryVersion = { major_version : int; minor_version : int; };;
+type CreateContext = { context : record.CONTEXT; element_header : record.ElementHeader; client_specs : record.ClientSpec list; ranges : record.Range list; };;
+type RegisterClients = { context : record.CONTEXT; element_header : record.ElementHeader; client_specs : record.ClientSpec list; ranges : record.Range list; };;
+type UnregisterClients = { context : record.CONTEXT; client_specs : record.ClientSpec list; };;
+type GetContext = { context : record.CONTEXT; };;
+type EnableContext = { context : record.CONTEXT; };;
+type DisableContext = { context : record.CONTEXT; };;
+type FreeContext = { context : record.CONTEXT; };;
+end
+module Render = struct
+type PictType = Indexed | Direct;;
+type Picture = None;;
+type PictOp = Clear | Src | Dst | Over | OverReverse | In | InReverse | Out | OutReverse | Atop | AtopReverse | Xor | Add | Saturate | DisjointClear | DisjointSrc | DisjointDst | DisjointOver | DisjointOverReverse | DisjointIn | DisjointInReverse | DisjointOut | DisjointOutReverse | DisjointAtop | DisjointAtopReverse | DisjointXor | ConjointClear | ConjointSrc | ConjointDst | ConjointOver | ConjointOverReverse | ConjointIn | ConjointInReverse | ConjointOut | ConjointOutReverse | ConjointAtop | ConjointAtopReverse | ConjointXor | Multiply | Screen | Overlay | Darken | Lighten | ColorDodge | ColorBurn | HardLight | SoftLight | Difference | Exclusion | HSLHue | HSLSaturation | HSLColor | HSLLuminosity;;
+type PolyEdge = Sharp | Smooth;;
+type PolyMode = Precise | Imprecise;;
+
+type SubPixel = Unknown | HorizontalRGB | HorizontalBGR | VerticalRGB | VerticalBGR | None;;
+type Repeat = None | Normal | Pad | Reflect;;
+type GLYPH = int32;;
+type GLYPHSET = xid;;
+type PICTURE = xid;;
+type PICTFORMAT = xid;;
+type FIXED = int32;;
+type PictFormat = { };;
+type Picture = { };;
+type PictOp = { };;
+type GlyphSet = { };;
+type Glyph = { };;
+type DIRECTFORMAT = { red_shift : int; red_mask : int; green_shift : int; green_mask : int; blue_shift : int; blue_mask : int; alpha_shift : int; alpha_mask : int; };;
+type PICTFORMINFO = { id : render.PICTFORMAT; type : int; depth : int; direct : render.DIRECTFORMAT; colormap : xproto.COLORMAP; };;
+type PICTVISUAL = { visual : xproto.VISUALID; format : render.PICTFORMAT; };;
+type PICTDEPTH = { depth : int; visuals : render.PICTVISUAL list; };;
+type PICTSCREEN = { fallback : render.PICTFORMAT; depths : render.PICTDEPTH list; };;
+type INDEXVALUE = { pixel : int32; red : int; green : int; blue : int; alpha : int; };;
+type COLOR = { red : int; green : int; blue : int; alpha : int; };;
+type POINTFIX = { x : render.FIXED; y : render.FIXED; };;
+type LINEFIX = { p1 : render.POINTFIX; p2 : render.POINTFIX; };;
+type TRIANGLE = { p1 : render.POINTFIX; p2 : render.POINTFIX; p3 : render.POINTFIX; };;
+type TRAPEZOID = { top : render.FIXED; bottom : render.FIXED; left : render.LINEFIX; right : render.LINEFIX; };;
+type GLYPHINFO = { width : int; height : int; x : int; y : int; x_off : int; y_off : int; };;
+type QueryVersion = { client_major_version : int32; client_minor_version : int32; };;
+type QueryPictFormats = { };;
+type QueryPictIndexValues = { format : render.PICTFORMAT; };;
+type CreatePicture = { pid : render.PICTURE; drawable : xproto.DRAWABLE; format : render.PICTFORMAT; repeat : int32 option; alphamap : render.PICTURE option; alphaxorigin : int32 option; alphayorigin : int32 option; clipxorigin : int32 option; clipyorigin : int32 option; clipmask : xproto.PIXMAP option; graphicsexposure : int32 option; subwindowmode : int32 option; polyedge : int32 option; polymode : int32 option; dither : xproto.ATOM option; componentalpha : int32 option; };;
+type ChangePicture = { picture : render.PICTURE; repeat : int32 option; alphamap : render.PICTURE option; alphaxorigin : int32 option; alphayorigin : int32 option; clipxorigin : int32 option; clipyorigin : int32 option; clipmask : xproto.PIXMAP option; graphicsexposure : int32 option; subwindowmode : int32 option; polyedge : int32 option; polymode : int32 option; dither : xproto.ATOM option; componentalpha : int32 option; };;
+type SetPictureClipRectangles = { picture : render.PICTURE; clip_x_origin : int; clip_y_origin : int; rectangles : xproto.RECTANGLE list; };;
+type FreePicture = { picture : render.PICTURE; };;
+type Composite = { op : int; src : render.PICTURE; mask : render.PICTURE; dst : render.PICTURE; src_x : int; src_y : int; mask_x : int; mask_y : int; dst_x : int; dst_y : int; width : int; height : int; };;
+type Trapezoids = { op : int; src : render.PICTURE; dst : render.PICTURE; mask_format : render.PICTFORMAT; src_x : int; src_y : int; traps : render.TRAPEZOID list; };;
+type Triangles = { op : int; src : render.PICTURE; dst : render.PICTURE; mask_format : render.PICTFORMAT; src_x : int; src_y : int; triangles : render.TRIANGLE list; };;
+type TriStrip = { op : int; src : render.PICTURE; dst : render.PICTURE; mask_format : render.PICTFORMAT; src_x : int; src_y : int; points : render.POINTFIX list; };;
+type TriFan = { op : int; src : render.PICTURE; dst : render.PICTURE; mask_format : render.PICTFORMAT; src_x : int; src_y : int; points : render.POINTFIX list; };;
+type CreateGlyphSet = { gsid : render.GLYPHSET; format : render.PICTFORMAT; };;
+type ReferenceGlyphSet = { gsid : render.GLYPHSET; existing : render.GLYPHSET; };;
+type FreeGlyphSet = { glyphset : render.GLYPHSET; };;
+type AddGlyphs = { glyphset : render.GLYPHSET; glyphids : int32 list; glyphs : render.GLYPHINFO list; data : char list; };;
+type FreeGlyphs = { glyphset : render.GLYPHSET; glyphs : render.GLYPH list; };;
+type CompositeGlyphs8 = { op : int; src : render.PICTURE; dst : render.PICTURE; mask_format : render.PICTFORMAT; glyphset : render.GLYPHSET; src_x : int; src_y : int; glyphcmds : char list; };;
+type CompositeGlyphs16 = { op : int; src : render.PICTURE; dst : render.PICTURE; mask_format : render.PICTFORMAT; glyphset : render.GLYPHSET; src_x : int; src_y : int; glyphcmds : char list; };;
+type CompositeGlyphs32 = { op : int; src : render.PICTURE; dst : render.PICTURE; mask_format : render.PICTFORMAT; glyphset : render.GLYPHSET; src_x : int; src_y : int; glyphcmds : char list; };;
+type FillRectangles = { op : int; dst : render.PICTURE; color : render.COLOR; rects : xproto.RECTANGLE list; };;
+type CreateCursor = { cid : xproto.CURSOR; source : render.PICTURE; x : int; y : int; };;
+type TRANSFORM = { matrix11 : render.FIXED; matrix12 : render.FIXED; matrix13 : render.FIXED; matrix21 : render.FIXED; matrix22 : render.FIXED; matrix23 : render.FIXED; matrix31 : render.FIXED; matrix32 : render.FIXED; matrix33 : render.FIXED; };;
+type SetPictureTransform = { picture : render.PICTURE; transform : render.TRANSFORM; };;
+type QueryFilters = { drawable : xproto.DRAWABLE; };;
+type SetPictureFilter = { picture : render.PICTURE; filter : char list; values : render.FIXED list; };;
+type ANIMCURSORELT = { cursor : xproto.CURSOR; delay : int32; };;
+type CreateAnimCursor = { cid : xproto.CURSOR; cursors : render.ANIMCURSORELT list; };;
+type SPANFIX = { l : render.FIXED; r : render.FIXED; y : render.FIXED; };;
+type TRAP = { top : render.SPANFIX; bot : render.SPANFIX; };;
+type AddTraps = { picture : render.PICTURE; x_off : int; y_off : int; traps : render.TRAP list; };;
+type CreateSolidFill = { picture : render.PICTURE; color : render.COLOR; };;
+type CreateLinearGradient = { picture : render.PICTURE; p1 : render.POINTFIX; p2 : render.POINTFIX; stops : render.FIXED list; colors : render.COLOR list; };;
+type CreateRadialGradient = { picture : render.PICTURE; inner : render.POINTFIX; outer : render.POINTFIX; inner_radius : render.FIXED; outer_radius : render.FIXED; stops : render.FIXED list; colors : render.COLOR list; };;
+type CreateConicalGradient = { picture : render.PICTURE; center : render.POINTFIX; angle : render.FIXED; stops : render.FIXED list; colors : render.COLOR list; };;
+end
+module Res = struct
+type Client = { resource_base : int32; resource_mask : int32; };;
+type Type = { resource_type : xproto.ATOM; count : int32; };;
+
+type ClientIdSpec = { client : int32; mask : int32; };;
+type ClientIdValue = { spec : res.ClientIdSpec; length : int32; value : int32 list; };;
+type ResourceIdSpec = { resource : int32; type : int32; };;
+type ResourceSizeSpec = { spec : res.ResourceIdSpec; bytes : int32; ref_count : int32; use_count : int32; };;
+type ResourceSizeValue = { size : res.ResourceSizeSpec; cross_references : res.ResourceSizeSpec list; };;
+type QueryVersion = { client_major : int; client_minor : int; };;
+type QueryClients = { };;
+type QueryClientResources = { xid : int32; };;
+type QueryClientPixmapBytes = { xid : int32; };;
+type QueryClientIds = { specs : res.ClientIdSpec list; };;
+type QueryResourceBytes = { client : int32; specs : res.ResourceIdSpec list; };;
+end
+module ScreenSaver = struct
+type Kind = Blanked | Internal | External;;
+
+type State = Off | On | Cycle | Disabled;;
+type QueryVersion = { client_major_version : int; client_minor_version : int; };;
+type QueryInfo = { drawable : xproto.DRAWABLE; };;
+type SelectInput = { drawable : xproto.DRAWABLE; event_mask : int32; };;
+type SetAttributes = { drawable : xproto.DRAWABLE; x : int; y : int; width : int; height : int; border_width : int; class : char; depth : int; visual : xproto.VISUALID; background_pixmap : xproto.PIXMAP option; background_pixel : int32 option; border_pixmap : xproto.PIXMAP option; border_pixel : int32 option; bit_gravity : int32 option; win_gravity : int32 option; backing_store : int32 option; backing_planes : int32 option; backing_pixel : int32 option; override_redirect : xproto.BOOL32 option; save_under : xproto.BOOL32 option; event_mask : int32 option; do_not_propogate_mask : int32 option; colormap : xproto.COLORMAP option; cursor : xproto.CURSOR option; };;
+type UnsetAttributes = { drawable : xproto.DRAWABLE; };;
+type Suspend = { suspend : int32; };;
+type Notify = { state : char; time : xproto.TIMESTAMP; root : xproto.WINDOW; window : xproto.WINDOW; kind : char; forced : bool; };;
+end
+module Shape = struct
+type OP = int;;
+type KIND = int;;
+type SO = Set | Union | Intersect | Subtract | Invert;;
+type SK = Bounding | Clip | Input;;
+type Notify = { shape_kind : shape.KIND; affected_window : xproto.WINDOW; extents_x : int; extents_y : int; extents_width : int; extents_height : int; server_time : xproto.TIMESTAMP; shaped : bool; };;
+type QueryVersion = { };;
+type Rectangles = { operation : shape.OP; destination_kind : shape.KIND; ordering : char; destination_window : xproto.WINDOW; x_offset : int; y_offset : int; rectangles : xproto.RECTANGLE list; };;
+type Mask = { operation : shape.OP; destination_kind : shape.KIND; destination_window : xproto.WINDOW; x_offset : int; y_offset : int; source_bitmap : xproto.PIXMAP; };;
+type Combine = { operation : shape.OP; destination_kind : shape.KIND; source_kind : shape.KIND; destination_window : xproto.WINDOW; x_offset : int; y_offset : int; source_window : xproto.WINDOW; };;
+type Offset = { destination_kind : shape.KIND; destination_window : xproto.WINDOW; x_offset : int; y_offset : int; };;
+type QueryExtents = { destination_window : xproto.WINDOW; };;
+type SelectInput = { destination_window : xproto.WINDOW; enable : bool; };;
+type InputSelected = { destination_window : xproto.WINDOW; };;
+type GetRectangles = { window : xproto.WINDOW; source_kind : shape.KIND; };;
+end
+module Shm = struct
+type SEG = xid;;
+type Completion = { drawable : xproto.DRAWABLE; minor_event : int; major_event : char; shmseg : shm.SEG; offset : int32; };;
+
+type QueryVersion = { };;
+type Attach = { shmseg : shm.SEG; shmid : int32; read_only : bool; };;
+type Detach = { shmseg : shm.SEG; };;
+type PutImage = { drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; total_width : int; total_height : int; src_x : int; src_y : int; src_width : int; src_height : int; dst_x : int; dst_y : int; depth : int; format : int; send_event : bool; shmseg : shm.SEG; offset : int32; };;
+type GetImage = { drawable : xproto.DRAWABLE; x : int; y : int; width : int; height : int; plane_mask : int32; format : int; shmseg : shm.SEG; offset : int32; };;
+type CreatePixmap = { pid : xproto.PIXMAP; drawable : xproto.DRAWABLE; width : int; height : int; depth : int; shmseg : shm.SEG; offset : int32; };;
+type AttachFd = { shmseg : shm.SEG; shm_fd : file_descr; read_only : bool; };;
+type CreateSegment = { shmseg : shm.SEG; size : int32; read_only : bool; };;
+end
+module Sync = struct
+type ALARM = xid;;
+type ALARMSTATE = Active | Inactive | Destroyed;;
+type COUNTER = xid;;
+type FENCE = xid;;
+type TESTTYPE = PositiveTransition | NegativeTransition | PositiveComparison | NegativeComparison;;
+type VALUETYPE = Absolute | Relative;;
+
+type INT64 = { hi : int32; lo : int32; };;
+type SYSTEMCOUNTER = { counter : sync.COUNTER; resolution : sync.INT64; name : char list; };;
+type TRIGGER = { counter : sync.COUNTER; wait_type : int32; wait_value : sync.INT64; test_type : int32; };;
+type WAITCONDITION = { trigger : sync.TRIGGER; event_threshold : sync.INT64; };;
+type Counter = { bad_counter : int32; minor_opcode : int; major_opcode : int; };;
+type Alarm = { bad_alarm : int32; minor_opcode : int; major_opcode : int; };;
+type Initialize = { desired_major_version : int; desired_minor_version : int; };;
+type ListSystemCounters = { };;
+type CreateCounter = { id : sync.COUNTER; initial_value : sync.INT64; };;
+type DestroyCounter = { counter : sync.COUNTER; };;
+type QueryCounter = { counter : sync.COUNTER; };;
+type Await = { wait_list : sync.WAITCONDITION list; };;
+type ChangeCounter = { counter : sync.COUNTER; amount : sync.INT64; };;
+type SetCounter = { counter : sync.COUNTER; value : sync.INT64; };;
+type CreateAlarm = { id : sync.ALARM; counter : sync.COUNTER option; valueType : int32 option; value : sync.INT64 option; testType : int32 option; delta : sync.INT64 option; events : int32 option; };;
+type ChangeAlarm = { id : sync.ALARM; counter : sync.COUNTER option; valueType : int32 option; value : sync.INT64 option; testType : int32 option; delta : sync.INT64 option; events : int32 option; };;
+type DestroyAlarm = { alarm : sync.ALARM; };;
+type QueryAlarm = { alarm : sync.ALARM; };;
+type SetPriority = { id : int32; priority : int32; };;
+type GetPriority = { id : int32; };;
+type CreateFence = { drawable : xproto.DRAWABLE; fence : sync.FENCE; initially_triggered : bool; };;
+type TriggerFence = { fence : sync.FENCE; };;
+type ResetFence = { fence : sync.FENCE; };;
+type DestroyFence = { fence : sync.FENCE; };;
+type QueryFence = { fence : sync.FENCE; };;
+type AwaitFence = { fence_list : sync.FENCE list; };;
+type CounterNotify = { kind : int; counter : sync.COUNTER; wait_value : sync.INT64; counter_value : sync.INT64; timestamp : xproto.TIMESTAMP; count : int; destroyed : bool; };;
+type AlarmNotify = { kind : int; alarm : sync.ALARM; counter_value : sync.INT64; alarm_value : sync.INT64; timestamp : xproto.TIMESTAMP; state : int; };;
+end
+module XCMisc = struct
+type GetVersion = { client_major_version : int; client_minor_version : int; };;
+type GetXIDRange = { };;
+type GetXIDList = { count : int32; };;
+end
+module XF86Dri = struct
+type DrmClipRect = { x1 : int; y1 : int; x2 : int; x3 : int; };;
+type QueryVersion = { };;
+type QueryDirectRenderingCapable = { screen : int32; };;
+type OpenConnection = { screen : int32; };;
+type CloseConnection = { screen : int32; };;
+type GetClientDriverName = { screen : int32; };;
+type CreateContext = { screen : int32; visual : int32; context : int32; };;
+type DestroyContext = { screen : int32; context : int32; };;
+type CreateDrawable = { screen : int32; drawable : int32; };;
+type DestroyDrawable = { screen : int32; drawable : int32; };;
+type GetDrawableInfo = { screen : int32; drawable : int32; };;
+type GetDeviceInfo = { screen : int32; };;
+type AuthConnection = { screen : int32; magic : int32; };;
+end
+module XF86VidMode = struct
+type SYNCRANGE = int32;;
+type DOTCLOCK = int32;;
+
+
+
+type ModeInfo = { dotclock : xf86vidmode.DOTCLOCK; hdisplay : int; hsyncstart : int; hsyncend : int; htotal : int; hskew : int32; vdisplay : int; vsyncstart : int; vsyncend : int; vtotal : int; flags : int32; privsize : int32; };;
+type QueryVersion = { };;
+type GetModeLine = { screen : int; };;
+type ModModeLine = { screen : int32; hdisplay : int; hsyncstart : int; hsyncend : int; htotal : int; hskew : int; vdisplay : int; vsyncstart : int; vsyncend : int; vtotal : int; flags : int32; private : int list; };;
+type SwitchMode = { screen : int; zoom : int; };;
+type GetMonitor = { screen : int; };;
+type LockModeSwitch = { screen : int; lock : int; };;
+type GetAllModeLines = { screen : int; };;
+type AddModeLine = { screen : int32; dotclock : xf86vidmode.DOTCLOCK; hdisplay : int; hsyncstart : int; hsyncend : int; htotal : int; hskew : int; vdisplay : int; vsyncstart : int; vsyncend : int; vtotal : int; flags : int32; after_dotclock : xf86vidmode.DOTCLOCK; after_hdisplay : int; after_hsyncstart : int; after_hsyncend : int; after_htotal : int; after_hskew : int; after_vdisplay : int; after_vsyncstart : int; after_vsyncend : int; after_vtotal : int; after_flags : int32; private : int list; };;
+type DeleteModeLine = { screen : int32; dotclock : xf86vidmode.DOTCLOCK; hdisplay : int; hsyncstart : int; hsyncend : int; htotal : int; hskew : int; vdisplay : int; vsyncstart : int; vsyncend : int; vtotal : int; flags : int32; private : int list; };;
+type ValidateModeLine = { screen : int32; dotclock : xf86vidmode.DOTCLOCK; hdisplay : int; hsyncstart : int; hsyncend : int; htotal : int; hskew : int; vdisplay : int; vsyncstart : int; vsyncend : int; vtotal : int; flags : int32; private : int list; };;
+type SwitchToMode = { screen : int32; dotclock : xf86vidmode.DOTCLOCK; hdisplay : int; hsyncstart : int; hsyncend : int; htotal : int; hskew : int; vdisplay : int; vsyncstart : int; vsyncend : int; vtotal : int; flags : int32; private : int list; };;
+type GetViewPort = { screen : int; };;
+type SetViewPort = { screen : int; x : int32; y : int32; };;
+type GetDotClocks = { screen : int; };;
+type SetClientVersion = { major : int; minor : int; };;
+type SetGamma = { screen : int; red : int32; green : int32; blue : int32; };;
+type GetGamma = { screen : int; };;
+type GetGammaRamp = { screen : int; size : int; };;
+type SetGammaRamp = { screen : int; size : int; red : int list; green : int list; blue : int list; };;
+type GetGammaRampSize = { screen : int; };;
+type GetPermissions = { screen : int; };;
+type BadClock = { };;
+type BadHTimings = { };;
+type BadVTimings = { };;
+type ModeUnsuitable = { };;
+type ExtensionDisabled = { };;
+type ClientNotLocal = { };;
+type ZoomLocked = { };;
+end
+module XFixes = struct
+type QueryVersion = { client_major_version : int32; client_minor_version : int32; };;
+type SaveSetMode = Insert | Delete;;
+type SaveSetTarget = Nearest | Root;;
+type SaveSetMapping = Map | Unmap;;
+type ChangeSaveSet = { mode : char; target : char; map : char; window : xproto.WINDOW; };;
+type SelectionEvent = SetSelectionOwner | SelectionWindowDestroy | SelectionClientClose;;
+
+type SelectionNotify = { subtype : int; window : xproto.WINDOW; owner : xproto.WINDOW; selection : xproto.ATOM; timestamp : xproto.TIMESTAMP; selection_timestamp : xproto.TIMESTAMP; };;
+type SelectSelectionInput = { window : xproto.WINDOW; selection : xproto.ATOM; event_mask : int32; };;
+type CursorNotify = DisplayCursor;;
+
+type CursorNotify = { subtype : int; window : xproto.WINDOW; cursor_serial : int32; timestamp : xproto.TIMESTAMP; name : xproto.ATOM; };;
+type SelectCursorInput = { window : xproto.WINDOW; event_mask : int32; };;
+type GetCursorImage = { };;
+type REGION = xid;;
+type BadRegion = { };;
+type Region = None;;
+type CreateRegion = { region : xfixes.REGION; rectangles : xproto.RECTANGLE list; };;
+type CreateRegionFromBitmap = { region : xfixes.REGION; bitmap : xproto.PIXMAP; };;
+type CreateRegionFromWindow = { region : xfixes.REGION; window : xproto.WINDOW; kind : shape.KIND; };;
+type CreateRegionFromGC = { region : xfixes.REGION; gc : xproto.GCONTEXT; };;
+type CreateRegionFromPicture = { region : xfixes.REGION; picture : render.PICTURE; };;
+type DestroyRegion = { region : xfixes.REGION; };;
+type SetRegion = { region : xfixes.REGION; rectangles : xproto.RECTANGLE list; };;
+type CopyRegion = { source : xfixes.REGION; destination : xfixes.REGION; };;
+type UnionRegion = { source1 : xfixes.REGION; source2 : xfixes.REGION; destination : xfixes.REGION; };;
+type IntersectRegion = { source1 : xfixes.REGION; source2 : xfixes.REGION; destination : xfixes.REGION; };;
+type SubtractRegion = { source1 : xfixes.REGION; source2 : xfixes.REGION; destination : xfixes.REGION; };;
+type InvertRegion = { source : xfixes.REGION; bounds : xproto.RECTANGLE; destination : xfixes.REGION; };;
+type TranslateRegion = { region : xfixes.REGION; dx : int; dy : int; };;
+type RegionExtents = { source : xfixes.REGION; destination : xfixes.REGION; };;
+type FetchRegion = { region : xfixes.REGION; };;
+type SetGCClipRegion = { gc : xproto.GCONTEXT; region : xfixes.REGION; x_origin : int; y_origin : int; };;
+type SetWindowShapeRegion = { dest : xproto.WINDOW; dest_kind : shape.KIND; x_offset : int; y_offset : int; region : xfixes.REGION; };;
+type SetPictureClipRegion = { picture : render.PICTURE; region : xfixes.REGION; x_origin : int; y_origin : int; };;
+type SetCursorName = { cursor : xproto.CURSOR; name : char list; };;
+type GetCursorName = { cursor : xproto.CURSOR; };;
+type GetCursorImageAndName = { };;
+type ChangeCursor = { source : xproto.CURSOR; destination : xproto.CURSOR; };;
+type ChangeCursorByName = { src : xproto.CURSOR; name : char list; };;
+type ExpandRegion = { source : xfixes.REGION; destination : xfixes.REGION; left : int; right : int; top : int; bottom : int; };;
+type HideCursor = { window : xproto.WINDOW; };;
+type ShowCursor = { window : xproto.WINDOW; };;
+type BARRIER = xid;;
+
+type CreatePointerBarrier = { barrier : xfixes.BARRIER; window : xproto.WINDOW; x1 : int; y1 : int; x2 : int; y2 : int; directions : int32; devices : int list; };;
+type DeletePointerBarrier = { barrier : xfixes.BARRIER; };;
+end
+module Xinerama = struct
+type ScreenInfo = { x_org : int; y_org : int; width : int; height : int; };;
+type QueryVersion = { major : int; minor : int; };;
+type GetState = { window : xproto.WINDOW; };;
+type GetScreenCount = { window : xproto.WINDOW; };;
+type GetScreenSize = { window : xproto.WINDOW; screen : int32; };;
+type IsActive = { };;
+type QueryScreens = { };;
+end
+module Input = struct
+type EventClass = int32;;
+type KeyCode = int;;
+type DeviceId = int;;
+type FP1616 = int32;;
+type FP3232 = { integral : int32; frac : int32; };;
+type GetExtensionVersion = { name : char list; };;
+type DeviceUse = IsXPointer | IsXKeyboard | IsXExtensionDevice | IsXExtensionKeyboard | IsXExtensionPointer;;
+type InputClass = Key | Button | Valuator | Feedback | Proximity | Focus | Other;;
+type ValuatorMode = Relative | Absolute;;
+type DeviceInfo = { device_type : xproto.ATOM; device_id : int; num_class_info : int; device_use : int; };;
+type KeyInfo = { class_id : int; len : int; min_keycode : xinput.KeyCode; max_keycode : xinput.KeyCode; num_keys : int; };;
+type ButtonInfo = { class_id : int; len : int; num_buttons : int; };;
+type AxisInfo = { resolution : int32; minimum : int32; maximum : int32; };;
+type ValuatorInfo = { class_id : int; len : int; mode : int; motion_size : int32; axes : xinput.AxisInfo list; };;
+type InputClass = Key of { min_keycode : xinput.KeyCode; max_keycode : xinput.KeyCode; num_keys : int; } | Button of { num_buttons : int; } | Valuator of { mode : int; motion_size : int32; axes : xinput.AxisInfo list; };;
+type InputInfo = { len : int; };;
+type DeviceName = { string : char list; };;
+type ListInputDevices = { };;
+type EventTypeBase = int;;
+type InputClassInfo = { class_id : int; event_type_base : xinput.EventTypeBase; };;
+type OpenDevice = { device_id : int; };;
+type CloseDevice = { device_id : int; };;
+type SetDeviceMode = { device_id : int; mode : int; };;
+type SelectExtensionEvent = { window : xproto.WINDOW; classes : xinput.EventClass list; };;
+type GetSelectedExtensionEvents = { window : xproto.WINDOW; };;
+type PropagateMode = AddToList | DeleteFromList;;
+type ChangeDeviceDontPropagateList = { window : xproto.WINDOW; mode : int; classes : xinput.EventClass list; };;
+type GetDeviceDontPropagateList = { window : xproto.WINDOW; };;
+type DeviceTimeCoord = { time : xproto.TIMESTAMP; axisvalues : int32 list; };;
+type GetDeviceMotionEvents = { start : xproto.TIMESTAMP; stop : xproto.TIMESTAMP; device_id : int; };;
+type ChangeKeyboardDevice = { device_id : int; };;
+type ChangePointerDevice = { x_axis : int; y_axis : int; device_id : int; };;
+type GrabDevice = { grab_window : xproto.WINDOW; time : xproto.TIMESTAMP; this_device_mode : int; other_device_mode : int; owner_events : bool; device_id : int; classes : xinput.EventClass list; };;
+type UngrabDevice = { time : xproto.TIMESTAMP; device_id : int; };;
+type ModifierDevice = UseXKeyboard;;
+type GrabDeviceKey = { grab_window : xproto.WINDOW; modifiers : int; modifier_device : int; grabbed_device : int; key : int; this_device_mode : int; other_device_mode : int; owner_events : bool; classes : xinput.EventClass list; };;
+type UngrabDeviceKey = { grabWindow : xproto.WINDOW; modifiers : int; modifier_device : int; key : int; grabbed_device : int; };;
+type GrabDeviceButton = { grab_window : xproto.WINDOW; grabbed_device : int; modifier_device : int; modifiers : int; this_device_mode : int; other_device_mode : int; button : int; owner_events : bool; classes : xinput.EventClass list; };;
+type UngrabDeviceButton = { grab_window : xproto.WINDOW; modifiers : int; modifier_device : int; button : int; grabbed_device : int; };;
+type DeviceInputMode = AsyncThisDevice | SyncThisDevice | ReplayThisDevice | AsyncOtherDevices | AsyncAll | SyncAll;;
+type AllowDeviceEvents = { time : xproto.TIMESTAMP; mode : int; device_id : int; };;
+type GetDeviceFocus = { device_id : int; };;
+type SetDeviceFocus = { focus : xproto.WINDOW; time : xproto.TIMESTAMP; revert_to : int; device_id : int; };;
+type FeedbackClass = Keyboard | Pointer | String | Integer | Led | Bell;;
+type KbdFeedbackState = { class_id : int; feedback_id : int; len : int; pitch : int; duration : int; led_mask : int32; led_values : int32; global_auto_repeat : bool; click : int; percent : int; auto_repeats : int list; };;
+type PtrFeedbackState = { class_id : int; feedback_id : int; len : int; accel_num : int; accel_denom : int; threshold : int; };;
+type IntegerFeedbackState = { class_id : int; feedback_id : int; len : int; resolution : int32; min_value : int32; max_value : int32; };;
+type StringFeedbackState = { class_id : int; feedback_id : int; len : int; max_symbols : int; keysyms : xproto.KEYSYM list; };;
+type BellFeedbackState = { class_id : int; feedback_id : int; len : int; percent : int; pitch : int; duration : int; };;
+type LedFeedbackState = { class_id : int; feedback_id : int; len : int; led_mask : int32; led_values : int32; };;
+type FeedbackClass = Keyboard of { pitch : int; duration : int; led_mask : int32; led_values : int32; global_auto_repeat : bool; click : int; percent : int; auto_repeats : int list; } | Pointer of { accel_num : int; accel_denom : int; threshold : int; } | String of { max_symbols : int; keysyms : xproto.KEYSYM list; } | Integer of { resolution : int32; min_value : int32; max_value : int32; } | Led of { led_mask : int32; led_values : int32; } | Bell of { percent : int; pitch : int; duration : int; };;
+type FeedbackState = { feedback_id : int; len : int; };;
+type GetFeedbackControl = { device_id : int; };;
+type KbdFeedbackCtl = { class_id : int; feedback_id : int; len : int; key : xinput.KeyCode; auto_repeat_mode : int; key_click_percent : int; bell_percent : int; bell_pitch : int; bell_duration : int; led_mask : int32; led_values : int32; };;
+type PtrFeedbackCtl = { class_id : int; feedback_id : int; len : int; num : int; denom : int; threshold : int; };;
+type IntegerFeedbackCtl = { class_id : int; feedback_id : int; len : int; int_to_display : int32; };;
+type StringFeedbackCtl = { class_id : int; feedback_id : int; len : int; keysyms : xproto.KEYSYM list; };;
+type BellFeedbackCtl = { class_id : int; feedback_id : int; len : int; percent : int; pitch : int; duration : int; };;
+type LedFeedbackCtl = { class_id : int; feedback_id : int; len : int; led_mask : int32; led_values : int32; };;
+type FeedbackClass = Keyboard of { key : xinput.KeyCode; auto_repeat_mode : int; key_click_percent : int; bell_percent : int; bell_pitch : int; bell_duration : int; led_mask : int32; led_values : int32; } | Pointer of { num : int; denom : int; threshold : int; } | String of { keysyms : xproto.KEYSYM list; } | Integer of { int_to_display : int32; } | Led of { led_mask : int32; led_values : int32; } | Bell of { percent : int; pitch : int; duration : int; };;
+type FeedbackCtl = { feedback_id : int; len : int; };;
+
+type ChangeFeedbackControl = { mask : int32; device_id : int; feedback_id : int; feedback : xinput.FeedbackCtl; };;
+type GetDeviceKeyMapping = { device_id : int; first_keycode : xinput.KeyCode; count : int; };;
+type ChangeDeviceKeyMapping = { device_id : int; first_keycode : xinput.KeyCode; keysyms_per_keycode : int; keycode_count : int; keysyms : xproto.KEYSYM list; };;
+type GetDeviceModifierMapping = { device_id : int; };;
+type SetDeviceModifierMapping = { device_id : int; keycodes_per_modifier : int; keymaps : int list; };;
+type GetDeviceButtonMapping = { device_id : int; };;
+type SetDeviceButtonMapping = { device_id : int; map : int list; };;
+type KeyState = { class_id : int; len : int; num_keys : int; keys : int list; };;
+type ButtonState = { class_id : int; len : int; num_buttons : int; buttons : int list; };;
+
+type ValuatorState = { class_id : int; len : int; mode : int; valuators : int32 list; };;
+type InputClass = Key of { num_keys : int; keys : int list; } | Button of { num_buttons : int; buttons : int list; } | Valuator of { mode : int; valuators : int32 list; };;
+type InputState = { len : int; };;
+type QueryDeviceState = { device_id : int; };;
+type DeviceBell = { device_id : int; feedback_id : int; feedback_class : int; percent : int; };;
+type SetDeviceValuators = { device_id : int; first_valuator : int; valuators : int32 list; };;
+type DeviceControl = resolution | abs_calib | core | enable | abs_area;;
+type DeviceResolutionState = { control_id : int; len : int; resolution_values : int32 list; resolution_min : int32 list; resolution_max : int32 list; };;
+type DeviceAbsCalibState = { control_id : int; len : int; min_x : int32; max_x : int32; min_y : int32; max_y : int32; flip_x : int32; flip_y : int32; rotation : int32; button_threshold : int32; };;
+type DeviceAbsAreaState = { control_id : int; len : int; offset_x : int32; offset_y : int32; width : int32; height : int32; screen : int32; following : int32; };;
+type DeviceCoreState = { control_id : int; len : int; status : int; iscore : int; };;
+type DeviceEnableState = { control_id : int; len : int; enable : int; };;
+type DeviceControl = resolution of { resolution_values : int32 list; resolution_min : int32 list; resolution_max : int32 list; } | abs_calib of { min_x : int32; max_x : int32; min_y : int32; max_y : int32; flip_x : int32; flip_y : int32; rotation : int32; button_threshold : int32; } | core of { status : int; iscore : int; } | enable of { enable : int; } | abs_area of { offset_x : int32; offset_y : int32; width : int32; height : int32; screen : int32; following : int32; };;
+type DeviceState = { len : int; };;
+type GetDeviceControl = { control_id : int; device_id : int; };;
+type DeviceResolutionCtl = { control_id : int; len : int; first_valuator : int; resolution_values : int32 list; };;
+type DeviceAbsCalibCtl = { control_id : int; len : int; min_x : int32; max_x : int32; min_y : int32; max_y : int32; flip_x : int32; flip_y : int32; rotation : int32; button_threshold : int32; };;
+type DeviceAbsAreaCtrl = { control_id : int; len : int; offset_x : int32; offset_y : int32; width : int32; height : int32; screen : int32; following : int32; };;
+type DeviceCoreCtrl = { control_id : int; len : int; status : int; };;
+type DeviceEnableCtrl = { control_id : int; len : int; enable : int; };;
+type DeviceControl = resolution of { first_valuator : int; resolution_values : int32 list; } | abs_calib of { min_x : int32; max_x : int32; min_y : int32; max_y : int32; flip_x : int32; flip_y : int32; rotation : int32; button_threshold : int32; } | core of { status : int; } | enable of { enable : int; } | abs_area of { offset_x : int32; offset_y : int32; width : int32; height : int32; screen : int32; following : int32; };;
+type DeviceCtl = { len : int; };;
+type ChangeDeviceControl = { control_id : int; device_id : int; control : xinput.DeviceCtl; };;
+type ListDeviceProperties = { device_id : int; };;
+type PropertyFormat = 8Bits | 16Bits | 32Bits;;
+type PropertyFormat = 8Bits of { data8 : int list; } | 16Bits of { data16 : int list; } | 32Bits of { data32 : int32 list; };;
+type ChangeDeviceProperty = { property : xproto.ATOM; type : xproto.ATOM; device_id : int; mode : int; num_items : int32; };;
+type DeleteDeviceProperty = { property : xproto.ATOM; device_id : int; };;
+type PropertyFormat = 8Bits of { data8 : int list; } | 16Bits of { data16 : int list; } | 32Bits of { data32 : int32 list; };;
+type GetDeviceProperty = { property : xproto.ATOM; type : xproto.ATOM; offset : int32; len : int32; device_id : int; delete : bool; };;
+type Device = All | AllMaster;;
+type GroupInfo = { base : int; latched : int; locked : int; effective : int; };;
+type ModifierInfo = { base : int32; latched : int32; locked : int32; effective : int32; };;
+type XIQueryPointer = { window : xproto.WINDOW; deviceid : xinput.DeviceId; };;
+type XIWarpPointer = { src_win : xproto.WINDOW; dst_win : xproto.WINDOW; src_x : xinput.FP1616; src_y : xinput.FP1616; src_width : int; src_height : int; dst_x : xinput.FP1616; dst_y : xinput.FP1616; deviceid : xinput.DeviceId; };;
+type XIChangeCursor = { window : xproto.WINDOW; cursor : xproto.CURSOR; deviceid : xinput.DeviceId; };;
+type HierarchyChangeType = AddMaster | RemoveMaster | AttachSlave | DetachSlave;;
+type ChangeMode = Attach | Float;;
+type AddMaster = { type : int; len : int; send_core : bool; enable : bool; name : char list; };;
+type RemoveMaster = { type : int; len : int; deviceid : xinput.DeviceId; return_mode : int; return_pointer : xinput.DeviceId; return_keyboard : xinput.DeviceId; };;
+type AttachSlave = { type : int; len : int; deviceid : xinput.DeviceId; master : xinput.DeviceId; };;
+type DetachSlave = { type : int; len : int; deviceid : xinput.DeviceId; };;
+type HierarchyChangeType = AddMaster of { send_core : bool; enable : bool; name : char list; } | RemoveMaster of { deviceid : xinput.DeviceId; return_mode : int; return_pointer : xinput.DeviceId; return_keyboard : xinput.DeviceId; } | AttachSlave of { deviceid : xinput.DeviceId; master : xinput.DeviceId; } | DetachSlave of { deviceid : xinput.DeviceId; };;
+type HierarchyChange = { len : int; };;
+type XIChangeHierarchy = { changes : xinput.HierarchyChange list; };;
+type XISetClientPointer = { window : xproto.WINDOW; deviceid : xinput.DeviceId; };;
+type XIGetClientPointer = { window : xproto.WINDOW; };;
+
+type EventMask = { deviceid : xinput.DeviceId; mask : int32 list; };;
+type XISelectEvents = { window : xproto.WINDOW; masks : xinput.EventMask list; };;
+type XIQueryVersion = { major_version : int; minor_version : int; };;
+type DeviceClassType = Key | Button | Valuator | Scroll | Touch;;
+type DeviceType = MasterPointer | MasterKeyboard | SlavePointer | SlaveKeyboard | FloatingSlave;;
+
+type ScrollType = Vertical | Horizontal;;
+type TouchMode = Direct | Dependent;;
+type ButtonClass = { type : int; len : int; sourceid : xinput.DeviceId; state : int32 list; labels : xproto.ATOM list; };;
+type KeyClass = { type : int; len : int; sourceid : xinput.DeviceId; keys : int32 list; };;
+type ScrollClass = { type : int; len : int; sourceid : xinput.DeviceId; number : int; scroll_type : int; flags : int32; increment : xinput.FP3232; };;
+type TouchClass = { type : int; len : int; sourceid : xinput.DeviceId; mode : int; num_touches : int; };;
+type ValuatorClass = { type : int; len : int; sourceid : xinput.DeviceId; number : int; label : xproto.ATOM; min : xinput.FP3232; max : xinput.FP3232; value : xinput.FP3232; resolution : int32; mode : int; };;
+type DeviceClassType = Key of { keys : int32 list; } | Button of { state : int32 list; labels : xproto.ATOM list; } | Valuator of { number : int; label : xproto.ATOM; min : xinput.FP3232; max : xinput.FP3232; value : xinput.FP3232; resolution : int32; mode : int; } | Scroll of { number : int; scroll_type : int; flags : int32; increment : xinput.FP3232; } | Touch of { mode : int; num_touches : int; };;
+type DeviceClass = { len : int; sourceid : xinput.DeviceId; };;
+type XIDeviceInfo = { deviceid : xinput.DeviceId; type : int; attachment : xinput.DeviceId; enabled : bool; name : char list; classes : xinput.DeviceClass list; };;
+type XIQueryDevice = { deviceid : xinput.DeviceId; };;
+type XISetFocus = { window : xproto.WINDOW; time : xproto.TIMESTAMP; deviceid : xinput.DeviceId; };;
+type XIGetFocus = { deviceid : xinput.DeviceId; };;
+type GrabOwner = NoOwner | Owner;;
+type XIGrabDevice = { window : xproto.WINDOW; time : xproto.TIMESTAMP; cursor : xproto.CURSOR; deviceid : xinput.DeviceId; mode : int; paired_device_mode : int; owner_events : bool; mask : int32 list; };;
+type XIUngrabDevice = { time : xproto.TIMESTAMP; deviceid : xinput.DeviceId; };;
+type EventMode = AsyncDevice | SyncDevice | ReplayDevice | AsyncPairedDevice | AsyncPair | SyncPair | AcceptTouch | RejectTouch;;
+type XIAllowEvents = { time : xproto.TIMESTAMP; deviceid : xinput.DeviceId; event_mode : int; touchid : int32; grab_window : xproto.WINDOW; };;
+type GrabMode22 = Sync | Async | Touch;;
+type GrabType = Button | Keycode | Enter | FocusIn | TouchBegin;;
+
+type GrabModifierInfo = { modifiers : int32; status : int; };;
+type XIPassiveGrabDevice = { time : xproto.TIMESTAMP; grab_window : xproto.WINDOW; cursor : xproto.CURSOR; detail : int32; deviceid : xinput.DeviceId; grab_type : int; grab_mode : int; paired_device_mode : int; owner_events : bool; mask : int32 list; modifiers : int32 list; };;
+type XIPassiveUngrabDevice = { grab_window : xproto.WINDOW; detail : int32; deviceid : xinput.DeviceId; grab_type : int; modifiers : int32 list; };;
+type XIListProperties = { deviceid : xinput.DeviceId; };;
+type PropertyFormat = 8Bits of { data8 : int list; } | 16Bits of { data16 : int list; } | 32Bits of { data32 : int32 list; };;
+type XIChangeProperty = { deviceid : xinput.DeviceId; mode : int; property : xproto.ATOM; type : xproto.ATOM; num_items : int32; };;
+type XIDeleteProperty = { deviceid : xinput.DeviceId; property : xproto.ATOM; };;
+type PropertyFormat = 8Bits of { data8 : int list; } | 16Bits of { data16 : int list; } | 32Bits of { data32 : int32 list; };;
+type XIGetProperty = { deviceid : xinput.DeviceId; delete : bool; property : xproto.ATOM; type : xproto.ATOM; offset : int32; len : int32; };;
+type XIGetSelectedEvents = { window : xproto.WINDOW; };;
+type BarrierReleasePointerInfo = { deviceid : xinput.DeviceId; barrier : xfixes.BARRIER; eventid : int32; };;
+type XIBarrierReleasePointer = { barriers : xinput.BarrierReleasePointerInfo list; };;
+type DeviceValuator = { device_id : int; device_state : int; num_valuators : int; first_valuator : int; valuators : int32 list; };;
+
+type DeviceKeyPress = { detail : char; time : xproto.TIMESTAMP; root : xproto.WINDOW; event : xproto.WINDOW; child : xproto.WINDOW; root_x : int; root_y : int; event_x : int; event_y : int; state : int; same_screen : bool; device_id : int; };;
+
+
+
+
+type DeviceFocusIn = { detail : char; time : xproto.TIMESTAMP; window : xproto.WINDOW; mode : char; device_id : int; };;
+
+
+
+
+type DeviceStateNotify = { device_id : char; time : xproto.TIMESTAMP; num_keys : int; num_buttons : int; num_valuators : int; classes_reported : int; buttons : int list; keys : int list; valuators : int32 list; };;
+type DeviceMappingNotify = { device_id : char; request : int; first_keycode : xinput.KeyCode; count : int; time : xproto.TIMESTAMP; };;
+type ChangeDevice = NewPointer | NewKeyboard;;
+type ChangeDeviceNotify = { device_id : char; time : xproto.TIMESTAMP; request : int; };;
+type DeviceKeyStateNotify = { device_id : char; keys : int list; };;
+type DeviceButtonStateNotify = { device_id : char; buttons : int list; };;
+type DeviceChange = Added | Removed | Enabled | Disabled | Unrecoverable | ControlChanged;;
+type DevicePresenceNotify = { time : xproto.TIMESTAMP; devchange : char; device_id : char; control : int; };;
+type DevicePropertyNotify = { state : char; time : xproto.TIMESTAMP; property : xproto.ATOM; device_id : int; };;
+type ChangeReason = SlaveSwitch | DeviceChange;;
+type DeviceChanged = { deviceid : xinput.DeviceId; time : xproto.TIMESTAMP; sourceid : xinput.DeviceId; reason : int; classes : xinput.DeviceClass list; };;
+
+type KeyPress = { deviceid : xinput.DeviceId; time : xproto.TIMESTAMP; detail : int32; root : xproto.WINDOW; event : xproto.WINDOW; child : xproto.WINDOW; root_x : xinput.FP1616; root_y : xinput.FP1616; event_x : xinput.FP1616; event_y : xinput.FP1616; sourceid : xinput.DeviceId; flags : int32; mods : xinput.ModifierInfo; group : xinput.GroupInfo; button_mask : int32 list; valuator_mask : int32 list; axisvalues : xinput.FP3232 list; };;
+
+
+type ButtonPress = { deviceid : xinput.DeviceId; time : xproto.TIMESTAMP; detail : int32; root : xproto.WINDOW; event : xproto.WINDOW; child : xproto.WINDOW; root_x : xinput.FP1616; root_y : xinput.FP1616; event_x : xinput.FP1616; event_y : xinput.FP1616; sourceid : xinput.DeviceId; flags : int32; mods : xinput.ModifierInfo; group : xinput.GroupInfo; button_mask : int32 list; valuator_mask : int32 list; axisvalues : xinput.FP3232 list; };;
+
+
+type NotifyMode = Normal | Grab | Ungrab | WhileGrabbed | PassiveGrab | PassiveUngrab;;
+type NotifyDetail = Ancestor | Virtual | Inferior | Nonlinear | NonlinearVirtual | Pointer | PointerRoot | None;;
+type Enter = { deviceid : xinput.DeviceId; time : xproto.TIMESTAMP; sourceid : xinput.DeviceId; mode : int; detail : int; root : xproto.WINDOW; event : xproto.WINDOW; child : xproto.WINDOW; root_x : xinput.FP1616; root_y : xinput.FP1616; event_x : xinput.FP1616; event_y : xinput.FP1616; same_screen : bool; focus : bool; mods : xinput.ModifierInfo; group : xinput.GroupInfo; buttons : int32 list; };;
+
+
+
+
+type HierarchyInfo = { deviceid : xinput.DeviceId; attachment : xinput.DeviceId; type : int; enabled : bool; flags : int32; };;
+type Hierarchy = { deviceid : xinput.DeviceId; time : xproto.TIMESTAMP; flags : int32; infos : xinput.HierarchyInfo list; };;
+type PropertyFlag = Deleted | Created | Modified;;
+type Property = { deviceid : xinput.DeviceId; time : xproto.TIMESTAMP; property : xproto.ATOM; what : int; };;
+type RawKeyPress = { deviceid : xinput.DeviceId; time : xproto.TIMESTAMP; detail : int32; sourceid : xinput.DeviceId; flags : int32; valuator_mask : int32 list; axisvalues : xinput.FP3232 list; axisvalues_raw : xinput.FP3232 list; };;
+
+type RawButtonPress = { deviceid : xinput.DeviceId; time : xproto.TIMESTAMP; detail : int32; sourceid : xinput.DeviceId; flags : int32; valuator_mask : int32 list; axisvalues : xinput.FP3232 list; axisvalues_raw : xinput.FP3232 list; };;
+
+
+
+type TouchBegin = { deviceid : xinput.DeviceId; time : xproto.TIMESTAMP; detail : int32; root : xproto.WINDOW; event : xproto.WINDOW; child : xproto.WINDOW; root_x : xinput.FP1616; root_y : xinput.FP1616; event_x : xinput.FP1616; event_y : xinput.FP1616; sourceid : xinput.DeviceId; flags : int32; mods : xinput.ModifierInfo; group : xinput.GroupInfo; button_mask : int32 list; valuator_mask : int32 list; axisvalues : xinput.FP3232 list; };;
+
+
+type TouchOwnershipFlags = None;;
+type TouchOwnership = { deviceid : xinput.DeviceId; time : xproto.TIMESTAMP; touchid : int32; root : xproto.WINDOW; event : xproto.WINDOW; child : xproto.WINDOW; sourceid : xinput.DeviceId; flags : int32; };;
+type RawTouchBegin = { deviceid : xinput.DeviceId; time : xproto.TIMESTAMP; detail : int32; sourceid : xinput.DeviceId; flags : int32; valuator_mask : int32 list; axisvalues : xinput.FP3232 list; axisvalues_raw : xinput.FP3232 list; };;
+
+
+
+type BarrierHit = { deviceid : xinput.DeviceId; time : xproto.TIMESTAMP; eventid : int32; root : xproto.WINDOW; event : xproto.WINDOW; barrier : xfixes.BARRIER; dtime : int32; flags : int32; sourceid : xinput.DeviceId; root_x : xinput.FP1616; root_y : xinput.FP1616; dx : xinput.FP3232; dy : xinput.FP3232; };;
+
+
+type SendExtensionEvent = { destination : xproto.WINDOW; device_id : int; propagate : bool; events : xinput.EventForSend list; classes : xinput.EventClass list; };;
+type Device = { };;
+type Event = { };;
+type Mode = { };;
+type DeviceBusy = { };;
+type Class = { };;
+end
+module XPrint = struct
+type STRING8 = char;;
+type PRINTER = { name : xprint.STRING8 list; description : xprint.STRING8 list; };;
+type PCONTEXT = xid;;
+type GetDoc = Finished | SecondConsumer;;
+
+type Detail = StartJobNotify | EndJobNotify | StartDocNotify | EndDocNotify | StartPageNotify | EndPageNotify;;
+type Attr = JobAttr | DocAttr | PageAttr | PrinterAttr | ServerAttr | MediumAttr | SpoolerAttr;;
+type PrintQueryVersion = { };;
+type PrintGetPrinterList = { printer_name : xprint.STRING8 list; locale : xprint.STRING8 list; };;
+type PrintRehashPrinterList = { };;
+type CreateContext = { context_id : int32; printerName : xprint.STRING8 list; locale : xprint.STRING8 list; };;
+type PrintSetContext = { context : int32; };;
+type PrintGetContext = { };;
+type PrintDestroyContext = { context : int32; };;
+type PrintGetScreenOfContext = { };;
+type PrintStartJob = { output_mode : int; };;
+type PrintEndJob = { cancel : bool; };;
+type PrintStartDoc = { driver_mode : int; };;
+type PrintEndDoc = { cancel : bool; };;
+type PrintPutDocumentData = { drawable : xproto.DRAWABLE; data : char list; doc_format : xprint.STRING8 list; options : xprint.STRING8 list; };;
+type PrintGetDocumentData = { context : xprint.PCONTEXT; max_bytes : int32; };;
+type PrintStartPage = { window : xproto.WINDOW; };;
+type PrintEndPage = { cancel : bool; };;
+type PrintSelectInput = { context : xprint.PCONTEXT; event_mask : int32; };;
+type PrintInputSelected = { context : xprint.PCONTEXT; };;
+type PrintGetAttributes = { context : xprint.PCONTEXT; pool : int; };;
+type PrintGetOneAttributes = { context : xprint.PCONTEXT; pool : int; name : xprint.STRING8 list; };;
+type PrintSetAttributes = { context : xprint.PCONTEXT; stringLen : int32; pool : int; rule : int; attributes : xprint.STRING8 list; };;
+type PrintGetPageDimensions = { context : xprint.PCONTEXT; };;
+type PrintQueryScreens = { };;
+type PrintSetImageResolution = { context : xprint.PCONTEXT; image_resolution : int; };;
+type PrintGetImageResolution = { context : xprint.PCONTEXT; };;
+type Notify = { detail : int; context : xprint.PCONTEXT; cancel : bool; };;
+type AttributNotify = { detail : int; context : xprint.PCONTEXT; };;
+type BadContext = { };;
+type BadSequence = { };;
+end
+module Xproto = structtype CHAR2B = { byte1 : int; byte2 : int; };;
+type WINDOW = xid;;
+type PIXMAP = xid;;
+type CURSOR = xid;;
+type FONT = xid;;
+type GCONTEXT = xid;;
+type COLORMAP = xid;;
+type ATOM = xid;;
+type DRAWABLE = xid;;
+type FONTABLE = xid;;
+type BOOL32 = int32;;
+type VISUALID = int32;;
+type TIMESTAMP = int32;;
+type KEYSYM = int32;;
+type KEYCODE = int;;
+type KEYCODE32 = int32;;
+type BUTTON = int;;
+type POINT = { x : int; y : int; };;
+type RECTANGLE = { x : int; y : int; width : int; height : int; };;
+type ARC = { x : int; y : int; width : int; height : int; angle1 : int; angle2 : int; };;
+type FORMAT = { depth : int; bits_per_pixel : int; scanline_pad : int; };;
+type VisualClass = StaticGray | GrayScale | StaticColor | PseudoColor | TrueColor | DirectColor;;
+type VISUALTYPE = { visual_id : xproto.VISUALID; class : int; bits_per_rgb_value : int; colormap_entries : int; red_mask : int32; green_mask : int32; blue_mask : int32; };;
+type DEPTH = { depth : int; visuals : xproto.VISUALTYPE list; };;
+
+type BackingStore = NotUseful | WhenMapped | Always;;
+type SCREEN = { root : xproto.WINDOW; default_colormap : xproto.COLORMAP; white_pixel : int32; black_pixel : int32; current_input_masks : int32; width_in_pixels : int; height_in_pixels : int; width_in_millimeters : int; height_in_millimeters : int; min_installed_maps : int; max_installed_maps : int; root_visual : xproto.VISUALID; backing_stores : char; save_unders : bool; root_depth : int; allowed_depths : xproto.DEPTH list; };;
+type SetupRequest = { byte_order : int; protocol_major_version : int; protocol_minor_version : int; authorization_protocol_name : char list; authorization_protocol_data : char list; };;
+type SetupFailed = { status : int; protocol_major_version : int; protocol_minor_version : int; length : int; reason : char list; };;
+type SetupAuthenticate = { status : int; length : int; reason : char list; };;
+type ImageOrder = LSBFirst | MSBFirst;;
+type Setup = { status : int; protocol_major_version : int; protocol_minor_version : int; length : int; release_number : int32; resource_id_base : int32; resource_id_mask : int32; motion_buffer_size : int32; maximum_request_length : int; image_byte_order : int; bitmap_format_bit_order : int; bitmap_format_scanline_unit : int; bitmap_format_scanline_pad : int; min_keycode : xproto.KEYCODE; max_keycode : xproto.KEYCODE; vendor : char list; pixmap_formats : xproto.FORMAT list; roots : xproto.SCREEN list; };;
+
+
+type Window = None;;
+type KeyPress = { detail : xproto.KEYCODE; time : xproto.TIMESTAMP; root : xproto.WINDOW; event : xproto.WINDOW; child : xproto.WINDOW; root_x : int; root_y : int; event_x : int; event_y : int; state : int; same_screen : bool; };;
+
+
+type ButtonPress = { detail : xproto.BUTTON; time : xproto.TIMESTAMP; root : xproto.WINDOW; event : xproto.WINDOW; child : xproto.WINDOW; root_x : int; root_y : int; event_x : int; event_y : int; state : int; same_screen : bool; };;
+
+type Motion = Normal | Hint;;
+type MotionNotify = { detail : char; time : xproto.TIMESTAMP; root : xproto.WINDOW; event : xproto.WINDOW; child : xproto.WINDOW; root_x : int; root_y : int; event_x : int; event_y : int; state : int; same_screen : bool; };;
+type NotifyDetail = Ancestor | Virtual | Inferior | Nonlinear | NonlinearVirtual | Pointer | PointerRoot | None;;
+type NotifyMode = Normal | Grab | Ungrab | WhileGrabbed;;
+type EnterNotify = { detail : char; time : xproto.TIMESTAMP; root : xproto.WINDOW; event : xproto.WINDOW; child : xproto.WINDOW; root_x : int; root_y : int; event_x : int; event_y : int; state : int; mode : char; same_screen_focus : char; };;
+
+type FocusIn = { detail : char; event : xproto.WINDOW; mode : char; };;
+
+type KeymapNotify = { keys : int list; };;
+type Expose = { window : xproto.WINDOW; x : int; y : int; width : int; height : int; count : int; };;
+type GraphicsExposure = { drawable : xproto.DRAWABLE; x : int; y : int; width : int; height : int; minor_opcode : int; count : int; major_opcode : int; };;
+type NoExposure = { drawable : xproto.DRAWABLE; minor_opcode : int; major_opcode : int; };;
+type Visibility = Unobscured | PartiallyObscured | FullyObscured;;
+type VisibilityNotify = { window : xproto.WINDOW; state : char; };;
+type CreateNotify = { parent : xproto.WINDOW; window : xproto.WINDOW; x : int; y : int; width : int; height : int; border_width : int; override_redirect : bool; };;
+type DestroyNotify = { event : xproto.WINDOW; window : xproto.WINDOW; };;
+type UnmapNotify = { event : xproto.WINDOW; window : xproto.WINDOW; from_configure : bool; };;
+type MapNotify = { event : xproto.WINDOW; window : xproto.WINDOW; override_redirect : bool; };;
+type MapRequest = { parent : xproto.WINDOW; window : xproto.WINDOW; };;
+type ReparentNotify = { event : xproto.WINDOW; window : xproto.WINDOW; parent : xproto.WINDOW; x : int; y : int; override_redirect : bool; };;
+type ConfigureNotify = { event : xproto.WINDOW; window : xproto.WINDOW; above_sibling : xproto.WINDOW; x : int; y : int; width : int; height : int; border_width : int; override_redirect : bool; };;
+type ConfigureRequest = { stack_mode : char; parent : xproto.WINDOW; window : xproto.WINDOW; sibling : xproto.WINDOW; x : int; y : int; width : int; height : int; border_width : int; value_mask : int; };;
+type GravityNotify = { event : xproto.WINDOW; window : xproto.WINDOW; x : int; y : int; };;
+type ResizeRequest = { window : xproto.WINDOW; width : int; height : int; };;
+type Place = OnTop | OnBottom;;
+type CirculateNotify = { event : xproto.WINDOW; window : xproto.WINDOW; place : char; };;
+
+type Property = NewValue | Delete;;
+type PropertyNotify = { window : xproto.WINDOW; atom : xproto.ATOM; time : xproto.TIMESTAMP; state : char; };;
+type SelectionClear = { time : xproto.TIMESTAMP; owner : xproto.WINDOW; selection : xproto.ATOM; };;
+type Time = CurrentTime;;
+type Atom = None | Any | PRIMARY | SECONDARY | ARC | ATOM | BITMAP | CARDINAL | COLORMAP | CURSOR | CUT_BUFFER0 | CUT_BUFFER1 | CUT_BUFFER2 | CUT_BUFFER3 | CUT_BUFFER4 | CUT_BUFFER5 | CUT_BUFFER6 | CUT_BUFFER7 | DRAWABLE | FONT | INTEGER | PIXMAP | POINT | RECTANGLE | RESOURCE_MANAGER | RGB_COLOR_MAP | RGB_BEST_MAP | RGB_BLUE_MAP | RGB_DEFAULT_MAP | RGB_GRAY_MAP | RGB_GREEN_MAP | RGB_RED_MAP | STRING | VISUALID | WINDOW | WM_COMMAND | WM_HINTS | WM_CLIENT_MACHINE | WM_ICON_NAME | WM_ICON_SIZE | WM_NAME | WM_NORMAL_HINTS | WM_SIZE_HINTS | WM_ZOOM_HINTS | MIN_SPACE | NORM_SPACE | MAX_SPACE | END_SPACE | SUPERSCRIPT_X | SUPERSCRIPT_Y | SUBSCRIPT_X | SUBSCRIPT_Y | UNDERLINE_POSITION | UNDERLINE_THICKNESS | STRIKEOUT_ASCENT | STRIKEOUT_DESCENT | ITALIC_ANGLE | X_HEIGHT | QUAD_WIDTH | WEIGHT | POINT_SIZE | RESOLUTION | COPYRIGHT | NOTICE | FONT_NAME | FAMILY_NAME | FULL_NAME | CAP_HEIGHT | WM_CLASS | WM_TRANSIENT_FOR;;
+type SelectionRequest = { time : xproto.TIMESTAMP; owner : xproto.WINDOW; requestor : xproto.WINDOW; selection : xproto.ATOM; target : xproto.ATOM; property : xproto.ATOM; };;
+type SelectionNotify = { time : xproto.TIMESTAMP; requestor : xproto.WINDOW; selection : xproto.ATOM; target : xproto.ATOM; property : xproto.ATOM; };;
+type ColormapState = Uninstalled | Installed;;
+type Colormap = None;;
+type ColormapNotify = { window : xproto.WINDOW; colormap : xproto.COLORMAP; new : bool; state : char; };;
+type ClientMessageDataFormat = data8 | data16 | data32;;
+type ClientMessageDataFormat = data8 of { data8 : int list; } | data16 of { data16 : int list; } | data32 of { data32 : int32 list; };;
+type ClientMessage = { window : xproto.WINDOW; type : xproto.ATOM; };;
+type Mapping = Modifier | Keyboard | Pointer;;
+type MappingNotify = { request : char; first_keycode : xproto.KEYCODE; count : int; };;
+type GeGeneric = { };;
+type Request = { bad_value : int32; minor_opcode : int; major_opcode : int; };;
+type Value = { bad_value : int32; minor_opcode : int; major_opcode : int; };;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+type WindowClass = CopyFromParent | InputOutput | InputOnly;;
+
+type BackPixmap = None | ParentRelative;;
+type Gravity = BitForget | WinUnmap | NorthWest | North | NorthEast | West | Center | East | SouthWest | South | SouthEast | Static;;
+type CreateWindow = { depth : int; wid : xproto.WINDOW; parent : xproto.WINDOW; x : int; y : int; width : int; height : int; border_width : int; class : int; visual : xproto.VISUALID; background_pixmap : xproto.PIXMAP option; background_pixel : int32 option; border_pixmap : xproto.PIXMAP option; border_pixel : int32 option; bit_gravity : int32 option; win_gravity : int32 option; backing_store : int32 option; backing_planes : int32 option; backing_pixel : int32 option; override_redirect : xproto.BOOL32 option; save_under : xproto.BOOL32 option; event_mask : int32 option; do_not_propogate_mask : int32 option; colormap : xproto.COLORMAP option; cursor : xproto.CURSOR option; };;
+type ChangeWindowAttributes = { window : xproto.WINDOW; background_pixmap : xproto.PIXMAP option; background_pixel : int32 option; border_pixmap : xproto.PIXMAP option; border_pixel : int32 option; bit_gravity : int32 option; win_gravity : int32 option; backing_store : int32 option; backing_planes : int32 option; backing_pixel : int32 option; override_redirect : xproto.BOOL32 option; save_under : xproto.BOOL32 option; event_mask : int32 option; do_not_propogate_mask : int32 option; colormap : xproto.COLORMAP option; cursor : xproto.CURSOR option; };;
+type MapState = Unmapped | Unviewable | Viewable;;
+type GetWindowAttributes = { window : xproto.WINDOW; };;
+type DestroyWindow = { window : xproto.WINDOW; };;
+type DestroySubwindows = { window : xproto.WINDOW; };;
+type SetMode = Insert | Delete;;
+type ChangeSaveSet = { mode : char; window : xproto.WINDOW; };;
+type ReparentWindow = { window : xproto.WINDOW; parent : xproto.WINDOW; x : int; y : int; };;
+type MapWindow = { window : xproto.WINDOW; };;
+type MapSubwindows = { window : xproto.WINDOW; };;
+type UnmapWindow = { window : xproto.WINDOW; };;
+type UnmapSubwindows = { window : xproto.WINDOW; };;
+
+type StackMode = Above | Below | TopIf | BottomIf | Opposite;;
+type ConfigureWindow = { window : xproto.WINDOW; x : int32 option; y : int32 option; width : int32 option; height : int32 option; border_width : int32 option; sibling : xproto.WINDOW option; stack_mode : int32 option; };;
+type Circulate = RaiseLowest | LowerHighest;;
+type CirculateWindow = { direction : int; window : xproto.WINDOW; };;
+type GetGeometry = { drawable : xproto.DRAWABLE; };;
+type QueryTree = { window : xproto.WINDOW; };;
+type InternAtom = { only_if_exists : bool; name : char list; };;
+type GetAtomName = { atom : xproto.ATOM; };;
+type PropMode = Replace | Prepend | Append;;
+type ChangeProperty = { mode : int; window : xproto.WINDOW; property : xproto.ATOM; type : xproto.ATOM; format : int; data_len : int32; data : char list; };;
+type DeleteProperty = { window : xproto.WINDOW; property : xproto.ATOM; };;
+type GetPropertyType = Any;;
+type GetProperty = { delete : bool; window : xproto.WINDOW; property : xproto.ATOM; type : xproto.ATOM; long_offset : int32; long_length : int32; };;
+type ListProperties = { window : xproto.WINDOW; };;
+type SetSelectionOwner = { owner : xproto.WINDOW; selection : xproto.ATOM; time : xproto.TIMESTAMP; };;
+type GetSelectionOwner = { selection : xproto.ATOM; };;
+type ConvertSelection = { requestor : xproto.WINDOW; selection : xproto.ATOM; target : xproto.ATOM; property : xproto.ATOM; time : xproto.TIMESTAMP; };;
+type SendEventDest = PointerWindow | ItemFocus;;
+type SendEvent = { propagate : bool; destination : xproto.WINDOW; event_mask : int32; event : char list; };;
+type GrabMode = Sync | Async;;
+type GrabStatus = Success | AlreadyGrabbed | InvalidTime | NotViewable | Frozen;;
+type Cursor = None;;
+type GrabPointer = { owner_events : bool; grab_window : xproto.WINDOW; event_mask : int; pointer_mode : char; keyboard_mode : char; confine_to : xproto.WINDOW; cursor : xproto.CURSOR; time : xproto.TIMESTAMP; };;
+type UngrabPointer = { time : xproto.TIMESTAMP; };;
+type ButtonIndex = Any | 1 | 2 | 3 | 4 | 5;;
+type GrabButton = { owner_events : bool; grab_window : xproto.WINDOW; event_mask : int; pointer_mode : int; keyboard_mode : int; confine_to : xproto.WINDOW; cursor : xproto.CURSOR; button : int; modifiers : int; };;
+type UngrabButton = { button : int; grab_window : xproto.WINDOW; modifiers : int; };;
+type ChangeActivePointerGrab = { cursor : xproto.CURSOR; time : xproto.TIMESTAMP; event_mask : int; };;
+type GrabKeyboard = { owner_events : bool; grab_window : xproto.WINDOW; time : xproto.TIMESTAMP; pointer_mode : char; keyboard_mode : char; };;
+type UngrabKeyboard = { time : xproto.TIMESTAMP; };;
+type Grab = Any;;
+type GrabKey = { owner_events : bool; grab_window : xproto.WINDOW; modifiers : int; key : xproto.KEYCODE; pointer_mode : int; keyboard_mode : int; };;
+type UngrabKey = { key : xproto.KEYCODE; grab_window : xproto.WINDOW; modifiers : int; };;
+type Allow = AsyncPointer | SyncPointer | ReplayPointer | AsyncKeyboard | SyncKeyboard | ReplayKeyboard | AsyncBoth | SyncBoth;;
+type AllowEvents = { mode : int; time : xproto.TIMESTAMP; };;
+type GrabServer = { };;
+type UngrabServer = { };;
+type QueryPointer = { window : xproto.WINDOW; };;
+type TIMECOORD = { time : xproto.TIMESTAMP; x : int; y : int; };;
+type GetMotionEvents = { window : xproto.WINDOW; start : xproto.TIMESTAMP; stop : xproto.TIMESTAMP; };;
+type TranslateCoordinates = { src_window : xproto.WINDOW; dst_window : xproto.WINDOW; src_x : int; src_y : int; };;
+type WarpPointer = { src_window : xproto.WINDOW; dst_window : xproto.WINDOW; src_x : int; src_y : int; src_width : int; src_height : int; dst_x : int; dst_y : int; };;
+type InputFocus = None | PointerRoot | Parent | FollowKeyboard;;
+type SetInputFocus = { revert_to : int; focus : xproto.WINDOW; time : xproto.TIMESTAMP; };;
+type GetInputFocus = { };;
+type QueryKeymap = { };;
+type OpenFont = { fid : xproto.FONT; name : char list; };;
+type CloseFont = { font : xproto.FONT; };;
+type FontDraw = LeftToRight | RightToLeft;;
+type FONTPROP = { name : xproto.ATOM; value : int32; };;
+type CHARINFO = { left_side_bearing : int; right_side_bearing : int; character_width : int; ascent : int; descent : int; attributes : int; };;
+type QueryFont = { font : xproto.FONTABLE; };;
+type QueryTextExtents = { font : xproto.FONTABLE; string : xproto.CHAR2B list; };;
+type STR = { name : char list; };;
+type ListFonts = { max_names : int; pattern : char list; };;
+type ListFontsWithInfo = { max_names : int; pattern : char list; };;
+type SetFontPath = { font : xproto.STR list; };;
+type GetFontPath = { };;
+type CreatePixmap = { depth : int; pid : xproto.PIXMAP; drawable : xproto.DRAWABLE; width : int; height : int; };;
+type FreePixmap = { pixmap : xproto.PIXMAP; };;
+
+type GX = clear | and | andReverse | copy | andInverted | noop | xor | or | nor | equiv | invert | orReverse | copyInverted | orInverted | nand | set;;
+type LineStyle = Solid | OnOffDash | DoubleDash;;
+type CapStyle = NotLast | Butt | Round | Projecting;;
+type JoinStyle = Miter | Round | Bevel;;
+type FillStyle = Solid | Tiled | Stippled | OpaqueStippled;;
+type FillRule = EvenOdd | Winding;;
+type SubwindowMode = ClipByChildren | IncludeInferiors;;
+type ArcMode = Chord | PieSlice;;
+type CreateGC = { cid : xproto.GCONTEXT; drawable : xproto.DRAWABLE; function : int32 option; plane_mask : int32 option; foreground : int32 option; background : int32 option; line_width : int32 option; line_style : int32 option; cap_style : int32 option; join_style : int32 option; fill_style : int32 option; fill_rule : int32 option; tile : xproto.PIXMAP option; stipple : xproto.PIXMAP option; tile_stipple_x_origin : int32 option; tile_stipple_y_origin : int32 option; font : xproto.FONT option; subwindow_mode : int32 option; graphics_exposures : xproto.BOOL32 option; clip_x_origin : int32 option; clip_y_origin : int32 option; clip_mask : xproto.PIXMAP option; dash_offset : int32 option; dashes : int32 option; arc_mode : int32 option; };;
+type ChangeGC = { gc : xproto.GCONTEXT; function : int32 option; plane_mask : int32 option; foreground : int32 option; background : int32 option; line_width : int32 option; line_style : int32 option; cap_style : int32 option; join_style : int32 option; fill_style : int32 option; fill_rule : int32 option; tile : xproto.PIXMAP option; stipple : xproto.PIXMAP option; tile_stipple_x_origin : int32 option; tile_stipple_y_origin : int32 option; font : xproto.FONT option; subwindow_mode : int32 option; graphics_exposures : xproto.BOOL32 option; clip_x_origin : int32 option; clip_y_origin : int32 option; clip_mask : xproto.PIXMAP option; dash_offset : int32 option; dashes : int32 option; arc_mode : int32 option; };;
+type CopyGC = { src_gc : xproto.GCONTEXT; dst_gc : xproto.GCONTEXT; value_mask : int32; };;
+type SetDashes = { gc : xproto.GCONTEXT; dash_offset : int; dashes : int list; };;
+type ClipOrdering = Unsorted | YSorted | YXSorted | YXBanded;;
+type SetClipRectangles = { ordering : char; gc : xproto.GCONTEXT; clip_x_origin : int; clip_y_origin : int; rectangles : xproto.RECTANGLE list; };;
+type FreeGC = { gc : xproto.GCONTEXT; };;
+type ClearArea = { exposures : bool; window : xproto.WINDOW; x : int; y : int; width : int; height : int; };;
+type CopyArea = { src_drawable : xproto.DRAWABLE; dst_drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; src_x : int; src_y : int; dst_x : int; dst_y : int; width : int; height : int; };;
+type CopyPlane = { src_drawable : xproto.DRAWABLE; dst_drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; src_x : int; src_y : int; dst_x : int; dst_y : int; width : int; height : int; bit_plane : int32; };;
+type CoordMode = Origin | Previous;;
+type PolyPoint = { coordinate_mode : char; drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; points : xproto.POINT list; };;
+type PolyLine = { coordinate_mode : char; drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; points : xproto.POINT list; };;
+type SEGMENT = { x1 : int; y1 : int; x2 : int; y2 : int; };;
+type PolySegment = { drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; segments : xproto.SEGMENT list; };;
+type PolyRectangle = { drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; rectangles : xproto.RECTANGLE list; };;
+type PolyArc = { drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; arcs : xproto.ARC list; };;
+type PolyShape = Complex | Nonconvex | Convex;;
+type FillPoly = { drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; shape : int; coordinate_mode : int; points : xproto.POINT list; };;
+type PolyFillRectangle = { drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; rectangles : xproto.RECTANGLE list; };;
+type PolyFillArc = { drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; arcs : xproto.ARC list; };;
+type ImageFormat = XYBitmap | XYPixmap | ZPixmap;;
+type PutImage = { format : int; drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; width : int; height : int; dst_x : int; dst_y : int; left_pad : int; depth : int; data : char list; };;
+type GetImage = { format : int; drawable : xproto.DRAWABLE; x : int; y : int; width : int; height : int; plane_mask : int32; };;
+type PolyText8 = { drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; x : int; y : int; items : char list; };;
+type PolyText16 = { drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; x : int; y : int; items : char list; };;
+type ImageText8 = { drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; x : int; y : int; string : char list; };;
+type ImageText16 = { drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; x : int; y : int; string : xproto.CHAR2B list; };;
+type ColormapAlloc = None | All;;
+type CreateColormap = { alloc : char; mid : xproto.COLORMAP; window : xproto.WINDOW; visual : xproto.VISUALID; };;
+type FreeColormap = { cmap : xproto.COLORMAP; };;
+type CopyColormapAndFree = { mid : xproto.COLORMAP; src_cmap : xproto.COLORMAP; };;
+type InstallColormap = { cmap : xproto.COLORMAP; };;
+type UninstallColormap = { cmap : xproto.COLORMAP; };;
+type ListInstalledColormaps = { window : xproto.WINDOW; };;
+type AllocColor = { cmap : xproto.COLORMAP; red : int; green : int; blue : int; };;
+type AllocNamedColor = { cmap : xproto.COLORMAP; name : char list; };;
+type AllocColorCells = { contiguous : bool; cmap : xproto.COLORMAP; colors : int; planes : int; };;
+type AllocColorPlanes = { contiguous : bool; cmap : xproto.COLORMAP; colors : int; reds : int; greens : int; blues : int; };;
+type FreeColors = { cmap : xproto.COLORMAP; plane_mask : int32; pixels : int32 list; };;
+
+type COLORITEM = { pixel : int32; red : int; green : int; blue : int; flags : char; };;
+type StoreColors = { cmap : xproto.COLORMAP; items : xproto.COLORITEM list; };;
+type StoreNamedColor = { flags : int; cmap : xproto.COLORMAP; pixel : int32; name : char list; };;
+type RGB = { red : int; green : int; blue : int; };;
+type QueryColors = { cmap : xproto.COLORMAP; pixels : int32 list; };;
+type LookupColor = { cmap : xproto.COLORMAP; name : char list; };;
+type Pixmap = None;;
+type CreateCursor = { cid : xproto.CURSOR; source : xproto.PIXMAP; mask : xproto.PIXMAP; fore_red : int; fore_green : int; fore_blue : int; back_red : int; back_green : int; back_blue : int; x : int; y : int; };;
+type Font = None;;
+type CreateGlyphCursor = { cid : xproto.CURSOR; source_font : xproto.FONT; mask_font : xproto.FONT; source_char : int; mask_char : int; fore_red : int; fore_green : int; fore_blue : int; back_red : int; back_green : int; back_blue : int; };;
+type FreeCursor = { cursor : xproto.CURSOR; };;
+type RecolorCursor = { cursor : xproto.CURSOR; fore_red : int; fore_green : int; fore_blue : int; back_red : int; back_green : int; back_blue : int; };;
+type QueryShapeOf = LargestCursor | FastestTile | FastestStipple;;
+type QueryBestSize = { class : int; drawable : xproto.DRAWABLE; width : int; height : int; };;
+type QueryExtension = { name : char list; };;
+type ListExtensions = { };;
+type ChangeKeyboardMapping = { keycode_count : int; first_keycode : xproto.KEYCODE; keysyms_per_keycode : int; keysyms : xproto.KEYSYM list; };;
+type GetKeyboardMapping = { first_keycode : xproto.KEYCODE; count : int; };;
+
+type LedMode = Off | On;;
+type AutoRepeatMode = Off | On | Default;;
+type ChangeKeyboardControl = { key_click_percent : int32 option; bell_percent : int32 option; bell_pitch : int32 option; bell_duration : int32 option; led : int32 option; led_mode : int32 option; key : xproto.KEYCODE32 option; auto_repeat_mode : int32 option; };;
+type GetKeyboardControl = { };;
+type Bell = { percent : int; };;
+type ChangePointerControl = { acceleration_numerator : int; acceleration_denominator : int; threshold : int; do_acceleration : bool; do_threshold : bool; };;
+type GetPointerControl = { };;
+type Blanking = NotPreferred | Preferred | Default;;
+type Exposures = NotAllowed | Allowed | Default;;
+type SetScreenSaver = { timeout : int; interval : int; prefer_blanking : int; allow_exposures : int; };;
+type GetScreenSaver = { };;
+type HostMode = Insert | Delete;;
+type Family = Internet | DECnet | Chaos | ServerInterpreted | Internet6;;
+type ChangeHosts = { mode : int; family : int; address : char list; };;
+type HOST = { family : int; address : char list; };;
+type ListHosts = { };;
+type AccessControl = Disable | Enable;;
+type SetAccessControl = { mode : int; };;
+type CloseDown = DestroyAll | RetainPermanent | RetainTemporary;;
+type SetCloseDownMode = { mode : int; };;
+type Kill = AllTemporary;;
+type KillClient = { resource : int32; };;
+type RotateProperties = { window : xproto.WINDOW; delta : int; atoms : xproto.ATOM list; };;
+type ScreenSaver = Reset | Active;;
+type ForceScreenSaver = { mode : int; };;
+type MappingStatus = Success | Busy | Failure;;
+type SetPointerMapping = { map : int list; };;
+type GetPointerMapping = { };;
+type MapIndex = Shift | Lock | Control | 1 | 2 | 3 | 4 | 5;;
+type SetModifierMapping = { keycodes_per_modifier : int; keycodes : xproto.KEYCODE list; };;
+type GetModifierMapping = { };;
+type NoOperation = { };;endmodule SELinux = struct
+type QueryVersion = { client_major : int; client_minor : int; };;
+type SetDeviceCreateContext = { context : char list; };;
+type GetDeviceCreateContext = { };;
+type SetDeviceContext = { device : int32; context : char list; };;
+type GetDeviceContext = { device : int32; };;
+type SetWindowCreateContext = { context : char list; };;
+type GetWindowCreateContext = { };;
+type GetWindowContext = { window : xproto.WINDOW; };;
+type ListItem = { name : xproto.ATOM; object_context : char list; data_context : char list; };;
+type SetPropertyCreateContext = { context : char list; };;
+type GetPropertyCreateContext = { };;
+type SetPropertyUseContext = { context : char list; };;
+type GetPropertyUseContext = { };;
+type GetPropertyContext = { window : xproto.WINDOW; property : xproto.ATOM; };;
+type GetPropertyDataContext = { window : xproto.WINDOW; property : xproto.ATOM; };;
+type ListProperties = { window : xproto.WINDOW; };;
+type SetSelectionCreateContext = { context : char list; };;
+type GetSelectionCreateContext = { };;
+type SetSelectionUseContext = { context : char list; };;
+type GetSelectionUseContext = { };;
+type GetSelectionContext = { selection : xproto.ATOM; };;
+type GetSelectionDataContext = { selection : xproto.ATOM; };;
+type ListSelections = { };;
+type GetClientContext = { resource : int32; };;
+end
+module Test = struct
+type GetVersion = { major_version : int; minor_version : int; };;
+type Cursor = None | Current;;
+type CompareCursor = { window : xproto.WINDOW; cursor : xproto.CURSOR; };;
+type FakeInput = { type : char; detail : char; time : int32; root : xproto.WINDOW; rootX : int; rootY : int; deviceid : int; };;
+type GrabControl = { impervious : bool; };;
+end
+module Xv = struct
+type PORT = xid;;
+type ENCODING = xid;;
+
+type ImageFormatInfoType = RGB | YUV;;
+type ImageFormatInfoFormat = Packed | Planar;;
+
+type VideoNotifyReason = Started | Stopped | Busy | Preempted | HardError;;
+type ScanlineOrder = TopToBottom | BottomToTop;;
+type GrabPortStatus = Success | BadExtension | AlreadyGrabbed | InvalidTime | BadReply | BadAlloc;;
+type Rational = { numerator : int32; denominator : int32; };;
+type Format = { visual : xproto.VISUALID; depth : int; };;
+type AdaptorInfo = { base_id : xv.PORT; num_ports : int; type : int; name : char list; formats : xv.Format list; };;
+type EncodingInfo = { encoding : xv.ENCODING; width : int; height : int; rate : xv.Rational; name : char list; };;
+type Image = { id : int32; width : int; height : int; pitches : int32 list; offsets : int32 list; data : int list; };;
+type AttributeInfo = { flags : int32; min : int32; max : int32; name : char list; };;
+type ImageFormatInfo = { id : int32; type : int; byte_order : int; guid : int list; bpp : int; num_planes : int; depth : int; red_mask : int32; green_mask : int32; blue_mask : int32; format : int; y_sample_bits : int32; u_sample_bits : int32; v_sample_bits : int32; vhorz_y_period : int32; vhorz_u_period : int32; vhorz_v_period : int32; vvert_y_period : int32; vvert_u_period : int32; vvert_v_period : int32; vcomp_order : int list; vscanline_order : int; };;
+type BadPort = { };;
+type BadEncoding = { };;
+type BadControl = { };;
+type VideoNotify = { reason : char; time : xproto.TIMESTAMP; drawable : xproto.DRAWABLE; port : xv.PORT; };;
+type PortNotify = { time : xproto.TIMESTAMP; port : xv.PORT; attribute : xproto.ATOM; value : int32; };;
+type QueryExtension = { };;
+type QueryAdaptors = { window : xproto.WINDOW; };;
+type QueryEncodings = { port : xv.PORT; };;
+type GrabPort = { port : xv.PORT; time : xproto.TIMESTAMP; };;
+type UngrabPort = { port : xv.PORT; time : xproto.TIMESTAMP; };;
+type PutVideo = { port : xv.PORT; drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; vid_x : int; vid_y : int; vid_w : int; vid_h : int; drw_x : int; drw_y : int; drw_w : int; drw_h : int; };;
+type PutStill = { port : xv.PORT; drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; vid_x : int; vid_y : int; vid_w : int; vid_h : int; drw_x : int; drw_y : int; drw_w : int; drw_h : int; };;
+type GetVideo = { port : xv.PORT; drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; vid_x : int; vid_y : int; vid_w : int; vid_h : int; drw_x : int; drw_y : int; drw_w : int; drw_h : int; };;
+type GetStill = { port : xv.PORT; drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; vid_x : int; vid_y : int; vid_w : int; vid_h : int; drw_x : int; drw_y : int; drw_w : int; drw_h : int; };;
+type StopVideo = { port : xv.PORT; drawable : xproto.DRAWABLE; };;
+type SelectVideoNotify = { drawable : xproto.DRAWABLE; onoff : bool; };;
+type SelectPortNotify = { port : xv.PORT; onoff : bool; };;
+type QueryBestSize = { port : xv.PORT; vid_w : int; vid_h : int; drw_w : int; drw_h : int; motion : bool; };;
+type SetPortAttribute = { port : xv.PORT; attribute : xproto.ATOM; value : int32; };;
+type GetPortAttribute = { port : xv.PORT; attribute : xproto.ATOM; };;
+type QueryPortAttributes = { port : xv.PORT; };;
+type ListImageFormats = { port : xv.PORT; };;
+type QueryImageAttributes = { port : xv.PORT; id : int32; width : int; height : int; };;
+type PutImage = { port : xv.PORT; drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; id : int32; src_x : int; src_y : int; src_w : int; src_h : int; drw_x : int; drw_y : int; drw_w : int; drw_h : int; width : int; height : int; data : int list; };;
+type ShmPutImage = { port : xv.PORT; drawable : xproto.DRAWABLE; gc : xproto.GCONTEXT; shmseg : shm.SEG; id : int32; offset : int32; src_x : int; src_y : int; src_w : int; src_h : int; drw_x : int; drw_y : int; drw_w : int; drw_h : int; width : int; height : int; send_event : int; };;
+end
+module XvMC = struct
+type CONTEXT = xid;;
+type SURFACE = xid;;
+type SUBPICTURE = xid;;
+type SurfaceInfo = { id : xvmc.SURFACE; chroma_format : int; pad0 : int; max_width : int; max_height : int; subpicture_max_width : int; subpicture_max_height : int; mc_type : int32; flags : int32; };;
+type QueryVersion = { };;
+type ListSurfaceTypes = { port_id : xv.PORT; };;
+type CreateContext = { context_id : xvmc.CONTEXT; port_id : xv.PORT; surface_id : xvmc.SURFACE; width : int; height : int; flags : int32; };;
+type DestroyContext = { context_id : xvmc.CONTEXT; };;
+type CreateSurface = { surface_id : xvmc.SURFACE; context_id : xvmc.CONTEXT; };;
+type DestroySurface = { surface_id : xvmc.SURFACE; };;
+type CreateSubpicture = { subpicture_id : xvmc.SUBPICTURE; context : xvmc.CONTEXT; xvimage_id : int32; width : int; height : int; };;
+type DestroySubpicture = { subpicture_id : xvmc.SUBPICTURE; };;
+type ListSubpictureTypes = { port_id : xv.PORT; surface_id : xvmc.SURFACE; };;
+end
