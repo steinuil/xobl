@@ -24,7 +24,7 @@ let modules =
     "xfixes";
     "xinerama";
     "xinput";
-    (* "xkb"; *)
+    "xkb";
     "xprint";
     "xproto";
     "xselinux";
@@ -44,9 +44,7 @@ let parse_module m =
     raise exn
 
 let () =
-  let xcbs =
-    modules |> List.map parse_module
-    |> List.map Xobl_compiler.Elaborate.unions_to_switches
-    |> Xobl_compiler.Elaborate.resolve_idents
-  in
-  List.map (Xobl_compiler.Elaborate.do_stuff xcbs) xcbs |> ignore
+  let xcbs = modules |> List.map parse_module in
+  Xobl_compiler.Elaborate.resolve_idents xcbs
+  |> List.iter (fun xcb ->
+         print_endline (Xobl_compiler__.Parsetree.show_xcb xcb))
