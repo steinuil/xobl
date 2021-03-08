@@ -44,12 +44,9 @@ let parse_module m =
     raise exn
 
 let () =
-  let xcbs = modules |> List.map parse_module in
-  let xcbs = List.map Xobl_compiler.Elaborate.unions_to_switches xcbs in
-  let xcbs = Xobl_compiler.Elaborate.resolve_idents xcbs in
-  let xcbs = List.map (Xobl_compiler.Elaborate.do_stuff xcbs) xcbs in
-  ignore xcbs
-
-(* let () =
-  let xcbs = modules |> List.map parse_module in *)
-(* List.iter Xobl_compiler__Elaborate_masks.in_xcb xcbs *)
+  let xcbs =
+    modules |> List.map parse_module
+    |> List.map Xobl_compiler.Elaborate.unions_to_switches
+    |> Xobl_compiler.Elaborate.resolve_idents
+  in
+  List.map (Xobl_compiler.Elaborate.do_stuff xcbs) xcbs |> ignore

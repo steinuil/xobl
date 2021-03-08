@@ -132,6 +132,96 @@ let rec enum_switches_to_variants (curr_module, xcbs) fields =
              failwith (Parsetree.show_field a)
          | _ -> None)
   in
+  let _ayy =
+    List.filter_map
+      (function
+        | Parsetree.Field_list { length = Some e; _ } -> (
+            let rec traverse = function
+              | Parsetree.Binop (_, e1, e2) -> traverse e1 @ traverse e2
+              | Unop (_, e) -> traverse e
+              | Field_ref f -> [ f ]
+              | Param_ref { param = _; _ } ->
+                  (* There is a single case in which this happens
+                     and of course it's inside xinput. *)
+                  []
+              | Enum_ref _ | Pop_count _ | List_element_ref ->
+                  failwith "unreachable"
+              | Sum_of { field = _; _ } ->
+                  (* There are a few cases in xinput. *)
+                  []
+              | Expr_value _ | Expr_bit _ -> []
+            in
+            let x = traverse e in
+            match x with [ f ] -> Some f | _ -> None )
+        | _ -> None)
+      fields
+    |> List.map (function f ->
+           ( match
+               List.find_map
+                 (function
+                   | Parsetree.Field { name; _ } when name = f -> Some name
+                   | _ -> None)
+                 fields
+             with
+           | Some _ -> ()
+           | None -> Printf.eprintf "%s %s\n" curr_module f ))
+  in
+  let optional_fields =
+    fields
+    |> List.filter_map (function
+         | Parsetree.Field_switch
+             {
+               sw_cond = Cond_bit_and (Field_ref cond_field);
+               sw_name;
+               sw_cases;
+             } ->
+             let cond_mask =
+               fields
+               |> List.find_map (function
+                    | Parsetree.Field
+                        {
+                          name;
+                          type_ = { ft_allowed = Some (Allowed_mask mask); _ };
+                        }
+                      when name = cond_field ->
+                        Some mask
+                    | _ -> None)
+               |> Option.get
+             in
+             let cond_mask_items =
+               find_module xcbs (Option.get cond_mask.id_module)
+               |> List.find_map (function
+                    | Parsetree.Enum { name; items; _ }
+                      when name = cond_mask.id_name ->
+                        Some items
+                    | _ -> None)
+               |> Option.get
+             in
+             let mask_items =
+               sw_cases
+               |> List.map (function
+                    | Parsetree.
+                        {
+                          cs_cond = [ Enum_ref { item; _ } ];
+                          cs_fields = [ Field { type_; _ } ];
+                          cs_name = _;
+                        } ->
+                        let bit =
+                          cond_mask_items
+                          |> List.find_map (function
+                               | name, Parsetree.Item_bit b when name = item ->
+                                   Some b
+                               | _ -> None)
+                          |> Option.get
+                        in
+                        let type_ = conv_field_type type_ in
+                        Elaboratetree.Field_optional
+                          { name = item; mask = cond_field; bit; type_ }
+                    | case -> failwith (Parsetree.show_case case))
+             in
+             Some (sw_name, mask_items, cond_field)
+         | _ -> None)
+  in
   let fields, additional_variants =
     fields
     |> List.map (function
@@ -140,13 +230,15 @@ let rec enum_switches_to_variants (curr_module, xcbs) fields =
                List.find (fun (name, _, _, _, _) -> name = sw_name) variants
              in
 
-             ( Elaboratetree.(
-                 Field_variant
-                   {
-                     name;
-                     variant =
-                       { id_module = curr_module; id_name = variant_name };
-                   }),
+             ( Elaboratetree.
+                 [
+                   Field_variant
+                     {
+                       name;
+                       variant =
+                         { id_module = curr_module; id_name = variant_name };
+                     };
+                 ],
                additional_variants )
          | Field { name; type_ = { ft_type; _ } }
            when List.exists
@@ -157,32 +249,52 @@ let rec enum_switches_to_variants (curr_module, xcbs) fields =
                  (fun (_, cond_field, _, _, _) -> name = cond_field)
                  variants
              in
-             ( Elaboratetree.Field_variant_tag
-                 { variant = field_name; type_ = conv_type ft_type },
+             ( [
+                 Elaboratetree.Field_variant_tag
+                   { variant = field_name; type_ = conv_type ft_type };
+               ],
+               [] )
+         | Field_switch { sw_cond = Cond_bit_and _; sw_name; _ } ->
+             let _, optional_fields, _ =
+               List.find (fun (name, _, _) -> name = sw_name) optional_fields
+             in
+             (optional_fields, [])
+         | Field { name; type_ = { ft_type; _ } }
+           when List.exists
+                  (fun (_, _, cond_field) -> name = cond_field)
+                  optional_fields ->
+             ( [
+                 Elaboratetree.Field_optional_mask
+                   { name; type_ = conv_type ft_type };
+               ],
                [] )
          | Field { name; type_ } ->
-             (Elaboratetree.Field { name; type_ = conv_field_type type_ }, [])
-         | Field_expr { name; type_; expr } ->
-             ( Elaboratetree.Field_expr
-                 {
-                   name;
-                   type_ = conv_field_type type_;
-                   expr = conv_expression expr;
-                 },
+             ( [ Elaboratetree.Field { name; type_ = conv_field_type type_ } ],
                [] )
-         | Field_file_descriptor f -> (Elaboratetree.Field_file_descriptor f, [])
+         | Field_expr { name; type_; expr } ->
+             ( [
+                 Elaboratetree.Field_expr
+                   {
+                     name;
+                     type_ = conv_field_type type_;
+                     expr = conv_expression expr;
+                   };
+               ],
+               [] )
+         | Field_file_descriptor f ->
+             ([ Elaboratetree.Field_file_descriptor f ], [])
          | Field_pad { pad; serialize } ->
-             (Elaboratetree.Field_pad { pad; serialize }, [])
-         | Field_list _ | Field_switch _ ->
+             ([ Elaboratetree.Field_pad { pad; serialize } ], [])
+         | Field_list _ ->
              (* FIXME *)
-             (Elaboratetree.Field_file_descriptor "a", []))
+             ([], []))
     |> List.split
   in
   let variants =
     List.map (fun (_, _, name, items, _) -> (name, items)) variants
     @ List.flatten additional_variants
   in
-  (fields, variants)
+  (List.flatten fields, variants)
 
 (** Because event structs use these despite everything else just using the
     file name. *)

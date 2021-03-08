@@ -66,12 +66,12 @@ type field =
   | Field_expr of { name : string; type_ : field_type; expr : expression }
   | Field_file_descriptor of string
   | Field_pad of { pad : pad; serialize : bool }
-  | Field_list of { name : string; type_ : field_type }
-  | Field_list_length of {
-      list : string;
-      type_ : type_;
-      by_expr : expression option;
+  | Field_list of {
+      name : string;
+      type_ : field_type;
+      length : expression option;
     }
+  | Field_list_length of { list : string; type_ : type_ }
       (** Contains the length of the associated list.
           Should be hidden in the public API. *)
   | Field_variant of { name : string; variant : ident }
