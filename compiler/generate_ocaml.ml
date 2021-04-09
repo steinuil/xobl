@@ -180,6 +180,9 @@ let gen_field_type ctx out = function
   | { ft_type = _; ft_allowed = Some (Allowed_enum enum) } ->
       gen_ident ctx out
         { enum with id_name = Ident.snake enum.id_name ~suffix:"enum" }
+  | { ft_type = _; ft_allowed = Some (Allowed_mask mask) } ->
+      gen_ident ctx out
+        { mask with id_name = Ident.snake mask.id_name ~suffix:"mask" }
   | { ft_type; ft_allowed = Some _ } -> gen_type ctx out ft_type
 
 let gen_field ctx out = function
@@ -245,6 +248,8 @@ let gen_event_struct_field ctx out ident =
   Printf.fprintf out "%s of %a" (Ident.caml ident.id_name) (gen_ident ctx)
     { ident with id_name = Ident.snake ident.id_name ~suffix:"event" }
 
+let mask_item out (name, _) = Printf.fprintf out "`%s" (Ident.caml name)
+
 let gen_declaration ctx out = function
   | Type_alias { name; type_ } ->
       Printf.fprintf out "type %s = %a;;" (Ident.snake name) (gen_type ctx)
@@ -297,7 +302,14 @@ let gen_declaration ctx out = function
       Printf.fprintf out "type %s = %a;;" (Ident.snake name)
         (list_sep " | " (gen_event_struct_field ctx))
         events
-  | Mask _ -> ()
+  | Mask { name; items; additional_values = [] } ->
+      Printf.fprintf out "type %s = [ %a ] list;;"
+        (Ident.snake name ~suffix:"mask")
+        (list_sep " | " mask_item) items
+  | Mask { name; items; additional_values = values } ->
+      Printf.fprintf out "type %s = ([ %a ], [ %a ]) mask;;"
+        (Ident.snake name ~suffix:"mask")
+        (list_sep " | " mask_item) items (list_sep " | " mask_item) values
 
 let gen_xcb out = function
   | Core decls ->

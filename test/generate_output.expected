@@ -1,5 +1,6 @@
 type xid = int
 type file_descr = int
+type ('flags, 'vals) mask = F of 'flags list | V of 'vals
 module[@warning "-27"] Bigreq = struct
 type enable_reply = { maximum_request_length : int32; };;
 let enable () : enable_reply Lwt.t = failwith "not implemented";;
@@ -29,27 +30,27 @@ type format = { depth : int; bits_per_pixel : int; scanline_pad : int; };;
 type visual_class_enum = Static_gray | Gray_scale | Static_color | Pseudo_color | True_color | Direct_color;;
 type visualtype = { visual_id : visualid; class_ : visual_class_enum; bits_per_rgb_value : int; colormap_entries : int; red_mask : int32; green_mask : int32; blue_mask : int32; };;
 type depth = { depth : int; visuals : visualtype list; };;
-
+type event_mask_mask = ([ `Key_press | `Key_release | `Button_press | `Button_release | `Enter_window | `Leave_window | `Pointer_motion | `Pointer_motion_hint | `Button1_motion | `Button2_motion | `Button3_motion | `Button4_motion | `Button5_motion | `Button_motion | `Keymap_state | `Exposure | `Visibility_change | `Structure_notify | `Resize_redirect | `Substructure_notify | `Substructure_redirect | `Focus_change | `Property_change | `Color_map_change | `Owner_grab_button ], [ `No_event ]) mask;;
 type backing_store_enum = Not_useful | When_mapped | Always;;
-type screen = { root : window; default_colormap : colormap; white_pixel : int32; black_pixel : int32; current_input_masks : int32; width_in_pixels : int; height_in_pixels : int; width_in_millimeters : int; height_in_millimeters : int; min_installed_maps : int; max_installed_maps : int; root_visual : visualid; backing_stores : backing_store_enum; save_unders : bool; root_depth : int; allowed_depths : depth list; };;
+type screen = { root : window; default_colormap : colormap; white_pixel : int32; black_pixel : int32; current_input_masks : event_mask_mask; width_in_pixels : int; height_in_pixels : int; width_in_millimeters : int; height_in_millimeters : int; min_installed_maps : int; max_installed_maps : int; root_visual : visualid; backing_stores : backing_store_enum; save_unders : bool; root_depth : int; allowed_depths : depth list; };;
 type setup_request = { byte_order : int; protocol_major_version : int; protocol_minor_version : int; authorization_protocol_name : char list; authorization_protocol_data : char list; };;
 type setup_failed = { status : int; protocol_major_version : int; protocol_minor_version : int; length : int; reason : char list; };;
 type setup_authenticate = { status : int; length : int; reason : char list; };;
 type image_order_enum = Lsb_first | Msb_first;;
 type setup = { status : int; protocol_major_version : int; protocol_minor_version : int; length : int; release_number : int32; resource_id_base : int32; resource_id_mask : int32; motion_buffer_size : int32; maximum_request_length : int; image_byte_order : image_order_enum; bitmap_format_bit_order : image_order_enum; bitmap_format_scanline_unit : int; bitmap_format_scanline_pad : int; min_keycode : keycode; max_keycode : keycode; vendor : char list; pixmap_formats : format list; roots : screen list; };;
-
-
+type mod_mask_mask = [ `Shift | `Lock | `Control | `D1 | `D2 | `D3 | `D4 | `D5 | `Any ] list;;
+type key_but_mask_mask = [ `Shift | `Lock | `Control | `Mod1 | `Mod2 | `Mod3 | `Mod4 | `Mod5 | `Button1 | `Button2 | `Button3 | `Button4 | `Button5 ] list;;
 type window_enum = None;;
-type key_press_event = { detail : keycode; time : timestamp; root : window; event : window; child : window; root_x : int; root_y : int; event_x : int; event_y : int; state : int; same_screen : bool; };;
+type key_press_event = { detail : keycode; time : timestamp; root : window; event : window; child : window; root_x : int; root_y : int; event_x : int; event_y : int; state : key_but_mask_mask; same_screen : bool; };;
 type key_release_event = key_press_event;;
-
-type button_press_event = { detail : button; time : timestamp; root : window; event : window; child : window; root_x : int; root_y : int; event_x : int; event_y : int; state : int; same_screen : bool; };;
+type button_mask_mask = [ `D1 | `D2 | `D3 | `D4 | `D5 | `Any ] list;;
+type button_press_event = { detail : button; time : timestamp; root : window; event : window; child : window; root_x : int; root_y : int; event_x : int; event_y : int; state : key_but_mask_mask; same_screen : bool; };;
 type button_release_event = button_press_event;;
 type motion_enum = Normal | Hint;;
-type motion_notify_event = { detail : motion_enum; time : timestamp; root : window; event : window; child : window; root_x : int; root_y : int; event_x : int; event_y : int; state : int; same_screen : bool; };;
+type motion_notify_event = { detail : motion_enum; time : timestamp; root : window; event : window; child : window; root_x : int; root_y : int; event_x : int; event_y : int; state : key_but_mask_mask; same_screen : bool; };;
 type notify_detail_enum = Ancestor | Virtual | Inferior | Nonlinear | Nonlinear_virtual | Pointer | Pointer_root | None;;
 type notify_mode_enum = Normal | Grab | Ungrab | While_grabbed;;
-type enter_notify_event = { detail : notify_detail_enum; time : timestamp; root : window; event : window; child : window; root_x : int; root_y : int; event_x : int; event_y : int; state : int; mode : notify_mode_enum; same_screen_focus : char; };;
+type enter_notify_event = { detail : notify_detail_enum; time : timestamp; root : window; event : window; child : window; root_x : int; root_y : int; event_x : int; event_y : int; state : key_but_mask_mask; mode : notify_mode_enum; same_screen_focus : char; };;
 type leave_notify_event = enter_notify_event;;
 type focus_in_event = { detail : notify_detail_enum; event : window; mode : notify_mode_enum; };;
 type focus_out_event = focus_in_event;;
@@ -67,7 +68,8 @@ type map_request_event = { parent : window; window : window; };;
 type reparent_notify_event = { event : window; window : window; parent : window; x : int; y : int; override_redirect : bool; };;
 type configure_notify_event = { event : window; window : window; above_sibling : window; x : int; y : int; width : int; height : int; border_width : int; override_redirect : bool; };;
 type stack_mode_enum = Above | Below | Top_if | Bottom_if | Opposite;;
-type configure_request_event = { stack_mode : stack_mode_enum; parent : window; window : window; sibling : window; x : int; y : int; width : int; height : int; border_width : int; value_mask : int; };;
+type config_window_mask = [ `X | `Y | `Width | `Height | `Border_width | `Sibling | `Stack_mode ] list;;
+type configure_request_event = { stack_mode : stack_mode_enum; parent : window; window : window; sibling : window; x : int; y : int; width : int; height : int; border_width : int; value_mask : config_window_mask; };;
 type gravity_notify_event = { event : window; window : window; x : int; y : int; };;
 type resize_request_event = { window : window; width : int; height : int; };;
 type place_enum = On_top | On_bottom;;
@@ -107,15 +109,15 @@ type name_error = request_error;;
 type length_error = request_error;;
 type implementation_error = request_error;;
 type window_class_enum = Copy_from_parent | Input_output | Input_only;;
-
+type cw_mask = [ `Back_pixmap | `Back_pixel | `Border_pixmap | `Border_pixel | `Bit_gravity | `Win_gravity | `Backing_store | `Backing_planes | `Backing_pixel | `Override_redirect | `Save_under | `Event_mask | `Dont_propagate | `Colormap | `Cursor ] list;;
 type back_pixmap_enum = None | Parent_relative;;
 type gravity_enum = Bit_forget | Win_unmap | North_west | North | North_east | West | Center | East | South_west | South | South_east | Static;;
 type pixmap_enum = None;;
 type cursor_enum = None;;
-let create_window ~(depth : int) ~(wid : window) ~(parent : window) ~(x : int) ~(y : int) ~(width : int) ~(height : int) ~(border_width : int) ~(class_ : window_class_enum) ~(visual : visualid) ?(background_pixmap : pixmap option) ?(background_pixel : int32 option) ?(border_pixmap : pixmap option) ?(border_pixel : int32 option) ?(bit_gravity : gravity_enum option) ?(win_gravity : gravity_enum option) ?(backing_store : backing_store_enum option) ?(backing_planes : int32 option) ?(backing_pixel : int32 option) ?(override_redirect : bool32 option) ?(save_under : bool32 option) ?(event_mask : int32 option) ?(do_not_propogate_mask : int32 option) ?(colormap : colormap option) ?(cursor : cursor option) () : unit Lwt.t = failwith "not implemented";;
-let change_window_attributes ~(window : window) ?(background_pixmap : pixmap option) ?(background_pixel : int32 option) ?(border_pixmap : pixmap option) ?(border_pixel : int32 option) ?(bit_gravity : gravity_enum option) ?(win_gravity : gravity_enum option) ?(backing_store : backing_store_enum option) ?(backing_planes : int32 option) ?(backing_pixel : int32 option) ?(override_redirect : bool32 option) ?(save_under : bool32 option) ?(event_mask : int32 option) ?(do_not_propogate_mask : int32 option) ?(colormap : colormap option) ?(cursor : cursor option) () : unit Lwt.t = failwith "not implemented";;
+let create_window ~(depth : int) ~(wid : window) ~(parent : window) ~(x : int) ~(y : int) ~(width : int) ~(height : int) ~(border_width : int) ~(class_ : window_class_enum) ~(visual : visualid) ?(background_pixmap : pixmap option) ?(background_pixel : int32 option) ?(border_pixmap : pixmap option) ?(border_pixel : int32 option) ?(bit_gravity : gravity_enum option) ?(win_gravity : gravity_enum option) ?(backing_store : backing_store_enum option) ?(backing_planes : int32 option) ?(backing_pixel : int32 option) ?(override_redirect : bool32 option) ?(save_under : bool32 option) ?(event_mask : event_mask_mask option) ?(do_not_propogate_mask : event_mask_mask option) ?(colormap : colormap option) ?(cursor : cursor option) () : unit Lwt.t = failwith "not implemented";;
+let change_window_attributes ~(window : window) ?(background_pixmap : pixmap option) ?(background_pixel : int32 option) ?(border_pixmap : pixmap option) ?(border_pixel : int32 option) ?(bit_gravity : gravity_enum option) ?(win_gravity : gravity_enum option) ?(backing_store : backing_store_enum option) ?(backing_planes : int32 option) ?(backing_pixel : int32 option) ?(override_redirect : bool32 option) ?(save_under : bool32 option) ?(event_mask : event_mask_mask option) ?(do_not_propogate_mask : event_mask_mask option) ?(colormap : colormap option) ?(cursor : cursor option) () : unit Lwt.t = failwith "not implemented";;
 type map_state_enum = Unmapped | Unviewable | Viewable;;
-type get_window_attributes_reply = { backing_store : backing_store_enum; visual : visualid; class_ : window_class_enum; bit_gravity : gravity_enum; win_gravity : gravity_enum; backing_planes : int32; backing_pixel : int32; save_under : bool; map_is_installed : bool; map_state : map_state_enum; override_redirect : bool; colormap : colormap; all_event_masks : int32; your_event_mask : int32; do_not_propagate_mask : int; };;
+type get_window_attributes_reply = { backing_store : backing_store_enum; visual : visualid; class_ : window_class_enum; bit_gravity : gravity_enum; win_gravity : gravity_enum; backing_planes : int32; backing_pixel : int32; save_under : bool; map_is_installed : bool; map_state : map_state_enum; override_redirect : bool; colormap : colormap; all_event_masks : event_mask_mask; your_event_mask : event_mask_mask; do_not_propagate_mask : event_mask_mask; };;
 let get_window_attributes ~(window : window) () : get_window_attributes_reply Lwt.t = failwith "not implemented";;
 let destroy_window ~(window : window) () : unit Lwt.t = failwith "not implemented";;
 let destroy_subwindows ~(window : window) () : unit Lwt.t = failwith "not implemented";;
@@ -126,7 +128,6 @@ let map_window ~(window : window) () : unit Lwt.t = failwith "not implemented";;
 let map_subwindows ~(window : window) () : unit Lwt.t = failwith "not implemented";;
 let unmap_window ~(window : window) () : unit Lwt.t = failwith "not implemented";;
 let unmap_subwindows ~(window : window) () : unit Lwt.t = failwith "not implemented";;
-
 let configure_window ~(window : window) ?(x : int32 option) ?(y : int32 option) ?(width : int32 option) ?(height : int32 option) ?(border_width : int32 option) ?(sibling : window option) ?(stack_mode : stack_mode_enum option) () : unit Lwt.t = failwith "not implemented";;
 type circulate_enum = Raise_lowest | Lower_highest;;
 let circulate_window ~(direction : circulate_enum) ~(window : window) () : unit Lwt.t = failwith "not implemented";;
@@ -151,27 +152,27 @@ type get_selection_owner_reply = { owner : window; };;
 let get_selection_owner ~(selection : atom) () : get_selection_owner_reply Lwt.t = failwith "not implemented";;
 let convert_selection ~(requestor : window) ~(selection : atom) ~(target : atom) ~(property : atom) ~(time : timestamp) () : unit Lwt.t = failwith "not implemented";;
 type send_event_dest_enum = Pointer_window | Item_focus;;
-let send_event ~(propagate : bool) ~(destination : window) ~(event_mask : int32) ~(event : char list) () : unit Lwt.t = failwith "not implemented";;
+let send_event ~(propagate : bool) ~(destination : window) ~(event_mask : event_mask_mask) ~(event : char list) () : unit Lwt.t = failwith "not implemented";;
 type grab_mode_enum = Sync | Async;;
 type grab_status_enum = Success | Already_grabbed | Invalid_time | Not_viewable | Frozen;;
 type grab_pointer_reply = { status : grab_status_enum; };;
-let grab_pointer ~(owner_events : bool) ~(grab_window : window) ~(event_mask : int) ~(pointer_mode : grab_mode_enum) ~(keyboard_mode : grab_mode_enum) ~(confine_to : window) ~(cursor : cursor) ~(time : timestamp) () : grab_pointer_reply Lwt.t = failwith "not implemented";;
+let grab_pointer ~(owner_events : bool) ~(grab_window : window) ~(event_mask : event_mask_mask) ~(pointer_mode : grab_mode_enum) ~(keyboard_mode : grab_mode_enum) ~(confine_to : window) ~(cursor : cursor) ~(time : timestamp) () : grab_pointer_reply Lwt.t = failwith "not implemented";;
 let ungrab_pointer ~(time : timestamp) () : unit Lwt.t = failwith "not implemented";;
 type button_index_enum = Any | D1 | D2 | D3 | D4 | D5;;
-let grab_button ~(owner_events : bool) ~(grab_window : window) ~(event_mask : int) ~(pointer_mode : grab_mode_enum) ~(keyboard_mode : grab_mode_enum) ~(confine_to : window) ~(cursor : cursor) ~(button : button_index_enum) ~(modifiers : int) () : unit Lwt.t = failwith "not implemented";;
-let ungrab_button ~(button : button_index_enum) ~(grab_window : window) ~(modifiers : int) () : unit Lwt.t = failwith "not implemented";;
-let change_active_pointer_grab ~(cursor : cursor) ~(time : timestamp) ~(event_mask : int) () : unit Lwt.t = failwith "not implemented";;
+let grab_button ~(owner_events : bool) ~(grab_window : window) ~(event_mask : event_mask_mask) ~(pointer_mode : grab_mode_enum) ~(keyboard_mode : grab_mode_enum) ~(confine_to : window) ~(cursor : cursor) ~(button : button_index_enum) ~(modifiers : mod_mask_mask) () : unit Lwt.t = failwith "not implemented";;
+let ungrab_button ~(button : button_index_enum) ~(grab_window : window) ~(modifiers : mod_mask_mask) () : unit Lwt.t = failwith "not implemented";;
+let change_active_pointer_grab ~(cursor : cursor) ~(time : timestamp) ~(event_mask : event_mask_mask) () : unit Lwt.t = failwith "not implemented";;
 type grab_keyboard_reply = { status : grab_status_enum; };;
 let grab_keyboard ~(owner_events : bool) ~(grab_window : window) ~(time : timestamp) ~(pointer_mode : grab_mode_enum) ~(keyboard_mode : grab_mode_enum) () : grab_keyboard_reply Lwt.t = failwith "not implemented";;
 let ungrab_keyboard ~(time : timestamp) () : unit Lwt.t = failwith "not implemented";;
 type grab_enum = Any;;
-let grab_key ~(owner_events : bool) ~(grab_window : window) ~(modifiers : int) ~(key : keycode) ~(pointer_mode : grab_mode_enum) ~(keyboard_mode : grab_mode_enum) () : unit Lwt.t = failwith "not implemented";;
-let ungrab_key ~(key : keycode) ~(grab_window : window) ~(modifiers : int) () : unit Lwt.t = failwith "not implemented";;
+let grab_key ~(owner_events : bool) ~(grab_window : window) ~(modifiers : mod_mask_mask) ~(key : keycode) ~(pointer_mode : grab_mode_enum) ~(keyboard_mode : grab_mode_enum) () : unit Lwt.t = failwith "not implemented";;
+let ungrab_key ~(key : keycode) ~(grab_window : window) ~(modifiers : mod_mask_mask) () : unit Lwt.t = failwith "not implemented";;
 type allow_enum = Async_pointer | Sync_pointer | Replay_pointer | Async_keyboard | Sync_keyboard | Replay_keyboard | Async_both | Sync_both;;
 let allow_events ~(mode : allow_enum) ~(time : timestamp) () : unit Lwt.t = failwith "not implemented";;
 let grab_server () : unit Lwt.t = failwith "not implemented";;
 let ungrab_server () : unit Lwt.t = failwith "not implemented";;
-type query_pointer_reply = { same_screen : bool; root : window; child : window; root_x : int; root_y : int; win_x : int; win_y : int; mask : int; };;
+type query_pointer_reply = { same_screen : bool; root : window; child : window; root_x : int; root_y : int; win_x : int; win_y : int; mask : key_but_mask_mask; };;
 let query_pointer ~(window : window) () : query_pointer_reply Lwt.t = failwith "not implemented";;
 type timecoord = { time : timestamp; x : int; y : int; };;
 type get_motion_events_reply = { events : timecoord list; };;
@@ -204,7 +205,7 @@ type get_font_path_reply = { path : str list; };;
 let get_font_path () : get_font_path_reply Lwt.t = failwith "not implemented";;
 let create_pixmap ~(depth : int) ~(pid : pixmap) ~(drawable : drawable) ~(width : int) ~(height : int) () : unit Lwt.t = failwith "not implemented";;
 let free_pixmap ~(pixmap : pixmap) () : unit Lwt.t = failwith "not implemented";;
-
+type gc_mask = [ `Function | `Plane_mask | `Foreground | `Background | `Line_width | `Line_style | `Cap_style | `Join_style | `Fill_style | `Fill_rule | `Tile | `Stipple | `Tile_stipple_origin_x | `Tile_stipple_origin_y | `Font | `Subwindow_mode | `Graphics_exposures | `Clip_origin_x | `Clip_origin_y | `Clip_mask | `Dash_offset | `Dash_list | `Arc_mode ] list;;
 type gx_enum = Clear | And | And_reverse | Copy | And_inverted | Noop | Xor | Or | Nor | Equiv | Invert | Or_reverse | Copy_inverted | Or_inverted | Nand | Set;;
 type line_style_enum = Solid | On_off_dash | Double_dash;;
 type cap_style_enum = Not_last | Butt | Round | Projecting;;
@@ -216,7 +217,7 @@ type arc_mode_enum = Chord | Pie_slice;;
 type font_enum = None;;
 let create_gc ~(cid : gcontext) ~(drawable : drawable) ?(function_ : gx_enum option) ?(plane_mask : int32 option) ?(foreground : int32 option) ?(background : int32 option) ?(line_width : int32 option) ?(line_style : line_style_enum option) ?(cap_style : cap_style_enum option) ?(join_style : join_style_enum option) ?(fill_style : fill_style_enum option) ?(fill_rule : fill_rule_enum option) ?(tile : pixmap option) ?(stipple : pixmap option) ?(tile_stipple_x_origin : int32 option) ?(tile_stipple_y_origin : int32 option) ?(font : font option) ?(subwindow_mode : subwindow_mode_enum option) ?(graphics_exposures : bool32 option) ?(clip_x_origin : int32 option) ?(clip_y_origin : int32 option) ?(clip_mask : pixmap option) ?(dash_offset : int32 option) ?(dashes : int32 option) ?(arc_mode : arc_mode_enum option) () : unit Lwt.t = failwith "not implemented";;
 let change_gc ~(gc : gcontext) ?(function_ : gx_enum option) ?(plane_mask : int32 option) ?(foreground : int32 option) ?(background : int32 option) ?(line_width : int32 option) ?(line_style : line_style_enum option) ?(cap_style : cap_style_enum option) ?(join_style : join_style_enum option) ?(fill_style : fill_style_enum option) ?(fill_rule : fill_rule_enum option) ?(tile : pixmap option) ?(stipple : pixmap option) ?(tile_stipple_x_origin : int32 option) ?(tile_stipple_y_origin : int32 option) ?(font : font option) ?(subwindow_mode : subwindow_mode_enum option) ?(graphics_exposures : bool32 option) ?(clip_x_origin : int32 option) ?(clip_y_origin : int32 option) ?(clip_mask : pixmap option) ?(dash_offset : int32 option) ?(dashes : int32 option) ?(arc_mode : arc_mode_enum option) () : unit Lwt.t = failwith "not implemented";;
-let copy_gc ~(src_gc : gcontext) ~(dst_gc : gcontext) ~(value_mask : int32) () : unit Lwt.t = failwith "not implemented";;
+let copy_gc ~(src_gc : gcontext) ~(dst_gc : gcontext) ~(value_mask : gc_mask) () : unit Lwt.t = failwith "not implemented";;
 let set_dashes ~(gc : gcontext) ~(dash_offset : int) ~(dashes : int list) () : unit Lwt.t = failwith "not implemented";;
 type clip_ordering_enum = Unsorted | Y_sorted | Yx_sorted | Yx_banded;;
 let set_clip_rectangles ~(ordering : clip_ordering_enum) ~(gc : gcontext) ~(clip_x_origin : int) ~(clip_y_origin : int) ~(rectangles : rectangle list) () : unit Lwt.t = failwith "not implemented";;
@@ -260,10 +261,10 @@ let alloc_color_cells ~(contiguous : bool) ~(cmap : colormap) ~(colors : int) ~(
 type alloc_color_planes_reply = { red_mask : int32; green_mask : int32; blue_mask : int32; pixels : int32 list; };;
 let alloc_color_planes ~(contiguous : bool) ~(cmap : colormap) ~(colors : int) ~(reds : int) ~(greens : int) ~(blues : int) () : alloc_color_planes_reply Lwt.t = failwith "not implemented";;
 let free_colors ~(cmap : colormap) ~(plane_mask : int32) ~(pixels : int32 list) () : unit Lwt.t = failwith "not implemented";;
-
-type coloritem = { pixel : int32; red : int; green : int; blue : int; flags : char; };;
+type color_flag_mask = [ `Red | `Green | `Blue ] list;;
+type coloritem = { pixel : int32; red : int; green : int; blue : int; flags : color_flag_mask; };;
 let store_colors ~(cmap : colormap) ~(items : coloritem list) () : unit Lwt.t = failwith "not implemented";;
-let store_named_color ~(flags : int) ~(cmap : colormap) ~(pixel : int32) ~(name : char list) () : unit Lwt.t = failwith "not implemented";;
+let store_named_color ~(flags : color_flag_mask) ~(cmap : colormap) ~(pixel : int32) ~(name : char list) () : unit Lwt.t = failwith "not implemented";;
 type rgb = { red : int; green : int; blue : int; };;
 type query_colors_reply = { colors : rgb list; };;
 let query_colors ~(cmap : colormap) ~(pixels : int32 list) () : query_colors_reply Lwt.t = failwith "not implemented";;
@@ -283,7 +284,7 @@ let list_extensions () : list_extensions_reply Lwt.t = failwith "not implemented
 let change_keyboard_mapping ~(keycode_count : int) ~(first_keycode : keycode) ~(keysyms_per_keycode : int) ~(keysyms : keysym list) () : unit Lwt.t = failwith "not implemented";;
 type get_keyboard_mapping_reply = { keysyms_per_keycode : char; keysyms : keysym list; };;
 let get_keyboard_mapping ~(first_keycode : keycode) ~(count : int) () : get_keyboard_mapping_reply Lwt.t = failwith "not implemented";;
-
+type kb_mask = [ `Key_click_percent | `Bell_percent | `Bell_pitch | `Bell_duration | `Led | `Led_mode | `Key | `Auto_repeat_mode ] list;;
 type led_mode_enum = Off | On;;
 type auto_repeat_mode_enum = Off | On | Default;;
 let change_keyboard_control ?(key_click_percent : int32 option) ?(bell_percent : int32 option) ?(bell_pitch : int32 option) ?(bell_duration : int32 option) ?(led : int32 option) ?(led_mode : led_mode_enum option) ?(key : keycode32 option) ?(auto_repeat_mode : auto_repeat_mode_enum option) () : unit Lwt.t = failwith "not implemented";;
@@ -331,7 +332,7 @@ type picture_enum = None;;
 type pict_op_enum = Clear | Src | Dst | Over | Over_reverse | In | In_reverse | Out | Out_reverse | Atop | Atop_reverse | Xor | Add | Saturate | Disjoint_clear | Disjoint_src | Disjoint_dst | Disjoint_over | Disjoint_over_reverse | Disjoint_in | Disjoint_in_reverse | Disjoint_out | Disjoint_out_reverse | Disjoint_atop | Disjoint_atop_reverse | Disjoint_xor | Conjoint_clear | Conjoint_src | Conjoint_dst | Conjoint_over | Conjoint_over_reverse | Conjoint_in | Conjoint_in_reverse | Conjoint_out | Conjoint_out_reverse | Conjoint_atop | Conjoint_atop_reverse | Conjoint_xor | Multiply | Screen | Overlay | Darken | Lighten | Color_dodge | Color_burn | Hard_light | Soft_light | Difference | Exclusion | Hsl_hue | Hsl_saturation | Hsl_color | Hsl_luminosity;;
 type poly_edge_enum = Sharp | Smooth;;
 type poly_mode_enum = Precise | Imprecise;;
-
+type cp_mask = [ `Repeat | `Alpha_map | `Alpha_x_origin | `Alpha_y_origin | `Clip_x_origin | `Clip_y_origin | `Clip_mask | `Graphics_exposure | `Subwindow_mode | `Poly_edge | `Poly_mode | `Dither | `Component_alpha ] list;;
 type sub_pixel_enum = Unknown | Horizontal_rgb | Horizontal_bgr | Vertical_rgb | Vertical_bgr | None;;
 type repeat_enum = None | Normal | Pad | Reflect;;
 type glyph = int32;;
@@ -424,13 +425,13 @@ type save_set_target_enum = Nearest | Root;;
 type save_set_mapping_enum = Map | Unmap;;
 let change_save_set ~(mode : save_set_mode_enum) ~(target : save_set_target_enum) ~(map : save_set_mapping_enum) ~(window : Xproto.window) () : unit Lwt.t = failwith "not implemented";;
 type selection_event_enum = Set_selection_owner | Selection_window_destroy | Selection_client_close;;
-
+type selection_event_mask_mask = [ `Set_selection_owner | `Selection_window_destroy | `Selection_client_close ] list;;
 type selection_notify_event = { subtype : selection_event_enum; window : Xproto.window; owner : Xproto.window; selection : Xproto.atom; timestamp : Xproto.timestamp; selection_timestamp : Xproto.timestamp; };;
-let select_selection_input ~(window : Xproto.window) ~(selection : Xproto.atom) ~(event_mask : int32) () : unit Lwt.t = failwith "not implemented";;
+let select_selection_input ~(window : Xproto.window) ~(selection : Xproto.atom) ~(event_mask : selection_event_mask_mask) () : unit Lwt.t = failwith "not implemented";;
 type cursor_notify_enum = Display_cursor;;
-
+type cursor_notify_mask_mask = [ `Display_cursor ] list;;
 type cursor_notify_event = { subtype : cursor_notify_enum; window : Xproto.window; cursor_serial : int32; timestamp : Xproto.timestamp; name : Xproto.atom; };;
-let select_cursor_input ~(window : Xproto.window) ~(event_mask : int32) () : unit Lwt.t = failwith "not implemented";;
+let select_cursor_input ~(window : Xproto.window) ~(event_mask : cursor_notify_mask_mask) () : unit Lwt.t = failwith "not implemented";;
 type get_cursor_image_reply = { x : int; y : int; width : int; height : int; xhot : int; yhot : int; cursor_serial : int32; cursor_image : int32 list; };;
 let get_cursor_image () : get_cursor_image_reply Lwt.t = failwith "not implemented";;
 type region = xid;;
@@ -466,8 +467,8 @@ let expand_region ~(source : region) ~(destination : region) ~(left : int) ~(rig
 let hide_cursor ~(window : Xproto.window) () : unit Lwt.t = failwith "not implemented";;
 let show_cursor ~(window : Xproto.window) () : unit Lwt.t = failwith "not implemented";;
 type barrier = xid;;
-
-let create_pointer_barrier ~(barrier : barrier) ~(window : Xproto.window) ~(x1 : int) ~(y1 : int) ~(x2 : int) ~(y2 : int) ~(directions : int32) ~(devices : int list) () : unit Lwt.t = failwith "not implemented";;
+type barrier_directions_mask = [ `Positive_x | `Positive_y | `Negative_x | `Negative_y ] list;;
+let create_pointer_barrier ~(barrier : barrier) ~(window : Xproto.window) ~(x1 : int) ~(y1 : int) ~(x2 : int) ~(y2 : int) ~(directions : barrier_directions_mask) ~(devices : int list) () : unit Lwt.t = failwith "not implemented";;
 let delete_pointer_barrier ~(barrier : barrier) () : unit Lwt.t = failwith "not implemented";;
 end
 module[@warning "-27"] Composite = struct
@@ -609,7 +610,7 @@ let query_version ~(major_version : int32) ~(minor_version : int32) () : query_v
 let wait_gl ~(context_tag : context_tag) () : unit Lwt.t = failwith "not implemented";;
 let wait_x ~(context_tag : context_tag) () : unit Lwt.t = failwith "not implemented";;
 let copy_context ~(src : context) ~(dest : context) ~(mask : int32) ~(src_context_tag : context_tag) () : unit Lwt.t = failwith "not implemented";;
-
+type gc_mask = ([ `Gl_current_bit | `Gl_point_bit | `Gl_line_bit | `Gl_polygon_bit | `Gl_polygon_stipple_bit | `Gl_pixel_mode_bit | `Gl_lighting_bit | `Gl_fog_bit | `Gl_depth_buffer_bit | `Gl_accum_buffer_bit | `Gl_stencil_buffer_bit | `Gl_viewport_bit | `Gl_transform_bit | `Gl_enable_bit | `Gl_color_buffer_bit | `Gl_hint_bit | `Gl_eval_bit | `Gl_list_bit | `Gl_texture_bit | `Gl_scissor_bit ], [ `Gl_all_attrib_bits ]) mask;;
 let swap_buffers ~(context_tag : context_tag) ~(drawable : drawable) () : unit Lwt.t = failwith "not implemented";;
 let use_x_font ~(context_tag : context_tag) ~(font : Xproto.font) ~(first : int32) ~(count : int32) ~(list_base : int32) () : unit Lwt.t = failwith "not implemented";;
 let create_glx_pixmap ~(screen : int32) ~(visual : Xproto.visualid) ~(pixmap : Xproto.pixmap) ~(glx_pixmap : pixmap) () : unit Lwt.t = failwith "not implemented";;
@@ -777,23 +778,23 @@ type bad_output_error = unit;;
 type bad_crtc_error = unit;;
 type bad_mode_error = unit;;
 type bad_provider_error = unit;;
-
+type rotation_mask = [ `Rotate_0 | `Rotate_90 | `Rotate_180 | `Rotate_270 | `Reflect_x | `Reflect_y ] list;;
 type screen_size = { width : int; height : int; mwidth : int; mheight : int; };;
 type refresh_rates = { rates : int list; };;
 type query_version_reply = { major_version : int32; minor_version : int32; };;
 let query_version ~(major_version : int32) ~(minor_version : int32) () : query_version_reply Lwt.t = failwith "not implemented";;
 type set_config_enum = Success | Invalid_config_time | Invalid_time | Failed;;
 type set_screen_config_reply = { status : set_config_enum; new_timestamp : Xproto.timestamp; config_timestamp : Xproto.timestamp; root : Xproto.window; subpixel_order : Render.sub_pixel_enum; };;
-let set_screen_config ~(window : Xproto.window) ~(timestamp : Xproto.timestamp) ~(config_timestamp : Xproto.timestamp) ~(size_id : int) ~(rotation : int) ~(rate : int) () : set_screen_config_reply Lwt.t = failwith "not implemented";;
-
-let select_input ~(window : Xproto.window) ~(enable : int) () : unit Lwt.t = failwith "not implemented";;
-type get_screen_info_reply = { rotations : int; root : Xproto.window; timestamp : Xproto.timestamp; config_timestamp : Xproto.timestamp; size_id : int; rotation : int; rate : int; n_info : int; sizes : screen_size list; rates : refresh_rates list; };;
+let set_screen_config ~(window : Xproto.window) ~(timestamp : Xproto.timestamp) ~(config_timestamp : Xproto.timestamp) ~(size_id : int) ~(rotation : rotation_mask) ~(rate : int) () : set_screen_config_reply Lwt.t = failwith "not implemented";;
+type notify_mask_mask = [ `Screen_change | `Crtc_change | `Output_change | `Output_property | `Provider_change | `Provider_property | `Resource_change | `Lease ] list;;
+let select_input ~(window : Xproto.window) ~(enable : notify_mask_mask) () : unit Lwt.t = failwith "not implemented";;
+type get_screen_info_reply = { rotations : rotation_mask; root : Xproto.window; timestamp : Xproto.timestamp; config_timestamp : Xproto.timestamp; size_id : int; rotation : rotation_mask; rate : int; n_info : int; sizes : screen_size list; rates : refresh_rates list; };;
 let get_screen_info ~(window : Xproto.window) () : get_screen_info_reply Lwt.t = failwith "not implemented";;
 type get_screen_size_range_reply = { min_width : int; min_height : int; max_width : int; max_height : int; };;
 let get_screen_size_range ~(window : Xproto.window) () : get_screen_size_range_reply Lwt.t = failwith "not implemented";;
 let set_screen_size ~(window : Xproto.window) ~(width : int) ~(height : int) ~(mm_width : int32) ~(mm_height : int32) () : unit Lwt.t = failwith "not implemented";;
-
-type mode_info = { id : int32; width : int; height : int; dot_clock : int32; hsync_start : int; hsync_end : int; htotal : int; hskew : int; vsync_start : int; vsync_end : int; vtotal : int; name_len : int; mode_flags : int32; };;
+type mode_flag_mask = [ `Hsync_positive | `Hsync_negative | `Vsync_positive | `Vsync_negative | `Interlace | `Double_scan | `Csync | `Csync_positive | `Csync_negative | `Hskew_present | `Bcast | `Pixel_multiplex | `Double_clock | `Halve_clock ] list;;
+type mode_info = { id : int32; width : int; height : int; dot_clock : int32; hsync_start : int; hsync_end : int; htotal : int; hskew : int; vsync_start : int; vsync_end : int; vtotal : int; name_len : int; mode_flags : mode_flag_mask; };;
 type get_screen_resources_reply = { timestamp : Xproto.timestamp; config_timestamp : Xproto.timestamp; crtcs : crtc list; outputs : output list; modes : mode_info list; names : char list; };;
 let get_screen_resources ~(window : Xproto.window) () : get_screen_resources_reply Lwt.t = failwith "not implemented";;
 type connection_enum = Connected | Disconnected | Unknown;;
@@ -813,10 +814,10 @@ let create_mode ~(window : Xproto.window) ~(mode_info : mode_info) ~(name : char
 let destroy_mode ~(mode : mode) () : unit Lwt.t = failwith "not implemented";;
 let add_output_mode ~(output : output) ~(mode : mode) () : unit Lwt.t = failwith "not implemented";;
 let delete_output_mode ~(output : output) ~(mode : mode) () : unit Lwt.t = failwith "not implemented";;
-type get_crtc_info_reply = { status : set_config_enum; timestamp : Xproto.timestamp; x : int; y : int; width : int; height : int; mode : mode; rotation : int; rotations : int; outputs : output list; possible : output list; };;
+type get_crtc_info_reply = { status : set_config_enum; timestamp : Xproto.timestamp; x : int; y : int; width : int; height : int; mode : mode; rotation : rotation_mask; rotations : rotation_mask; outputs : output list; possible : output list; };;
 let get_crtc_info ~(crtc : crtc) ~(config_timestamp : Xproto.timestamp) () : get_crtc_info_reply Lwt.t = failwith "not implemented";;
 type set_crtc_config_reply = { status : set_config_enum; timestamp : Xproto.timestamp; };;
-let set_crtc_config ~(crtc : crtc) ~(timestamp : Xproto.timestamp) ~(config_timestamp : Xproto.timestamp) ~(x : int) ~(y : int) ~(mode : mode) ~(rotation : int) ~(outputs : output list) () : set_crtc_config_reply Lwt.t = failwith "not implemented";;
+let set_crtc_config ~(crtc : crtc) ~(timestamp : Xproto.timestamp) ~(config_timestamp : Xproto.timestamp) ~(x : int) ~(y : int) ~(mode : mode) ~(rotation : rotation_mask) ~(outputs : output list) () : set_crtc_config_reply Lwt.t = failwith "not implemented";;
 type get_crtc_gamma_size_reply = { size : int; };;
 let get_crtc_gamma_size ~(crtc : crtc) () : get_crtc_gamma_size_reply Lwt.t = failwith "not implemented";;
 type get_crtc_gamma_reply = { red : int list; green : int list; blue : int list; };;
@@ -824,7 +825,7 @@ let get_crtc_gamma ~(crtc : crtc) () : get_crtc_gamma_reply Lwt.t = failwith "no
 let set_crtc_gamma ~(crtc : crtc) ~(red : int list) ~(green : int list) ~(blue : int list) () : unit Lwt.t = failwith "not implemented";;
 type get_screen_resources_current_reply = { timestamp : Xproto.timestamp; config_timestamp : Xproto.timestamp; crtcs : crtc list; outputs : output list; modes : mode_info list; names : char list; };;
 let get_screen_resources_current ~(window : Xproto.window) () : get_screen_resources_current_reply Lwt.t = failwith "not implemented";;
-
+type transform_mask = [ `Unit | `Scale_up | `Scale_down | `Projective ] list;;
 let set_crtc_transform ~(crtc : crtc) ~(transform : Render.transform) ~(filter_name : char list) ~(filter_params : Render.fixed list) () : unit Lwt.t = failwith "not implemented";;
 type get_crtc_transform_reply = { pending_transform : Render.transform; has_transforms : bool; current_transform : Render.transform; pending_filter_name : char list; pending_params : Render.fixed list; current_filter_name : char list; current_params : Render.fixed list; };;
 let get_crtc_transform ~(crtc : crtc) () : get_crtc_transform_reply Lwt.t = failwith "not implemented";;
@@ -837,8 +838,8 @@ type get_output_primary_reply = { output : output; };;
 let get_output_primary ~(window : Xproto.window) () : get_output_primary_reply Lwt.t = failwith "not implemented";;
 type get_providers_reply = { timestamp : Xproto.timestamp; providers : provider list; };;
 let get_providers ~(window : Xproto.window) () : get_providers_reply Lwt.t = failwith "not implemented";;
-
-type get_provider_info_reply = { status : int; timestamp : Xproto.timestamp; capabilities : int32; crtcs : crtc list; outputs : output list; associated_providers : provider list; associated_capability : int32 list; name : char list; };;
+type provider_capability_mask = [ `Source_output | `Sink_output | `Source_offload | `Sink_offload ] list;;
+type get_provider_info_reply = { status : int; timestamp : Xproto.timestamp; capabilities : provider_capability_mask; crtcs : crtc list; outputs : output list; associated_providers : provider list; associated_capability : int32 list; name : char list; };;
 let get_provider_info ~(provider : provider) ~(config_timestamp : Xproto.timestamp) () : get_provider_info_reply Lwt.t = failwith "not implemented";;
 let set_provider_offload_sink ~(provider : provider) ~(sink_provider : provider) ~(config_timestamp : Xproto.timestamp) () : unit Lwt.t = failwith "not implemented";;
 let set_provider_output_source ~(provider : provider) ~(source_provider : provider) ~(config_timestamp : Xproto.timestamp) () : unit Lwt.t = failwith "not implemented";;
@@ -851,10 +852,10 @@ let change_provider_property ~(provider : provider) ~(property : Xproto.atom) ~(
 let delete_provider_property ~(provider : provider) ~(property : Xproto.atom) () : unit Lwt.t = failwith "not implemented";;
 type get_provider_property_reply = { format : int; type_ : Xproto.atom; bytes_after : int32; num_items : int32; data : char list; };;
 let get_provider_property ~(provider : provider) ~(property : Xproto.atom) ~(type_ : Xproto.atom) ~(long_offset : int32) ~(long_length : int32) ~(delete : bool) ~(pending : bool) () : get_provider_property_reply Lwt.t = failwith "not implemented";;
-type screen_change_notify_event = { rotation : int; timestamp : Xproto.timestamp; config_timestamp : Xproto.timestamp; root : Xproto.window; request_window : Xproto.window; size_id : int; subpixel_order : Render.sub_pixel_enum; width : int; height : int; mwidth : int; mheight : int; };;
+type screen_change_notify_event = { rotation : rotation_mask; timestamp : Xproto.timestamp; config_timestamp : Xproto.timestamp; root : Xproto.window; request_window : Xproto.window; size_id : int; subpixel_order : Render.sub_pixel_enum; width : int; height : int; mwidth : int; mheight : int; };;
 type notify_enum = Crtc_change | Output_change | Output_property | Provider_change | Provider_property | Resource_change | Lease;;
-type crtc_change = { timestamp : Xproto.timestamp; window : Xproto.window; crtc : crtc; mode : mode; rotation : int; x : int; y : int; width : int; height : int; };;
-type output_change = { timestamp : Xproto.timestamp; config_timestamp : Xproto.timestamp; window : Xproto.window; output : output; crtc : crtc; mode : mode; rotation : int; connection : connection_enum; subpixel_order : Render.sub_pixel_enum; };;
+type crtc_change = { timestamp : Xproto.timestamp; window : Xproto.window; crtc : crtc; mode : mode; rotation : rotation_mask; x : int; y : int; width : int; height : int; };;
+type output_change = { timestamp : Xproto.timestamp; config_timestamp : Xproto.timestamp; window : Xproto.window; output : output; crtc : crtc; mode : mode; rotation : rotation_mask; connection : connection_enum; subpixel_order : Render.sub_pixel_enum; };;
 type output_property = { window : Xproto.window; output : output; atom : Xproto.atom; timestamp : Xproto.timestamp; status : Xproto.property_enum; };;
 type provider_change = { timestamp : Xproto.timestamp; window : Xproto.window; provider : provider; };;
 type provider_property = { window : Xproto.window; provider : provider; atom : Xproto.atom; timestamp : Xproto.timestamp; state : int; };;
@@ -878,7 +879,7 @@ type counter = xid;;
 type fence = xid;;
 type testtype_enum = Positive_transition | Negative_transition | Positive_comparison | Negative_comparison;;
 type valuetype_enum = Absolute | Relative;;
-
+type ca_mask = [ `Counter | `Value_type | `Value | `Test_type | `Delta | `Events ] list;;
 type int64 = { hi : int32; lo : int32; };;
 type systemcounter = { counter : counter; resolution : int64; name : char list; };;
 type trigger = { counter : counter; wait_type : valuetype_enum; wait_value : int64; test_type : testtype_enum; };;
@@ -916,9 +917,9 @@ type alarm_notify_event = { kind : int; alarm : alarm; counter_value : int64; al
 end
 module[@warning "-27"] Present = struct
 type event_enum = Configure_notify | Complete_notify | Idle_notify | Redirect_notify;;
-
-
-
+type event_mask_mask = ([ `Configure_notify | `Complete_notify | `Idle_notify | `Redirect_notify ], [ `No_event ]) mask;;
+type option_mask = ([ `Async | `Copy | `Ust | `Suboptimal ], [ `None ]) mask;;
+type capability_mask = ([ `Async | `Fence | `Ust ], [ `None ]) mask;;
 type complete_kind_enum = Pixmap | Notify_msc;;
 type complete_mode_enum = Copy | Flip | Skip | Suboptimal_copy;;
 type notify = { window : Xproto.window; serial : int32; };;
@@ -927,7 +928,7 @@ let query_version ~(major_version : int32) ~(minor_version : int32) () : query_v
 let pixmap ~(window : Xproto.window) ~(pixmap : Xproto.pixmap) ~(serial : int32) ~(valid : Xfixes.region) ~(update : Xfixes.region) ~(x_off : int) ~(y_off : int) ~(target_crtc : Randr.crtc) ~(wait_fence : Sync.fence) ~(idle_fence : Sync.fence) ~(options : int32) ~(target_msc : int64) ~(divisor : int64) ~(remainder : int64) ~(notifies : notify list) () : unit Lwt.t = failwith "not implemented";;
 let notify_msc ~(window : Xproto.window) ~(serial : int32) ~(target_msc : int64) ~(divisor : int64) ~(remainder : int64) () : unit Lwt.t = failwith "not implemented";;
 type event = xid;;
-let select_input ~(eid : event) ~(window : Xproto.window) ~(event_mask : int32) () : unit Lwt.t = failwith "not implemented";;
+let select_input ~(eid : event) ~(window : Xproto.window) ~(event_mask : event_mask_mask) () : unit Lwt.t = failwith "not implemented";;
 type query_capabilities_reply = { capabilities : int32; };;
 let query_capabilities ~(target : int32) () : query_capabilities_reply Lwt.t = failwith "not implemented";;
 type generic_event = { extension : int; length : int32; evtype : int; event : event; };;
@@ -943,7 +944,7 @@ type range16 = { first : int; last : int; };;
 type ext_range = { major : range8; minor : range16; };;
 type range = { core_requests : range8; core_replies : range8; ext_requests : ext_range; ext_replies : ext_range; delivered_events : range8; device_events : range8; errors : range8; client_started : bool; client_died : bool; };;
 type element_header = int;;
-
+type h_type_mask = [ `From_server_time | `From_client_time | `From_client_sequence ] list;;
 type client_spec = int32;;
 type cs_enum = Current_clients | Future_clients | All_clients;;
 type client_info = { client_resource : client_spec; ranges : range list; };;
@@ -963,8 +964,8 @@ end
 module[@warning "-27"] Res = struct
 type client = { resource_base : int32; resource_mask : int32; };;
 type type_ = { resource_type : Xproto.atom; count : int32; };;
-
-type client_id_spec = { client : int32; mask : int32; };;
+type client_id_mask_mask = [ `Client_xid | `Local_client_pid ] list;;
+type client_id_spec = { client : int32; mask : client_id_mask_mask; };;
 type client_id_value = { spec : client_id_spec; length : int32; value : int32 list; };;
 type resource_id_spec = { resource : int32; type_ : int32; };;
 type resource_size_spec = { spec : resource_id_spec; bytes : int32; ref_count : int32; use_count : int32; };;
@@ -984,14 +985,14 @@ let query_resource_bytes ~(client : int32) ~(specs : resource_id_spec list) () :
 end
 module[@warning "-27"] Screensaver = struct
 type kind_enum = Blanked | Internal | External;;
-
+type event_mask = [ `Notify_mask | `Cycle_mask ] list;;
 type state_enum = Off | On | Cycle | Disabled;;
 type query_version_reply = { server_major_version : int; server_minor_version : int; };;
 let query_version ~(client_major_version : int) ~(client_minor_version : int) () : query_version_reply Lwt.t = failwith "not implemented";;
 type query_info_reply = { state : int; saver_window : Xproto.window; ms_until_server : int32; ms_since_user_input : int32; event_mask : int32; kind : kind_enum; };;
 let query_info ~(drawable : Xproto.drawable) () : query_info_reply Lwt.t = failwith "not implemented";;
-let select_input ~(drawable : Xproto.drawable) ~(event_mask : int32) () : unit Lwt.t = failwith "not implemented";;
-let set_attributes ~(drawable : Xproto.drawable) ~(x : int) ~(y : int) ~(width : int) ~(height : int) ~(border_width : int) ~(class_ : Xproto.window_class_enum) ~(depth : int) ~(visual : Xproto.visualid) ?(background_pixmap : Xproto.pixmap option) ?(background_pixel : int32 option) ?(border_pixmap : Xproto.pixmap option) ?(border_pixel : int32 option) ?(bit_gravity : Xproto.gravity_enum option) ?(win_gravity : Xproto.gravity_enum option) ?(backing_store : Xproto.backing_store_enum option) ?(backing_planes : int32 option) ?(backing_pixel : int32 option) ?(override_redirect : Xproto.bool32 option) ?(save_under : Xproto.bool32 option) ?(event_mask : int32 option) ?(do_not_propogate_mask : int32 option) ?(colormap : Xproto.colormap option) ?(cursor : Xproto.cursor option) () : unit Lwt.t = failwith "not implemented";;
+let select_input ~(drawable : Xproto.drawable) ~(event_mask : event_mask) () : unit Lwt.t = failwith "not implemented";;
+let set_attributes ~(drawable : Xproto.drawable) ~(x : int) ~(y : int) ~(width : int) ~(height : int) ~(border_width : int) ~(class_ : Xproto.window_class_enum) ~(depth : int) ~(visual : Xproto.visualid) ?(background_pixmap : Xproto.pixmap option) ?(background_pixel : int32 option) ?(border_pixmap : Xproto.pixmap option) ?(border_pixel : int32 option) ?(bit_gravity : Xproto.gravity_enum option) ?(win_gravity : Xproto.gravity_enum option) ?(backing_store : Xproto.backing_store_enum option) ?(backing_planes : int32 option) ?(backing_pixel : int32 option) ?(override_redirect : Xproto.bool32 option) ?(save_under : Xproto.bool32 option) ?(event_mask : Xproto.event_mask_mask option) ?(do_not_propogate_mask : Xproto.event_mask_mask option) ?(colormap : Xproto.colormap option) ?(cursor : Xproto.cursor option) () : unit Lwt.t = failwith "not implemented";;
 let unset_attributes ~(drawable : Xproto.drawable) () : unit Lwt.t = failwith "not implemented";;
 let suspend ~(suspend : int32) () : unit Lwt.t = failwith "not implemented";;
 type notify_event = { state : state_enum; time : Xproto.timestamp; root : Xproto.window; window : Xproto.window; kind : kind_enum; forced : bool; };;
@@ -1047,30 +1048,30 @@ end
 module[@warning "-27"] Xf86vidmode = struct
 type syncrange = int32;;
 type dotclock = int32;;
-
-
-
-type mode_info = { dotclock : dotclock; hdisplay : int; hsyncstart : int; hsyncend : int; htotal : int; hskew : int32; vdisplay : int; vsyncstart : int; vsyncend : int; vtotal : int; flags : int32; privsize : int32; };;
+type mode_flag_mask = [ `Positive_h_sync | `Negative_h_sync | `Positive_v_sync | `Negative_v_sync | `Interlace | `Composite_sync | `Positive_c_sync | `Negative_c_sync | `H_skew | `Broadcast | `Pixmux | `Double_clock | `Half_clock ] list;;
+type clock_flag_mask = [ `Programable ] list;;
+type permission_mask = [ `Read | `Write ] list;;
+type mode_info = { dotclock : dotclock; hdisplay : int; hsyncstart : int; hsyncend : int; htotal : int; hskew : int32; vdisplay : int; vsyncstart : int; vsyncend : int; vtotal : int; flags : mode_flag_mask; privsize : int32; };;
 type query_version_reply = { major_version : int; minor_version : int; };;
 let query_version () : query_version_reply Lwt.t = failwith "not implemented";;
-type get_mode_line_reply = { dotclock : dotclock; hdisplay : int; hsyncstart : int; hsyncend : int; htotal : int; hskew : int; vdisplay : int; vsyncstart : int; vsyncend : int; vtotal : int; flags : int32; private_ : int list; };;
+type get_mode_line_reply = { dotclock : dotclock; hdisplay : int; hsyncstart : int; hsyncend : int; htotal : int; hskew : int; vdisplay : int; vsyncstart : int; vsyncend : int; vtotal : int; flags : mode_flag_mask; private_ : int list; };;
 let get_mode_line ~(screen : int) () : get_mode_line_reply Lwt.t = failwith "not implemented";;
-let mod_mode_line ~(screen : int32) ~(hdisplay : int) ~(hsyncstart : int) ~(hsyncend : int) ~(htotal : int) ~(hskew : int) ~(vdisplay : int) ~(vsyncstart : int) ~(vsyncend : int) ~(vtotal : int) ~(flags : int32) ~(private_ : int list) () : unit Lwt.t = failwith "not implemented";;
+let mod_mode_line ~(screen : int32) ~(hdisplay : int) ~(hsyncstart : int) ~(hsyncend : int) ~(htotal : int) ~(hskew : int) ~(vdisplay : int) ~(vsyncstart : int) ~(vsyncend : int) ~(vtotal : int) ~(flags : mode_flag_mask) ~(private_ : int list) () : unit Lwt.t = failwith "not implemented";;
 let switch_mode ~(screen : int) ~(zoom : int) () : unit Lwt.t = failwith "not implemented";;
 type get_monitor_reply = { hsync : syncrange list; vsync : syncrange list; vendor : char list; alignment_pad : char list; model : char list; };;
 let get_monitor ~(screen : int) () : get_monitor_reply Lwt.t = failwith "not implemented";;
 let lock_mode_switch ~(screen : int) ~(lock : int) () : unit Lwt.t = failwith "not implemented";;
 type get_all_mode_lines_reply = { modeinfo : mode_info list; };;
 let get_all_mode_lines ~(screen : int) () : get_all_mode_lines_reply Lwt.t = failwith "not implemented";;
-let add_mode_line ~(screen : int32) ~(dotclock : dotclock) ~(hdisplay : int) ~(hsyncstart : int) ~(hsyncend : int) ~(htotal : int) ~(hskew : int) ~(vdisplay : int) ~(vsyncstart : int) ~(vsyncend : int) ~(vtotal : int) ~(flags : int32) ~(after_dotclock : dotclock) ~(after_hdisplay : int) ~(after_hsyncstart : int) ~(after_hsyncend : int) ~(after_htotal : int) ~(after_hskew : int) ~(after_vdisplay : int) ~(after_vsyncstart : int) ~(after_vsyncend : int) ~(after_vtotal : int) ~(after_flags : int32) ~(private_ : int list) () : unit Lwt.t = failwith "not implemented";;
-let delete_mode_line ~(screen : int32) ~(dotclock : dotclock) ~(hdisplay : int) ~(hsyncstart : int) ~(hsyncend : int) ~(htotal : int) ~(hskew : int) ~(vdisplay : int) ~(vsyncstart : int) ~(vsyncend : int) ~(vtotal : int) ~(flags : int32) ~(private_ : int list) () : unit Lwt.t = failwith "not implemented";;
+let add_mode_line ~(screen : int32) ~(dotclock : dotclock) ~(hdisplay : int) ~(hsyncstart : int) ~(hsyncend : int) ~(htotal : int) ~(hskew : int) ~(vdisplay : int) ~(vsyncstart : int) ~(vsyncend : int) ~(vtotal : int) ~(flags : mode_flag_mask) ~(after_dotclock : dotclock) ~(after_hdisplay : int) ~(after_hsyncstart : int) ~(after_hsyncend : int) ~(after_htotal : int) ~(after_hskew : int) ~(after_vdisplay : int) ~(after_vsyncstart : int) ~(after_vsyncend : int) ~(after_vtotal : int) ~(after_flags : mode_flag_mask) ~(private_ : int list) () : unit Lwt.t = failwith "not implemented";;
+let delete_mode_line ~(screen : int32) ~(dotclock : dotclock) ~(hdisplay : int) ~(hsyncstart : int) ~(hsyncend : int) ~(htotal : int) ~(hskew : int) ~(vdisplay : int) ~(vsyncstart : int) ~(vsyncend : int) ~(vtotal : int) ~(flags : mode_flag_mask) ~(private_ : int list) () : unit Lwt.t = failwith "not implemented";;
 type validate_mode_line_reply = { status : int32; };;
-let validate_mode_line ~(screen : int32) ~(dotclock : dotclock) ~(hdisplay : int) ~(hsyncstart : int) ~(hsyncend : int) ~(htotal : int) ~(hskew : int) ~(vdisplay : int) ~(vsyncstart : int) ~(vsyncend : int) ~(vtotal : int) ~(flags : int32) ~(private_ : int list) () : validate_mode_line_reply Lwt.t = failwith "not implemented";;
-let switch_to_mode ~(screen : int32) ~(dotclock : dotclock) ~(hdisplay : int) ~(hsyncstart : int) ~(hsyncend : int) ~(htotal : int) ~(hskew : int) ~(vdisplay : int) ~(vsyncstart : int) ~(vsyncend : int) ~(vtotal : int) ~(flags : int32) ~(private_ : int list) () : unit Lwt.t = failwith "not implemented";;
+let validate_mode_line ~(screen : int32) ~(dotclock : dotclock) ~(hdisplay : int) ~(hsyncstart : int) ~(hsyncend : int) ~(htotal : int) ~(hskew : int) ~(vdisplay : int) ~(vsyncstart : int) ~(vsyncend : int) ~(vtotal : int) ~(flags : mode_flag_mask) ~(private_ : int list) () : validate_mode_line_reply Lwt.t = failwith "not implemented";;
+let switch_to_mode ~(screen : int32) ~(dotclock : dotclock) ~(hdisplay : int) ~(hsyncstart : int) ~(hsyncend : int) ~(htotal : int) ~(hskew : int) ~(vdisplay : int) ~(vsyncstart : int) ~(vsyncend : int) ~(vtotal : int) ~(flags : mode_flag_mask) ~(private_ : int list) () : unit Lwt.t = failwith "not implemented";;
 type get_view_port_reply = { x : int32; y : int32; };;
 let get_view_port ~(screen : int) () : get_view_port_reply Lwt.t = failwith "not implemented";;
 let set_view_port ~(screen : int) ~(x : int32) ~(y : int32) () : unit Lwt.t = failwith "not implemented";;
-type get_dot_clocks_reply = { flags : int32; clocks : int32; maxclocks : int32; clock : int32 list; };;
+type get_dot_clocks_reply = { flags : clock_flag_mask; clocks : int32; maxclocks : int32; clock : int32 list; };;
 let get_dot_clocks ~(screen : int) () : get_dot_clocks_reply Lwt.t = failwith "not implemented";;
 let set_client_version ~(major : int) ~(minor : int) () : unit Lwt.t = failwith "not implemented";;
 let set_gamma ~(screen : int) ~(red : int32) ~(green : int32) ~(blue : int32) () : unit Lwt.t = failwith "not implemented";;
@@ -1081,7 +1082,7 @@ let get_gamma_ramp ~(screen : int) ~(size : int) () : get_gamma_ramp_reply Lwt.t
 let set_gamma_ramp ~(screen : int) ~(size : int) ~(red : int list) ~(green : int list) ~(blue : int list) () : unit Lwt.t = failwith "not implemented";;
 type get_gamma_ramp_size_reply = { size : int; };;
 let get_gamma_ramp_size ~(screen : int) () : get_gamma_ramp_size_reply Lwt.t = failwith "not implemented";;
-type get_permissions_reply = { permissions : int32; };;
+type get_permissions_reply = { permissions : permission_mask; };;
 let get_permissions ~(screen : int) () : get_permissions_reply Lwt.t = failwith "not implemented";;
 type bad_clock_error = unit;;
 type bad_h_timings_error = unit;;
@@ -1152,10 +1153,10 @@ type grab_device_reply = { xi_reply_type : int; status : Xproto.grab_status_enum
 let grab_device ~(grab_window : Xproto.window) ~(time : Xproto.timestamp) ~(this_device_mode : Xproto.grab_mode_enum) ~(other_device_mode : Xproto.grab_mode_enum) ~(owner_events : bool) ~(device_id : int) ~(classes : event_class list) () : grab_device_reply Lwt.t = failwith "not implemented";;
 let ungrab_device ~(time : Xproto.timestamp) ~(device_id : int) () : unit Lwt.t = failwith "not implemented";;
 type modifier_device_enum = Use_x_keyboard;;
-let grab_device_key ~(grab_window : Xproto.window) ~(modifiers : int) ~(modifier_device : int) ~(grabbed_device : int) ~(key : int) ~(this_device_mode : Xproto.grab_mode_enum) ~(other_device_mode : Xproto.grab_mode_enum) ~(owner_events : bool) ~(classes : event_class list) () : unit Lwt.t = failwith "not implemented";;
-let ungrab_device_key ~(grab_window : Xproto.window) ~(modifiers : int) ~(modifier_device : int) ~(key : int) ~(grabbed_device : int) () : unit Lwt.t = failwith "not implemented";;
-let grab_device_button ~(grab_window : Xproto.window) ~(grabbed_device : int) ~(modifier_device : int) ~(modifiers : int) ~(this_device_mode : Xproto.grab_mode_enum) ~(other_device_mode : Xproto.grab_mode_enum) ~(button : int) ~(owner_events : bool) ~(classes : event_class list) () : unit Lwt.t = failwith "not implemented";;
-let ungrab_device_button ~(grab_window : Xproto.window) ~(modifiers : int) ~(modifier_device : int) ~(button : int) ~(grabbed_device : int) () : unit Lwt.t = failwith "not implemented";;
+let grab_device_key ~(grab_window : Xproto.window) ~(modifiers : Xproto.mod_mask_mask) ~(modifier_device : int) ~(grabbed_device : int) ~(key : int) ~(this_device_mode : Xproto.grab_mode_enum) ~(other_device_mode : Xproto.grab_mode_enum) ~(owner_events : bool) ~(classes : event_class list) () : unit Lwt.t = failwith "not implemented";;
+let ungrab_device_key ~(grab_window : Xproto.window) ~(modifiers : Xproto.mod_mask_mask) ~(modifier_device : int) ~(key : int) ~(grabbed_device : int) () : unit Lwt.t = failwith "not implemented";;
+let grab_device_button ~(grab_window : Xproto.window) ~(grabbed_device : int) ~(modifier_device : int) ~(modifiers : Xproto.mod_mask_mask) ~(this_device_mode : Xproto.grab_mode_enum) ~(other_device_mode : Xproto.grab_mode_enum) ~(button : int) ~(owner_events : bool) ~(classes : event_class list) () : unit Lwt.t = failwith "not implemented";;
+let ungrab_device_button ~(grab_window : Xproto.window) ~(modifiers : Xproto.mod_mask_mask) ~(modifier_device : int) ~(button : int) ~(grabbed_device : int) () : unit Lwt.t = failwith "not implemented";;
 type device_input_mode_enum = Async_this_device | Sync_this_device | Replay_this_device | Async_other_devices | Async_all | Sync_all;;
 let allow_device_events ~(time : Xproto.timestamp) ~(mode : device_input_mode_enum) ~(device_id : int) () : unit Lwt.t = failwith "not implemented";;
 type get_device_focus_reply = { xi_reply_type : int; focus : Xproto.window; time : Xproto.timestamp; revert_to : Xproto.input_focus_enum; };;
@@ -1179,8 +1180,8 @@ type string_feedback_ctl = { class_id : feedback_class_enum; feedback_id : int; 
 type bell_feedback_ctl = { class_id : feedback_class_enum; feedback_id : int; len : int; percent : int; pitch : int; duration : int; };;
 type led_feedback_ctl = { class_id : feedback_class_enum; feedback_id : int; len : int; led_mask : int32; led_values : int32; };;
 type feedback_ctl = { feedback_id : int; len : int; data : feedback_class_variant; };;
-
-let change_feedback_control ~(mask : int32) ~(device_id : int) ~(feedback_id : int) ~(feedback : feedback_ctl) () : unit Lwt.t = failwith "not implemented";;
+type change_feedback_control_mask_mask = [ `Key_click_percent | `Percent | `Pitch | `Duration | `Led | `Led_mode | `Key | `Auto_repeat_mode | `String | `Integer | `Accel_num | `Accel_denom | `Threshold ] list;;
+let change_feedback_control ~(mask : change_feedback_control_mask_mask) ~(device_id : int) ~(feedback_id : int) ~(feedback : feedback_ctl) () : unit Lwt.t = failwith "not implemented";;
 type get_device_key_mapping_reply = { xi_reply_type : int; keysyms_per_keycode : int; keysyms : Xproto.keysym list; };;
 let get_device_key_mapping ~(device_id : int) ~(first_keycode : key_code) ~(count : int) () : get_device_key_mapping_reply Lwt.t = failwith "not implemented";;
 let change_device_key_mapping ~(device_id : int) ~(first_keycode : key_code) ~(keysyms_per_keycode : int) ~(keycode_count : int) ~(keysyms : Xproto.keysym list) () : unit Lwt.t = failwith "not implemented";;
@@ -1194,8 +1195,8 @@ type set_device_button_mapping_reply = { xi_reply_type : int; status : Xproto.ma
 let set_device_button_mapping ~(device_id : int) ~(map : int list) () : set_device_button_mapping_reply Lwt.t = failwith "not implemented";;
 type key_state = { class_id : input_class_enum; len : int; num_keys : int; keys : int list; };;
 type button_state = { class_id : input_class_enum; len : int; num_buttons : int; buttons : int list; };;
-
-type valuator_state = { class_id : input_class_enum; len : int; mode : int; valuators : int32 list; };;
+type valuator_state_mode_mask_mask = [ `Device_mode_absolute | `Out_of_proximity ] list;;
+type valuator_state = { class_id : input_class_enum; len : int; mode : valuator_state_mode_mask_mask; valuators : int32 list; };;
 type input_state = { len : int; data : input_class_variant; };;
 type query_device_state_reply = { xi_reply_type : int; classes : input_state list; };;
 let query_device_state ~(device_id : int) () : query_device_state_reply Lwt.t = failwith "not implemented";;
@@ -1247,22 +1248,22 @@ let xi_change_hierarchy ~(changes : hierarchy_change list) () : unit Lwt.t = fai
 let xi_set_client_pointer ~(window : Xproto.window) ~(deviceid : device_id) () : unit Lwt.t = failwith "not implemented";;
 type xi_get_client_pointer_reply = { set : bool; deviceid : device_id; };;
 let xi_get_client_pointer ~(window : Xproto.window) () : xi_get_client_pointer_reply Lwt.t = failwith "not implemented";;
-
-type event_mask = { deviceid : device_id; mask : int32 list; };;
+type xi_event_mask_mask = [ `Device_changed | `Key_press | `Key_release | `Button_press | `Button_release | `Motion | `Enter | `Leave | `Focus_in | `Focus_out | `Hierarchy | `Property | `Raw_key_press | `Raw_key_release | `Raw_button_press | `Raw_button_release | `Raw_motion | `Touch_begin | `Touch_update | `Touch_end | `Touch_ownership | `Raw_touch_begin | `Raw_touch_update | `Raw_touch_end | `Barrier_hit | `Barrier_leave ] list;;
+type event_mask = { deviceid : device_id; mask : xi_event_mask_mask list; };;
 let xi_select_events ~(window : Xproto.window) ~(masks : event_mask list) () : unit Lwt.t = failwith "not implemented";;
 type xi_query_version_reply = { major_version : int; minor_version : int; };;
 let xi_query_version ~(major_version : int) ~(minor_version : int) () : xi_query_version_reply Lwt.t = failwith "not implemented";;
 type device_class_type_enum = Key | Button | Valuator | Scroll | Touch;;
 type device_type_enum = Master_pointer | Master_keyboard | Slave_pointer | Slave_keyboard | Floating_slave;;
-
+type scroll_flags_mask = [ `No_emulation | `Preferred ] list;;
 type scroll_type_enum = Vertical | Horizontal;;
 type touch_mode_enum = Direct | Dependent;;
 type button_class = { type_ : device_class_type_enum; len : int; sourceid : device_id; state : int32 list; labels : Xproto.atom list; };;
 type key_class = { type_ : device_class_type_enum; len : int; sourceid : device_id; keys : int32 list; };;
-type scroll_class = { type_ : device_class_type_enum; len : int; sourceid : device_id; number : int; scroll_type : scroll_type_enum; flags : int32; increment : fp3232; };;
+type scroll_class = { type_ : device_class_type_enum; len : int; sourceid : device_id; number : int; scroll_type : scroll_type_enum; flags : scroll_flags_mask; increment : fp3232; };;
 type touch_class = { type_ : device_class_type_enum; len : int; sourceid : device_id; mode : touch_mode_enum; num_touches : int; };;
 type valuator_class = { type_ : device_class_type_enum; len : int; sourceid : device_id; number : int; label : Xproto.atom; min : fp3232; max : fp3232; value : fp3232; resolution : int32; mode : valuator_mode_enum; };;
-type device_class_type_variant = Key of { keys : int32 list; } | Button of { state : int32 list; labels : Xproto.atom list; } | Valuator of { number : int; label : Xproto.atom; min : fp3232; max : fp3232; value : fp3232; resolution : int32; mode : valuator_mode_enum; } | Scroll of { number : int; scroll_type : scroll_type_enum; flags : int32; increment : fp3232; } | Touch of { mode : touch_mode_enum; num_touches : int; };;
+type device_class_type_variant = Key of { keys : int32 list; } | Button of { state : int32 list; labels : Xproto.atom list; } | Valuator of { number : int; label : Xproto.atom; min : fp3232; max : fp3232; value : fp3232; resolution : int32; mode : valuator_mode_enum; } | Scroll of { number : int; scroll_type : scroll_type_enum; flags : scroll_flags_mask; increment : fp3232; } | Touch of { mode : touch_mode_enum; num_touches : int; };;
 type device_class = { len : int; sourceid : device_id; data : device_class_type_variant; };;
 type xi_device_info = { deviceid : device_id; type_ : device_type_enum; attachment : device_id; enabled : bool; name : char list; classes : device_class list; };;
 type xi_query_device_reply = { infos : xi_device_info list; };;
@@ -1278,7 +1279,7 @@ type event_mode_enum = Async_device | Sync_device | Replay_device | Async_paired
 let xi_allow_events ~(time : Xproto.timestamp) ~(deviceid : device_id) ~(event_mode : event_mode_enum) ~(touchid : int32) ~(grab_window : Xproto.window) () : unit Lwt.t = failwith "not implemented";;
 type grab_mode22_enum = Sync | Async | Touch;;
 type grab_type_enum = Button | Keycode | Enter | Focus_in | Touch_begin;;
-
+type modifier_mask_mask = [ `Any ] list;;
 type grab_modifier_info = { modifiers : int32; status : Xproto.grab_status_enum; };;
 type xi_passive_grab_device_reply = { modifiers : grab_modifier_info list; };;
 let xi_passive_grab_device ~(time : Xproto.timestamp) ~(grab_window : Xproto.window) ~(cursor : Xproto.cursor) ~(detail : int32) ~(deviceid : device_id) ~(grab_type : grab_type_enum) ~(grab_mode : grab_mode22_enum) ~(paired_device_mode : Xproto.grab_mode_enum) ~(owner_events : grab_owner_enum) ~(mask : int32 list) ~(modifiers : int32 list) () : xi_passive_grab_device_reply Lwt.t = failwith "not implemented";;
@@ -1294,8 +1295,8 @@ let xi_get_selected_events ~(window : Xproto.window) () : xi_get_selected_events
 type barrier_release_pointer_info = { deviceid : device_id; barrier : Xfixes.barrier; eventid : int32; };;
 let xi_barrier_release_pointer ~(barriers : barrier_release_pointer_info list) () : unit Lwt.t = failwith "not implemented";;
 type device_valuator_event = { device_id : int; device_state : int; num_valuators : int; first_valuator : int; valuators : int32 list; };;
-
-type device_key_press_event = { detail : char; time : Xproto.timestamp; root : Xproto.window; event : Xproto.window; child : Xproto.window; root_x : int; root_y : int; event_x : int; event_y : int; state : int; same_screen : bool; device_id : int; };;
+type more_events_mask_mask = [ `More_events ] list;;
+type device_key_press_event = { detail : char; time : Xproto.timestamp; root : Xproto.window; event : Xproto.window; child : Xproto.window; root_x : int; root_y : int; event_x : int; event_y : int; state : Xproto.key_but_mask_mask; same_screen : bool; device_id : int; };;
 type device_key_release_event = device_key_press_event;;
 type device_button_press_event = device_key_press_event;;
 type device_button_release_event = device_key_press_event;;
@@ -1304,8 +1305,8 @@ type device_focus_in_event = { detail : Xproto.notify_detail_enum; time : Xproto
 type device_focus_out_event = device_focus_in_event;;
 type proximity_in_event = device_key_press_event;;
 type proximity_out_event = device_key_press_event;;
-
-type device_state_notify_event = { device_id : char; time : Xproto.timestamp; num_keys : int; num_buttons : int; num_valuators : int; classes_reported : int; buttons : int list; keys : int list; valuators : int32 list; };;
+type classes_reported_mask_mask = [ `Out_of_proximity | `Device_mode_absolute | `Reporting_valuators | `Reporting_buttons | `Reporting_keys ] list;;
+type device_state_notify_event = { device_id : char; time : Xproto.timestamp; num_keys : int; num_buttons : int; num_valuators : int; classes_reported : classes_reported_mask_mask; buttons : int list; keys : int list; valuators : int32 list; };;
 type device_mapping_notify_event = { device_id : char; request : Xproto.mapping_enum; first_keycode : key_code; count : int; time : Xproto.timestamp; };;
 type change_device_enum = New_pointer | New_keyboard;;
 type change_device_notify_event = { device_id : char; time : Xproto.timestamp; request : change_device_enum; };;
@@ -1316,11 +1317,11 @@ type device_presence_notify_event = { time : Xproto.timestamp; devchange : devic
 type device_property_notify_event = { state : Xproto.property_enum; time : Xproto.timestamp; property : Xproto.atom; device_id : int; };;
 type change_reason_enum = Slave_switch | Device_change;;
 type device_changed_event = { deviceid : device_id; time : Xproto.timestamp; sourceid : device_id; reason : change_reason_enum; classes : device_class list; };;
-
-type key_press_event = { deviceid : device_id; time : Xproto.timestamp; detail : int32; root : Xproto.window; event : Xproto.window; child : Xproto.window; root_x : fp1616; root_y : fp1616; event_x : fp1616; event_y : fp1616; sourceid : device_id; flags : int32; mods : modifier_info; group : group_info; button_mask : int32 list; valuator_mask : int32 list; axisvalues : fp3232 list; };;
+type key_event_flags_mask = [ `Key_repeat ] list;;
+type key_press_event = { deviceid : device_id; time : Xproto.timestamp; detail : int32; root : Xproto.window; event : Xproto.window; child : Xproto.window; root_x : fp1616; root_y : fp1616; event_x : fp1616; event_y : fp1616; sourceid : device_id; flags : key_event_flags_mask; mods : modifier_info; group : group_info; button_mask : int32 list; valuator_mask : int32 list; axisvalues : fp3232 list; };;
 type key_release_event = key_press_event;;
-
-type button_press_event = { deviceid : device_id; time : Xproto.timestamp; detail : int32; root : Xproto.window; event : Xproto.window; child : Xproto.window; root_x : fp1616; root_y : fp1616; event_x : fp1616; event_y : fp1616; sourceid : device_id; flags : int32; mods : modifier_info; group : group_info; button_mask : int32 list; valuator_mask : int32 list; axisvalues : fp3232 list; };;
+type pointer_event_flags_mask = [ `Pointer_emulated ] list;;
+type button_press_event = { deviceid : device_id; time : Xproto.timestamp; detail : int32; root : Xproto.window; event : Xproto.window; child : Xproto.window; root_x : fp1616; root_y : fp1616; event_x : fp1616; event_y : fp1616; sourceid : device_id; flags : pointer_event_flags_mask; mods : modifier_info; group : group_info; button_mask : int32 list; valuator_mask : int32 list; axisvalues : fp3232 list; };;
 type button_release_event = button_press_event;;
 type motion_event = button_press_event;;
 type notify_mode_enum = Normal | Grab | Ungrab | While_grabbed | Passive_grab | Passive_ungrab;;
@@ -1329,27 +1330,27 @@ type enter_event = { deviceid : device_id; time : Xproto.timestamp; sourceid : d
 type leave_event = enter_event;;
 type focus_in_event = enter_event;;
 type focus_out_event = enter_event;;
-
-type hierarchy_info = { deviceid : device_id; attachment : device_id; type_ : device_type_enum; enabled : bool; flags : int32; };;
-type hierarchy_event = { deviceid : device_id; time : Xproto.timestamp; flags : int32; infos : hierarchy_info list; };;
+type hierarchy_mask_mask = [ `Master_added | `Master_removed | `Slave_added | `Slave_removed | `Slave_attached | `Slave_detached | `Device_enabled | `Device_disabled ] list;;
+type hierarchy_info = { deviceid : device_id; attachment : device_id; type_ : device_type_enum; enabled : bool; flags : hierarchy_mask_mask; };;
+type hierarchy_event = { deviceid : device_id; time : Xproto.timestamp; flags : hierarchy_mask_mask; infos : hierarchy_info list; };;
 type property_flag_enum = Deleted | Created | Modified;;
 type property_event = { deviceid : device_id; time : Xproto.timestamp; property : Xproto.atom; what : property_flag_enum; };;
-type raw_key_press_event = { deviceid : device_id; time : Xproto.timestamp; detail : int32; sourceid : device_id; flags : int32; valuator_mask : int32 list; axisvalues : fp3232 list; axisvalues_raw : fp3232 list; };;
+type raw_key_press_event = { deviceid : device_id; time : Xproto.timestamp; detail : int32; sourceid : device_id; flags : key_event_flags_mask; valuator_mask : int32 list; axisvalues : fp3232 list; axisvalues_raw : fp3232 list; };;
 type raw_key_release_event = raw_key_press_event;;
-type raw_button_press_event = { deviceid : device_id; time : Xproto.timestamp; detail : int32; sourceid : device_id; flags : int32; valuator_mask : int32 list; axisvalues : fp3232 list; axisvalues_raw : fp3232 list; };;
+type raw_button_press_event = { deviceid : device_id; time : Xproto.timestamp; detail : int32; sourceid : device_id; flags : pointer_event_flags_mask; valuator_mask : int32 list; axisvalues : fp3232 list; axisvalues_raw : fp3232 list; };;
 type raw_button_release_event = raw_button_press_event;;
 type raw_motion_event = raw_button_press_event;;
-
-type touch_begin_event = { deviceid : device_id; time : Xproto.timestamp; detail : int32; root : Xproto.window; event : Xproto.window; child : Xproto.window; root_x : fp1616; root_y : fp1616; event_x : fp1616; event_y : fp1616; sourceid : device_id; flags : int32; mods : modifier_info; group : group_info; button_mask : int32 list; valuator_mask : int32 list; axisvalues : fp3232 list; };;
+type touch_event_flags_mask = [ `Touch_pending_end | `Touch_emulating_pointer ] list;;
+type touch_begin_event = { deviceid : device_id; time : Xproto.timestamp; detail : int32; root : Xproto.window; event : Xproto.window; child : Xproto.window; root_x : fp1616; root_y : fp1616; event_x : fp1616; event_y : fp1616; sourceid : device_id; flags : touch_event_flags_mask; mods : modifier_info; group : group_info; button_mask : int32 list; valuator_mask : int32 list; axisvalues : fp3232 list; };;
 type touch_update_event = touch_begin_event;;
 type touch_end_event = touch_begin_event;;
 type touch_ownership_flags_enum = None;;
 type touch_ownership_event = { deviceid : device_id; time : Xproto.timestamp; touchid : int32; root : Xproto.window; event : Xproto.window; child : Xproto.window; sourceid : device_id; flags : touch_ownership_flags_enum; };;
-type raw_touch_begin_event = { deviceid : device_id; time : Xproto.timestamp; detail : int32; sourceid : device_id; flags : int32; valuator_mask : int32 list; axisvalues : fp3232 list; axisvalues_raw : fp3232 list; };;
+type raw_touch_begin_event = { deviceid : device_id; time : Xproto.timestamp; detail : int32; sourceid : device_id; flags : touch_event_flags_mask; valuator_mask : int32 list; axisvalues : fp3232 list; axisvalues_raw : fp3232 list; };;
 type raw_touch_update_event = raw_touch_begin_event;;
 type raw_touch_end_event = raw_touch_begin_event;;
-
-type barrier_hit_event = { deviceid : device_id; time : Xproto.timestamp; eventid : int32; root : Xproto.window; event : Xproto.window; barrier : Xfixes.barrier; dtime : int32; flags : int32; sourceid : device_id; root_x : fp1616; root_y : fp1616; dx : fp3232; dy : fp3232; };;
+type barrier_flags_mask = [ `Pointer_released | `Device_is_grabbed ] list;;
+type barrier_hit_event = { deviceid : device_id; time : Xproto.timestamp; eventid : int32; root : Xproto.window; event : Xproto.window; barrier : Xfixes.barrier; dtime : int32; flags : barrier_flags_mask; sourceid : device_id; root_x : fp1616; root_y : fp1616; dx : fp3232; dy : fp3232; };;
 type barrier_leave_event = barrier_hit_event;;
 type event_for_send = Device_valuator of device_valuator_event | Device_key_press of device_key_press_event | Device_key_release of device_key_release_event | Device_button_press of device_button_press_event | Device_button_release of device_button_release_event | Device_motion_notify of device_motion_notify_event | Device_focus_in of device_focus_in_event | Device_focus_out of device_focus_out_event | Proximity_in of proximity_in_event | Proximity_out of proximity_out_event | Device_state_notify of device_state_notify_event | Device_mapping_notify of device_mapping_notify_event | Change_device_notify of change_device_notify_event | Device_key_state_notify of device_key_state_notify_event | Device_button_state_notify of device_button_state_notify_event | Device_presence_notify of device_presence_notify_event | Device_property_notify of device_property_notify_event;;
 let send_extension_event ~(destination : Xproto.window) ~(device_id : int) ~(propagate : bool) ~(events : event_for_send list) ~(classes : event_class list) () : unit Lwt.t = failwith "not implemented";;
@@ -1364,7 +1365,7 @@ type string8 = char;;
 type printer = { name : string8 list; description : string8 list; };;
 type pcontext = xid;;
 type get_doc_enum = Finished | Second_consumer;;
-
+type ev_mask_mask = ([ `Print_mask | `Attribute_mask ], [ `No_event_mask ]) mask;;
 type detail_enum = Start_job_notify | End_job_notify | Start_doc_notify | End_doc_notify | Start_page_notify | End_page_notify;;
 type attr_enum = Job_attr | Doc_attr | Page_attr | Printer_attr | Server_attr | Medium_attr | Spooler_attr;;
 type print_query_version_reply = { major_version : int; minor_version : int; };;
@@ -1463,19 +1464,19 @@ end
 module[@warning "-27"] Xv = struct
 type port = xid;;
 type encoding = xid;;
-
+type type_mask = [ `Input_mask | `Output_mask | `Video_mask | `Still_mask | `Image_mask ] list;;
 type image_format_info_type_enum = Rgb | Yuv;;
 type image_format_info_format_enum = Packed | Planar;;
-
+type attribute_flag_mask = [ `Gettable | `Settable ] list;;
 type video_notify_reason_enum = Started | Stopped | Busy | Preempted | Hard_error;;
 type scanline_order_enum = Top_to_bottom | Bottom_to_top;;
 type grab_port_status_enum = Success | Bad_extension | Already_grabbed | Invalid_time | Bad_reply | Bad_alloc;;
 type rational = { numerator : int32; denominator : int32; };;
 type format = { visual : Xproto.visualid; depth : int; };;
-type adaptor_info = { base_id : port; num_ports : int; type_ : int; name : char list; formats : format list; };;
+type adaptor_info = { base_id : port; num_ports : int; type_ : type_mask; name : char list; formats : format list; };;
 type encoding_info = { encoding : encoding; width : int; height : int; rate : rational; name : char list; };;
 type image = { id : int32; width : int; height : int; pitches : int32 list; offsets : int32 list; data : int list; };;
-type attribute_info = { flags : int32; min : int32; max : int32; name : char list; };;
+type attribute_info = { flags : attribute_flag_mask; min : int32; max : int32; name : char list; };;
 type image_format_info = { id : int32; type_ : image_format_info_type_enum; byte_order : Xproto.image_order_enum; guid : int list; bpp : int; num_planes : int; depth : int; red_mask : int32; green_mask : int32; blue_mask : int32; format : image_format_info_format_enum; y_sample_bits : int32; u_sample_bits : int32; v_sample_bits : int32; vhorz_y_period : int32; vhorz_u_period : int32; vhorz_v_period : int32; vvert_y_period : int32; vvert_u_period : int32; vvert_v_period : int32; vcomp_order : int list; vscanline_order : scanline_order_enum; };;
 type bad_port_error = unit;;
 type bad_encoding_error = unit;;

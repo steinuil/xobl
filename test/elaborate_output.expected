@@ -24117,6 +24117,11 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
        items =
        [("Above", 0L); ("Below", 1L); ("TopIf", 2L); ("BottomIf", 3L);
          ("Opposite", 4L)]};
+     Elaboratetree.Mask {name = "ConfigWindow";
+       items =
+       [("X", 0); ("Y", 1); ("Width", 2); ("Height", 3); ("BorderWidth", 4);
+         ("Sibling", 5); ("StackMode", 6)];
+       additional_values = []};
      Elaboratetree.Event {name = "ConfigureRequest"; number = 23;
        is_generic = false; is_serializable = false;
        no_sequence_number = false;
@@ -25312,11 +25317,6 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              ft_allowed = None }}
          ];
        reply = None};
-     Elaboratetree.Mask {name = "ConfigWindow";
-       items =
-       [("X", 0); ("Y", 1); ("Width", 2); ("Height", 3); ("BorderWidth", 4);
-         ("Sibling", 5); ("StackMode", 6)];
-       additional_values = []};
      Elaboratetree.Request {name = "ConfigureWindow"; opcode = 12;
        combine_adjacent = true;
        fields =

@@ -40,13 +40,18 @@ let fix_declaration_order fixes decls =
     loop [] l
   in
   List.fold_left
-    (fun decls (enum_name, before) ->
+    (fun decls (enum, before) ->
       let decl, decls =
         decls
-        |> list_remove (function
-             | Elaboratetree.Enum { name; _ } as e when name = enum_name ->
-                 Some e
-             | _ -> None)
+        |> list_remove (fun d ->
+               match (d, enum) with
+               | (Elaboratetree.Enum { name; _ } as e), `Enum enum_name
+                 when name = enum_name ->
+                   Some e
+               | (Mask { name; _ } as m), `Mask mask_name when name = mask_name
+                 ->
+                   Some m
+               | _ -> None)
       in
       list_splice ~item:decl
         (fun d ->
@@ -646,11 +651,12 @@ let in_xcb xcbs = function
         ( in_declarations ("xproto", xcbs) declarations
         |> fix_declaration_order
              [
-               ("StackMode", `Event "ConfigureRequest");
-               ("Pixmap", `Request "CreateWindow");
-               ("Cursor", `Request "CreateWindow");
-               ("AccessControl", `Request "ListHosts");
-               ("Font", `Request "CreateGC");
+               (`Enum "StackMode", `Event "ConfigureRequest");
+               (`Enum "Pixmap", `Request "CreateWindow");
+               (`Enum "Cursor", `Request "CreateWindow");
+               (`Enum "AccessControl", `Request "ListHosts");
+               (`Enum "Font", `Request "CreateGC");
+               (`Mask "ConfigWindow", `Event "ConfigureRequest");
              ] )
   | Extension { name; file_name; query_name; multiword; version; declarations }
     ->

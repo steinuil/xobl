@@ -77,6 +77,8 @@ let () =
   in
   output_string stdout "type xid = int\n";
   output_string stdout "type file_descr = int\n";
+  output_string stdout
+    "type ('flags, 'vals) mask = F of 'flags list | V of 'vals\n";
   List.map (Xobl_compiler.Elaborate.do_stuff xcbs) xcbs
   |> sort_xcbs
   |> List.iter (fun xcb -> Xobl_compiler__.Generate_ocaml.gen_xcb stdout xcb)
