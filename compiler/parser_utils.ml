@@ -114,9 +114,9 @@ let mk_allowed_enum name = Allowed_enum (mk_ident name)
 
 let mk_allowed_mask name = Allowed_mask (mk_ident name)
 
-let mk_allowed_alt_enum name = Allowed_enum (mk_ident name)
+let mk_allowed_alt_enum name = Allowed_alt_enum (mk_ident name)
 
-let mk_allowed_alt_mask name = Allowed_mask (mk_ident name)
+let mk_allowed_alt_mask name = Allowed_alt_mask (mk_ident name)
 
 let mk_field_type ft_type ft_allowed = { ft_type; ft_allowed }
 

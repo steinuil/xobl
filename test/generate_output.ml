@@ -43,11 +43,40 @@ let parse_module m =
     close_in f;
     raise exn
 
+let sort_topological (nodes : (string * string list) list) =
+  let rec dfs out (node, dependencies) =
+    if List.mem node out then out
+    else
+      node
+      :: List.fold_left
+           (fun out node ->
+             let dependencies = List.assoc node nodes in
+             dfs out (node, dependencies))
+           out dependencies
+  in
+  List.fold_left dfs [] nodes |> List.rev
+
+let sort_xcbs xcbs =
+  xcbs
+  |> List.map (function
+       | Xobl_compiler__Elaboratetree.Core _ -> ("xproto", [])
+       | Extension { file_name; imports; _ } -> (file_name, imports))
+  |> sort_topological
+  |> List.map (fun name ->
+         xcbs
+         |> List.find (function
+              | Xobl_compiler__Elaboratetree.Core _ when name = "xproto" -> true
+              | Extension { file_name; _ } when file_name = name -> true
+              | _ -> false))
+
 let () =
   let xcbs =
     modules |> List.map parse_module
     |> List.map Xobl_compiler.Elaborate.unions_to_switches
     |> Xobl_compiler.Elaborate.resolve_idents
   in
+  output_string stdout "type xid = int\n";
+  output_string stdout "type file_descr = int\n";
   List.map (Xobl_compiler.Elaborate.do_stuff xcbs) xcbs
+  |> sort_xcbs
   |> List.iter (fun xcb -> Xobl_compiler__.Generate_ocaml.gen_xcb stdout xcb)

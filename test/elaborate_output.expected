@@ -302,7 +302,7 @@ Elaboratetree.Extension {name = "Damage"; file_name = "damage";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xfixes"; id_name = "REGION" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xfixes"; id_name = "Region"
                        }))
             }};
@@ -312,7 +312,7 @@ Elaboratetree.Extension {name = "Damage"; file_name = "damage";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xfixes"; id_name = "REGION" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xfixes"; id_name = "Region"
                        }))
             }}
@@ -6541,7 +6541,7 @@ Elaboratetree.Extension {name = "RandR"; file_name = "randr";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "ATOM" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto";
                        id_name = "GetPropertyType" }))
             }};
@@ -6580,7 +6580,7 @@ Elaboratetree.Extension {name = "RandR"; file_name = "randr";
                   (Elaboratetree.Type_ref
                      { Elaboratetree.id_module = "xproto"; id_name = "ATOM" });
                   ft_allowed =
-                  (Some (Elaboratetree.Allowed_enum
+                  (Some (Elaboratetree.Allowed_alt_enum
                            { Elaboratetree.id_module = "xproto";
                              id_name = "Atom" }))
                   }};
@@ -9541,7 +9541,7 @@ Elaboratetree.Extension {name = "Render"; file_name = "render";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "render"; id_name = "PICTURE" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "render";
                        id_name = "Picture" }))
             }};
@@ -10962,7 +10962,7 @@ Elaboratetree.Extension {name = "ScreenSaver"; file_name = "screensaver";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "PIXMAP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto";
                        id_name = "BackPixmap" }))
             }};
@@ -10979,7 +10979,7 @@ Elaboratetree.Extension {name = "ScreenSaver"; file_name = "screensaver";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "PIXMAP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Pixmap"
                        }))
             }};
@@ -11072,7 +11072,7 @@ Elaboratetree.Extension {name = "ScreenSaver"; file_name = "screensaver";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "COLORMAP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto";
                        id_name = "Colormap" }))
             }};
@@ -11083,7 +11083,7 @@ Elaboratetree.Extension {name = "ScreenSaver"; file_name = "screensaver";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "CURSOR" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Cursor"
                        }))
             }}
@@ -11342,7 +11342,7 @@ Elaboratetree.Extension {name = "Shape"; file_name = "shape";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "PIXMAP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Pixmap"
                        }))
             }}
@@ -14532,7 +14532,7 @@ Elaboratetree.Extension {name = "XFixes"; file_name = "xfixes";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "ATOM" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Atom" }))
             }};
         Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 12);
@@ -14936,7 +14936,7 @@ Elaboratetree.Extension {name = "XFixes"; file_name = "xfixes";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xfixes"; id_name = "REGION" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xfixes"; id_name = "Region"
                        }))
             }};
@@ -14988,7 +14988,7 @@ Elaboratetree.Extension {name = "XFixes"; file_name = "xfixes";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xfixes"; id_name = "REGION" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xfixes"; id_name = "Region"
                        }))
             }}
@@ -15009,7 +15009,7 @@ Elaboratetree.Extension {name = "XFixes"; file_name = "xfixes";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xfixes"; id_name = "REGION" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xfixes"; id_name = "Region"
                        }))
             }};
@@ -15065,7 +15065,7 @@ Elaboratetree.Extension {name = "XFixes"; file_name = "xfixes";
                   (Elaboratetree.Type_ref
                      { Elaboratetree.id_module = "xproto"; id_name = "ATOM" });
                   ft_allowed =
-                  (Some (Elaboratetree.Allowed_enum
+                  (Some (Elaboratetree.Allowed_alt_enum
                            { Elaboratetree.id_module = "xproto";
                              id_name = "Atom" }))
                   }};
@@ -15126,7 +15126,7 @@ Elaboratetree.Extension {name = "XFixes"; file_name = "xfixes";
                   (Elaboratetree.Type_ref
                      { Elaboratetree.id_module = "xproto"; id_name = "ATOM" });
                   ft_allowed =
-                  (Some (Elaboratetree.Allowed_enum
+                  (Some (Elaboratetree.Allowed_alt_enum
                            { Elaboratetree.id_module = "xproto";
                              id_name = "Atom" }))
                   }};
@@ -16099,7 +16099,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
             }};
         Elaboratetree.Field {name = "device_id";
@@ -16226,7 +16226,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
             }};
         Elaboratetree.Field_list_length {list = "classes";
@@ -16296,7 +16296,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
            }};
         Elaboratetree.Field {name = "device_id";
@@ -16336,7 +16336,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card8);
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput";
                        id_name = "ModifierDevice" }))
             }};
@@ -16350,7 +16350,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card8);
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Grab" }))
             }};
         Elaboratetree.Field {name = "this_device_mode";
@@ -16409,7 +16409,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card8);
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput";
                        id_name = "ModifierDevice" }))
             }};
@@ -16418,7 +16418,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card8);
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Grab" }))
             }};
         Elaboratetree.Field {name = "grabbed_device";
@@ -16447,7 +16447,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card8);
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput";
                        id_name = "ModifierDevice" }))
             }};
@@ -16486,7 +16486,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card8);
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Grab" }))
             }};
         Elaboratetree.Field {name = "owner_events";
@@ -16527,7 +16527,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card8);
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput";
                        id_name = "ModifierDevice" }))
             }};
@@ -16536,7 +16536,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card8);
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Grab" }))
             }};
         Elaboratetree.Field {name = "grabbed_device";
@@ -16562,7 +16562,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
            }};
         Elaboratetree.Field {name = "mode";
@@ -16607,7 +16607,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
                      { Elaboratetree.id_module = "xproto"; id_name = "WINDOW"
                        });
                   ft_allowed =
-                  (Some (Elaboratetree.Allowed_enum
+                  (Some (Elaboratetree.Allowed_alt_enum
                            { Elaboratetree.id_module = "xproto";
                              id_name = "InputFocus" }))
                   }};
@@ -16639,7 +16639,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xproto"; id_name = "WINDOW" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xproto";
                       id_name = "InputFocus" }))
            }};
@@ -16649,7 +16649,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
             }};
         Elaboratetree.Field {name = "revert_to";
@@ -17346,134 +17346,6 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_primitive Parsetree.Card32);
             ft_allowed = None }}
         ]};
-    Elaboratetree.Variant {name = "FeedbackClass";
-      items =
-      [{ Elaboratetree.vi_name = "Keyboard"; vi_tag = 0L;
-         vi_fields =
-         [Elaboratetree.Field {name = "key";
-            type_ =
-            { Elaboratetree.ft_type =
-              (Elaboratetree.Type_ref
-                 { Elaboratetree.id_module = "xinput"; id_name = "KeyCode" });
-              ft_allowed = None }};
-           Elaboratetree.Field {name = "auto_repeat_mode";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Card8);
-               ft_allowed = None }};
-           Elaboratetree.Field {name = "key_click_percent";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Int8);
-               ft_allowed = None }};
-           Elaboratetree.Field {name = "bell_percent";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Int8);
-               ft_allowed = None }};
-           Elaboratetree.Field {name = "bell_pitch";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Int16);
-               ft_allowed = None }};
-           Elaboratetree.Field {name = "bell_duration";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Int16);
-               ft_allowed = None }};
-           Elaboratetree.Field {name = "led_mask";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Card32);
-               ft_allowed = None }};
-           Elaboratetree.Field {name = "led_values";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Card32);
-               ft_allowed = None }}
-           ]
-         };
-        { Elaboratetree.vi_name = "Pointer"; vi_tag = 1L;
-          vi_fields =
-          [Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 2);
-             serialize = false};
-            Elaboratetree.Field {name = "num";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Int16);
-                ft_allowed = None }};
-            Elaboratetree.Field {name = "denom";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Int16);
-                ft_allowed = None }};
-            Elaboratetree.Field {name = "threshold";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Int16);
-                ft_allowed = None }}
-            ]
-          };
-        { Elaboratetree.vi_name = "String"; vi_tag = 2L;
-          vi_fields =
-          [Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 2);
-             serialize = false};
-            Elaboratetree.Field_list_length {list = "keysyms";
-              type_ = (Elaboratetree.Type_primitive Parsetree.Card16);
-              expr = (Elaboratetree.Field_ref "num_keysyms")};
-            Elaboratetree.Field_list_simple {name = "keysyms";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_ref
-                   { Elaboratetree.id_module = "xproto"; id_name = "KEYSYM" });
-                ft_allowed = None }}
-            ]
-          };
-        { Elaboratetree.vi_name = "Integer"; vi_tag = 3L;
-          vi_fields =
-          [Elaboratetree.Field {name = "int_to_display";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Int32);
-               ft_allowed = None }}
-            ]
-          };
-        { Elaboratetree.vi_name = "Led"; vi_tag = 4L;
-          vi_fields =
-          [Elaboratetree.Field {name = "led_mask";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Card32);
-               ft_allowed = None }};
-            Elaboratetree.Field {name = "led_values";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Card32);
-                ft_allowed = None }}
-            ]
-          };
-        { Elaboratetree.vi_name = "Bell"; vi_tag = 5L;
-          vi_fields =
-          [Elaboratetree.Field {name = "percent";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Int8);
-               ft_allowed = None }};
-            Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 3);
-              serialize = false};
-            Elaboratetree.Field {name = "pitch";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Int16);
-                ft_allowed = None }};
-            Elaboratetree.Field {name = "duration";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Int16);
-                ft_allowed = None }}
-            ]
-          }
-        ]};
     Elaboratetree.Struct {name = "FeedbackCtl";
       fields =
       [Elaboratetree.Field_variant_tag {variant = "data";
@@ -17852,64 +17724,6 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Int32); ft_allowed = None
             }}
-        ]};
-    Elaboratetree.Variant {name = "InputClass";
-      items =
-      [{ Elaboratetree.vi_name = "Key"; vi_tag = 0L;
-         vi_fields =
-         [Elaboratetree.Field {name = "num_keys";
-            type_ =
-            { Elaboratetree.ft_type =
-              (Elaboratetree.Type_primitive Parsetree.Card8);
-              ft_allowed = None }};
-           Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 1);
-             serialize = false};
-           Elaboratetree.Field_list {name = "keys";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Card8);
-               ft_allowed = None };
-             length = (Some (Elaboratetree.Expr_value 32L))}
-           ]
-         };
-        { Elaboratetree.vi_name = "Button"; vi_tag = 1L;
-          vi_fields =
-          [Elaboratetree.Field {name = "num_buttons";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Card8);
-               ft_allowed = None }};
-            Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 1);
-              serialize = false};
-            Elaboratetree.Field_list {name = "buttons";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Card8);
-                ft_allowed = None };
-              length = (Some (Elaboratetree.Expr_value 32L))}
-            ]
-          };
-        { Elaboratetree.vi_name = "Valuator"; vi_tag = 2L;
-          vi_fields =
-          [Elaboratetree.Field_list_length {list = "valuators";
-             type_ = (Elaboratetree.Type_primitive Parsetree.Card8);
-             expr = (Elaboratetree.Field_ref "num_valuators")};
-            Elaboratetree.Field {name = "mode";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Card8);
-                ft_allowed =
-                (Some (Elaboratetree.Allowed_mask
-                         { Elaboratetree.id_module = "xinput";
-                           id_name = "ValuatorStateModeMask" }))
-                }};
-            Elaboratetree.Field_list_simple {name = "valuators";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Int32);
-                ft_allowed = None }}
-            ]
-          }
         ]};
     Elaboratetree.Struct {name = "InputState";
       fields =
@@ -18391,7 +18205,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
                 { Elaboratetree.ft_type =
                   (Elaboratetree.Type_primitive Parsetree.Card8);
                   ft_allowed =
-                  (Some (Elaboratetree.Allowed_enum
+                  (Some (Elaboratetree.Allowed_alt_enum
                            { Elaboratetree.id_module = "xproto";
                              id_name = "GrabStatus" }))
                   }};
@@ -18589,128 +18403,6 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
         Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 3);
           serialize = false}
         ]};
-    Elaboratetree.Variant {name = "DeviceControl";
-      items =
-      [{ Elaboratetree.vi_name = "resolution"; vi_tag = 1L;
-         vi_fields =
-         [Elaboratetree.Field {name = "first_valuator";
-            type_ =
-            { Elaboratetree.ft_type =
-              (Elaboratetree.Type_primitive Parsetree.Card8);
-              ft_allowed = None }};
-           Elaboratetree.Field_list_length {list = "resolution_values";
-             type_ = (Elaboratetree.Type_primitive Parsetree.Card8);
-             expr = (Elaboratetree.Field_ref "num_valuators")};
-           Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 2);
-             serialize = false};
-           Elaboratetree.Field_list_simple {name = "resolution_values";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Card32);
-               ft_allowed = None }}
-           ]
-         };
-        { Elaboratetree.vi_name = "abs_calib"; vi_tag = 2L;
-          vi_fields =
-          [Elaboratetree.Field {name = "min_x";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Int32);
-               ft_allowed = None }};
-            Elaboratetree.Field {name = "max_x";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Int32);
-                ft_allowed = None }};
-            Elaboratetree.Field {name = "min_y";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Int32);
-                ft_allowed = None }};
-            Elaboratetree.Field {name = "max_y";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Int32);
-                ft_allowed = None }};
-            Elaboratetree.Field {name = "flip_x";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Card32);
-                ft_allowed = None }};
-            Elaboratetree.Field {name = "flip_y";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Card32);
-                ft_allowed = None }};
-            Elaboratetree.Field {name = "rotation";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Card32);
-                ft_allowed = None }};
-            Elaboratetree.Field {name = "button_threshold";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Card32);
-                ft_allowed = None }}
-            ]
-          };
-        { Elaboratetree.vi_name = "core"; vi_tag = 3L;
-          vi_fields =
-          [Elaboratetree.Field {name = "status";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Card8);
-               ft_allowed = None }};
-            Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 3);
-              serialize = false}
-            ]
-          };
-        { Elaboratetree.vi_name = "enable"; vi_tag = 4L;
-          vi_fields =
-          [Elaboratetree.Field {name = "enable";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Card8);
-               ft_allowed = None }};
-            Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 3);
-              serialize = false}
-            ]
-          };
-        { Elaboratetree.vi_name = "abs_area"; vi_tag = 5L;
-          vi_fields =
-          [Elaboratetree.Field {name = "offset_x";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Card32);
-               ft_allowed = None }};
-            Elaboratetree.Field {name = "offset_y";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Card32);
-                ft_allowed = None }};
-            Elaboratetree.Field {name = "width";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Int32);
-                ft_allowed = None }};
-            Elaboratetree.Field {name = "height";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Int32);
-                ft_allowed = None }};
-            Elaboratetree.Field {name = "screen";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Int32);
-                ft_allowed = None }};
-            Elaboratetree.Field {name = "following";
-              type_ =
-              { Elaboratetree.ft_type =
-                (Elaboratetree.Type_primitive Parsetree.Card32);
-                ft_allowed = None }}
-            ]
-          }
-        ]};
     Elaboratetree.Struct {name = "DeviceCtl";
       fields =
       [Elaboratetree.Field_variant_tag {variant = "data";
@@ -18761,7 +18453,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
                 { Elaboratetree.ft_type =
                   (Elaboratetree.Type_primitive Parsetree.Card8);
                   ft_allowed =
-                  (Some (Elaboratetree.Allowed_enum
+                  (Some (Elaboratetree.Allowed_alt_enum
                            { Elaboratetree.id_module = "xproto";
                              id_name = "GrabStatus" }))
                   }};
@@ -18897,43 +18589,6 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
           serialize = false}
         ];
       reply = None};
-    Elaboratetree.Variant {name = "PropertyFormat";
-      items =
-      [{ Elaboratetree.vi_name = "8Bits"; vi_tag = 8L;
-         vi_fields =
-         [Elaboratetree.Field_list {name = "data8";
-            type_ =
-            { Elaboratetree.ft_type =
-              (Elaboratetree.Type_primitive Parsetree.Card8);
-              ft_allowed = None };
-            length = (Some (Elaboratetree.Field_ref "num_items"))};
-           Elaboratetree.Field_pad {pad = (Parsetree.Pad_align 4);
-             serialize = false}
-           ]
-         };
-        { Elaboratetree.vi_name = "16Bits"; vi_tag = 16L;
-          vi_fields =
-          [Elaboratetree.Field_list {name = "data16";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Card16);
-               ft_allowed = None };
-             length = (Some (Elaboratetree.Field_ref "num_items"))};
-            Elaboratetree.Field_pad {pad = (Parsetree.Pad_align 4);
-              serialize = false}
-            ]
-          };
-        { Elaboratetree.vi_name = "32Bits"; vi_tag = 32L;
-          vi_fields =
-          [Elaboratetree.Field_list {name = "data32";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Card32);
-               ft_allowed = None };
-             length = (Some (Elaboratetree.Field_ref "num_items"))}
-            ]
-          }
-        ]};
     Elaboratetree.Request {name = "GetDeviceProperty"; opcode = 39;
       combine_adjacent = true;
       fields =
@@ -19071,7 +18726,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -19208,7 +18863,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -19237,7 +18892,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -19310,7 +18965,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -19331,7 +18986,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -19341,7 +18996,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }}
@@ -19368,7 +19023,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -19378,7 +19033,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }}
@@ -19405,7 +19060,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -19447,7 +19102,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
                   { Elaboratetree.id_module = "xinput"; id_name = "DeviceId"
                     });
                ft_allowed =
-               (Some (Elaboratetree.Allowed_enum
+               (Some (Elaboratetree.Allowed_alt_enum
                         { Elaboratetree.id_module = "xinput";
                           id_name = "Device" }))
                }};
@@ -19469,7 +19124,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
                    { Elaboratetree.id_module = "xinput"; id_name = "DeviceId"
                      });
                 ft_allowed =
-                (Some (Elaboratetree.Allowed_enum
+                (Some (Elaboratetree.Allowed_alt_enum
                          { Elaboratetree.id_module = "xinput";
                            id_name = "Device" }))
                 }};
@@ -19480,7 +19135,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
                    { Elaboratetree.id_module = "xinput"; id_name = "DeviceId"
                      });
                 ft_allowed =
-                (Some (Elaboratetree.Allowed_enum
+                (Some (Elaboratetree.Allowed_alt_enum
                          { Elaboratetree.id_module = "xinput";
                            id_name = "Device" }))
                 }}
@@ -19495,7 +19150,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
                   { Elaboratetree.id_module = "xinput"; id_name = "DeviceId"
                     });
                ft_allowed =
-               (Some (Elaboratetree.Allowed_enum
+               (Some (Elaboratetree.Allowed_alt_enum
                         { Elaboratetree.id_module = "xinput";
                           id_name = "Device" }))
                }};
@@ -19506,7 +19161,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
                    { Elaboratetree.id_module = "xinput"; id_name = "DeviceId"
                      });
                 ft_allowed =
-                (Some (Elaboratetree.Allowed_enum
+                (Some (Elaboratetree.Allowed_alt_enum
                          { Elaboratetree.id_module = "xinput";
                            id_name = "Device" }))
                 }}
@@ -19521,7 +19176,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
                   { Elaboratetree.id_module = "xinput"; id_name = "DeviceId"
                     });
                ft_allowed =
-               (Some (Elaboratetree.Allowed_enum
+               (Some (Elaboratetree.Allowed_alt_enum
                         { Elaboratetree.id_module = "xinput";
                           id_name = "Device" }))
                }};
@@ -19576,7 +19231,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -19611,7 +19266,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
                      { Elaboratetree.id_module = "xinput";
                        id_name = "DeviceId" });
                   ft_allowed =
-                  (Some (Elaboratetree.Allowed_enum
+                  (Some (Elaboratetree.Allowed_alt_enum
                            { Elaboratetree.id_module = "xinput";
                              id_name = "Device" }))
                   }};
@@ -19638,7 +19293,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -20122,7 +19777,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -20141,7 +19796,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -20182,7 +19837,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -20220,7 +19875,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
             }};
         Elaboratetree.Field {name = "deviceid";
@@ -20229,7 +19884,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -20246,7 +19901,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -20283,7 +19938,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
             }};
         Elaboratetree.Field {name = "cursor";
@@ -20298,7 +19953,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -20364,7 +20019,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
            }};
         Elaboratetree.Field {name = "deviceid";
@@ -20373,7 +20028,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -20395,7 +20050,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
            }};
         Elaboratetree.Field {name = "deviceid";
@@ -20404,7 +20059,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -20447,7 +20102,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
          { Elaboratetree.ft_type =
            (Elaboratetree.Type_primitive Parsetree.Card32);
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput";
                       id_name = "ModifierMask" }))
            }};
@@ -20472,7 +20127,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
            }};
         Elaboratetree.Field {name = "grab_window";
@@ -20498,7 +20153,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -20593,7 +20248,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -20627,7 +20282,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -20649,43 +20304,6 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
                      { Elaboratetree.id_module = "xproto"; id_name = "ATOM" });
                   ft_allowed = None }}
               ])};
-    Elaboratetree.Variant {name = "PropertyFormat";
-      items =
-      [{ Elaboratetree.vi_name = "8Bits"; vi_tag = 8L;
-         vi_fields =
-         [Elaboratetree.Field_list {name = "data8";
-            type_ =
-            { Elaboratetree.ft_type =
-              (Elaboratetree.Type_primitive Parsetree.Card8);
-              ft_allowed = None };
-            length = (Some (Elaboratetree.Field_ref "num_items"))};
-           Elaboratetree.Field_pad {pad = (Parsetree.Pad_align 4);
-             serialize = false}
-           ]
-         };
-        { Elaboratetree.vi_name = "16Bits"; vi_tag = 16L;
-          vi_fields =
-          [Elaboratetree.Field_list {name = "data16";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Card16);
-               ft_allowed = None };
-             length = (Some (Elaboratetree.Field_ref "num_items"))};
-            Elaboratetree.Field_pad {pad = (Parsetree.Pad_align 4);
-              serialize = false}
-            ]
-          };
-        { Elaboratetree.vi_name = "32Bits"; vi_tag = 32L;
-          vi_fields =
-          [Elaboratetree.Field_list {name = "data32";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Card32);
-               ft_allowed = None };
-             length = (Some (Elaboratetree.Field_ref "num_items"))}
-            ]
-          }
-        ]};
     Elaboratetree.Request {name = "XIChangeProperty"; opcode = 57;
       combine_adjacent = true;
       fields =
@@ -20695,7 +20313,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -20741,7 +20359,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -20755,43 +20373,6 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             ft_allowed = None }}
         ];
       reply = None};
-    Elaboratetree.Variant {name = "PropertyFormat";
-      items =
-      [{ Elaboratetree.vi_name = "8Bits"; vi_tag = 8L;
-         vi_fields =
-         [Elaboratetree.Field_list {name = "data8";
-            type_ =
-            { Elaboratetree.ft_type =
-              (Elaboratetree.Type_primitive Parsetree.Card8);
-              ft_allowed = None };
-            length = (Some (Elaboratetree.Field_ref "num_items"))};
-           Elaboratetree.Field_pad {pad = (Parsetree.Pad_align 4);
-             serialize = false}
-           ]
-         };
-        { Elaboratetree.vi_name = "16Bits"; vi_tag = 16L;
-          vi_fields =
-          [Elaboratetree.Field_list {name = "data16";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Card16);
-               ft_allowed = None };
-             length = (Some (Elaboratetree.Field_ref "num_items"))};
-            Elaboratetree.Field_pad {pad = (Parsetree.Pad_align 4);
-              serialize = false}
-            ]
-          };
-        { Elaboratetree.vi_name = "32Bits"; vi_tag = 32L;
-          vi_fields =
-          [Elaboratetree.Field_list {name = "data32";
-             type_ =
-             { Elaboratetree.ft_type =
-               (Elaboratetree.Type_primitive Parsetree.Card32);
-               ft_allowed = None };
-             length = (Some (Elaboratetree.Field_ref "num_items"))}
-            ]
-          }
-        ]};
     Elaboratetree.Request {name = "XIGetProperty"; opcode = 59;
       combine_adjacent = true;
       fields =
@@ -20801,7 +20382,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -20991,7 +20572,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "WINDOW" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Window"
                        }))
             }};
@@ -21034,7 +20615,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card8);
             ft_allowed =
-            (Some (Elaboratetree.Allowed_mask
+            (Some (Elaboratetree.Allowed_alt_mask
                      { Elaboratetree.id_module = "xinput";
                        id_name = "MoreEventsMask" }))
             }}
@@ -21124,7 +20705,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
          { Elaboratetree.ft_type =
            (Elaboratetree.Type_primitive Parsetree.Byte);
            ft_allowed =
-           (Some (Elaboratetree.Allowed_mask
+           (Some (Elaboratetree.Allowed_alt_mask
                     { Elaboratetree.id_module = "xinput";
                       id_name = "MoreEventsMask" }))
            }};
@@ -21253,7 +20834,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
          { Elaboratetree.ft_type =
            (Elaboratetree.Type_primitive Parsetree.Byte);
            ft_allowed =
-           (Some (Elaboratetree.Allowed_mask
+           (Some (Elaboratetree.Allowed_alt_mask
                     { Elaboratetree.id_module = "xinput";
                       id_name = "MoreEventsMask" }))
            }};
@@ -21273,7 +20854,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
          { Elaboratetree.ft_type =
            (Elaboratetree.Type_primitive Parsetree.Byte);
            ft_allowed =
-           (Some (Elaboratetree.Allowed_mask
+           (Some (Elaboratetree.Allowed_alt_mask
                     { Elaboratetree.id_module = "xinput";
                       id_name = "MoreEventsMask" }))
            }};
@@ -21366,7 +20947,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -21376,7 +20957,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
             }};
         Elaboratetree.Field_list_length {list = "classes";
@@ -21388,7 +20969,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -21422,7 +21003,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -21432,7 +21013,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
             }};
         Elaboratetree.Field {name = "detail";
@@ -21494,7 +21075,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -21558,7 +21139,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -21568,7 +21149,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
             }};
         Elaboratetree.Field {name = "detail";
@@ -21630,7 +21211,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -21704,7 +21285,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -21714,7 +21295,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
             }};
         Elaboratetree.Field {name = "sourceid";
@@ -21723,7 +21304,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -21842,7 +21423,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -21852,7 +21433,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -21891,7 +21472,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -21901,7 +21482,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
             }};
         Elaboratetree.Field {name = "flags";
@@ -21937,7 +21518,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -21947,7 +21528,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
             }};
         Elaboratetree.Field {name = "property";
@@ -21977,7 +21558,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -21987,7 +21568,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
             }};
         Elaboratetree.Field {name = "detail";
@@ -22055,7 +21636,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -22065,7 +21646,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
             }};
         Elaboratetree.Field {name = "detail";
@@ -22141,7 +21722,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -22151,7 +21732,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
             }};
         Elaboratetree.Field {name = "detail";
@@ -22213,7 +21794,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -22279,7 +21860,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -22289,7 +21870,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
             }};
         Elaboratetree.Field {name = "touchid";
@@ -22321,7 +21902,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -22348,7 +21929,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -22358,7 +21939,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
             }};
         Elaboratetree.Field {name = "detail";
@@ -22434,7 +22015,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Elaboratetree.Allowed_enum
+           (Some (Elaboratetree.Allowed_alt_enum
                     { Elaboratetree.id_module = "xinput"; id_name = "Device"
                       }))
            }};
@@ -22444,7 +22025,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
             }};
         Elaboratetree.Field {name = "eventid";
@@ -22490,7 +22071,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xinput"; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xinput"; id_name = "Device"
                        }))
             }};
@@ -23799,7 +23380,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Window" }))
              }};
@@ -23881,7 +23462,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Window" }))
              }};
@@ -23965,7 +23546,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Window" }))
              }};
@@ -24051,7 +23632,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Window" }))
              }};
@@ -24495,7 +24076,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Window" }))
              }};
@@ -24532,6 +24113,10 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
          Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 1);
            serialize = false}
          ]};
+     Elaboratetree.Enum {name = "StackMode";
+       items =
+       [("Above", 0L); ("Below", 1L); ("TopIf", 2L); ("BottomIf", 3L);
+         ("Opposite", 4L)]};
      Elaboratetree.Event {name = "ConfigureRequest"; number = 23;
        is_generic = false; is_serializable = false;
        no_sequence_number = false;
@@ -24563,7 +24148,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Window" }))
              }};
@@ -24795,7 +24380,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Time"
                         }))
              }};
@@ -24829,7 +24414,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "ATOM" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Atom"
                         }))
              }}
@@ -24846,7 +24431,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Time"
                         }))
              }};
@@ -24874,7 +24459,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "ATOM" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Atom"
                         }))
              }}
@@ -24900,7 +24485,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "COLORMAP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Colormap" }))
              }};
@@ -25120,6 +24705,8 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
          ("North", 2L); ("NorthEast", 3L); ("West", 4L); ("Center", 5L);
          ("East", 6L); ("SouthWest", 7L); ("South", 8L); ("SouthEast", 9L);
          ("Static", 10L)]};
+     Elaboratetree.Enum {name = "Pixmap"; items = [("None", 0L)]};
+     Elaboratetree.Enum {name = "Cursor"; items = [("None", 0L)]};
      Elaboratetree.Request {name = "CreateWindow"; opcode = 1;
        combine_adjacent = true;
        fields =
@@ -25189,7 +24776,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "PIXMAP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "BackPixmap" }))
              }};
@@ -25206,7 +24793,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "PIXMAP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Pixmap" }))
              }};
@@ -25299,7 +24886,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "COLORMAP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Colormap" }))
              }};
@@ -25310,7 +24897,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "CURSOR" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Cursor" }))
              }}
@@ -25336,7 +24923,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "PIXMAP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "BackPixmap" }))
              }};
@@ -25353,7 +24940,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "PIXMAP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Pixmap" }))
              }};
@@ -25446,7 +25033,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "COLORMAP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Colormap" }))
              }};
@@ -25457,7 +25044,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "CURSOR" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Cursor" }))
              }}
@@ -25562,7 +25149,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
                       { Elaboratetree.id_module = "xproto";
                         id_name = "COLORMAP" });
                    ft_allowed =
-                   (Some (Elaboratetree.Allowed_enum
+                   (Some (Elaboratetree.Allowed_alt_enum
                             { Elaboratetree.id_module = "xproto";
                               id_name = "Colormap" }))
                    }};
@@ -25730,10 +25317,6 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
        [("X", 0); ("Y", 1); ("Width", 2); ("Height", 3); ("BorderWidth", 4);
          ("Sibling", 5); ("StackMode", 6)];
        additional_values = []};
-     Elaboratetree.Enum {name = "StackMode";
-       items =
-       [("Above", 0L); ("Below", 1L); ("TopIf", 2L); ("BottomIf", 3L);
-         ("Opposite", 4L)]};
      Elaboratetree.Request {name = "ConfigureWindow"; opcode = 12;
        combine_adjacent = true;
        fields =
@@ -25786,7 +25369,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Window" }))
              }};
@@ -25906,7 +25489,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
                       { Elaboratetree.id_module = "xproto";
                         id_name = "WINDOW" });
                    ft_allowed =
-                   (Some (Elaboratetree.Allowed_enum
+                   (Some (Elaboratetree.Allowed_alt_enum
                             { Elaboratetree.id_module = "xproto";
                               id_name = "Window" }))
                    }};
@@ -25952,7 +25535,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
                       { Elaboratetree.id_module = "xproto"; id_name = "ATOM"
                         });
                    ft_allowed =
-                   (Some (Elaboratetree.Allowed_enum
+                   (Some (Elaboratetree.Allowed_alt_enum
                             { Elaboratetree.id_module = "xproto";
                               id_name = "Atom" }))
                    }}
@@ -26086,7 +25669,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "ATOM" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "GetPropertyType" }))
              }};
@@ -26178,7 +25761,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Window" }))
              }};
@@ -26194,7 +25777,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Time"
                         }))
              }}
@@ -26222,7 +25805,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
                       { Elaboratetree.id_module = "xproto";
                         id_name = "WINDOW" });
                    ft_allowed =
-                   (Some (Elaboratetree.Allowed_enum
+                   (Some (Elaboratetree.Allowed_alt_enum
                             { Elaboratetree.id_module = "xproto";
                               id_name = "Window" }))
                    }}
@@ -26256,7 +25839,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "ATOM" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Atom"
                         }))
              }};
@@ -26266,7 +25849,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Time"
                         }))
              }}
@@ -26288,7 +25871,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "SendEventDest" }))
              }};
@@ -26315,7 +25898,6 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
        items =
        [("Success", 0L); ("AlreadyGrabbed", 1L); ("InvalidTime", 2L);
          ("NotViewable", 3L); ("Frozen", 4L)]};
-     Elaboratetree.Enum {name = "Cursor"; items = [("None", 0L)]};
      Elaboratetree.Request {name = "GrabPointer"; opcode = 26;
        combine_adjacent = true;
        fields =
@@ -26363,7 +25945,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Window" }))
              }};
@@ -26373,7 +25955,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "CURSOR" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Cursor" }))
              }};
@@ -26383,7 +25965,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Time"
                         }))
              }}
@@ -26410,7 +25992,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Time"
                         }))
              }}
@@ -26466,7 +26048,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Window" }))
              }};
@@ -26476,7 +26058,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "CURSOR" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Cursor" }))
              }};
@@ -26544,7 +26126,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "CURSOR" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Cursor" }))
              }};
@@ -26554,7 +26136,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Time"
                         }))
              }};
@@ -26591,7 +26173,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Time"
                         }))
              }};
@@ -26638,7 +26220,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Time"
                         }))
              }}
@@ -26674,7 +26256,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "KEYCODE" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Grab"
                         }))
              }};
@@ -26709,7 +26291,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "KEYCODE" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Grab" }))
             }};
          Elaboratetree.Field {name = "grab_window";
@@ -26754,7 +26336,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Time"
                         }))
              }}
@@ -26796,7 +26378,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
                       { Elaboratetree.id_module = "xproto";
                         id_name = "WINDOW" });
                    ft_allowed =
-                   (Some (Elaboratetree.Allowed_enum
+                   (Some (Elaboratetree.Allowed_alt_enum
                             { Elaboratetree.id_module = "xproto";
                               id_name = "Window" }))
                    }};
@@ -26868,7 +26450,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Time"
                         }))
              }};
@@ -26878,7 +26460,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Time"
                         }))
              }}
@@ -26940,7 +26522,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
                       { Elaboratetree.id_module = "xproto";
                         id_name = "WINDOW" });
                    ft_allowed =
-                   (Some (Elaboratetree.Allowed_enum
+                   (Some (Elaboratetree.Allowed_alt_enum
                             { Elaboratetree.id_module = "xproto";
                               id_name = "Window" }))
                    }};
@@ -26966,7 +26548,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Window" }))
              }};
@@ -26976,7 +26558,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Window" }))
              }};
@@ -27034,7 +26616,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "InputFocus" }))
              }};
@@ -27044,7 +26626,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Time"
                         }))
              }}
@@ -27069,7 +26651,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
                       { Elaboratetree.id_module = "xproto";
                         id_name = "WINDOW" });
                    ft_allowed =
-                   (Some (Elaboratetree.Allowed_enum
+                   (Some (Elaboratetree.Allowed_alt_enum
                             { Elaboratetree.id_module = "xproto";
                               id_name = "InputFocus" }))
                    }}
@@ -27617,6 +27199,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
        items = [("ClipByChildren", 0L); ("IncludeInferiors", 1L)]};
      Elaboratetree.Enum {name = "ArcMode";
        items = [("Chord", 0L); ("PieSlice", 1L)]};
+     Elaboratetree.Enum {name = "Font"; items = [("None", 0L)]};
      Elaboratetree.Request {name = "CreateGC"; opcode = 55;
        combine_adjacent = true;
        fields =
@@ -27726,7 +27309,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "PIXMAP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Pixmap" }))
              }};
@@ -27737,7 +27320,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "PIXMAP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Pixmap" }))
              }};
@@ -27760,7 +27343,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "FONT" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Font"
                         }))
              }};
@@ -27800,7 +27383,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "PIXMAP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Pixmap" }))
              }};
@@ -27931,7 +27514,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "PIXMAP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Pixmap" }))
              }};
@@ -27942,7 +27525,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "PIXMAP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Pixmap" }))
              }};
@@ -27965,7 +27548,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "FONT" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Font"
                         }))
              }};
@@ -28005,7 +27588,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "PIXMAP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Pixmap" }))
              }};
@@ -29410,7 +28993,6 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
                    (Elaboratetree.Type_primitive Parsetree.Card16);
                    ft_allowed = None }}
                ])};
-     Elaboratetree.Enum {name = "Pixmap"; items = [("None", 0L)]};
      Elaboratetree.Request {name = "CreateCursor"; opcode = 93;
        combine_adjacent = true;
        fields =
@@ -29434,7 +29016,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "PIXMAP" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto";
                         id_name = "Pixmap" }))
              }};
@@ -29480,7 +29062,6 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              ft_allowed = None }}
          ];
        reply = None};
-     Elaboratetree.Enum {name = "Font"; items = [("None", 0L)]};
      Elaboratetree.Request {name = "CreateGlyphCursor"; opcode = 94;
        combine_adjacent = true;
        fields =
@@ -29504,7 +29085,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "FONT" });
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Font"
                         }))
              }};
@@ -30098,6 +29679,8 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
          Elaboratetree.Field_pad {pad = (Parsetree.Pad_align 4);
            serialize = false}
          ]};
+     Elaboratetree.Enum {name = "AccessControl";
+       items = [("Disable", 0L); ("Enable", 1L)]};
      Elaboratetree.Request {name = "ListHosts"; opcode = 110;
        combine_adjacent = true; fields = [];
        reply =
@@ -30123,8 +29706,6 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
                         });
                    ft_allowed = None }}
                ])};
-     Elaboratetree.Enum {name = "AccessControl";
-       items = [("Disable", 0L); ("Enable", 1L)]};
      Elaboratetree.Request {name = "SetAccessControl"; opcode = 111;
        combine_adjacent = true;
        fields =
@@ -30167,7 +29748,7 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
            { Elaboratetree.ft_type =
              (Elaboratetree.Type_primitive Parsetree.Card32);
              ft_allowed =
-             (Some (Elaboratetree.Allowed_enum
+             (Some (Elaboratetree.Allowed_alt_enum
                       { Elaboratetree.id_module = "xproto"; id_name = "Kill"
                         }))
              }}
@@ -31400,7 +30981,7 @@ Elaboratetree.Extension {name = "Xv"; file_name = "xv";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
             }}
         ];
@@ -31430,7 +31011,7 @@ Elaboratetree.Extension {name = "Xv"; file_name = "xv";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "xproto"; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Elaboratetree.Allowed_enum
+            (Some (Elaboratetree.Allowed_alt_enum
                      { Elaboratetree.id_module = "xproto"; id_name = "Time" }))
             }}
         ];

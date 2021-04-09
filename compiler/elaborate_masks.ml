@@ -20,6 +20,45 @@
 - get rid of void types, which apparently are supposed to be void pointers
 *)
 
+let fix_declaration_order fixes decls =
+  let list_remove f l =
+    let rec loop acc = function
+      | [] -> invalid_arg "l"
+      | item :: rest -> (
+          match f item with
+          | Some res -> (res, List.rev acc @ rest)
+          | None -> loop (item :: acc) rest )
+    in
+    loop [] l
+  in
+  let list_splice ~item f l =
+    let rec loop acc = function
+      | [] -> invalid_arg "l"
+      | curr :: _ as rest when f curr -> List.rev acc @ [ item ] @ rest
+      | curr :: rest -> loop (curr :: acc) rest
+    in
+    loop [] l
+  in
+  List.fold_left
+    (fun decls (enum_name, before) ->
+      let decl, decls =
+        decls
+        |> list_remove (function
+             | Elaboratetree.Enum { name; _ } as e when name = enum_name ->
+                 Some e
+             | _ -> None)
+      in
+      list_splice ~item:decl
+        (fun d ->
+          match (d, before) with
+          | Elaboratetree.Event { name; _ }, `Event ev_name when name = ev_name
+            ->
+              true
+          | Request { name; _ }, `Request req_name when name = req_name -> true
+          | _ -> false)
+        decls)
+    decls fixes
+
 let conv_ident Parsetree.{ id_module; id_name } =
   Elaboratetree.{ id_module = Option.get id_module; id_name }
 
@@ -586,10 +625,33 @@ let in_declarations (curr_module, xcbs) decls =
                  { name; opcode; combine_adjacent; fields; reply = None };
              ])
   |> List.flatten
+  |> List.fold_left
+       (fun acc -> function
+         | Elaboratetree.Variant { name; _ } as item ->
+             if
+               List.exists
+                 (function
+                   | Elaboratetree.Variant { name = other_name; _ } ->
+                       name = other_name
+                   | _ -> false)
+                 acc
+             then acc
+             else item :: acc | item -> item :: acc)
+       []
+  |> List.rev
 
 let in_xcb xcbs = function
   | Parsetree.Core declarations ->
-      Elaboratetree.Core (in_declarations ("xproto", xcbs) declarations)
+      Elaboratetree.Core
+        ( in_declarations ("xproto", xcbs) declarations
+        |> fix_declaration_order
+             [
+               ("StackMode", `Event "ConfigureRequest");
+               ("Pixmap", `Request "CreateWindow");
+               ("Cursor", `Request "CreateWindow");
+               ("AccessControl", `Request "ListHosts");
+               ("Font", `Request "CreateGC");
+             ] )
   | Extension { name; file_name; query_name; multiword; version; declarations }
     ->
       let imports =

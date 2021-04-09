@@ -296,7 +296,7 @@ Parsetree.Extension {name = "Damage"; file_name = "damage";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "REGION" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Region" }))
             }};
         Parsetree.Field {name = "parts";
@@ -305,7 +305,7 @@ Parsetree.Extension {name = "Damage"; file_name = "damage";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "REGION" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Region" }))
             }}
         ];
@@ -6688,7 +6688,7 @@ Parsetree.Extension {name = "RandR"; file_name = "randr";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "ATOM" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None;
                        id_name = "GetPropertyType" }))
             }};
@@ -6723,7 +6723,7 @@ Parsetree.Extension {name = "RandR"; file_name = "randr";
                     (Parsetree.Type_ref
                        { Parsetree.id_module = None; id_name = "ATOM" });
                     ft_allowed =
-                    (Some (Parsetree.Allowed_enum
+                    (Some (Parsetree.Allowed_alt_enum
                              { Parsetree.id_module = None; id_name = "Atom" }))
                     }};
                 Parsetree.Field {name = "bytes_after";
@@ -9984,7 +9984,7 @@ Parsetree.Extension {name = "Render"; file_name = "render";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "PICTURE" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Picture" }))
             }};
         Parsetree.Field {name = "dst";
@@ -11401,7 +11401,7 @@ Parsetree.Extension {name = "ScreenSaver"; file_name = "screensaver";
                      (Parsetree.Type_ref
                         { Parsetree.id_module = None; id_name = "PIXMAP" });
                      ft_allowed =
-                     (Some (Parsetree.Allowed_enum
+                     (Some (Parsetree.Allowed_alt_enum
                               { Parsetree.id_module = None;
                                 id_name = "BackPixmap" }))
                      }}
@@ -11434,7 +11434,7 @@ Parsetree.Extension {name = "ScreenSaver"; file_name = "screensaver";
                       (Parsetree.Type_ref
                          { Parsetree.id_module = None; id_name = "PIXMAP" });
                       ft_allowed =
-                      (Some (Parsetree.Allowed_enum
+                      (Some (Parsetree.Allowed_alt_enum
                                { Parsetree.id_module = None;
                                  id_name = "Pixmap" }))
                       }}
@@ -11615,7 +11615,7 @@ Parsetree.Extension {name = "ScreenSaver"; file_name = "screensaver";
                       (Parsetree.Type_ref
                          { Parsetree.id_module = None; id_name = "COLORMAP" });
                       ft_allowed =
-                      (Some (Parsetree.Allowed_enum
+                      (Some (Parsetree.Allowed_alt_enum
                                { Parsetree.id_module = None;
                                  id_name = "Colormap" }))
                       }}
@@ -11634,7 +11634,7 @@ Parsetree.Extension {name = "ScreenSaver"; file_name = "screensaver";
                       (Parsetree.Type_ref
                          { Parsetree.id_module = None; id_name = "CURSOR" });
                       ft_allowed =
-                      (Some (Parsetree.Allowed_enum
+                      (Some (Parsetree.Allowed_alt_enum
                                { Parsetree.id_module = None;
                                  id_name = "Cursor" }))
                       }}
@@ -11887,7 +11887,7 @@ Parsetree.Extension {name = "Shape"; file_name = "shape";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "PIXMAP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Pixmap" }))
             }}
         ];
@@ -15139,7 +15139,7 @@ Parsetree.Extension {name = "XFixes"; file_name = "xfixes";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "ATOM" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Atom" }))
             }};
         Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 12);
@@ -15544,7 +15544,7 @@ Parsetree.Extension {name = "XFixes"; file_name = "xfixes";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "REGION" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Region" }))
             }};
         Parsetree.Field {name = "x_origin";
@@ -15590,7 +15590,7 @@ Parsetree.Extension {name = "XFixes"; file_name = "xfixes";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "REGION" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Region" }))
             }}
         ];
@@ -15610,7 +15610,7 @@ Parsetree.Extension {name = "XFixes"; file_name = "xfixes";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "REGION" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Region" }))
             }};
         Parsetree.Field {name = "x_origin";
@@ -15664,7 +15664,7 @@ Parsetree.Extension {name = "XFixes"; file_name = "xfixes";
                     (Parsetree.Type_ref
                        { Parsetree.id_module = None; id_name = "ATOM" });
                     ft_allowed =
-                    (Some (Parsetree.Allowed_enum
+                    (Some (Parsetree.Allowed_alt_enum
                              { Parsetree.id_module = None; id_name = "Atom" }))
                     }};
                 Parsetree.Field {name = "nbytes";
@@ -15730,7 +15730,7 @@ Parsetree.Extension {name = "XFixes"; file_name = "xfixes";
                     (Parsetree.Type_ref
                        { Parsetree.id_module = None; id_name = "ATOM" });
                     ft_allowed =
-                    (Some (Parsetree.Allowed_enum
+                    (Some (Parsetree.Allowed_alt_enum
                              { Parsetree.id_module = None; id_name = "Atom" }))
                     }};
                 Parsetree.Field {name = "nbytes";
@@ -16747,7 +16747,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Time" }))
             }};
         Parsetree.Field {name = "device_id";
@@ -16878,7 +16878,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Time" }))
             }};
         Parsetree.Field {name = "num_classes";
@@ -16946,7 +16946,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "TIMESTAMP" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Time" }))
            }};
         Parsetree.Field {name = "device_id";
@@ -16982,7 +16982,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
           type_ =
           { Parsetree.ft_type = (Parsetree.Type_primitive Parsetree.Card8);
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "ModifierDevice"
                        }))
             }};
@@ -16994,7 +16994,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
           type_ =
           { Parsetree.ft_type = (Parsetree.Type_primitive Parsetree.Card8);
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Grab" }))
             }};
         Parsetree.Field {name = "this_device_mode";
@@ -17045,7 +17045,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
           type_ =
           { Parsetree.ft_type = (Parsetree.Type_primitive Parsetree.Card8);
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "ModifierDevice"
                        }))
             }};
@@ -17053,7 +17053,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
           type_ =
           { Parsetree.ft_type = (Parsetree.Type_primitive Parsetree.Card8);
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Grab" }))
             }};
         Parsetree.Field {name = "grabbed_device";
@@ -17079,7 +17079,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
           type_ =
           { Parsetree.ft_type = (Parsetree.Type_primitive Parsetree.Card8);
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "ModifierDevice"
                        }))
             }};
@@ -17112,7 +17112,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
           type_ =
           { Parsetree.ft_type = (Parsetree.Type_primitive Parsetree.Card8);
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Grab" }))
             }};
         Parsetree.Field {name = "owner_events";
@@ -17149,7 +17149,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
           type_ =
           { Parsetree.ft_type = (Parsetree.Type_primitive Parsetree.Card8);
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "ModifierDevice"
                        }))
             }};
@@ -17157,7 +17157,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
           type_ =
           { Parsetree.ft_type = (Parsetree.Type_primitive Parsetree.Card8);
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Grab" }))
             }};
         Parsetree.Field {name = "grabbed_device";
@@ -17185,7 +17185,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "TIMESTAMP" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Time" }))
            }};
         Parsetree.Field {name = "mode";
@@ -17225,7 +17225,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
                     (Parsetree.Type_ref
                        { Parsetree.id_module = None; id_name = "WINDOW" });
                     ft_allowed =
-                    (Some (Parsetree.Allowed_enum
+                    (Some (Parsetree.Allowed_alt_enum
                              { Parsetree.id_module = None;
                                id_name = "InputFocus" }))
                     }};
@@ -17258,7 +17258,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "WINDOW" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "InputFocus" }))
            }};
         Parsetree.Field {name = "time";
@@ -17267,7 +17267,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Time" }))
             }};
         Parsetree.Field {name = "revert_to";
@@ -19036,7 +19036,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
                   { Parsetree.ft_type =
                     (Parsetree.Type_primitive Parsetree.Card8);
                     ft_allowed =
-                    (Some (Parsetree.Allowed_enum
+                    (Some (Parsetree.Allowed_alt_enum
                              { Parsetree.id_module = None;
                                id_name = "GrabStatus" }))
                     }};
@@ -19408,7 +19408,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
                   { Parsetree.ft_type =
                     (Parsetree.Type_primitive Parsetree.Card8);
                     ft_allowed =
-                    (Some (Parsetree.Allowed_enum
+                    (Some (Parsetree.Allowed_alt_enum
                              { Parsetree.id_module = None;
                                id_name = "GrabStatus" }))
                     }};
@@ -19768,7 +19768,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 2); serialize = false}
@@ -19900,7 +19900,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 2); serialize = false}
@@ -19927,7 +19927,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 2); serialize = false}
@@ -19998,7 +19998,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field {name = "return_mode";
@@ -20015,7 +20015,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field {name = "return_keyboard";
@@ -20024,7 +20024,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }}
         ]};
@@ -20048,7 +20048,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field {name = "master";
@@ -20057,7 +20057,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }}
         ]};
@@ -20081,7 +20081,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 2); serialize = false}
@@ -20153,7 +20153,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
                       (Parsetree.Type_ref
                          { Parsetree.id_module = None; id_name = "DeviceId" });
                       ft_allowed =
-                      (Some (Parsetree.Allowed_enum
+                      (Some (Parsetree.Allowed_alt_enum
                                { Parsetree.id_module = None;
                                  id_name = "Device" }))
                       }};
@@ -20175,7 +20175,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
                           { Parsetree.id_module = None; id_name = "DeviceId"
                             });
                        ft_allowed =
-                       (Some (Parsetree.Allowed_enum
+                       (Some (Parsetree.Allowed_alt_enum
                                 { Parsetree.id_module = None;
                                   id_name = "Device" }))
                        }};
@@ -20186,7 +20186,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
                           { Parsetree.id_module = None; id_name = "DeviceId"
                             });
                        ft_allowed =
-                       (Some (Parsetree.Allowed_enum
+                       (Some (Parsetree.Allowed_alt_enum
                                 { Parsetree.id_module = None;
                                   id_name = "Device" }))
                        }}
@@ -20207,7 +20207,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
                       (Parsetree.Type_ref
                          { Parsetree.id_module = None; id_name = "DeviceId" });
                       ft_allowed =
-                      (Some (Parsetree.Allowed_enum
+                      (Some (Parsetree.Allowed_alt_enum
                                { Parsetree.id_module = None;
                                  id_name = "Device" }))
                       }};
@@ -20218,7 +20218,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
                           { Parsetree.id_module = None; id_name = "DeviceId"
                             });
                        ft_allowed =
-                       (Some (Parsetree.Allowed_enum
+                       (Some (Parsetree.Allowed_alt_enum
                                 { Parsetree.id_module = None;
                                   id_name = "Device" }))
                        }}
@@ -20239,7 +20239,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
                       (Parsetree.Type_ref
                          { Parsetree.id_module = None; id_name = "DeviceId" });
                       ft_allowed =
-                      (Some (Parsetree.Allowed_enum
+                      (Some (Parsetree.Allowed_alt_enum
                                { Parsetree.id_module = None;
                                  id_name = "Device" }))
                       }};
@@ -20282,7 +20282,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 2); serialize = false}
@@ -20315,7 +20315,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
                     (Parsetree.Type_ref
                        { Parsetree.id_module = None; id_name = "DeviceId" });
                     ft_allowed =
-                    (Some (Parsetree.Allowed_enum
+                    (Some (Parsetree.Allowed_alt_enum
                              { Parsetree.id_module = None; id_name = "Device"
                                }))
                     }};
@@ -20360,7 +20360,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field {name = "mask_len";
@@ -20886,7 +20886,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field {name = "type";
@@ -20902,7 +20902,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field {name = "num_classes";
@@ -20941,7 +20941,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 2); serialize = false}
@@ -20983,7 +20983,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Time" }))
             }};
         Parsetree.Field {name = "deviceid";
@@ -20992,7 +20992,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 2); serialize = false}
@@ -21007,7 +21007,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 2); serialize = false}
@@ -21047,7 +21047,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Time" }))
             }};
         Parsetree.Field {name = "cursor";
@@ -21062,7 +21062,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field {name = "mode";
@@ -21124,7 +21124,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "TIMESTAMP" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Time" }))
            }};
         Parsetree.Field {name = "deviceid";
@@ -21133,7 +21133,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 2); serialize = false}
@@ -21159,7 +21159,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "TIMESTAMP" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Time" }))
            }};
         Parsetree.Field {name = "deviceid";
@@ -21168,7 +21168,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field {name = "event_mode";
@@ -21213,7 +21213,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
          type_ =
          { Parsetree.ft_type = (Parsetree.Type_primitive Parsetree.Card32);
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "ModifierMask" }))
            }};
         Parsetree.Field {name = "status";
@@ -21234,7 +21234,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "TIMESTAMP" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Time" }))
            }};
         Parsetree.Field {name = "grab_window";
@@ -21259,7 +21259,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field {name = "num_modifiers";
@@ -21351,7 +21351,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field {name = "num_modifiers";
@@ -21382,7 +21382,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 2); serialize = false}
@@ -21417,7 +21417,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field {name = "mode";
@@ -21522,7 +21522,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 2); serialize = false};
@@ -21543,7 +21543,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field {name = "delete";
@@ -21795,7 +21795,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "WINDOW" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Window" }))
             }};
         Parsetree.Field {name = "root_x";
@@ -21829,7 +21829,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
           type_ =
           { Parsetree.ft_type = (Parsetree.Type_primitive Parsetree.Card8);
             ft_allowed =
-            (Some (Parsetree.Allowed_mask
+            (Some (Parsetree.Allowed_alt_mask
                      { Parsetree.id_module = None; id_name = "MoreEventsMask"
                        }))
             }}
@@ -21910,7 +21910,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
          type_ =
          { Parsetree.ft_type = (Parsetree.Type_primitive Parsetree.Byte);
            ft_allowed =
-           (Some (Parsetree.Allowed_mask
+           (Some (Parsetree.Allowed_alt_mask
                     { Parsetree.id_module = None; id_name = "MoreEventsMask"
                       }))
            }};
@@ -22028,7 +22028,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
          type_ =
          { Parsetree.ft_type = (Parsetree.Type_primitive Parsetree.Byte);
            ft_allowed =
-           (Some (Parsetree.Allowed_mask
+           (Some (Parsetree.Allowed_alt_mask
                     { Parsetree.id_module = None; id_name = "MoreEventsMask"
                       }))
            }};
@@ -22046,7 +22046,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
          type_ =
          { Parsetree.ft_type = (Parsetree.Type_primitive Parsetree.Byte);
            ft_allowed =
-           (Some (Parsetree.Allowed_mask
+           (Some (Parsetree.Allowed_alt_mask
                     { Parsetree.id_module = None; id_name = "MoreEventsMask"
                       }))
            }};
@@ -22139,7 +22139,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field {name = "time";
@@ -22148,7 +22148,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Time" }))
             }};
         Parsetree.Field {name = "num_classes";
@@ -22161,7 +22161,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field {name = "reason";
@@ -22193,7 +22193,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field {name = "time";
@@ -22202,7 +22202,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Time" }))
             }};
         Parsetree.Field {name = "detail";
@@ -22265,7 +22265,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 2); serialize = false};
@@ -22325,7 +22325,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field {name = "time";
@@ -22334,7 +22334,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Time" }))
             }};
         Parsetree.Field {name = "detail";
@@ -22397,7 +22397,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 2); serialize = false};
@@ -22478,7 +22478,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field {name = "time";
@@ -22487,7 +22487,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Time" }))
             }};
         Parsetree.Field {name = "sourceid";
@@ -22496,7 +22496,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field {name = "mode";
@@ -22616,7 +22616,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field {name = "attachment";
@@ -22625,7 +22625,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field {name = "type";
@@ -22658,7 +22658,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field {name = "time";
@@ -22667,7 +22667,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Time" }))
             }};
         Parsetree.Field {name = "flags";
@@ -22708,7 +22708,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field {name = "time";
@@ -22717,7 +22717,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Time" }))
             }};
         Parsetree.Field {name = "property";
@@ -22746,7 +22746,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field {name = "time";
@@ -22755,7 +22755,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Time" }))
             }};
         Parsetree.Field {name = "detail";
@@ -22820,7 +22820,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field {name = "time";
@@ -22829,7 +22829,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Time" }))
             }};
         Parsetree.Field {name = "detail";
@@ -22902,7 +22902,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field {name = "time";
@@ -22911,7 +22911,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Time" }))
             }};
         Parsetree.Field {name = "detail";
@@ -22974,7 +22974,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 2); serialize = false};
@@ -23037,7 +23037,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field {name = "time";
@@ -23046,7 +23046,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Time" }))
             }};
         Parsetree.Field {name = "touchid";
@@ -23077,7 +23077,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 2); serialize = false};
@@ -23101,7 +23101,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field {name = "time";
@@ -23110,7 +23110,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Time" }))
             }};
         Parsetree.Field {name = "detail";
@@ -23183,7 +23183,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
            (Parsetree.Type_ref
               { Parsetree.id_module = None; id_name = "DeviceId" });
            ft_allowed =
-           (Some (Parsetree.Allowed_enum
+           (Some (Parsetree.Allowed_alt_enum
                     { Parsetree.id_module = None; id_name = "Device" }))
            }};
         Parsetree.Field {name = "time";
@@ -23192,7 +23192,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Time" }))
             }};
         Parsetree.Field {name = "eventid";
@@ -23234,7 +23234,7 @@ Parsetree.Extension {name = "Input"; file_name = "xinput";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "DeviceId" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Device" }))
             }};
         Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 2); serialize = false};
@@ -24349,7 +24349,7 @@ Parsetree.Extension {name = "xkb"; file_name = "xkb";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "IDSpec" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "ID" }))
             }};
         Parsetree.Field {name = "namesPresent";
@@ -25044,7 +25044,7 @@ Parsetree.Extension {name = "xkb"; file_name = "xkb";
           type_ =
           { Parsetree.ft_type = (Parsetree.Type_primitive Parsetree.Card8);
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None;
                        id_name = "SymInterpretMatch" }))
             }};
@@ -27196,7 +27196,7 @@ Parsetree.Extension {name = "xkb"; file_name = "xkb";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "IDSpec" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "ID" }))
             }};
         Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 2); serialize = false};
@@ -27345,7 +27345,7 @@ Parsetree.Extension {name = "xkb"; file_name = "xkb";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "IDSpec" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "ID" }))
             }};
         Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 2); serialize = false};
@@ -29532,7 +29532,7 @@ Parsetree.Extension {name = "xkb"; file_name = "xkb";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "IDSpec" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "ID" }))
             }}
         ];
@@ -29610,7 +29610,7 @@ Parsetree.Extension {name = "xkb"; file_name = "xkb";
                   { Parsetree.ft_type =
                     (Parsetree.Type_primitive Parsetree.Card16);
                     ft_allowed =
-                    (Some (Parsetree.Allowed_enum
+                    (Some (Parsetree.Allowed_alt_enum
                              { Parsetree.id_module = None; id_name = "ID" }))
                     }};
                 Parsetree.Field {name = "dfltLedFB";
@@ -29618,7 +29618,7 @@ Parsetree.Extension {name = "xkb"; file_name = "xkb";
                   { Parsetree.ft_type =
                     (Parsetree.Type_primitive Parsetree.Card16);
                     ft_allowed =
-                    (Some (Parsetree.Allowed_enum
+                    (Some (Parsetree.Allowed_alt_enum
                              { Parsetree.id_module = None; id_name = "ID" }))
                     }};
                 Parsetree.Field_pad {pad = (Parsetree.Pad_bytes 2);
@@ -31790,7 +31790,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Window" }))
              }};
          Parsetree.Field {name = "root_x";
@@ -31866,7 +31866,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Window" }))
              }};
          Parsetree.Field {name = "root_x";
@@ -31942,7 +31942,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Window" }))
              }};
          Parsetree.Field {name = "root_x";
@@ -32028,7 +32028,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Window" }))
              }};
          Parsetree.Field {name = "root_x";
@@ -32423,7 +32423,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Window" }))
              }};
          Parsetree.Field {name = "x";
@@ -32482,7 +32482,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Window" }))
              }};
          Parsetree.Field {name = "x";
@@ -32745,7 +32745,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Time" }))
              }};
          Parsetree.Field {name = "owner";
@@ -32778,7 +32778,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "ATOM" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Atom" }))
              }}
          ];
@@ -32793,7 +32793,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Time" }))
              }};
          Parsetree.Field {name = "requestor";
@@ -32820,7 +32820,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "ATOM" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Atom" }))
              }}
          ];
@@ -32848,7 +32848,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "COLORMAP" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Colormap" }))
              }};
          Parsetree.Field {name = "new";
@@ -33150,7 +33150,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                       (Parsetree.Type_ref
                          { Parsetree.id_module = None; id_name = "PIXMAP" });
                       ft_allowed =
-                      (Some (Parsetree.Allowed_enum
+                      (Some (Parsetree.Allowed_alt_enum
                                { Parsetree.id_module = None;
                                  id_name = "BackPixmap" }))
                       }}
@@ -33183,7 +33183,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                        (Parsetree.Type_ref
                           { Parsetree.id_module = None; id_name = "PIXMAP" });
                        ft_allowed =
-                       (Some (Parsetree.Allowed_enum
+                       (Some (Parsetree.Allowed_alt_enum
                                 { Parsetree.id_module = None;
                                   id_name = "Pixmap" }))
                        }}
@@ -33365,7 +33365,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                           { Parsetree.id_module = None; id_name = "COLORMAP"
                             });
                        ft_allowed =
-                       (Some (Parsetree.Allowed_enum
+                       (Some (Parsetree.Allowed_alt_enum
                                 { Parsetree.id_module = None;
                                   id_name = "Colormap" }))
                        }}
@@ -33384,7 +33384,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                        (Parsetree.Type_ref
                           { Parsetree.id_module = None; id_name = "CURSOR" });
                        ft_allowed =
-                       (Some (Parsetree.Allowed_enum
+                       (Some (Parsetree.Allowed_alt_enum
                                 { Parsetree.id_module = None;
                                   id_name = "Cursor" }))
                        }}
@@ -33429,7 +33429,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                       (Parsetree.Type_ref
                          { Parsetree.id_module = None; id_name = "PIXMAP" });
                       ft_allowed =
-                      (Some (Parsetree.Allowed_enum
+                      (Some (Parsetree.Allowed_alt_enum
                                { Parsetree.id_module = None;
                                  id_name = "BackPixmap" }))
                       }}
@@ -33462,7 +33462,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                        (Parsetree.Type_ref
                           { Parsetree.id_module = None; id_name = "PIXMAP" });
                        ft_allowed =
-                       (Some (Parsetree.Allowed_enum
+                       (Some (Parsetree.Allowed_alt_enum
                                 { Parsetree.id_module = None;
                                   id_name = "Pixmap" }))
                        }}
@@ -33644,7 +33644,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                           { Parsetree.id_module = None; id_name = "COLORMAP"
                             });
                        ft_allowed =
-                       (Some (Parsetree.Allowed_enum
+                       (Some (Parsetree.Allowed_alt_enum
                                 { Parsetree.id_module = None;
                                   id_name = "Colormap" }))
                        }}
@@ -33663,7 +33663,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                        (Parsetree.Type_ref
                           { Parsetree.id_module = None; id_name = "CURSOR" });
                        ft_allowed =
-                       (Some (Parsetree.Allowed_enum
+                       (Some (Parsetree.Allowed_alt_enum
                                 { Parsetree.id_module = None;
                                   id_name = "Cursor" }))
                        }}
@@ -33774,7 +33774,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                      (Parsetree.Type_ref
                         { Parsetree.id_module = None; id_name = "COLORMAP" });
                      ft_allowed =
-                     (Some (Parsetree.Allowed_enum
+                     (Some (Parsetree.Allowed_alt_enum
                               { Parsetree.id_module = None;
                                 id_name = "Colormap" }))
                      }};
@@ -34062,7 +34062,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                        (Parsetree.Type_ref
                           { Parsetree.id_module = None; id_name = "WINDOW" });
                        ft_allowed =
-                       (Some (Parsetree.Allowed_enum
+                       (Some (Parsetree.Allowed_alt_enum
                                 { Parsetree.id_module = None;
                                   id_name = "Window" }))
                        }}
@@ -34195,7 +34195,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                      (Parsetree.Type_ref
                         { Parsetree.id_module = None; id_name = "WINDOW" });
                      ft_allowed =
-                     (Some (Parsetree.Allowed_enum
+                     (Some (Parsetree.Allowed_alt_enum
                               { Parsetree.id_module = None;
                                 id_name = "Window" }))
                      }};
@@ -34245,7 +34245,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                      (Parsetree.Type_ref
                         { Parsetree.id_module = None; id_name = "ATOM" });
                      ft_allowed =
-                     (Some (Parsetree.Allowed_enum
+                     (Some (Parsetree.Allowed_alt_enum
                               { Parsetree.id_module = None; id_name = "Atom"
                                 }))
                      }}
@@ -34384,7 +34384,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "ATOM" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None;
                         id_name = "GetPropertyType" }))
              }};
@@ -34479,7 +34479,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Window" }))
              }};
          Parsetree.Field {name = "selection";
@@ -34494,7 +34494,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Time" }))
              }}
          ];
@@ -34520,7 +34520,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                      (Parsetree.Type_ref
                         { Parsetree.id_module = None; id_name = "WINDOW" });
                      ft_allowed =
-                     (Some (Parsetree.Allowed_enum
+                     (Some (Parsetree.Allowed_alt_enum
                               { Parsetree.id_module = None;
                                 id_name = "Window" }))
                      }}
@@ -34555,7 +34555,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "ATOM" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Atom" }))
              }};
          Parsetree.Field {name = "time";
@@ -34564,7 +34564,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Time" }))
              }}
          ];
@@ -34587,7 +34587,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "SendEventDest"
                         }))
              }};
@@ -34660,7 +34660,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Window" }))
              }};
          Parsetree.Field {name = "cursor";
@@ -34669,7 +34669,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "CURSOR" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Cursor" }))
              }};
          Parsetree.Field {name = "time";
@@ -34678,7 +34678,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Time" }))
              }}
          ];
@@ -34706,7 +34706,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Time" }))
              }}
          ];
@@ -34757,7 +34757,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Window" }))
              }};
          Parsetree.Field {name = "cursor";
@@ -34766,7 +34766,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "CURSOR" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Cursor" }))
              }};
          Parsetree.Field {name = "button";
@@ -34824,7 +34824,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "CURSOR" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Cursor" }))
              }};
          Parsetree.Field {name = "time";
@@ -34833,7 +34833,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Time" }))
              }};
          Parsetree.Field {name = "event_mask";
@@ -34866,7 +34866,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Time" }))
              }};
          Parsetree.Field {name = "pointer_mode";
@@ -34910,7 +34910,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Time" }))
              }}
          ];
@@ -34943,7 +34943,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "KEYCODE" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Grab" }))
              }};
          Parsetree.Field {name = "pointer_mode";
@@ -34973,7 +34973,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "KEYCODE" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Grab" }))
             }};
          Parsetree.Field {name = "grab_window";
@@ -35020,7 +35020,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Time" }))
              }}
          ];
@@ -35059,7 +35059,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                      (Parsetree.Type_ref
                         { Parsetree.id_module = None; id_name = "WINDOW" });
                      ft_allowed =
-                     (Some (Parsetree.Allowed_enum
+                     (Some (Parsetree.Allowed_alt_enum
                               { Parsetree.id_module = None;
                                 id_name = "Window" }))
                      }};
@@ -35130,7 +35130,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Time" }))
              }};
          Parsetree.Field {name = "stop";
@@ -35139,7 +35139,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Time" }))
              }}
          ];
@@ -35202,7 +35202,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                      (Parsetree.Type_ref
                         { Parsetree.id_module = None; id_name = "WINDOW" });
                      ft_allowed =
-                     (Some (Parsetree.Allowed_enum
+                     (Some (Parsetree.Allowed_alt_enum
                               { Parsetree.id_module = None;
                                 id_name = "Window" }))
                      }};
@@ -35229,7 +35229,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Window" }))
              }};
          Parsetree.Field {name = "dst_window";
@@ -35238,7 +35238,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Window" }))
              }};
          Parsetree.Field {name = "src_x";
@@ -35290,7 +35290,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "WINDOW" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "InputFocus" }))
              }};
          Parsetree.Field {name = "time";
@@ -35299,7 +35299,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "TIMESTAMP" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Time" }))
              }}
          ];
@@ -35323,7 +35323,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                      (Parsetree.Type_ref
                         { Parsetree.id_module = None; id_name = "WINDOW" });
                      ft_allowed =
-                     (Some (Parsetree.Allowed_enum
+                     (Some (Parsetree.Allowed_alt_enum
                               { Parsetree.id_module = None;
                                 id_name = "InputFocus" }))
                      }}
@@ -36145,7 +36145,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                        (Parsetree.Type_ref
                           { Parsetree.id_module = None; id_name = "PIXMAP" });
                        ft_allowed =
-                       (Some (Parsetree.Allowed_enum
+                       (Some (Parsetree.Allowed_alt_enum
                                 { Parsetree.id_module = None;
                                   id_name = "Pixmap" }))
                        }}
@@ -36164,7 +36164,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                        (Parsetree.Type_ref
                           { Parsetree.id_module = None; id_name = "PIXMAP" });
                        ft_allowed =
-                       (Some (Parsetree.Allowed_enum
+                       (Some (Parsetree.Allowed_alt_enum
                                 { Parsetree.id_module = None;
                                   id_name = "Pixmap" }))
                        }}
@@ -36211,7 +36211,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                        (Parsetree.Type_ref
                           { Parsetree.id_module = None; id_name = "FONT" });
                        ft_allowed =
-                       (Some (Parsetree.Allowed_enum
+                       (Some (Parsetree.Allowed_alt_enum
                                 { Parsetree.id_module = None;
                                   id_name = "Font" }))
                        }}
@@ -36291,7 +36291,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                        (Parsetree.Type_ref
                           { Parsetree.id_module = None; id_name = "PIXMAP" });
                        ft_allowed =
-                       (Some (Parsetree.Allowed_enum
+                       (Some (Parsetree.Allowed_alt_enum
                                 { Parsetree.id_module = None;
                                   id_name = "Pixmap" }))
                        }}
@@ -36545,7 +36545,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                        (Parsetree.Type_ref
                           { Parsetree.id_module = None; id_name = "PIXMAP" });
                        ft_allowed =
-                       (Some (Parsetree.Allowed_enum
+                       (Some (Parsetree.Allowed_alt_enum
                                 { Parsetree.id_module = None;
                                   id_name = "Pixmap" }))
                        }}
@@ -36564,7 +36564,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                        (Parsetree.Type_ref
                           { Parsetree.id_module = None; id_name = "PIXMAP" });
                        ft_allowed =
-                       (Some (Parsetree.Allowed_enum
+                       (Some (Parsetree.Allowed_alt_enum
                                 { Parsetree.id_module = None;
                                   id_name = "Pixmap" }))
                        }}
@@ -36611,7 +36611,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                        (Parsetree.Type_ref
                           { Parsetree.id_module = None; id_name = "FONT" });
                        ft_allowed =
-                       (Some (Parsetree.Allowed_enum
+                       (Some (Parsetree.Allowed_alt_enum
                                 { Parsetree.id_module = None;
                                   id_name = "Font" }))
                        }}
@@ -36691,7 +36691,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
                        (Parsetree.Type_ref
                           { Parsetree.id_module = None; id_name = "PIXMAP" });
                        ft_allowed =
-                       (Some (Parsetree.Allowed_enum
+                       (Some (Parsetree.Allowed_alt_enum
                                 { Parsetree.id_module = None;
                                   id_name = "Pixmap" }))
                        }}
@@ -38098,7 +38098,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "PIXMAP" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Pixmap" }))
              }};
          Parsetree.Field {name = "fore_red";
@@ -38159,7 +38159,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
              (Parsetree.Type_ref
                 { Parsetree.id_module = None; id_name = "FONT" });
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Font" }))
              }};
          Parsetree.Field {name = "source_char";
@@ -38915,7 +38915,7 @@ Parsetree.Extension {name = "XPrint"; file_name = "xprint";
            type_ =
            { Parsetree.ft_type = (Parsetree.Type_primitive Parsetree.Card32);
              ft_allowed =
-             (Some (Parsetree.Allowed_enum
+             (Some (Parsetree.Allowed_alt_enum
                       { Parsetree.id_module = None; id_name = "Kill" }))
              }}
          ];
@@ -40257,7 +40257,7 @@ Parsetree.Extension {name = "Xv"; file_name = "xv"; query_name = "XVideo";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Time" }))
             }}
         ];
@@ -40290,7 +40290,7 @@ Parsetree.Extension {name = "Xv"; file_name = "xv"; query_name = "XVideo";
             (Parsetree.Type_ref
                { Parsetree.id_module = None; id_name = "TIMESTAMP" });
             ft_allowed =
-            (Some (Parsetree.Allowed_enum
+            (Some (Parsetree.Allowed_alt_enum
                      { Parsetree.id_module = None; id_name = "Time" }))
             }}
         ];
