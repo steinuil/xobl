@@ -11,23 +11,27 @@
       - variant field
       Also needs a new type of declaration
 
-
 - [x] put imports into xcb
 - figure out list length fields
 - [x] add variants
 - prune unused enums and masks
-- reorder some declarations that have dependencies above them (there's like 2)
+- [x] reorder some declarations that have dependencies above them (there's like 2)
 - get rid of void types, which apparently are supposed to be void pointers
+- char list -> string
+- figure out how to deal with masks
 *)
 
+(* This is a hack to avoid having to topologically sort the declarations.
+   The Right Thing(tm) would be to have a list that goes through all the
+   declarations and checks if all the types referenced throughout were
+   declared before the current one, and if there's any move them before
+   the current one and go back to check them too. *)
 let fix_declaration_order fixes decls =
   let list_remove f l =
     let rec loop acc = function
       | [] -> invalid_arg "l"
-      | item :: rest -> (
-          match f item with
-          | Some res -> (res, List.rev acc @ rest)
-          | None -> loop (item :: acc) rest )
+      | item :: rest when f item -> (item, List.rev acc @ rest)
+      | item :: rest -> loop (item :: acc) rest
     in
     loop [] l
   in
@@ -42,24 +46,21 @@ let fix_declaration_order fixes decls =
   List.fold_left
     (fun decls (enum, before) ->
       let decl, decls =
-        decls
-        |> list_remove (fun d ->
-               match (d, enum) with
-               | (Elaboratetree.Enum { name; _ } as e), `Enum enum_name
-                 when name = enum_name ->
-                   Some e
-               | (Mask { name; _ } as m), `Mask mask_name when name = mask_name
-                 ->
-                   Some m
-               | _ -> None)
+        list_remove
+          (fun d ->
+            match (d, enum) with
+            | Elaboratetree.Enum { name; _ }, `Enum other_name
+            | Mask { name; _ }, `Mask other_name ->
+                name = other_name
+            | _ -> false)
+          decls
       in
       list_splice ~item:decl
         (fun d ->
           match (d, before) with
-          | Elaboratetree.Event { name; _ }, `Event ev_name when name = ev_name
-            ->
-              true
-          | Request { name; _ }, `Request req_name when name = req_name -> true
+          | Elaboratetree.Event { name; _ }, `Event other_name
+          | Request { name; _ }, `Request other_name ->
+              name = other_name
           | _ -> false)
         decls)
     decls fixes
@@ -455,7 +456,6 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
          | Field_pad { pad; serialize } ->
              ([ Elaboratetree.Field_pad { pad; serialize } ], [])
          | Field_list { name; type_; length } ->
-             (* Printf.eprintf "%s.%s.%s\n" curr_module struct_name name; *)
              ( [
                  Elaboratetree.Field_list
                    {
@@ -484,7 +484,7 @@ let find_module_by_extension_name xcbs n =
        | _ -> None)
   |> Option.get
 
-(** Resolve event numbers to their idents. *)
+(** Resolve event numbers to their idents for event structs. *)
 let resolve_allowed_event xcbs
     Parsetree.{ ae_module; ae_opcode_range = { min; max }; _ } =
   let find_event id_module ev_number =
@@ -502,11 +502,12 @@ let resolve_allowed_event xcbs
 (** Split enums in pure enums and masks, based on whether they only have value
     items or also bit items. *)
 let split_enums name enum_items =
-  if
+  let all_items_are_value =
     List.for_all
       (function _, Parsetree.Item_value _ -> true | _ -> false)
       enum_items
-  then
+  in
+  if all_items_are_value then
     let items =
       List.map
         (function
@@ -645,6 +646,31 @@ let in_declarations (curr_module, xcbs) decls =
        []
   |> List.rev
 
+let fix_modifier_mask = function
+  | Elaboratetree.Struct { name = "GrabModifierInfo"; fields } ->
+      Elaboratetree.Struct
+        {
+          name = "GrabModifierInfo";
+          fields =
+            List.map
+              (function
+                | Elaboratetree.Field
+                    {
+                      name = "modifiers";
+                      type_ =
+                        { ft_allowed = Some (Allowed_alt_enum mask); _ } as t;
+                    } ->
+                    Elaboratetree.Field
+                      {
+                        name = "modifiers";
+                        type_ =
+                          { t with ft_allowed = Some (Allowed_alt_mask mask) };
+                      }
+                | item -> item)
+              fields;
+        }
+  | item -> item
+
 let in_xcb xcbs = function
   | Parsetree.Core declarations ->
       Elaboratetree.Core
@@ -664,7 +690,11 @@ let in_xcb xcbs = function
         declarations
         |> List.filter_map (function Parsetree.Import i -> Some i | _ -> None)
       in
-      let declarations = declarations in
+      let declarations = in_declarations (file_name, xcbs) declarations in
+      let declarations =
+        if file_name = "xinput" then List.map fix_modifier_mask declarations
+        else declarations
+      in
       Elaboratetree.Extension
         {
           name;
@@ -673,5 +703,5 @@ let in_xcb xcbs = function
           multiword;
           version;
           imports;
-          declarations = in_declarations (file_name, xcbs) declarations;
+          declarations;
         }

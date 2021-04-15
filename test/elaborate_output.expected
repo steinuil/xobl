@@ -20102,7 +20102,7 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
          { Elaboratetree.ft_type =
            (Elaboratetree.Type_primitive Parsetree.Card32);
            ft_allowed =
-           (Some (Elaboratetree.Allowed_alt_enum
+           (Some (Elaboratetree.Allowed_alt_mask
                     { Elaboratetree.id_module = "xinput";
                       id_name = "ModifierMask" }))
            }};

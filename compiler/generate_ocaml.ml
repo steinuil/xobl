@@ -183,7 +183,14 @@ let gen_field_type ctx out = function
   | { ft_type = _; ft_allowed = Some (Allowed_mask mask) } ->
       gen_ident ctx out
         { mask with id_name = Ident.snake mask.id_name ~suffix:"mask" }
-  | { ft_type; ft_allowed = Some _ } -> gen_type ctx out ft_type
+  | { ft_type; ft_allowed = Some (Allowed_alt_enum enum) } ->
+      Printf.fprintf out "(%a, %a) alt" (gen_ident ctx)
+        { enum with id_name = Ident.snake enum.id_name ~suffix:"enum" }
+        (gen_type ctx) ft_type
+  | { ft_type; ft_allowed = Some (Allowed_alt_mask mask) } ->
+      Printf.fprintf out "(%a, %a) alt" (gen_ident ctx)
+        { mask with id_name = Ident.snake mask.id_name ~suffix:"mask" }
+        (gen_type ctx) ft_type
 
 let gen_field ctx out = function
   | Field { name; type_ } ->
@@ -200,10 +207,9 @@ let gen_field ctx out = function
   | Field_variant { name; variant } ->
       Printf.fprintf out "%s : %a; " (Ident.snake name) (gen_ident ctx)
         { variant with id_name = Ident.snake variant.id_name ~suffix:"variant" }
-  | Field_pad _ | Field_list_length _ | Field_variant_tag _
+  | Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _
   | Field_optional_mask _ ->
       ()
-  | Field_expr _ -> ()
 
 let gen_variant_item ctx out { vi_name; vi_tag = _; vi_fields } =
   Printf.fprintf out "%s of { %a}" (Ident.caml vi_name)
@@ -211,7 +217,7 @@ let gen_variant_item ctx out { vi_name; vi_tag = _; vi_fields } =
     vi_fields
 
 let gen_named_arg ctx out = function
-  | Field { name; type_ } | Field_expr { name; type_; _ } ->
+  | Field { name; type_ } ->
       Printf.fprintf out "~(%s : %a) " (Ident.snake name) (gen_field_type ctx)
         type_
   | Field_file_descriptor name ->
@@ -225,15 +231,15 @@ let gen_named_arg ctx out = function
   | Field_variant { name; variant } ->
       Printf.fprintf out "~(%s : %a) " (Ident.snake name) (gen_ident ctx)
         { variant with id_name = Ident.snake variant.id_name ~suffix:"variant" }
-  | Field_pad _ | Field_list_length _ | Field_variant_tag _
+  | Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _
   | Field_optional_mask _ ->
       ()
 
 let is_field_visible = function
-  | Field _ | Field_expr _ | Field_file_descriptor _ | Field_optional _
-  | Field_list _ | Field_list_simple _ | Field_variant _ ->
+  | Field _ | Field_file_descriptor _ | Field_optional _ | Field_list _
+  | Field_list_simple _ | Field_variant _ ->
       true
-  | Field_pad _ | Field_list_length _ | Field_variant_tag _
+  | Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _
   | Field_optional_mask _ ->
       false
 
