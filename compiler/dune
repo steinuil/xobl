@@ -4,4 +4,4 @@
  (libraries patche)
  (inline_tests)
  (preprocess
-  (pps ppx_inline_test ppx_expect ppx_deriving.show lwt_ppx)))
+  (pps ppx_inline_test ppx_expect ppx_deriving.show)))
