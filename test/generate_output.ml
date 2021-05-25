@@ -75,11 +75,63 @@ let () =
     |> List.map Xobl_compiler.Elaborate.unions_to_switches
     |> Xobl_compiler.Elaborate.resolve_idents
   in
-  output_string stdout "type xid = int\n";
-  output_string stdout "type file_descr = int\n";
   output_string stdout
-    "type ('flags, 'vals) mask = F of 'flags list | V of 'vals\n";
-  output_string stdout "type ('enum, 't) alt = E of 'enum | T of 't\n";
+    {|type xid = int
+type file_descr = int
+type ('flags, 'vals) mask = F of 'flags list | V of 'vals
+type ('enum, 't) alt = E of 'enum | T of 't
+let (let*) = Option.bind
+
+let decode f buf ~at ~size =
+  if Bytes.length buf < at + size - 1 then None else Some (f buf at, at + size)
+
+let decode_char buf ~at = decode Bytes.get buf ~at ~size:1
+
+let decode_uint8 buf ~at = decode Bytes.get_uint8 buf ~at ~size:1
+
+let decode_int8 buf ~at = decode Bytes.get_int8 buf ~at ~size:1
+
+let decode_bool buf ~at =
+  decode_uint8 buf ~at |> Option.map (fun (n, at) -> (n <> 0, at))
+
+let decode_uint16 buf ~at = decode Bytes.get_uint16_le buf ~at ~size:2
+
+let decode_int16 buf ~at = decode Bytes.get_int16_le buf ~at ~size:2
+
+let decode_int32 buf ~at = decode Bytes.get_int32_le buf ~at ~size:4
+
+let decode_int64 buf ~at = decode Bytes.get_int64_le buf ~at ~size:8
+
+let decode_float buf ~at =
+  decode_int64 buf ~at
+  |> Option.map (fun (n, at) -> (Int64.float_of_bits n, at))
+
+let decode_file_descr buf ~at =
+  decode Bytes.get_int16_le buf ~at ~size:2
+  |> Option.map (fun (n, at) -> ((Obj.magic n : Unix.file_descr), at))
+
+let decode_xid = decode_int16
+
+let decode_enum decode to_int of_int buf ~at =
+  match decode buf ~at with
+  | None -> None
+  | Some (n, at) ->
+    match of_int (to_int n) with
+    | None -> None
+    | Some e -> Some (e, at)
+
+let decode_list decode_item len buf ~at =
+  let rec loop items at len =
+    if len = 0 then Some ((List.rev items), at)
+    else
+      match decode_item buf ~at with
+      | None -> None
+      | Some (item, at) ->
+        loop (item :: items) at (len - 1)
+  in
+  loop [] at len
+
+|};
   List.map (Xobl_compiler.Elaborate.do_stuff xcbs) xcbs
   |> sort_xcbs
-  |> List.iter (fun xcb -> Xobl_compiler__.Generate_ocaml.gen_xcb stdout xcb)
+  |> Xobl_compiler__.Generate_ocaml.gen stdout

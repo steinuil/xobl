@@ -420,21 +420,28 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
          (* Lists *)
          | Field_list { name; type_; length = Some _ }
            when List.exists (fun (list_name, _, _) -> name = list_name) lists ->
+             let _, length_field, _ =
+               List.find (fun (list_name, _, _) -> name = list_name) lists
+             in
              ( [
                  Elaboratetree.Field_list_simple
-                   { name; type_ = conv_field_type type_ };
+                   {
+                     name;
+                     type_ = conv_field_type type_;
+                     length = length_field;
+                   };
                ],
                [] )
          | Field { name; type_ = { ft_type; _ } }
            when List.exists
                   (fun (_, length_field, _) -> name = length_field)
                   lists ->
-             let list, _, expr =
+             let _, _, expr =
                List.find (fun (_, length_field, _) -> name = length_field) lists
              in
              ( [
                  Elaboratetree.Field_list_length
-                   { list; type_ = conv_type ft_type; expr };
+                   { name; type_ = conv_type ft_type; expr };
                ],
                [] )
          (* Rest *)

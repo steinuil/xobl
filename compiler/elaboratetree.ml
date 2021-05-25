@@ -71,9 +71,9 @@ type field =
       type_ : field_type;
       length : expression option;
     }
-  | Field_list_simple of { name : string; type_ : field_type }
+  | Field_list_simple of { name : string; type_ : field_type; length : string }
       (** List with an associated {!constructor:Field_list_length} length. *)
-  | Field_list_length of { list : string; type_ : type_; expr : expression }
+  | Field_list_length of { name : string; type_ : type_; expr : expression }
       (** Contains the length of the associated simple list.
           Should be hidden in the public API. *)
   | Field_variant of { name : string; variant : ident }
