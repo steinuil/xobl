@@ -32,7 +32,7 @@ module Attr = struct
     match v with
     | None -> return None
     | Some v -> (
-        match f v with Some i -> return (Some i) | None -> error (err v) )
+        match f v with Some i -> return (Some i) | None -> error (err v))
 
   open Infix
 
@@ -137,7 +137,7 @@ let inp str =
 let make_input = Lazy_list.of_xml_input
 
 let%test_module "el_discard" =
-  ( module struct
+  (module struct
     let%test "empty" = run (el_discard "el") (inp "<el></el>") = Ok ()
 
     let%test "data" = run (el_discard "el") (inp "<el>a</el>") = Ok ()
@@ -152,4 +152,4 @@ let%test_module "el_discard" =
       run (el_discard "el")
         (inp "<el><a><b>c<c><d />d</c></b><ee>asd</ee></a></el>")
       = Ok ()
-  end )
+  end)

@@ -319,7 +319,7 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
                          Some (list_name, length_field, invert e)
                      | _ -> None)
                    fields
-             | _ -> None )
+             | _ -> None)
          | _ -> None)
   in
   (* let _ayy =
@@ -649,7 +649,8 @@ let in_declarations (curr_module, xcbs) decls =
                    | _ -> false)
                  acc
              then acc
-             else item :: acc | item -> item :: acc)
+             else item :: acc
+         | item -> item :: acc)
        []
   |> List.rev
 
@@ -681,7 +682,7 @@ let fix_modifier_mask = function
 let in_xcb xcbs = function
   | Parsetree.Core declarations ->
       Elaboratetree.Core
-        ( in_declarations ("xproto", xcbs) declarations
+        (in_declarations ("xproto", xcbs) declarations
         |> fix_declaration_order
              [
                (`Enum "StackMode", `Event "ConfigureRequest");
@@ -690,7 +691,7 @@ let in_xcb xcbs = function
                (`Enum "AccessControl", `Request "ListHosts");
                (`Enum "Font", `Request "CreateGC");
                (`Mask "ConfigWindow", `Event "ConfigureRequest");
-             ] )
+             ])
   | Extension { name; file_name; query_name; multiword; version; declarations }
     ->
       let imports =

@@ -5,7 +5,7 @@ module Parsers = struct
       | el :: rest -> (
           match f el with
           | Some el -> (Some el, List.rev_append prev rest)
-          | None -> loop (el :: prev) rest )
+          | None -> loop (el :: prev) rest)
     in
     loop []
 

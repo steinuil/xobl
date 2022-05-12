@@ -38,9 +38,9 @@ exception Test_failed of Xobl_compiler.Parser.error
 let parse_module m =
   let f = open_in (Printf.sprintf "../xml-xcb/%s.xml" m) in
   try
-    ( match Xobl_compiler.Parser.parse (`Channel f) with
+    (match Xobl_compiler.Parser.parse (`Channel f) with
     | Error err -> raise (Test_failed err)
-    | Ok xcb -> print_endline (Xobl_compiler__.Parsetree.show_xcb xcb) );
+    | Ok xcb -> print_endline (Xobl_compiler__.Parsetree.show_xcb xcb));
     close_in f
   with exn ->
     close_in f;

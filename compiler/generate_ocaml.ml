@@ -21,8 +21,8 @@ module Casing = struct
           let prev = name.[i - 1] in
           if
             prev <> '_'
-            && ( Char.lowercase_ascii prev = prev
-               || is_last_of_acronym name i len )
+            && (Char.lowercase_ascii prev = prev
+               || is_last_of_acronym name i len)
           then Buffer.add_char buf '_';
           Buffer.add_char buf (Char.lowercase_ascii c)
       | c -> Buffer.add_char buf c);
@@ -122,14 +122,14 @@ module Ident = struct
     if name.[0] >= '0' && name.[0] <= '9' then "D" ^ name else name
 
   let snake ?prefix ?suffix name =
-    ( match (prefix, suffix) with
+    (match (prefix, suffix) with
     | Some prefix, Some suffix ->
         prefix ^ "_" ^ Casing.snake name ^ "_" ^ suffix
     | Some prefix, None -> prefix ^ "_" ^ Casing.snake name
     | None, Some suffix -> Casing.snake name ^ "_" ^ suffix
     | None, None ->
         let name = Casing.snake name in
-        if List.mem name ocaml_reserved then name ^ "_" else name )
+        if List.mem name ocaml_reserved then name ^ "_" else name)
     |> sanitize_numbers
 
   let caml name = Casing.caml name |> sanitize_numbers
@@ -363,8 +363,8 @@ let gen_decode_fields ctx out fields =
   output_string out "let orig = at in ";
   list_sep " " (gen_decode_field ctx fields) out fields;
   Printf.fprintf out " ignore orig; Some ({ %s }, at)"
-    ( List.filter_map name_of_field fields
-    |> List.map Ident.snake |> String.concat "; " )
+    (List.filter_map name_of_field fields
+    |> List.map Ident.snake |> String.concat "; ")
 
 (* output_string out " None" *)
 
@@ -468,8 +468,8 @@ let gen_declaration ctx out = function
         (Ident.snake name)
         (list (gen_named_arg ctx))
         fields
-        ( if Option.is_some reply then Ident.snake name ~suffix:"reply"
-        else "unit" )
+        (if Option.is_some reply then Ident.snake name ~suffix:"reply"
+        else "unit")
   | Event_copy { name; event; _ } ->
       Printf.fprintf out "type %s = %a;;"
         (Ident.snake name ~suffix:"event")

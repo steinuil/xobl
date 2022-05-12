@@ -38,7 +38,7 @@ let rec of_type xcbs = function
   | Type_ref ident -> (
       match resolve_type xcbs ident with
       | `Prim prim -> of_prim prim
-      | `Struct _ | `Event_struct _ -> failwith "a" )
+      | `Struct _ | `Event_struct _ -> failwith "a")
 
 and of_field_type xcbs { ft_type; _ } = of_type xcbs ft_type
 
@@ -56,5 +56,5 @@ and of_fields xcbs _parents fields =
    known at runtime *)
 
 (* and of_field xcbs = function
-  | Field { type_; _ } | Field_expr { type_; _ } -> of_field_type xcbs type_
-  | Field_file_descriptor _ -> of_prim Fd *)
+   | Field { type_; _ } | Field_expr { type_; _ } -> of_field_type xcbs type_
+   | Field_file_descriptor _ -> of_prim Fd *)

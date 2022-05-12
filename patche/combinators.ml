@@ -32,7 +32,7 @@ let map_option ~none f p inp =
   match p inp with
   | Error _ as err -> err
   | Ok (v, rest) -> (
-      match f v with Some v -> Ok (v, rest) | None -> Error (none v) )
+      match f v with Some v -> Ok (v, rest) | None -> Error (none v))
 
 (* Various *)
 
@@ -145,7 +145,7 @@ let or_ p1 p2 inp = match p1 inp with Ok _ as ok -> ok | Error _ -> p2 inp
 let choice ps inp =
   let rec loop = function
     | [] -> Error `Choice_failed
-    | p :: ps -> ( match p inp with Ok _ as ok -> ok | Error _ -> loop ps )
+    | p :: ps -> ( match p inp with Ok _ as ok -> ok | Error _ -> loop ps)
   in
   loop ps
 

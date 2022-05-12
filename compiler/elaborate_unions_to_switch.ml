@@ -292,9 +292,9 @@ let randr_notify_to_switch decls =
                                             {
                                               enum;
                                               item =
-                                                ( if id_name = "LeaseNotify" then
-                                                  "Lease"
-                                                else id_name );
+                                                (if id_name = "LeaseNotify" then
+                                                 "Lease"
+                                                else id_name);
                                             };
                                         ];
                                       cs_fields = [ f ];

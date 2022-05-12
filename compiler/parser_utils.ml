@@ -47,7 +47,7 @@ let mk_type id =
   | { id_module = None; id_name } as id -> (
       match prim_of_string_opt id_name with
       | Some prim -> Type_primitive prim
-      | None -> Type_ref id )
+      | None -> Type_ref id)
 
 let binop = function
   | "+" -> Ok Add
