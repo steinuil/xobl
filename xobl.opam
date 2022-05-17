@@ -7,7 +7,7 @@ license: "ISC"
 homepage: "https://github.com/steinuil/xobl"
 bug-reports: "https://github.com/steinuil/xobl/issues"
 depends: [
-  "dune" {>= "2.8"}
+  "dune" {>= "3.1"}
   "xmlm"
   "ppx_inline_test"
   "ppx_expect"

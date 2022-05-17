@@ -35,21 +35,13 @@ module Casing = struct
     else snek name
 
   let%test "C case" = snake "bigreq" = "bigreq"
-
   let%test "UPPERCASE" = snake "CHAR2B" = "char2b"
-
   let%test "snake_case" = snake "bits_per_rgb_value" = "bits_per_rgb_value"
-
   let%test "CamelCase" = snake "StaticGray" = "static_gray"
-
   let%test "weird case 1" = snake "GLXContext" = "glx_context"
-
   let%test "weird case 2" = snake "DECnet" = "decnet"
-
   let%test "weird case 3" = snake "Positive_HSync" = "positive_h_sync"
-
   let%test "weird case 4" = snake "DRI2Buffer" = "dri2_buffer"
-
   let%test "weird case 5" = snake "TestStriGS" = "test_stri_gs"
 
   let caml name = String.capitalize_ascii (snake name)
@@ -338,15 +330,21 @@ let gen_decode_field ctx _fields out = function
         (resolve_as_prim ctx type_ |> gen_to_int);
       Printf.fprintf out "let %s = %a in" (Ident.snake name) gen_expr expr
   | Field_list_simple { name; type_; length } ->
-      Printf.fprintf out "let* %s, at = decode_list %a %s buf ~at in"
+      Printf.fprintf out "let* %s, at = decode_list (%a) %s buf ~at in"
         (Ident.snake name)
         (gen_decode_field_type ctx)
         type_ (Ident.snake length)
-  | Field_expr _ | Field_list _ | Field_variant _ | Field_variant_tag _
-  | Field_optional _ | Field_optional_mask _ ->
-      ()
-
-(* | Field_optional { name; type_; _ } *)
+  | Field_optional_mask { name; type_ } ->
+      Printf.fprintf out "let* %s, at = %a buf ~at in" (Ident.snake name)
+        (gen_decode_type ctx) type_
+  | Field_optional { name; type_; mask; bit } ->
+      Printf.fprintf out
+        "let* %s, at = if %s land (1 lsl %d) <> 0 then let* v, at = %a buf ~at \
+         in Some ((Some v, at)) else Some ((None, at))"
+        (Ident.snake name) (Ident.snake mask) bit
+        (gen_decode_field_type ctx)
+        type_
+  | Field_expr _ | Field_list _ | Field_variant _ | Field_variant_tag _ -> ()
 
 let name_of_field = function
   | Field { name; _ }
@@ -365,8 +363,6 @@ let gen_decode_fields ctx out fields =
   Printf.fprintf out " ignore orig; Some ({ %s }, at)"
     (List.filter_map name_of_field fields
     |> List.map Ident.snake |> String.concat "; ")
-
-(* output_string out " None" *)
 
 let gen_variant_item ctx out { vi_name; vi_tag = _; vi_fields } =
   Printf.fprintf out "%s of { %a}" (Ident.caml vi_name)
@@ -469,7 +465,21 @@ let gen_declaration ctx out = function
         (list (gen_named_arg ctx))
         fields
         (if Option.is_some reply then Ident.snake name ~suffix:"reply"
-        else "unit")
+        else "unit");
+      reply
+      |> Option.iter (function
+           | fields when visible_fields fields = 0 ->
+               Printf.fprintf out
+                 "\n\
+                  let %s buf ~at : (%s * int) option = ignore buf; Some ((), \
+                  at);;"
+                 (Ident.snake ~prefix:"decode" ~suffix:"reply" name)
+                 (Ident.snake name ~suffix:"reply")
+           | fields ->
+               Printf.fprintf out "\nlet %s buf ~at : (%s * int) option = %a;;"
+                 (Ident.snake ~prefix:"decode" ~suffix:"reply" name)
+                 (Ident.snake name ~suffix:"reply")
+                 (gen_decode_fields ctx) fields)
   | Event_copy { name; event; _ } ->
       Printf.fprintf out "type %s = %a;;"
         (Ident.snake name ~suffix:"event")

@@ -131,6 +131,36 @@ let decode_list decode_item len buf ~at =
   in
   loop [] at len
 
+let encode f buf v ~at ~size =
+  if Bytes.length buf < at + size then None else (
+    f buf at v;
+    Some (at + size)
+  )
+
+let encode_char buf v ~at = encode Bytes.set buf  v ~at ~size:1
+
+let encode_uint8 buf v ~at = encode Bytes.set_uint8 buf v ~at ~size:1
+
+let encode_int8 buf v ~at = encode Bytes.set_int8 buf v ~at ~size:1
+
+let encode_bool buf v ~at = encode_uint8 buf (if v then 1 else 0) ~at
+
+let encode_uint16 buf v ~at = encode Bytes.set_uint16_le buf v ~at ~size:2
+
+let encode_int16 buf v ~at = encode Bytes.set_int16_le buf v ~at ~size:2
+
+let encode_int32 buf v ~at = encode Bytes.set_int32_le buf v ~at ~size:4
+
+let encode_int64 buf v ~at = encode Bytes.set_int64_le buf v ~at ~size:8
+
+let encode_float buf v ~at =
+  encode_int64 buf (Int64.bits_of_float v) ~at
+
+let encode_file_descr buf (v : Unix.file_descr) ~at =
+  encode_int16 buf (Obj.magic v) ~at
+
+let encode_xid = encode_int16
+
 |};
   List.map (Xobl_compiler.Elaborate.do_stuff xcbs) xcbs
   |> sort_xcbs
