@@ -103,7 +103,7 @@ let decode_uint16 buf ~at = decode Bytes.get_uint16_le buf ~at ~size:2
 
 let decode_int16 buf ~at = decode Bytes.get_int16_le buf ~at ~size:2
 
-let decode_int32 buf ~at = decode Bytes.get_int32_le buf ~at ~size:4
+let decode_int32 buf ~at = decode Bytes.get_int32_le buf ~at ~size:4 |> Option.map (fun (n, at) -> (Int32.to_int n, at))
 
 let decode_int64 buf ~at = decode Bytes.get_int64_le buf ~at ~size:8
 

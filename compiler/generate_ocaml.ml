@@ -149,11 +149,11 @@ let gen_prim = function
   | Bool -> "bool"
   | Int8 -> "int"
   | Int16 -> "int"
-  | Int32 -> "int32"
+  | Int32 -> "int"
   | Fd -> "Unix.file_descr"
   | Card8 -> "int"
   | Card16 -> "int"
-  | Card32 -> "int32"
+  | Card32 -> "int"
   | Card64 -> "int64"
   | Float -> "float"
   | Double -> "float"
@@ -164,7 +164,8 @@ let gen_to_int = function
   | Bool -> Some "Bool.to_int"
   | Int8 | Int16 | Card8 | Card16 | Xid -> None
   | Fd -> Some "Obj.magic"
-  | Int32 | Card32 -> Some "Int32.to_int"
+  (* | Int32 | Card32 -> Some "Int32.to_int" *)
+  | Int32 | Card32 -> None
   | Card64 -> Some "Int64.to_int"
   | Void | Float | Double -> failwith "gen_to_int"
 
@@ -173,7 +174,7 @@ let gen_to_int64 = function
   | Bool -> Some "bool_to_int64"
   | Int8 | Int16 | Card8 | Card16 | Xid -> Some "Int64.of_int"
   | Fd -> Some "Obj.magic"
-  | Int32 | Card32 -> Some "Int64.of_int32"
+  | Int32 | Card32 -> Some "Int64.of_int"
   | Card64 -> None
   | Void | Float | Double -> failwith "gen_to_int64"
 
@@ -210,7 +211,8 @@ let resolve_as_prim (_, xcbs) = function
   | Type_union _ -> Xid
 
 let gen_decode_prim = function
-  | Void -> "failwith \"a\""
+  (* | Void -> "failwith \"a\"" *)
+  | Void -> "decode_char"
   | Char -> "decode_char"
   | Byte -> "decode_char"
   | Bool -> "decode_bool"
