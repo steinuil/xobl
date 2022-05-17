@@ -301,18 +301,19 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
                | Binop (Sub, e1, e2)
                | Binop (Mul, e1, e2)
                | Binop (Div, e1, e2) ->
-                   let* e1 = traverse e1 in
-                   let* e2 = traverse e2 in
-                   Some (e1 @ e2)
+                   let* e1, v1 = traverse e1 in
+                   let* e2, v2 = traverse e2 in
+                   Some (e1 @ e2, v1 + v2)
                | Unop (Bit_not, e) -> traverse e
-               | Field_ref f -> Some [ f ]
+               | Field_ref f -> Some ([ f ], 0)
+               | Expr_value _ -> Some ([], 1)
                | Binop (_, _, _)
                | Param_ref _ | Pop_count _ | Sum_of _ | List_element_ref
-               | Expr_value _ | Expr_bit _ | Enum_ref _ ->
+               | Expr_bit _ | Enum_ref _ ->
                    None
              in
              match traverse e with
-             | Some [ length_field ] ->
+             | Some ([ length_field ], values) when values < 2 ->
                  List.find_map
                    (function
                      | Parsetree.Field { name; _ } when name = length_field ->

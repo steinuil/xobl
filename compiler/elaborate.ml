@@ -19,12 +19,10 @@ Need a change in the AST:
 - Turn switches whose expression is bit and into just a struct with all fields
   optional
   Note that some flag switches (in xkb, obviously) don't use a simple field but
-  an arbitrary expression, but again, we're not supporting fucking xkb.
+  an arbitrary expression, but again, we're not supporting xkb.
 
 *)
 
 let unions_to_switches = Elaborate_unions_to_switch.unions_to_switch
-
 let resolve_idents = Elaborate_resolve.resolve
-
 let do_stuff = Elaborate_masks.in_xcb

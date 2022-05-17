@@ -2363,20 +2363,18 @@ Elaboratetree.Extension {name = "Glx"; file_name = "glx"; query_name = "GLX";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "glx"; id_name = "PIXMAP" });
             ft_allowed = None }};
-        Elaboratetree.Field {name = "num_attribs";
-          type_ =
-          { Elaboratetree.ft_type =
-            (Elaboratetree.Type_primitive Parsetree.Card32);
-            ft_allowed = None }};
-        Elaboratetree.Field_list {name = "attribs";
+        Elaboratetree.Field_list_length {name = "num_attribs";
+          type_ = (Elaboratetree.Type_primitive Parsetree.Card32);
+          expr =
+          (Elaboratetree.Binop (Parsetree.Div,
+             (Elaboratetree.Field_ref "num_attribs"),
+             (Elaboratetree.Expr_value 2L)))};
+        Elaboratetree.Field_list_simple {name = "attribs";
           type_ =
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card32);
             ft_allowed = None };
-          length =
-          (Some (Elaboratetree.Binop (Parsetree.Mul,
-                   (Elaboratetree.Field_ref "num_attribs"),
-                   (Elaboratetree.Expr_value 2L))))}
+          length = "num_attribs"}
         ];
       reply = None};
     Elaboratetree.Request {name = "DestroyPixmap"; opcode = 23;
@@ -2443,22 +2441,20 @@ Elaboratetree.Extension {name = "Glx"; file_name = "glx"; query_name = "GLX";
       reply =
       (Some [Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 1);
                serialize = false};
-              Elaboratetree.Field {name = "num_attribs";
-                type_ =
-                { Elaboratetree.ft_type =
-                  (Elaboratetree.Type_primitive Parsetree.Card32);
-                  ft_allowed = None }};
+              Elaboratetree.Field_list_length {name = "num_attribs";
+                type_ = (Elaboratetree.Type_primitive Parsetree.Card32);
+                expr =
+                (Elaboratetree.Binop (Parsetree.Div,
+                   (Elaboratetree.Field_ref "num_attribs"),
+                   (Elaboratetree.Expr_value 2L)))};
               Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 20);
                 serialize = false};
-              Elaboratetree.Field_list {name = "attribs";
+              Elaboratetree.Field_list_simple {name = "attribs";
                 type_ =
                 { Elaboratetree.ft_type =
                   (Elaboratetree.Type_primitive Parsetree.Card32);
                   ft_allowed = None };
-                length =
-                (Some (Elaboratetree.Binop (Parsetree.Mul,
-                         (Elaboratetree.Field_ref "num_attribs"),
-                         (Elaboratetree.Expr_value 2L))))}
+                length = "num_attribs"}
               ])};
     Elaboratetree.Request {name = "MakeContextCurrent"; opcode = 26;
       combine_adjacent = true;
@@ -2521,20 +2517,18 @@ Elaboratetree.Extension {name = "Glx"; file_name = "glx"; query_name = "GLX";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "glx"; id_name = "PBUFFER" });
             ft_allowed = None }};
-        Elaboratetree.Field {name = "num_attribs";
-          type_ =
-          { Elaboratetree.ft_type =
-            (Elaboratetree.Type_primitive Parsetree.Card32);
-            ft_allowed = None }};
-        Elaboratetree.Field_list {name = "attribs";
+        Elaboratetree.Field_list_length {name = "num_attribs";
+          type_ = (Elaboratetree.Type_primitive Parsetree.Card32);
+          expr =
+          (Elaboratetree.Binop (Parsetree.Div,
+             (Elaboratetree.Field_ref "num_attribs"),
+             (Elaboratetree.Expr_value 2L)))};
+        Elaboratetree.Field_list_simple {name = "attribs";
           type_ =
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card32);
             ft_allowed = None };
-          length =
-          (Some (Elaboratetree.Binop (Parsetree.Mul,
-                   (Elaboratetree.Field_ref "num_attribs"),
-                   (Elaboratetree.Expr_value 2L))))}
+          length = "num_attribs"}
         ];
       reply = None};
     Elaboratetree.Request {name = "DestroyPbuffer"; opcode = 28;
@@ -2561,22 +2555,20 @@ Elaboratetree.Extension {name = "Glx"; file_name = "glx"; query_name = "GLX";
       reply =
       (Some [Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 1);
                serialize = false};
-              Elaboratetree.Field {name = "num_attribs";
-                type_ =
-                { Elaboratetree.ft_type =
-                  (Elaboratetree.Type_primitive Parsetree.Card32);
-                  ft_allowed = None }};
+              Elaboratetree.Field_list_length {name = "num_attribs";
+                type_ = (Elaboratetree.Type_primitive Parsetree.Card32);
+                expr =
+                (Elaboratetree.Binop (Parsetree.Div,
+                   (Elaboratetree.Field_ref "num_attribs"),
+                   (Elaboratetree.Expr_value 2L)))};
               Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 20);
                 serialize = false};
-              Elaboratetree.Field_list {name = "attribs";
+              Elaboratetree.Field_list_simple {name = "attribs";
                 type_ =
                 { Elaboratetree.ft_type =
                   (Elaboratetree.Type_primitive Parsetree.Card32);
                   ft_allowed = None };
-                length =
-                (Some (Elaboratetree.Binop (Parsetree.Mul,
-                         (Elaboratetree.Field_ref "num_attribs"),
-                         (Elaboratetree.Expr_value 2L))))}
+                length = "num_attribs"}
               ])};
     Elaboratetree.Request {name = "ChangeDrawableAttributes"; opcode = 30;
       combine_adjacent = true;
@@ -2587,20 +2579,18 @@ Elaboratetree.Extension {name = "Glx"; file_name = "glx"; query_name = "GLX";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "glx"; id_name = "DRAWABLE" });
            ft_allowed = None }};
-        Elaboratetree.Field {name = "num_attribs";
-          type_ =
-          { Elaboratetree.ft_type =
-            (Elaboratetree.Type_primitive Parsetree.Card32);
-            ft_allowed = None }};
-        Elaboratetree.Field_list {name = "attribs";
+        Elaboratetree.Field_list_length {name = "num_attribs";
+          type_ = (Elaboratetree.Type_primitive Parsetree.Card32);
+          expr =
+          (Elaboratetree.Binop (Parsetree.Div,
+             (Elaboratetree.Field_ref "num_attribs"),
+             (Elaboratetree.Expr_value 2L)))};
+        Elaboratetree.Field_list_simple {name = "attribs";
           type_ =
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card32);
             ft_allowed = None };
-          length =
-          (Some (Elaboratetree.Binop (Parsetree.Mul,
-                   (Elaboratetree.Field_ref "num_attribs"),
-                   (Elaboratetree.Expr_value 2L))))}
+          length = "num_attribs"}
         ];
       reply = None};
     Elaboratetree.Request {name = "CreateWindow"; opcode = 31;
@@ -2629,20 +2619,18 @@ Elaboratetree.Extension {name = "Glx"; file_name = "glx"; query_name = "GLX";
             (Elaboratetree.Type_ref
                { Elaboratetree.id_module = "glx"; id_name = "WINDOW" });
             ft_allowed = None }};
-        Elaboratetree.Field {name = "num_attribs";
-          type_ =
-          { Elaboratetree.ft_type =
-            (Elaboratetree.Type_primitive Parsetree.Card32);
-            ft_allowed = None }};
-        Elaboratetree.Field_list {name = "attribs";
+        Elaboratetree.Field_list_length {name = "num_attribs";
+          type_ = (Elaboratetree.Type_primitive Parsetree.Card32);
+          expr =
+          (Elaboratetree.Binop (Parsetree.Div,
+             (Elaboratetree.Field_ref "num_attribs"),
+             (Elaboratetree.Expr_value 2L)))};
+        Elaboratetree.Field_list_simple {name = "attribs";
           type_ =
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card32);
             ft_allowed = None };
-          length =
-          (Some (Elaboratetree.Binop (Parsetree.Mul,
-                   (Elaboratetree.Field_ref "num_attribs"),
-                   (Elaboratetree.Expr_value 2L))))}
+          length = "num_attribs"}
         ];
       reply = None};
     Elaboratetree.Request {name = "DeleteWindow"; opcode = 32;
@@ -2669,26 +2657,24 @@ Elaboratetree.Extension {name = "Glx"; file_name = "glx"; query_name = "GLX";
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card32);
             ft_allowed = None }};
-        Elaboratetree.Field {name = "num_versions";
-          type_ =
-          { Elaboratetree.ft_type =
-            (Elaboratetree.Type_primitive Parsetree.Card32);
-            ft_allowed = None }};
+        Elaboratetree.Field_list_length {name = "num_versions";
+          type_ = (Elaboratetree.Type_primitive Parsetree.Card32);
+          expr =
+          (Elaboratetree.Binop (Parsetree.Div,
+             (Elaboratetree.Field_ref "num_versions"),
+             (Elaboratetree.Expr_value 2L)))};
         Elaboratetree.Field_list_length {name = "gl_str_len";
           type_ = (Elaboratetree.Type_primitive Parsetree.Card32);
           expr = (Elaboratetree.Field_ref "gl_str_len")};
         Elaboratetree.Field_list_length {name = "glx_str_len";
           type_ = (Elaboratetree.Type_primitive Parsetree.Card32);
           expr = (Elaboratetree.Field_ref "glx_str_len")};
-        Elaboratetree.Field_list {name = "gl_versions";
+        Elaboratetree.Field_list_simple {name = "gl_versions";
           type_ =
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card32);
             ft_allowed = None };
-          length =
-          (Some (Elaboratetree.Binop (Parsetree.Mul,
-                   (Elaboratetree.Field_ref "num_versions"),
-                   (Elaboratetree.Expr_value 2L))))};
+          length = "num_versions"};
         Elaboratetree.Field_list_simple {name = "gl_extension_string";
           type_ =
           { Elaboratetree.ft_type =
@@ -2736,20 +2722,18 @@ Elaboratetree.Extension {name = "Glx"; file_name = "glx"; query_name = "GLX";
             }};
         Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 3);
           serialize = false};
-        Elaboratetree.Field {name = "num_attribs";
-          type_ =
-          { Elaboratetree.ft_type =
-            (Elaboratetree.Type_primitive Parsetree.Card32);
-            ft_allowed = None }};
-        Elaboratetree.Field_list {name = "attribs";
+        Elaboratetree.Field_list_length {name = "num_attribs";
+          type_ = (Elaboratetree.Type_primitive Parsetree.Card32);
+          expr =
+          (Elaboratetree.Binop (Parsetree.Div,
+             (Elaboratetree.Field_ref "num_attribs"),
+             (Elaboratetree.Expr_value 2L)))};
+        Elaboratetree.Field_list_simple {name = "attribs";
           type_ =
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card32);
             ft_allowed = None };
-          length =
-          (Some (Elaboratetree.Binop (Parsetree.Mul,
-                   (Elaboratetree.Field_ref "num_attribs"),
-                   (Elaboratetree.Expr_value 2L))))}
+          length = "num_attribs"}
         ];
       reply = None};
     Elaboratetree.Request {name = "SetClientInfo2ARB"; opcode = 35;
@@ -2765,26 +2749,24 @@ Elaboratetree.Extension {name = "Glx"; file_name = "glx"; query_name = "GLX";
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card32);
             ft_allowed = None }};
-        Elaboratetree.Field {name = "num_versions";
-          type_ =
-          { Elaboratetree.ft_type =
-            (Elaboratetree.Type_primitive Parsetree.Card32);
-            ft_allowed = None }};
+        Elaboratetree.Field_list_length {name = "num_versions";
+          type_ = (Elaboratetree.Type_primitive Parsetree.Card32);
+          expr =
+          (Elaboratetree.Binop (Parsetree.Div,
+             (Elaboratetree.Field_ref "num_versions"),
+             (Elaboratetree.Expr_value 3L)))};
         Elaboratetree.Field_list_length {name = "gl_str_len";
           type_ = (Elaboratetree.Type_primitive Parsetree.Card32);
           expr = (Elaboratetree.Field_ref "gl_str_len")};
         Elaboratetree.Field_list_length {name = "glx_str_len";
           type_ = (Elaboratetree.Type_primitive Parsetree.Card32);
           expr = (Elaboratetree.Field_ref "glx_str_len")};
-        Elaboratetree.Field_list {name = "gl_versions";
+        Elaboratetree.Field_list_simple {name = "gl_versions";
           type_ =
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card32);
             ft_allowed = None };
-          length =
-          (Some (Elaboratetree.Binop (Parsetree.Mul,
-                   (Elaboratetree.Field_ref "num_versions"),
-                   (Elaboratetree.Expr_value 3L))))};
+          length = "num_versions"};
         Elaboratetree.Field_list_simple {name = "gl_extension_string";
           type_ =
           { Elaboratetree.ft_type =
@@ -10681,20 +10663,18 @@ Elaboratetree.Extension {name = "Res"; file_name = "res";
            (Elaboratetree.Type_ref
               { Elaboratetree.id_module = "res"; id_name = "ClientIdSpec" });
            ft_allowed = None }};
-        Elaboratetree.Field {name = "length";
-          type_ =
-          { Elaboratetree.ft_type =
-            (Elaboratetree.Type_primitive Parsetree.Card32);
-            ft_allowed = None }};
-        Elaboratetree.Field_list {name = "value";
+        Elaboratetree.Field_list_length {name = "length";
+          type_ = (Elaboratetree.Type_primitive Parsetree.Card32);
+          expr =
+          (Elaboratetree.Binop (Parsetree.Mul,
+             (Elaboratetree.Field_ref "length"),
+             (Elaboratetree.Expr_value 4L)))};
+        Elaboratetree.Field_list_simple {name = "value";
           type_ =
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card32);
             ft_allowed = None };
-          length =
-          (Some (Elaboratetree.Binop (Parsetree.Div,
-                   (Elaboratetree.Field_ref "length"),
-                   (Elaboratetree.Expr_value 4L))))}
+          length = "length"}
         ]};
     Elaboratetree.Struct {name = "ResourceIdSpec";
       fields =
@@ -17678,22 +17658,21 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
                { Elaboratetree.ft_type =
                  (Elaboratetree.Type_primitive Parsetree.Card8);
                  ft_allowed = None }};
-              Elaboratetree.Field {name = "keycodes_per_modifier";
-                type_ =
-                { Elaboratetree.ft_type =
-                  (Elaboratetree.Type_primitive Parsetree.Card8);
-                  ft_allowed = None }};
+              Elaboratetree.Field_list_length {
+                name = "keycodes_per_modifier";
+                type_ = (Elaboratetree.Type_primitive Parsetree.Card8);
+                expr =
+                (Elaboratetree.Binop (Parsetree.Div,
+                   (Elaboratetree.Field_ref "keycodes_per_modifier"),
+                   (Elaboratetree.Expr_value 8L)))};
               Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 23);
                 serialize = false};
-              Elaboratetree.Field_list {name = "keymaps";
+              Elaboratetree.Field_list_simple {name = "keymaps";
                 type_ =
                 { Elaboratetree.ft_type =
                   (Elaboratetree.Type_primitive Parsetree.Card8);
                   ft_allowed = None };
-                length =
-                (Some (Elaboratetree.Binop (Parsetree.Mul,
-                         (Elaboratetree.Field_ref "keycodes_per_modifier"),
-                         (Elaboratetree.Expr_value 8L))))}
+                length = "keycodes_per_modifier"}
               ])};
     Elaboratetree.Request {name = "SetDeviceModifierMapping"; opcode = 27;
       combine_adjacent = true;
@@ -17703,22 +17682,20 @@ Elaboratetree.Extension {name = "Input"; file_name = "xinput";
          { Elaboratetree.ft_type =
            (Elaboratetree.Type_primitive Parsetree.Card8); ft_allowed = None
            }};
-        Elaboratetree.Field {name = "keycodes_per_modifier";
-          type_ =
-          { Elaboratetree.ft_type =
-            (Elaboratetree.Type_primitive Parsetree.Card8); ft_allowed = None
-            }};
+        Elaboratetree.Field_list_length {name = "keycodes_per_modifier";
+          type_ = (Elaboratetree.Type_primitive Parsetree.Card8);
+          expr =
+          (Elaboratetree.Binop (Parsetree.Div,
+             (Elaboratetree.Field_ref "keycodes_per_modifier"),
+             (Elaboratetree.Expr_value 8L)))};
         Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 2);
           serialize = false};
-        Elaboratetree.Field_list {name = "keymaps";
+        Elaboratetree.Field_list_simple {name = "keymaps";
           type_ =
           { Elaboratetree.ft_type =
             (Elaboratetree.Type_primitive Parsetree.Card8); ft_allowed = None
             };
-          length =
-          (Some (Elaboratetree.Binop (Parsetree.Mul,
-                   (Elaboratetree.Field_ref "keycodes_per_modifier"),
-                   (Elaboratetree.Expr_value 8L))))}
+          length = "keycodes_per_modifier"}
         ];
       reply =
       (Some [Elaboratetree.Field {name = "xi_reply_type";
@@ -23443,20 +23420,18 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
             }};
          Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 5);
            serialize = false};
-         Elaboratetree.Field {name = "length";
-           type_ =
-           { Elaboratetree.ft_type =
-             (Elaboratetree.Type_primitive Parsetree.Card16);
-             ft_allowed = None }};
-         Elaboratetree.Field_list {name = "reason";
+         Elaboratetree.Field_list_length {name = "length";
+           type_ = (Elaboratetree.Type_primitive Parsetree.Card16);
+           expr =
+           (Elaboratetree.Binop (Parsetree.Div,
+              (Elaboratetree.Field_ref "length"),
+              (Elaboratetree.Expr_value 4L)))};
+         Elaboratetree.Field_list_simple {name = "reason";
            type_ =
            { Elaboratetree.ft_type =
              (Elaboratetree.Type_primitive Parsetree.Char); ft_allowed = None
              };
-           length =
-           (Some (Elaboratetree.Binop (Parsetree.Mul,
-                    (Elaboratetree.Field_ref "length"),
-                    (Elaboratetree.Expr_value 4L))))}
+           length = "length"}
          ]};
      Elaboratetree.Enum {name = "ImageOrder";
        items = [("LSBFirst", 0L); ("MSBFirst", 1L)]};
@@ -30126,21 +30101,19 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
      Elaboratetree.Request {name = "SetModifierMapping"; opcode = 118;
        combine_adjacent = true;
        fields =
-       [Elaboratetree.Field {name = "keycodes_per_modifier";
-          type_ =
-          { Elaboratetree.ft_type =
-            (Elaboratetree.Type_primitive Parsetree.Card8); ft_allowed = None
-            }};
-         Elaboratetree.Field_list {name = "keycodes";
+       [Elaboratetree.Field_list_length {name = "keycodes_per_modifier";
+          type_ = (Elaboratetree.Type_primitive Parsetree.Card8);
+          expr =
+          (Elaboratetree.Binop (Parsetree.Div,
+             (Elaboratetree.Field_ref "keycodes_per_modifier"),
+             (Elaboratetree.Expr_value 8L)))};
+         Elaboratetree.Field_list_simple {name = "keycodes";
            type_ =
            { Elaboratetree.ft_type =
              (Elaboratetree.Type_ref
                 { Elaboratetree.id_module = "xproto"; id_name = "KEYCODE" });
              ft_allowed = None };
-           length =
-           (Some (Elaboratetree.Binop (Parsetree.Mul,
-                    (Elaboratetree.Field_ref "keycodes_per_modifier"),
-                    (Elaboratetree.Expr_value 8L))))}
+           length = "keycodes_per_modifier"}
          ];
        reply =
        (Some [Elaboratetree.Field {name = "status";
@@ -30156,24 +30129,23 @@ Elaboratetree.Extension {name = "XPrint"; file_name = "xprint";
      Elaboratetree.Request {name = "GetModifierMapping"; opcode = 119;
        combine_adjacent = true; fields = [];
        reply =
-       (Some [Elaboratetree.Field {name = "keycodes_per_modifier";
-                type_ =
-                { Elaboratetree.ft_type =
-                  (Elaboratetree.Type_primitive Parsetree.Card8);
-                  ft_allowed = None }};
+       (Some [Elaboratetree.Field_list_length {
+                name = "keycodes_per_modifier";
+                type_ = (Elaboratetree.Type_primitive Parsetree.Card8);
+                expr =
+                (Elaboratetree.Binop (Parsetree.Div,
+                   (Elaboratetree.Field_ref "keycodes_per_modifier"),
+                   (Elaboratetree.Expr_value 8L)))};
                Elaboratetree.Field_pad {pad = (Parsetree.Pad_bytes 24);
                  serialize = false};
-               Elaboratetree.Field_list {name = "keycodes";
+               Elaboratetree.Field_list_simple {name = "keycodes";
                  type_ =
                  { Elaboratetree.ft_type =
                    (Elaboratetree.Type_ref
                       { Elaboratetree.id_module = "xproto";
                         id_name = "KEYCODE" });
                    ft_allowed = None };
-                 length =
-                 (Some (Elaboratetree.Binop (Parsetree.Mul,
-                          (Elaboratetree.Field_ref "keycodes_per_modifier"),
-                          (Elaboratetree.Expr_value 8L))))}
+                 length = "keycodes_per_modifier"}
                ])};
      Elaboratetree.Request {name = "NoOperation"; opcode = 127;
        combine_adjacent = true; fields = []; reply = None}

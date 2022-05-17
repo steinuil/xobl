@@ -3,7 +3,8 @@
   parser_output
   elaborate_resolve_output
   elaborate_output
-  generate_output)
- (libraries xobl_compiler)
+  generate_output
+  create_window)
+ (libraries xobl_compiler lwt lwt.unix)
  (deps
   (glob_files ../xml-xcb/*.xml)))

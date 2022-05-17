@@ -78,9 +78,14 @@ let () =
   output_string stdout
     {|type xid = int
 type file_descr = int
-type ('flags, 'vals) mask = F of 'flags list | V of 'vals
-type ('enum, 't) alt = E of 'enum | T of 't
+type ('flags, 'vals) mask = F of 'flags | V of 'vals
 let (let*) = Option.bind
+
+let identity x = x
+
+let char_to_int64 c = Char.code c |> Int64.of_int
+
+let bool_to_int64 b = Bool.to_int b |> Int64.of_int
 
 let decode f buf ~at ~size =
   if Bytes.length buf < at + size - 1 then None else Some (f buf at, at + size)
@@ -120,6 +125,15 @@ let decode_enum decode to_int of_int buf ~at =
     | None -> None
     | Some e -> Some (e, at)
 
+let decode_alt_enum decode to_int of_int buf ~at =
+  match decode buf ~at with
+  | None -> None
+  | Some (n, at) ->
+    let n = to_int n in
+    match of_int n with
+    | Some e -> Some (e, at)
+    | None -> Some (`Custom n, at)
+
 let decode_list decode_item len buf ~at =
   let rec loop items at len =
     if len = 0 then Some ((List.rev items), at)
@@ -130,6 +144,41 @@ let decode_list decode_item len buf ~at =
         loop (item :: items) at (len - 1)
   in
   loop [] at len
+
+let mask_of_int of_bit mask =
+  let rec iter mask pos acc =
+    if mask = 0L then Some acc
+    else if Int64.logand mask 1L <> 0L then
+      match of_bit pos with
+      | Some item -> iter Int64.(shift_right mask 1) Int64.(pos + 1) (item :: acc)
+      | None -> None
+    else iter Int64.(shift_right mask 1) Int64.(pos + 1) acc
+  in
+  iter mask 0 []
+
+let mask_value_of_int of_bit of_value mask =
+  match of_value mask with
+  | Some v -> Some (V v)
+  | None ->
+    match mask_of_int of_bit mask with
+    | Some f -> Some (F f)
+    | None -> None
+
+let decode_mask decode to_int64 of_int64 buf ~at =
+  match decode buf ~at with
+  | None -> None
+  | Some (n, at) ->
+    match of_int64 (to_int64 n) with
+    | None -> None
+    | Some e -> Some (e, at)
+
+let decode_alt_mask decode to_int64 of_int64 buf ~at =
+  match decode buf ~at with
+  | None -> None
+  | Some (n, at) ->
+    match of_int64 (to_int64 n) with
+    | Some e -> Some (F e, at)
+    | None -> Some (V n, at)
 
 let encode f buf v ~at ~size =
   if Bytes.length buf < at + size then None else (
