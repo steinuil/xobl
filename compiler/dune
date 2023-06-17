@@ -1,7 +1,7 @@
 (library
  (name xobl_compiler)
  (public_name xobl.compiler)
- (libraries patche)
+ (libraries patche sexplib)
  (inline_tests)
  (preprocess
-  (pps ppx_inline_test ppx_expect ppx_deriving.show)))
+  (pps ppx_inline_test ppx_expect ppx_deriving.show ppx_sexp_conv)))

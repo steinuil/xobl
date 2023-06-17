@@ -40,7 +40,10 @@ let parse_module m =
   try
     (match Xobl_compiler.Parser.parse (`Channel f) with
     | Error err -> raise (Test_failed err)
-    | Ok xcb -> print_endline (Xobl_compiler__.Parsetree.show_xcb xcb));
+    | Ok xcb ->
+        print_endline
+          (Sexplib.Sexp.to_string_hum
+             (Xobl_compiler__.Parsetree.sexp_of_xcb xcb)));
     close_in f
   with exn ->
     close_in f;

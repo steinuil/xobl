@@ -40,7 +40,7 @@ let find_module_by_name xcbs name =
     xcbs
   |> Option.get
 
-type id_kind = [ `Type | `Enum | `Event | `Error ] [@@deriving show]
+type id_kind = [ `Type | `Enum | `Event | `Error ] [@@deriving show, sexp]
 
 let id_exists (kind : id_kind) id_name = function
   | Xid name

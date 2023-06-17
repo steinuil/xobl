@@ -5,6 +5,6 @@
   elaborate_output
   generate_output
   create_window)
- (libraries xobl_compiler lwt lwt.unix)
+ (libraries xobl_compiler lwt lwt.unix sexplib)
  (deps
   (glob_files ../xml-xcb/*.xml)))

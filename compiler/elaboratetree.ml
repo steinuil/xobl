@@ -1,3 +1,5 @@
+open Sexplib.Conv
+
 type binop = Parsetree.binop =
   | Add
   | Sub
@@ -5,11 +7,10 @@ type binop = Parsetree.binop =
   | Div
   | Bit_and
   | Bit_left_shift
-[@@deriving show]
+[@@deriving show, sexp]
 
-type unop = Parsetree.unop = Bit_not [@@deriving show]
-
-type ident = { id_module : string; id_name : string } [@@deriving show]
+type unop = Parsetree.unop = Bit_not [@@deriving show, sexp]
+type ident = { id_module : string; id_name : string } [@@deriving show, sexp]
 
 type prim = Parsetree.prim =
   | Void
@@ -27,18 +28,21 @@ type prim = Parsetree.prim =
   | Float
   | Double
   | Xid  (** maps to a Card32 *)
-[@@deriving show]
+[@@deriving show, sexp]
 
 type type_ =
   | Type_primitive of prim
   | Type_ref of ident
   | Type_union of ident list
-[@@deriving show]
+[@@deriving show, sexp]
 
 type expression =
   | Binop of binop * expression * expression
   | Unop of unop * expression
   | Field_ref of string
+  (* The field's type should probably be resolved so that when outputting
+     expressions we know which conversion function to use when the type of the
+     field is not compatible with that of the length, i.e. card32. *)
   | Param_ref of { param : string; type_ : type_ }
   | Enum_ref of { enum : ident; item : string }
   | Pop_count of expression
@@ -46,20 +50,20 @@ type expression =
   | List_element_ref
   | Expr_value of int64
   | Expr_bit of int
-[@@deriving show]
+[@@deriving show, sexp]
 
 type pad = Parsetree.pad = Pad_bytes of int | Pad_align of int
-[@@deriving show]
+[@@deriving show, sexp]
 
 type field_allowed =
   | Allowed_enum of ident
   | Allowed_mask of ident
   | Allowed_alt_enum of ident
   | Allowed_alt_mask of ident
-[@@deriving show]
+[@@deriving show, sexp]
 
 type field_type = { ft_type : type_; ft_allowed : field_allowed option }
-[@@deriving show]
+[@@deriving show, sexp]
 
 type field =
   | Field of { name : string; type_ : field_type }
@@ -73,7 +77,12 @@ type field =
     }
   | Field_list_simple of { name : string; type_ : field_type; length : string }
       (** List with an associated {!constructor:Field_list_length} length. *)
-  | Field_list_length of { name : string; type_ : type_; expr : expression }
+  | Field_list_length of {
+      name : string;
+      type_ : type_;
+      expr : expression;
+      list : string;
+    }
       (** Contains the length of the associated simple list.
           Should be hidden in the public API. *)
   | Field_variant of { name : string; variant : ident }
@@ -93,10 +102,10 @@ type field =
       (** Contains the mask that indicates whether the optional fields
           associated are present or not in the struct.
           Should be hidden in the public API. *)
-[@@deriving show]
+[@@deriving show, sexp]
 
 type variant_item = { vi_name : string; vi_tag : int64; vi_fields : field list }
-[@@deriving show]
+[@@deriving show, sexp]
 
 type declaration =
   | Type_alias of { name : string; type_ : type_ }
@@ -127,7 +136,7 @@ type declaration =
       fields : field list;
       reply : field list option;
     }
-[@@deriving show]
+[@@deriving show, sexp]
 
 type xcb =
   | Core of declaration list
@@ -140,4 +149,4 @@ type xcb =
       imports : string list;
       declarations : declaration list;
     }
-[@@deriving show]
+[@@deriving show, sexp]

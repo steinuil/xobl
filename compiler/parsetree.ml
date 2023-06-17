@@ -80,10 +80,12 @@ for more information on the alignment checker.
 
 *)
 
-type doc = Doc [@@deriving show]
+open Sexplib.Conv
+
+type doc = Doc [@@deriving show, sexp]
 
 type required_start_align = { al_align : int; al_offset : int option }
-[@@deriving show]
+[@@deriving show, sexp]
 (** From what I could gather, the X11 protocol used to be defined by its C
     implementation so the padding between fields used to be "whatever the C
     compiler said". When it was formalized in the XML protocol files they
@@ -94,14 +96,15 @@ type required_start_align = { al_align : int; al_offset : int option }
     required_start_align field.
     The algorithm is described in the commit message on the xcb/proto repo. *)
 
-type enum_item = Item_value of int64 | Item_bit of int [@@deriving show]
+type enum_item = Item_value of int64 | Item_bit of int [@@deriving show, sexp]
 
 type binop = Add | Sub | Mul | Div | Bit_and | Bit_left_shift
-[@@deriving show]
+[@@deriving show, sexp]
 
-type unop = Bit_not [@@deriving show]
+type unop = Bit_not [@@deriving show, sexp]
 
-type ident = { id_module : string option; id_name : string } [@@deriving show]
+type ident = { id_module : string option; id_name : string }
+[@@deriving show, sexp]
 
 type prim =
   | Void
@@ -119,9 +122,10 @@ type prim =
   | Float
   | Double
   | Xid  (** maps to a Card32 *)
-[@@deriving show]
+[@@deriving show, sexp]
 
-type type_ = Type_primitive of prim | Type_ref of ident [@@deriving show]
+type type_ = Type_primitive of prim | Type_ref of ident
+[@@deriving show, sexp]
 
 type expression =
   | Binop of binop * expression * expression
@@ -134,41 +138,41 @@ type expression =
   | List_element_ref
   | Expr_value of int64
   | Expr_bit of int
-[@@deriving show]
+[@@deriving show, sexp]
 
-type 'a range = { min : 'a; max : 'a } [@@deriving show]
+type 'a range = { min : 'a; max : 'a } [@@deriving show, sexp]
 
 type allowed_events = {
   ae_module : string;
   ae_opcode_range : int range;
   ae_is_xge : bool;
 }
-[@@deriving show]
+[@@deriving show, sexp]
 
-type pad = Pad_bytes of int | Pad_align of int [@@deriving show]
+type pad = Pad_bytes of int | Pad_align of int [@@deriving show, sexp]
 
 type field_allowed =
   | Allowed_enum of ident
   | Allowed_mask of ident
   | Allowed_alt_enum of ident
   | Allowed_alt_mask of ident
-[@@deriving show]
+[@@deriving show, sexp]
 
 type field_type = { ft_type : type_; ft_allowed : field_allowed option }
-[@@deriving show]
+[@@deriving show, sexp]
 
 type switch_cond = Cond_bit_and of expression | Cond_eq of expression
-[@@deriving show]
+[@@deriving show, sexp]
 
 type switch = { sw_name : string; sw_cond : switch_cond; sw_cases : case list }
-[@@deriving show]
+[@@deriving show, sexp]
 
 and case = {
   cs_name : string option;
   cs_cond : expression list;
   cs_fields : field list;
 }
-[@@deriving show]
+[@@deriving show, sexp]
 
 and field =
   | Field_expr of { name : string; type_ : field_type; expr : expression }
@@ -181,9 +185,10 @@ and field =
   | Field_pad of { pad : pad; serialize : bool }
   | Field_switch of switch
   | Field of { name : string; type_ : field_type }
-[@@deriving show]
+[@@deriving show, sexp]
 
-type request_reply = { fields : field list; doc : doc option } [@@deriving show]
+type request_reply = { fields : field list; doc : doc option }
+[@@deriving show, sexp]
 
 type declaration =
   | Import of string
@@ -217,7 +222,7 @@ type declaration =
       reply : request_reply option;
       doc : doc option;
     }
-[@@deriving show]
+[@@deriving show, sexp]
 
 type xcb =
   | Core of declaration list
@@ -229,4 +234,4 @@ type xcb =
       version : int * int;
       declarations : declaration list;
     }
-[@@deriving show]
+[@@deriving show, sexp]

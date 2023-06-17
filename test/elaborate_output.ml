@@ -51,4 +51,6 @@ let () =
   in
   List.map (Xobl_compiler.Elaborate.do_stuff xcbs) xcbs
   |> List.iter (fun xcb ->
-         print_endline (Xobl_compiler__.Elaboratetree.show_xcb xcb))
+         print_endline
+           (Sexplib.Sexp.to_string_hum
+              (Xobl_compiler__.Elaboratetree.sexp_of_xcb xcb)))
