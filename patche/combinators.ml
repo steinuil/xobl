@@ -5,11 +5,8 @@ type ('t, 'inp, 'err) parser =
   'inp -> ('t * 'inp, ([> error ] as 'err)) Result.t
 
 let return v inp = Ok (v, inp)
-
 let error e _ = Error e
-
 let from_result = function Ok v -> return v | Error e -> error e
-
 let from_option ~none o = Option.to_result ~none o |> from_result
 
 (* Monad *)
@@ -157,14 +154,9 @@ module Infix = struct
   (* In ascending order of precedence *)
 
   let ( <|> ) = or_
-
   let ( ->> ) p f = map f p
-
   let ( ->= ) p f = map_result f p
-
   let ( *> ) = discard_left
-
   let ( *< ) = discard_right
-
   let ( *<> ) = tuple2
 end

@@ -437,12 +437,12 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
            when List.exists
                   (fun (_, length_field, _) -> name = length_field)
                   lists ->
-             let _, _, expr =
+             let list, _, expr =
                List.find (fun (_, length_field, _) -> name = length_field) lists
              in
              ( [
                  Elaboratetree.Field_list_length
-                   { name; type_ = conv_type ft_type; expr };
+                   { name; type_ = conv_type ft_type; expr; list };
                ],
                [] )
          (* Rest *)

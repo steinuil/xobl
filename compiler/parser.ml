@@ -13,7 +13,6 @@ let required_start_align : required_start_align parser =
     (map2 mk_required_start_align (Attr.int "align") (Attr.int_o "offset"))
 
 let import = el_b "import" data ->> mk_import
-
 let xid = el_a "xidtype" (Attr.str "name") ->> mk_xid
 
 let xid_union =
@@ -45,7 +44,6 @@ let copy name mk =
   el_a name Attr.(map3 mk (str "name") (str "ref" ->> mk_ident) (int "number"))
 
 let event_copy = copy "eventcopy" mk_event_copy
-
 let error_copy = copy "errorcopy" mk_error_copy
 
 let expression expression =
@@ -149,7 +147,6 @@ let error =
   ->> mk_error
 
 let union = el_ab "union" (Attr.str "name") (many field) ->> mk_union
-
 let struct_ = el_ab "struct" (Attr.str "name") (many field) ->> mk_struct
 
 let request_reply =

@@ -7,20 +7,15 @@ type ('t, 'inp, 'err) parser =
 (** {2 Basic parsers} *)
 
 val return : 't -> ('t, 'inp, 'err) parser
-
 val error : 'err -> ('t, 'inp, 'err) parser
 
 val satisfies :
   ('a -> bool) -> ('a, 'inp, 'err) parser -> ('a, 'inp, 'err) parser
 
 val opt : ('a, 'inp, 'err) parser -> ('a option, 'inp, 'err) parser
-
 val discard_with : 'a -> (_, 'inp, 'err) parser -> ('a, 'inp, 'err) parser
-
 val discard : (_, 'inp, 'err) parser -> (unit, 'inp, 'err) parser
-
 val from_result : ('t, 'err) result -> ('t, 'inp, 'err) parser
-
 val from_option : none:'err -> 't option -> ('t, 'inp, 'err) parser
 
 (** {2 Monad} *)
@@ -65,7 +60,6 @@ val discard_left :
   (_, 'inp, 'err) parser -> ('a, 'inp, 'err) parser -> ('a, 'inp, 'err) parser
 
 val many : ('a, 'inp, 'err) parser -> ('a list, 'inp, 'err) parser
-
 val many1 : ('a, 'inp, 'err) parser -> ('a list, 'inp, 'err) parser
 
 val tuple2 :

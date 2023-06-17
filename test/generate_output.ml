@@ -87,6 +87,8 @@ let char_to_int64 c = Char.code c |> Int64.of_int
 
 let bool_to_int64 b = Bool.to_int b |> Int64.of_int
 
+let bool_of_int b = if b then 1 else 0
+
 let decode f buf ~at ~size =
   if Bytes.length buf < at + size - 1 then None else Some (f buf at, at + size)
 
@@ -198,7 +200,7 @@ let encode_uint16 buf v ~at = encode Bytes.set_uint16_le buf v ~at ~size:2
 
 let encode_int16 buf v ~at = encode Bytes.set_int16_le buf v ~at ~size:2
 
-let encode_int32 buf v ~at = encode Bytes.set_int32_le buf v ~at ~size:4
+let encode_int32 buf v ~at = encode Bytes.set_int32_le buf (Int32.of_int v) ~at ~size:4
 
 let encode_int64 buf v ~at = encode Bytes.set_int64_le buf v ~at ~size:8
 
@@ -209,6 +211,39 @@ let encode_file_descr buf (v : Unix.file_descr) ~at =
   encode_int16 buf (Obj.magic v) ~at
 
 let encode_xid = encode_int16
+
+let encode_list encode_item buf ls ~at =
+  let rec loop at = function
+    | [] -> Some at
+    | item :: rest -> (
+      match encode_item buf item ~at with
+      | Some at -> loop at rest
+      | None -> None )
+  in
+  loop at ls
+
+let encode_enum decode to_int of_int buf ~at =
+  match decode buf ~at with
+  | None -> None
+  | Some (n, at) ->
+    match of_int (to_int n) with
+    | None -> None
+    | Some e -> Some (e, at)
+
+let encode_enum encode of_int to_int buf v ~at =
+  let v = to_int v in
+  encode buf (of_int v) ~at
+
+let encode_mask encode of_int to_int buf v ~at =
+  let v = to_int v in
+  encode buf (of_int v) ~at
+
+let int_of_mask to_bit mask =
+  List.fold_left (fun mask v -> mask lor (to_bit v)) 0 mask
+
+let mask_value_to_int to_mask to_enum = function
+  | F f -> int_of_mask to_mask f
+  | V v -> to_enum v
 
 |};
   List.map (Xobl_compiler.Elaborate.do_stuff xcbs) xcbs
