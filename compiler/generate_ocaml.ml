@@ -33,8 +33,8 @@ end = struct
   let rec resolve_name_as_prim { current_module; xcbs } name =
     let& decls, _ = find_module_by_name current_module xcbs in
     match List.find_map (find_prim name) decls with
-    | Some `Prim p -> Some p
-    | Some `Ref { id_module; id_name } ->
+    | Some (`Prim p) -> Some p
+    | Some (`Ref { id_module; id_name }) ->
         resolve_name_as_prim { current_module = id_module; xcbs } id_name
     | None -> None
 
