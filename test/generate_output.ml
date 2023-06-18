@@ -1,36 +1,36 @@
 let modules =
   [
-    "bigreq";
-    "composite";
-    "damage";
-    "dpms";
-    "dri2";
-    "dri3";
-    "ge";
-    "glx";
-    "present";
-    "randr";
-    "record";
-    "render";
-    "res";
-    "screensaver";
-    "shape";
-    "shm";
-    "sync";
-    "xc_misc";
-    (* "xevie"; *)
-    "xf86dri";
-    "xf86vidmode";
-    "xfixes";
-    "xinerama";
-    "xinput";
-    (* "xkb"; *)
-    "xprint";
+    (* "bigreq"; *)
+    (* "composite"; *)
+    (* "damage"; *)
+    (* "dpms"; *)
+    (* "dri2"; *)
+    (* "dri3"; *)
+    (* "ge"; *)
+    (* "glx"; *)
+    (* "present"; *)
+    (* "randr"; *)
+    (* "record"; *)
+    (* "render"; *)
+    (* "res"; *)
+    (* "screensaver"; *)
+    (* "shape"; *)
+    (* "shm"; *)
+    (* "sync"; *)
+    (* "xc_misc"; *)
+    (* (* "xevie"; *) *)
+    (* "xf86dri"; *)
+    (* "xf86vidmode"; *)
+    (* "xfixes"; *)
+    (* "xinerama"; *)
+    (* "xinput"; *)
+    (* (* "xkb"; *) *)
+    (* "xprint"; *)
     "xproto";
-    "xselinux";
-    "xtest";
-    "xv";
-    "xvmc";
+    (* "xselinux"; *)
+    (* "xtest"; *)
+    (* "xv"; *)
+    (* "xvmc"; *)
   ]
 
 let parse_module m =
@@ -79,6 +79,7 @@ let () =
     {|type xid = int
 type file_descr = int
 type ('flags, 'vals) mask = F of 'flags | V of 'vals
+type 't alt_enum = E of 't | Custom of int
 let (let*) = Option.bind
 
 let identity x = x
@@ -133,8 +134,8 @@ let decode_alt_enum decode to_int of_int buf ~at =
   | Some (n, at) ->
     let n = to_int n in
     match of_int n with
-    | Some e -> Some (e, at)
-    | None -> Some (`Custom n, at)
+    | Some e -> Some (E e, at)
+    | None -> Some (Custom n, at)
 
 let decode_list decode_item len buf ~at =
   let rec loop items at len =
@@ -244,6 +245,11 @@ let int_of_mask to_bit mask =
 let mask_value_to_int to_mask to_enum = function
   | F f -> int_of_mask to_mask f
   | V v -> to_enum v
+
+let encode_alt_enum encode of_int to_int buf v ~at =
+  match v with
+  | E v -> encode_enum encode of_int to_int buf v ~at
+  | Custom v -> encode buf v ~at
 
 |};
   List.map (Xobl_compiler.Elaborate.do_stuff xcbs) xcbs

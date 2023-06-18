@@ -295,7 +295,8 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
   let lists =
     fields
     |> List.filter_map (function
-         | Parsetree.Field_list { length = Some e; name = list_name; _ } -> (
+         | Parsetree.Field_list
+             { length = Some e; name = list_name; type_ = list_type } -> (
              let rec traverse = function
                | Parsetree.Binop (Add, e1, e2)
                | Binop (Sub, e1, e2)
@@ -317,7 +318,7 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
                  List.find_map
                    (function
                      | Parsetree.Field { name; _ } when name = length_field ->
-                         Some (list_name, length_field, invert e)
+                         Some (list_name, length_field, invert e, list_type)
                      | _ -> None)
                    fields
              | _ -> None)
@@ -420,9 +421,10 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
                [] )
          (* Lists *)
          | Field_list { name; type_; length = Some _ }
-           when List.exists (fun (list_name, _, _) -> name = list_name) lists ->
-             let _, length_field, _ =
-               List.find (fun (list_name, _, _) -> name = list_name) lists
+           when List.exists (fun (list_name, _, _, _) -> name = list_name) lists
+           ->
+             let _, length_field, _, _ =
+               List.find (fun (list_name, _, _, _) -> name = list_name) lists
              in
              ( [
                  Elaboratetree.Field_list_simple
@@ -435,14 +437,22 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
                [] )
          | Field { name; type_ = { ft_type; _ } }
            when List.exists
-                  (fun (_, length_field, _) -> name = length_field)
+                  (fun (_, length_field, _, _) -> name = length_field)
                   lists ->
-             let list, _, expr =
-               List.find (fun (_, length_field, _) -> name = length_field) lists
+             let list, _, expr, list_type =
+               List.find
+                 (fun (_, length_field, _, _) -> name = length_field)
+                 lists
              in
              ( [
                  Elaboratetree.Field_list_length
-                   { name; type_ = conv_type ft_type; expr; list };
+                   {
+                     name;
+                     type_ = conv_type ft_type;
+                     expr;
+                     list;
+                     list_type = conv_type list_type.ft_type;
+                   };
                ],
                [] )
          (* Rest *)

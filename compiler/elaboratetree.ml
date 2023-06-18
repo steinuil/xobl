@@ -82,6 +82,7 @@ type field =
       type_ : type_;
       expr : expression;
       list : string;
+      list_type : type_;
     }
       (** Contains the length of the associated simple list.
           Should be hidden in the public API. *)

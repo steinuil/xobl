@@ -47,4 +47,6 @@ let () =
   let xcbs = modules |> List.map parse_module in
   Xobl_compiler.Elaborate.resolve_idents xcbs
   |> List.iter (fun xcb ->
-         print_endline (Xobl_compiler__.Parsetree.show_xcb xcb))
+         print_endline
+           (Sexplib.Sexp.to_string_hum
+              (Xobl_compiler__.Parsetree.sexp_of_xcb xcb)))

@@ -1,10 +1,10 @@
 (tests
+ (modes byte)
  (names
   parser_output
   elaborate_resolve_output
   elaborate_output
-  generate_output
-  create_window)
- (libraries xobl_compiler lwt lwt.unix sexplib)
+  generate_output)
+ (libraries xobl_compiler lwt lwt.unix sexplib xobl)
  (deps
   (glob_files ../xml-xcb/*.xml)))

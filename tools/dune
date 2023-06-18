@@ -1,0 +1,11 @@
+(executable
+ (name xobl_compile)
+ (modules xobl_compile)
+ (public_name xobl-compile)
+ (libraries xobl_compiler))
+
+(executable
+ (name create_window)
+ (modules create_window)
+ (public_name create-window)
+ (libraries xobl lwt.unix))
