@@ -35,19 +35,24 @@ let read_handshake_response sock =
 
 let read_response sock =
   let buf = Bytes.create 32 in
-  let* _ = Lwt_unix.read sock buf 0 32 in
-  match Bytes.get buf 0 with
-  | '\x00' (* error *) -> Lwt.return buf
-  | '\x01' (* reply *) ->
-      let additional_data_length = Bytes.get_int32_le buf 4 |> Int32.to_int in
-      if additional_data_length < 1 then Lwt.return buf
-      else
-        let whole_buf = Bytes.create (32 + (additional_data_length * 4)) in
-        Bytes.blit buf 0 whole_buf 0 8;
-        let* _ = Lwt_unix.read sock whole_buf 32 (additional_data_length * 4) in
-        Lwt.return whole_buf
-  | msg_kind ->
-      failwith (Printf.sprintf "invalid message kind received: %c" msg_kind)
+  let* len = Lwt_unix.read sock buf 0 32 in
+  if len = 0 then Lwt.return None
+  else
+    let buf = Bytes.sub buf 0 len in
+    match Bytes.get buf 0 with
+    | '\x00' (* error *) -> Lwt.return (Some buf)
+    | '\x01' (* reply *) ->
+        let additional_data_length = Bytes.get_int32_le buf 4 |> Int32.to_int in
+        if additional_data_length < 1 then Lwt.return (Some buf)
+        else
+          let whole_buf = Bytes.create (32 + (additional_data_length * 4)) in
+          Bytes.blit buf 0 whole_buf 0 8;
+          let* _ =
+            Lwt_unix.read sock whole_buf 32 (additional_data_length * 4)
+          in
+          Lwt.return (Some whole_buf)
+    | msg_kind ->
+        failwith (Printf.sprintf "invalid message kind received: %c" msg_kind)
 
 let pad n = (if n = 0 then 0 else ((n - 1) lsr 2) + 1) * 4
 

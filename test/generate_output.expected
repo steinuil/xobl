@@ -543,7 +543,7 @@ let* at = encode_uint16 buf height ~at in
 let* at = encode_uint16 buf border_width ~at in
 let* at = encode_enum encode_uint16 identity window_class_int_of_enum buf class_ ~at in
 let* at = encode_visualid buf visual ~at in
-(* field_optional_mask *)
+(* field_optional_mask *)let* at = encode_int32 buf 0 ~at in
 (* field_optional *)
 (* field_optional *)
 (* field_optional *)
@@ -560,7 +560,7 @@ let* at = encode_visualid buf visual ~at in
 (* field_optional *)
 (* field_optional *)
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_change_window_attributes ~(window : window) ?(background_pixmap : back_pixmap_enum alt_enum option) ?(background_pixel : int option) ?(border_pixmap : pixmap_enum alt_enum option) ?(border_pixel : int option) ?(bit_gravity : gravity_enum option) ?(win_gravity : gravity_enum option) ?(backing_store : backing_store_enum option) ?(backing_planes : int option) ?(backing_pixel : int option) ?(override_redirect : bool32 option) ?(save_under : bool32 option) ?(event_mask : event_mask option) ?(do_not_propogate_mask : event_mask option) ?(colormap : colormap_enum alt_enum option) ?(cursor : cursor_enum alt_enum option)  buf ~at : int option =
 let orig = at in
@@ -570,7 +570,7 @@ let at = at + 1 in
 (* reserve request length *)
 let at = at + 2 in
 let* at = encode_window buf window ~at in
-(* field_optional_mask *)
+(* field_optional_mask *)let* at = encode_int32 buf 0 ~at in
 (* field_optional *)
 (* field_optional *)
 (* field_optional *)
@@ -587,7 +587,7 @@ let* at = encode_window buf window ~at in
 (* field_optional *)
 (* field_optional *)
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type map_state_enum = [ `Unmapped | `Unviewable | `Viewable ] [@@deriving sexp];;
 let map_state_enum_of_int : int -> [> map_state_enum ] option = function 0 -> Some `Unmapped | 1 -> Some `Unviewable | 2 -> Some `Viewable | n -> Printf.printf "unknown map_state_enum: %d\n" n; None;;
@@ -602,7 +602,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_window buf window ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_get_window_attributes_reply length buf ~at : (get_window_attributes_reply * int) option = let orig = at in let at = at + 1 in
 let* backing_store, at = decode_enum decode_uint8 identity backing_store_enum_of_int buf ~at in
@@ -633,7 +633,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_window buf window ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_destroy_subwindows ~(window : window)  buf ~at : int option =
 let orig = at in
@@ -644,7 +644,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_window buf window ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type set_mode_enum = [ `Insert | `Delete ] [@@deriving sexp];;
 let set_mode_enum_of_int : int -> [> set_mode_enum ] option = function 0 -> Some `Insert | 1 -> Some `Delete | n -> Printf.printf "unknown set_mode_enum: %d\n" n; None;;
@@ -658,7 +658,7 @@ let* at = encode_enum encode_char Char.chr set_mode_int_of_enum buf mode ~at in
 let at = at + 2 in
 let* at = encode_window buf window ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_reparent_window ~(window : window) ~(parent : window) ~(x : int) ~(y : int)  buf ~at : int option =
 let orig = at in
@@ -672,7 +672,7 @@ let* at = encode_window buf parent ~at in
 let* at = encode_int16 buf x ~at in
 let* at = encode_int16 buf y ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_map_window ~(window : window)  buf ~at : int option =
 let orig = at in
@@ -683,7 +683,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_window buf window ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_map_subwindows ~(window : window)  buf ~at : int option =
 let orig = at in
@@ -694,7 +694,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_window buf window ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_unmap_window ~(window : window)  buf ~at : int option =
 let orig = at in
@@ -705,7 +705,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_window buf window ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_unmap_subwindows ~(window : window)  buf ~at : int option =
 let orig = at in
@@ -716,7 +716,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_window buf window ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_configure_window ~(window : window) ?(x : int option) ?(y : int option) ?(width : int option) ?(height : int option) ?(border_width : int option) ?(sibling : window_enum alt_enum option) ?(stack_mode : stack_mode_enum option)  buf ~at : int option =
 let orig = at in
@@ -726,7 +726,7 @@ let at = at + 1 in
 (* reserve request length *)
 let at = at + 2 in
 let* at = encode_window buf window ~at in
-(* field_optional_mask *)
+(* field_optional_mask *)let* at = encode_uint16 buf 0 ~at in
 let at = at + 2 in
 (* field_optional *)
 (* field_optional *)
@@ -736,7 +736,7 @@ let at = at + 2 in
 (* field_optional *)
 (* field_optional *)
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type circulate_enum = [ `Raise_lowest | `Lower_highest ] [@@deriving sexp];;
 let circulate_enum_of_int : int -> [> circulate_enum ] option = function 0 -> Some `Raise_lowest | 1 -> Some `Lower_highest | n -> Printf.printf "unknown circulate_enum: %d\n" n; None;;
@@ -750,7 +750,7 @@ let* at = encode_enum encode_uint8 identity circulate_int_of_enum buf direction 
 let at = at + 2 in
 let* at = encode_window buf window ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type get_geometry_reply = { depth : int; root : window; x : int; y : int; width : int; height : int; border_width : int; } [@@deriving sexp];;
 let encode_get_geometry ~(drawable : drawable)  buf ~at : int option =
@@ -762,7 +762,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_drawable buf drawable ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_get_geometry_reply length buf ~at : (get_geometry_reply * int) option = let orig = at in let at = at + 1 in
 let* depth, at = decode_uint8 buf ~at in
@@ -786,7 +786,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_window buf window ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_query_tree_reply length buf ~at : (query_tree_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -810,7 +810,7 @@ let* at = encode_uint16 buf (identity (String.length name)) ~at in
 let at = at + 2 in
 let* at = encode_string buf name ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_intern_atom_reply length buf ~at : (intern_atom_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -828,7 +828,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_atom buf atom ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_get_atom_name_reply length buf ~at : (get_atom_name_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -841,7 +841,7 @@ Some ({ name }, at);;
 type prop_mode_enum = [ `Replace | `Prepend | `Append ] [@@deriving sexp];;
 let prop_mode_enum_of_int : int -> [> prop_mode_enum ] option = function 0 -> Some `Replace | 1 -> Some `Prepend | 2 -> Some `Append | n -> Printf.printf "unknown prop_mode_enum: %d\n" n; None;;
 let prop_mode_int_of_enum : prop_mode_enum -> int = function `Replace -> 0 | `Prepend -> 1 | `Append -> 2;;
-let encode_change_property ~(mode : prop_mode_enum) ~(window : window) ~(property : atom) ~(type_ : atom) ~(format : int) ~(data_len : int) ~(data : char list)  buf ~at : int option =
+let encode_change_property ~(mode : prop_mode_enum) ~(window : window) ~(property : atom) ~(type_ : atom) ~(format : int) ~(data_len : int) ~(data : string)  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 18 ~at in
@@ -854,9 +854,9 @@ let* at = encode_atom buf type_ ~at in
 let* at = encode_uint8 buf format ~at in
 let at = at + 3 in
 let* at = encode_int32 buf data_len ~at in
-let* at = encode_list encode_char buf data ~at in
+let* at = encode_string buf data ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_delete_property ~(window : window) ~(property : atom)  buf ~at : int option =
 let orig = at in
@@ -868,12 +868,12 @@ let at = at + 2 in
 let* at = encode_window buf window ~at in
 let* at = encode_atom buf property ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type get_property_type_enum = [ `Any ] [@@deriving sexp];;
 let get_property_type_enum_of_int : int -> [> get_property_type_enum ] option = function 0 -> Some `Any | n -> Printf.printf "unknown get_property_type_enum: %d\n" n; None;;
 let get_property_type_int_of_enum : get_property_type_enum -> int = function `Any -> 0;;
-type get_property_reply = { format : int; type_ : atom; bytes_after : int; value_len : int; value : char list; } [@@deriving sexp];;
+type get_property_reply = { format : int; type_ : atom; bytes_after : int; value_len : int; value : string; } [@@deriving sexp];;
 let encode_get_property ~(delete : bool) ~(window : window) ~(property : atom) ~(type_ : get_property_type_enum alt_enum) ~(long_offset : int) ~(long_length : int)  buf ~at : int option =
 let orig = at in
 (* opcode *)
@@ -887,7 +887,7 @@ let* at = encode_alt_enum encode_atom identity get_property_type_int_of_enum buf
 let* at = encode_int32 buf long_offset ~at in
 let* at = encode_int32 buf long_length ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_get_property_reply length buf ~at : (get_property_reply * int) option = let orig = at in let at = at + 1 in
 let* format, at = decode_uint8 buf ~at in
@@ -896,7 +896,7 @@ let* type_, at = decode_atom buf ~at in
 let* bytes_after, at = decode_int32 buf ~at in
 let* value_len, at = decode_int32 buf ~at in
 let at = at + 12 in
-let* value, at = let length = (value_len) * ((format) / (8)) in decode_list (decode_char) length buf ~at in
+let* value, at = let length = (value_len) * ((format) / (8)) in decode_string length buf ~at in
 ignore orig;
 Some ({ format; type_; bytes_after; value_len; value }, at);;
 type list_properties_reply = { atoms : atom list; } [@@deriving sexp];;
@@ -909,7 +909,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_window buf window ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_list_properties_reply length buf ~at : (list_properties_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -930,7 +930,7 @@ let* at = encode_alt_enum encode_window identity window_int_of_enum buf owner ~a
 let* at = encode_atom buf selection ~at in
 let* at = encode_alt_enum encode_timestamp identity time_int_of_enum buf time ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type get_selection_owner_reply = { owner : window_enum alt_enum; } [@@deriving sexp];;
 let encode_get_selection_owner ~(selection : atom)  buf ~at : int option =
@@ -942,7 +942,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_atom buf selection ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_get_selection_owner_reply length buf ~at : (get_selection_owner_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -963,7 +963,7 @@ let* at = encode_atom buf target ~at in
 let* at = encode_alt_enum encode_atom identity atom_int_of_enum buf property ~at in
 let* at = encode_alt_enum encode_timestamp identity time_int_of_enum buf time ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type send_event_dest_enum = [ `Pointer_window | `Item_focus ] [@@deriving sexp];;
 let send_event_dest_enum_of_int : int -> [> send_event_dest_enum ] option = function 0 -> Some `Pointer_window | 1 -> Some `Item_focus | n -> Printf.printf "unknown send_event_dest_enum: %d\n" n; None;;
@@ -979,7 +979,7 @@ let* at = encode_alt_enum encode_window identity send_event_dest_int_of_enum buf
 let* at = encode_mask encode_int32 identity event_mask_int_of_mask buf event_mask ~at in
 let* at = encode_string buf event ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type grab_mode_enum = [ `Sync | `Async ] [@@deriving sexp];;
 let grab_mode_enum_of_int : int -> [> grab_mode_enum ] option = function 0 -> Some `Sync | 1 -> Some `Async | n -> Printf.printf "unknown grab_mode_enum: %d\n" n; None;;
@@ -1003,7 +1003,7 @@ let* at = encode_alt_enum encode_window identity window_int_of_enum buf confine_
 let* at = encode_alt_enum encode_cursor identity cursor_int_of_enum buf cursor ~at in
 let* at = encode_alt_enum encode_timestamp identity time_int_of_enum buf time ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_grab_pointer_reply length buf ~at : (grab_pointer_reply * int) option = let orig = at in let at = at + 1 in
 let* status, at = decode_enum decode_char Char.code grab_status_enum_of_int buf ~at in
@@ -1019,7 +1019,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_alt_enum encode_timestamp identity time_int_of_enum buf time ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type button_index_enum = [ `Any | `D1 | `D2 | `D3 | `D4 | `D5 ] [@@deriving sexp];;
 let button_index_enum_of_int : int -> [> button_index_enum ] option = function 0 -> Some `Any | 1 -> Some `D1 | 2 -> Some `D2 | 3 -> Some `D3 | 4 -> Some `D4 | 5 -> Some `D5 | n -> Printf.printf "unknown button_index_enum: %d\n" n; None;;
@@ -1041,7 +1041,7 @@ let* at = encode_enum encode_uint8 identity button_index_int_of_enum buf button 
 let at = at + 1 in
 let* at = encode_mask encode_uint16 identity mod_mask_int_of_mask buf modifiers ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_ungrab_button ~(button : button_index_enum) ~(grab_window : window) ~(modifiers : mod_mask)  buf ~at : int option =
 let orig = at in
@@ -1054,7 +1054,7 @@ let* at = encode_window buf grab_window ~at in
 let* at = encode_mask encode_uint16 identity mod_mask_int_of_mask buf modifiers ~at in
 let at = at + 2 in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_change_active_pointer_grab ~(cursor : cursor_enum alt_enum) ~(time : time_enum alt_enum) ~(event_mask : event_mask)  buf ~at : int option =
 let orig = at in
@@ -1068,7 +1068,7 @@ let* at = encode_alt_enum encode_timestamp identity time_int_of_enum buf time ~a
 let* at = encode_mask encode_uint16 identity event_mask_int_of_mask buf event_mask ~at in
 let at = at + 2 in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type grab_keyboard_reply = { status : grab_status_enum; } [@@deriving sexp];;
 let encode_grab_keyboard ~(owner_events : bool) ~(grab_window : window) ~(time : time_enum alt_enum) ~(pointer_mode : grab_mode_enum) ~(keyboard_mode : grab_mode_enum)  buf ~at : int option =
@@ -1084,7 +1084,7 @@ let* at = encode_enum encode_char Char.chr grab_mode_int_of_enum buf pointer_mod
 let* at = encode_enum encode_char Char.chr grab_mode_int_of_enum buf keyboard_mode ~at in
 let at = at + 2 in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_grab_keyboard_reply length buf ~at : (grab_keyboard_reply * int) option = let orig = at in let at = at + 1 in
 let* status, at = decode_enum decode_char Char.code grab_status_enum_of_int buf ~at in
@@ -1100,7 +1100,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_alt_enum encode_timestamp identity time_int_of_enum buf time ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type grab_enum = [ `Any ] [@@deriving sexp];;
 let grab_enum_of_int : int -> [> grab_enum ] option = function 0 -> Some `Any | n -> Printf.printf "unknown grab_enum: %d\n" n; None;;
@@ -1119,7 +1119,7 @@ let* at = encode_enum encode_uint8 identity grab_mode_int_of_enum buf pointer_mo
 let* at = encode_enum encode_uint8 identity grab_mode_int_of_enum buf keyboard_mode ~at in
 let at = at + 3 in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_ungrab_key ~(key : grab_enum alt_enum) ~(grab_window : window) ~(modifiers : mod_mask)  buf ~at : int option =
 let orig = at in
@@ -1132,7 +1132,7 @@ let* at = encode_window buf grab_window ~at in
 let* at = encode_mask encode_uint16 identity mod_mask_int_of_mask buf modifiers ~at in
 let at = at + 2 in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type allow_enum = [ `Async_pointer | `Sync_pointer | `Replay_pointer | `Async_keyboard | `Sync_keyboard | `Replay_keyboard | `Async_both | `Sync_both ] [@@deriving sexp];;
 let allow_enum_of_int : int -> [> allow_enum ] option = function 0 -> Some `Async_pointer | 1 -> Some `Sync_pointer | 2 -> Some `Replay_pointer | 3 -> Some `Async_keyboard | 4 -> Some `Sync_keyboard | 5 -> Some `Replay_keyboard | 6 -> Some `Async_both | 7 -> Some `Sync_both | n -> Printf.printf "unknown allow_enum: %d\n" n; None;;
@@ -1146,7 +1146,7 @@ let* at = encode_enum encode_uint8 identity allow_int_of_enum buf mode ~at in
 let at = at + 2 in
 let* at = encode_alt_enum encode_timestamp identity time_int_of_enum buf time ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_grab_server  buf ~at : int option =
 let orig = at in
@@ -1154,7 +1154,7 @@ let orig = at in
 let* at = encode_uint8 buf 36 ~at in
 
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_ungrab_server  buf ~at : int option =
 let orig = at in
@@ -1162,7 +1162,7 @@ let orig = at in
 let* at = encode_uint8 buf 37 ~at in
 
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type query_pointer_reply = { same_screen : bool; root : window; child : window_enum alt_enum; root_x : int; root_y : int; win_x : int; win_y : int; mask : key_but_mask; } [@@deriving sexp];;
 let encode_query_pointer ~(window : window)  buf ~at : int option =
@@ -1174,7 +1174,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_window buf window ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_query_pointer_reply length buf ~at : (query_pointer_reply * int) option = let orig = at in let at = at + 1 in
 let* same_screen, at = decode_bool buf ~at in
@@ -1209,7 +1209,7 @@ let* at = encode_window buf window ~at in
 let* at = encode_alt_enum encode_timestamp identity time_int_of_enum buf start ~at in
 let* at = encode_alt_enum encode_timestamp identity time_int_of_enum buf stop ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_get_motion_events_reply length buf ~at : (get_motion_events_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -1232,7 +1232,7 @@ let* at = encode_window buf dst_window ~at in
 let* at = encode_int16 buf src_x ~at in
 let* at = encode_int16 buf src_y ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_translate_coordinates_reply length buf ~at : (translate_coordinates_reply * int) option = let orig = at in let at = at + 1 in
 let* same_screen, at = decode_bool buf ~at in
@@ -1258,7 +1258,7 @@ let* at = encode_uint16 buf src_height ~at in
 let* at = encode_int16 buf dst_x ~at in
 let* at = encode_int16 buf dst_y ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type input_focus_enum = [ `None | `Pointer_root | `Parent | `Follow_keyboard ] [@@deriving sexp];;
 let input_focus_enum_of_int : int -> [> input_focus_enum ] option = function 0 -> Some `None | 1 -> Some `Pointer_root | 2 -> Some `Parent | 3 -> Some `Follow_keyboard | n -> Printf.printf "unknown input_focus_enum: %d\n" n; None;;
@@ -1273,7 +1273,7 @@ let at = at + 2 in
 let* at = encode_alt_enum encode_window identity input_focus_int_of_enum buf focus ~at in
 let* at = encode_alt_enum encode_timestamp identity time_int_of_enum buf time ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type get_input_focus_reply = { revert_to : input_focus_enum; focus : input_focus_enum alt_enum; } [@@deriving sexp];;
 let encode_get_input_focus  buf ~at : int option =
@@ -1282,7 +1282,7 @@ let orig = at in
 let* at = encode_uint8 buf 43 ~at in
 
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_get_input_focus_reply length buf ~at : (get_input_focus_reply * int) option = let orig = at in let at = at + 1 in
 let* revert_to, at = decode_enum decode_uint8 identity input_focus_enum_of_int buf ~at in
@@ -1297,7 +1297,7 @@ let orig = at in
 let* at = encode_uint8 buf 44 ~at in
 
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_query_keymap_reply length buf ~at : (query_keymap_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -1317,7 +1317,7 @@ let* at = encode_uint16 buf (identity (String.length name)) ~at in
 let at = at + 2 in
 let* at = encode_string buf name ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_close_font ~(font : font)  buf ~at : int option =
 let orig = at in
@@ -1328,7 +1328,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_font buf font ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type font_draw_enum = [ `Left_to_right | `Right_to_left ] [@@deriving sexp];;
 let font_draw_enum_of_int : int -> [> font_draw_enum ] option = function 0 -> Some `Left_to_right | 1 -> Some `Right_to_left | n -> Printf.printf "unknown font_draw_enum: %d\n" n; None;;
@@ -1361,7 +1361,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_fontable buf font ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_query_font_reply length buf ~at : (query_font_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -1405,7 +1405,7 @@ let* at = encode_uint16 buf max_names ~at in
 let* at = encode_uint16 buf (identity (String.length pattern)) ~at in
 let* at = encode_string buf pattern ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_list_fonts_reply length buf ~at : (list_fonts_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -1427,7 +1427,7 @@ let* at = encode_uint16 buf max_names ~at in
 let* at = encode_uint16 buf (identity (String.length pattern)) ~at in
 let* at = encode_string buf pattern ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_list_fonts_with_info_reply length buf ~at : (list_fonts_with_info_reply * int) option = let orig = at in let at = at + 1 in
 let* name_len, at = decode_uint8 buf ~at in let name_len = name_len in
@@ -1462,7 +1462,7 @@ let* at = encode_uint16 buf (identity ((* invalid_argument *) List.length font))
 let at = at + 2 in
 let* at = encode_list encode_str buf font ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type get_font_path_reply = { path : str list; } [@@deriving sexp];;
 let encode_get_font_path  buf ~at : int option =
@@ -1471,7 +1471,7 @@ let orig = at in
 let* at = encode_uint8 buf 52 ~at in
 
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_get_font_path_reply length buf ~at : (get_font_path_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -1493,7 +1493,7 @@ let* at = encode_drawable buf drawable ~at in
 let* at = encode_uint16 buf width ~at in
 let* at = encode_uint16 buf height ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_free_pixmap ~(pixmap : pixmap)  buf ~at : int option =
 let orig = at in
@@ -1504,7 +1504,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_pixmap buf pixmap ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type gc_mask = [ `Function | `Plane_mask | `Foreground | `Background | `Line_width | `Line_style | `Cap_style | `Join_style | `Fill_style | `Fill_rule | `Tile | `Stipple | `Tile_stipple_origin_x | `Tile_stipple_origin_y | `Font | `Subwindow_mode | `Graphics_exposures | `Clip_origin_x | `Clip_origin_y | `Clip_mask | `Dash_offset | `Dash_list | `Arc_mode ] list [@@deriving sexp];;
 let gc_mask_of_int64 mask : gc_mask option = let of_int = function 0 -> Some `Function | 1 -> Some `Plane_mask | 2 -> Some `Foreground | 3 -> Some `Background | 4 -> Some `Line_width | 5 -> Some `Line_style | 6 -> Some `Cap_style | 7 -> Some `Join_style | 8 -> Some `Fill_style | 9 -> Some `Fill_rule | 10 -> Some `Tile | 11 -> Some `Stipple | 12 -> Some `Tile_stipple_origin_x | 13 -> Some `Tile_stipple_origin_y | 14 -> Some `Font | 15 -> Some `Subwindow_mode | 16 -> Some `Graphics_exposures | 17 -> Some `Clip_origin_x | 18 -> Some `Clip_origin_y | 19 -> Some `Clip_mask | 20 -> Some `Dash_offset | 21 -> Some `Dash_list | 22 -> Some `Arc_mode | _ -> None in mask_of_int of_int mask;;
@@ -1545,7 +1545,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_gcontext buf cid ~at in
 let* at = encode_drawable buf drawable ~at in
-(* field_optional_mask *)
+(* field_optional_mask *)let* at = encode_int32 buf 0 ~at in
 (* field_optional *)
 (* field_optional *)
 (* field_optional *)
@@ -1570,7 +1570,7 @@ let* at = encode_drawable buf drawable ~at in
 (* field_optional *)
 (* field_optional *)
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_change_gc ~(gc : gcontext) ?(function_ : gx_enum option) ?(plane_mask : int option) ?(foreground : int option) ?(background : int option) ?(line_width : int option) ?(line_style : line_style_enum option) ?(cap_style : cap_style_enum option) ?(join_style : join_style_enum option) ?(fill_style : fill_style_enum option) ?(fill_rule : fill_rule_enum option) ?(tile : pixmap_enum alt_enum option) ?(stipple : pixmap_enum alt_enum option) ?(tile_stipple_x_origin : int option) ?(tile_stipple_y_origin : int option) ?(font : font_enum alt_enum option) ?(subwindow_mode : subwindow_mode_enum option) ?(graphics_exposures : bool32 option) ?(clip_x_origin : int option) ?(clip_y_origin : int option) ?(clip_mask : pixmap_enum alt_enum option) ?(dash_offset : int option) ?(dashes : int option) ?(arc_mode : arc_mode_enum option)  buf ~at : int option =
 let orig = at in
@@ -1580,7 +1580,7 @@ let at = at + 1 in
 (* reserve request length *)
 let at = at + 2 in
 let* at = encode_gcontext buf gc ~at in
-(* field_optional_mask *)
+(* field_optional_mask *)let* at = encode_int32 buf 0 ~at in
 (* field_optional *)
 (* field_optional *)
 (* field_optional *)
@@ -1605,7 +1605,7 @@ let* at = encode_gcontext buf gc ~at in
 (* field_optional *)
 (* field_optional *)
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_copy_gc ~(src_gc : gcontext) ~(dst_gc : gcontext) ~(value_mask : gc_mask)  buf ~at : int option =
 let orig = at in
@@ -1618,7 +1618,7 @@ let* at = encode_gcontext buf src_gc ~at in
 let* at = encode_gcontext buf dst_gc ~at in
 let* at = encode_mask encode_int32 identity gc_int_of_mask buf value_mask ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_set_dashes ~(gc : gcontext) ~(dash_offset : int) ~(dashes : int list)  buf ~at : int option =
 let orig = at in
@@ -1632,7 +1632,7 @@ let* at = encode_uint16 buf dash_offset ~at in
 let* at = encode_uint16 buf (identity ((* Parsetree.Card8 *) List.length dashes)) ~at in
 let* at = encode_list encode_uint8 buf dashes ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type clip_ordering_enum = [ `Unsorted | `Y_sorted | `Yx_sorted | `Yx_banded ] [@@deriving sexp];;
 let clip_ordering_enum_of_int : int -> [> clip_ordering_enum ] option = function 0 -> Some `Unsorted | 1 -> Some `Y_sorted | 2 -> Some `Yx_sorted | 3 -> Some `Yx_banded | n -> Printf.printf "unknown clip_ordering_enum: %d\n" n; None;;
@@ -1649,7 +1649,7 @@ let* at = encode_int16 buf clip_x_origin ~at in
 let* at = encode_int16 buf clip_y_origin ~at in
 let* at = encode_list encode_rectangle buf rectangles ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_free_gc ~(gc : gcontext)  buf ~at : int option =
 let orig = at in
@@ -1660,7 +1660,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_gcontext buf gc ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_clear_area ~(exposures : bool) ~(window : window) ~(x : int) ~(y : int) ~(width : int) ~(height : int)  buf ~at : int option =
 let orig = at in
@@ -1675,7 +1675,7 @@ let* at = encode_int16 buf y ~at in
 let* at = encode_uint16 buf width ~at in
 let* at = encode_uint16 buf height ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_copy_area ~(src_drawable : drawable) ~(dst_drawable : drawable) ~(gc : gcontext) ~(src_x : int) ~(src_y : int) ~(dst_x : int) ~(dst_y : int) ~(width : int) ~(height : int)  buf ~at : int option =
 let orig = at in
@@ -1694,7 +1694,7 @@ let* at = encode_int16 buf dst_y ~at in
 let* at = encode_uint16 buf width ~at in
 let* at = encode_uint16 buf height ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_copy_plane ~(src_drawable : drawable) ~(dst_drawable : drawable) ~(gc : gcontext) ~(src_x : int) ~(src_y : int) ~(dst_x : int) ~(dst_y : int) ~(width : int) ~(height : int) ~(bit_plane : int)  buf ~at : int option =
 let orig = at in
@@ -1714,7 +1714,7 @@ let* at = encode_uint16 buf width ~at in
 let* at = encode_uint16 buf height ~at in
 let* at = encode_int32 buf bit_plane ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type coord_mode_enum = [ `Origin | `Previous ] [@@deriving sexp];;
 let coord_mode_enum_of_int : int -> [> coord_mode_enum ] option = function 0 -> Some `Origin | 1 -> Some `Previous | n -> Printf.printf "unknown coord_mode_enum: %d\n" n; None;;
@@ -1730,7 +1730,7 @@ let* at = encode_drawable buf drawable ~at in
 let* at = encode_gcontext buf gc ~at in
 let* at = encode_list encode_point buf points ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_poly_line ~(coordinate_mode : coord_mode_enum) ~(drawable : drawable) ~(gc : gcontext) ~(points : point list)  buf ~at : int option =
 let orig = at in
@@ -1743,7 +1743,7 @@ let* at = encode_drawable buf drawable ~at in
 let* at = encode_gcontext buf gc ~at in
 let* at = encode_list encode_point buf points ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type segment = { x1 : int; y1 : int; x2 : int; y2 : int; } [@@deriving sexp];;
 let decode_segment buf ~at : (segment * int) option = let orig = at in let* x1, at = decode_int16 buf ~at in
@@ -1765,7 +1765,7 @@ let* at = encode_drawable buf drawable ~at in
 let* at = encode_gcontext buf gc ~at in
 let* at = encode_list encode_segment buf segments ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_poly_rectangle ~(drawable : drawable) ~(gc : gcontext) ~(rectangles : rectangle list)  buf ~at : int option =
 let orig = at in
@@ -1778,7 +1778,7 @@ let* at = encode_drawable buf drawable ~at in
 let* at = encode_gcontext buf gc ~at in
 let* at = encode_list encode_rectangle buf rectangles ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_poly_arc ~(drawable : drawable) ~(gc : gcontext) ~(arcs : arc list)  buf ~at : int option =
 let orig = at in
@@ -1791,7 +1791,7 @@ let* at = encode_drawable buf drawable ~at in
 let* at = encode_gcontext buf gc ~at in
 let* at = encode_list encode_arc buf arcs ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type poly_shape_enum = [ `Complex | `Nonconvex | `Convex ] [@@deriving sexp];;
 let poly_shape_enum_of_int : int -> [> poly_shape_enum ] option = function 0 -> Some `Complex | 1 -> Some `Nonconvex | 2 -> Some `Convex | n -> Printf.printf "unknown poly_shape_enum: %d\n" n; None;;
@@ -1810,7 +1810,7 @@ let* at = encode_enum encode_uint8 identity coord_mode_int_of_enum buf coordinat
 let at = at + 2 in
 let* at = encode_list encode_point buf points ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_poly_fill_rectangle ~(drawable : drawable) ~(gc : gcontext) ~(rectangles : rectangle list)  buf ~at : int option =
 let orig = at in
@@ -1823,7 +1823,7 @@ let* at = encode_drawable buf drawable ~at in
 let* at = encode_gcontext buf gc ~at in
 let* at = encode_list encode_rectangle buf rectangles ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_poly_fill_arc ~(drawable : drawable) ~(gc : gcontext) ~(arcs : arc list)  buf ~at : int option =
 let orig = at in
@@ -1836,7 +1836,7 @@ let* at = encode_drawable buf drawable ~at in
 let* at = encode_gcontext buf gc ~at in
 let* at = encode_list encode_arc buf arcs ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type image_format_enum = [ `Xy_bitmap | `Xy_pixmap | `Z_pixmap ] [@@deriving sexp];;
 let image_format_enum_of_int : int -> [> image_format_enum ] option = function 0 -> Some `Xy_bitmap | 1 -> Some `Xy_pixmap | 2 -> Some `Z_pixmap | n -> Printf.printf "unknown image_format_enum: %d\n" n; None;;
@@ -1859,7 +1859,7 @@ let* at = encode_uint8 buf depth ~at in
 let at = at + 2 in
 let* at = encode_list encode_char buf data ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type get_image_reply = { depth : int; visual : visualid; data : char list; } [@@deriving sexp];;
 let encode_get_image ~(format : image_format_enum) ~(drawable : drawable) ~(x : int) ~(y : int) ~(width : int) ~(height : int) ~(plane_mask : int)  buf ~at : int option =
@@ -1876,7 +1876,7 @@ let* at = encode_uint16 buf width ~at in
 let* at = encode_uint16 buf height ~at in
 let* at = encode_int32 buf plane_mask ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_get_image_reply length buf ~at : (get_image_reply * int) option = let orig = at in let at = at + 1 in
 let* depth, at = decode_uint8 buf ~at in
@@ -1899,7 +1899,7 @@ let* at = encode_int16 buf x ~at in
 let* at = encode_int16 buf y ~at in
 let* at = encode_list encode_char buf items ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_poly_text16 ~(drawable : drawable) ~(gc : gcontext) ~(x : int) ~(y : int) ~(items : char list)  buf ~at : int option =
 let orig = at in
@@ -1914,7 +1914,7 @@ let* at = encode_int16 buf x ~at in
 let* at = encode_int16 buf y ~at in
 let* at = encode_list encode_char buf items ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_image_text8 ~(drawable : drawable) ~(gc : gcontext) ~(x : int) ~(y : int) ~(string : string)  buf ~at : int option =
 let orig = at in
@@ -1929,7 +1929,7 @@ let* at = encode_int16 buf x ~at in
 let* at = encode_int16 buf y ~at in
 let* at = encode_string buf string ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_image_text16 ~(drawable : drawable) ~(gc : gcontext) ~(x : int) ~(y : int) ~(string : char2b list)  buf ~at : int option =
 let orig = at in
@@ -1944,7 +1944,7 @@ let* at = encode_int16 buf x ~at in
 let* at = encode_int16 buf y ~at in
 let* at = encode_list encode_char2b buf string ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type colormap_alloc_enum = [ `None | `All ] [@@deriving sexp];;
 let colormap_alloc_enum_of_int : int -> [> colormap_alloc_enum ] option = function 0 -> Some `None | 1 -> Some `All | n -> Printf.printf "unknown colormap_alloc_enum: %d\n" n; None;;
@@ -1960,7 +1960,7 @@ let* at = encode_colormap buf mid ~at in
 let* at = encode_window buf window ~at in
 let* at = encode_visualid buf visual ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_free_colormap ~(cmap : colormap)  buf ~at : int option =
 let orig = at in
@@ -1971,7 +1971,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_colormap buf cmap ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_copy_colormap_and_free ~(mid : colormap) ~(src_cmap : colormap)  buf ~at : int option =
 let orig = at in
@@ -1983,7 +1983,7 @@ let at = at + 2 in
 let* at = encode_colormap buf mid ~at in
 let* at = encode_colormap buf src_cmap ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_install_colormap ~(cmap : colormap)  buf ~at : int option =
 let orig = at in
@@ -1994,7 +1994,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_colormap buf cmap ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_uninstall_colormap ~(cmap : colormap)  buf ~at : int option =
 let orig = at in
@@ -2005,7 +2005,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_colormap buf cmap ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type list_installed_colormaps_reply = { cmaps : colormap list; } [@@deriving sexp];;
 let encode_list_installed_colormaps ~(window : window)  buf ~at : int option =
@@ -2017,7 +2017,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_window buf window ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_list_installed_colormaps_reply length buf ~at : (list_installed_colormaps_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -2041,7 +2041,7 @@ let* at = encode_uint16 buf green ~at in
 let* at = encode_uint16 buf blue ~at in
 let at = at + 2 in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_alloc_color_reply length buf ~at : (alloc_color_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -2066,7 +2066,7 @@ let* at = encode_uint16 buf (identity (String.length name)) ~at in
 let at = at + 2 in
 let* at = encode_string buf name ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_alloc_named_color_reply length buf ~at : (alloc_named_color_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -2092,7 +2092,7 @@ let* at = encode_colormap buf cmap ~at in
 let* at = encode_uint16 buf colors ~at in
 let* at = encode_uint16 buf planes ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_alloc_color_cells_reply length buf ~at : (alloc_color_cells_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -2118,7 +2118,7 @@ let* at = encode_uint16 buf reds ~at in
 let* at = encode_uint16 buf greens ~at in
 let* at = encode_uint16 buf blues ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_alloc_color_planes_reply length buf ~at : (alloc_color_planes_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -2143,7 +2143,7 @@ let* at = encode_colormap buf cmap ~at in
 let* at = encode_int32 buf plane_mask ~at in
 let* at = encode_list encode_int32 buf pixels ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type color_flag_mask = [ `Red | `Green | `Blue ] list [@@deriving sexp];;
 let color_flag_mask_of_int64 mask : color_flag_mask option = let of_int = function 0 -> Some `Red | 1 -> Some `Green | 2 -> Some `Blue | _ -> None in mask_of_int of_int mask;;
@@ -2169,7 +2169,7 @@ let at = at + 2 in
 let* at = encode_colormap buf cmap ~at in
 let* at = encode_list encode_coloritem buf items ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_store_named_color ~(flags : color_flag_mask) ~(cmap : colormap) ~(pixel : int) ~(name : string)  buf ~at : int option =
 let orig = at in
@@ -2184,7 +2184,7 @@ let* at = encode_uint16 buf (identity (String.length name)) ~at in
 let at = at + 2 in
 let* at = encode_string buf name ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type rgb = { red : int; green : int; blue : int; } [@@deriving sexp];;
 let decode_rgb buf ~at : (rgb * int) option = let orig = at in let* red, at = decode_uint16 buf ~at in
@@ -2206,7 +2206,7 @@ let at = at + 2 in
 let* at = encode_colormap buf cmap ~at in
 let* at = encode_list encode_int32 buf pixels ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_query_colors_reply length buf ~at : (query_colors_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -2229,7 +2229,7 @@ let* at = encode_uint16 buf (identity (String.length name)) ~at in
 let at = at + 2 in
 let* at = encode_string buf name ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_lookup_color_reply length buf ~at : (lookup_color_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -2261,7 +2261,7 @@ let* at = encode_uint16 buf back_blue ~at in
 let* at = encode_uint16 buf x ~at in
 let* at = encode_uint16 buf y ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_create_glyph_cursor ~(cid : cursor) ~(source_font : font) ~(mask_font : font_enum alt_enum) ~(source_char : int) ~(mask_char : int) ~(fore_red : int) ~(fore_green : int) ~(fore_blue : int) ~(back_red : int) ~(back_green : int) ~(back_blue : int)  buf ~at : int option =
 let orig = at in
@@ -2282,7 +2282,7 @@ let* at = encode_uint16 buf back_red ~at in
 let* at = encode_uint16 buf back_green ~at in
 let* at = encode_uint16 buf back_blue ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_free_cursor ~(cursor : cursor)  buf ~at : int option =
 let orig = at in
@@ -2293,7 +2293,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_cursor buf cursor ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_recolor_cursor ~(cursor : cursor) ~(fore_red : int) ~(fore_green : int) ~(fore_blue : int) ~(back_red : int) ~(back_green : int) ~(back_blue : int)  buf ~at : int option =
 let orig = at in
@@ -2310,7 +2310,7 @@ let* at = encode_uint16 buf back_red ~at in
 let* at = encode_uint16 buf back_green ~at in
 let* at = encode_uint16 buf back_blue ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type query_shape_of_enum = [ `Largest_cursor | `Fastest_tile | `Fastest_stipple ] [@@deriving sexp];;
 let query_shape_of_enum_of_int : int -> [> query_shape_of_enum ] option = function 0 -> Some `Largest_cursor | 1 -> Some `Fastest_tile | 2 -> Some `Fastest_stipple | n -> Printf.printf "unknown query_shape_of_enum: %d\n" n; None;;
@@ -2327,7 +2327,7 @@ let* at = encode_drawable buf drawable ~at in
 let* at = encode_uint16 buf width ~at in
 let* at = encode_uint16 buf height ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_query_best_size_reply length buf ~at : (query_best_size_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -2348,7 +2348,7 @@ let* at = encode_uint16 buf (identity (String.length name)) ~at in
 let at = at + 2 in
 let* at = encode_string buf name ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_query_extension_reply length buf ~at : (query_extension_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -2366,7 +2366,7 @@ let orig = at in
 let* at = encode_uint8 buf 99 ~at in
 
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_list_extensions_reply length buf ~at : (list_extensions_reply * int) option = let orig = at in let at = at + 1 in
 let* names_len, at = decode_uint8 buf ~at in let names_len = names_len in
@@ -2387,7 +2387,7 @@ let* at = encode_uint8 buf keysyms_per_keycode ~at in
 let at = at + 2 in
 let* at = encode_list encode_keysym buf keysyms ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type get_keyboard_mapping_reply = { keysyms_per_keycode : char; keysyms : keysym list; } [@@deriving sexp];;
 let encode_get_keyboard_mapping ~(first_keycode : keycode) ~(count : int)  buf ~at : int option =
@@ -2400,7 +2400,7 @@ let at = at + 2 in
 let* at = encode_keycode buf first_keycode ~at in
 let* at = encode_uint8 buf count ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_get_keyboard_mapping_reply length buf ~at : (get_keyboard_mapping_reply * int) option = let orig = at in let at = at + 1 in
 let* keysyms_per_keycode, at = decode_char buf ~at in
@@ -2425,7 +2425,7 @@ let* at = encode_uint8 buf 102 ~at in
 let at = at + 1 in
 (* reserve request length *)
 let at = at + 2 in
-(* field_optional_mask *)
+(* field_optional_mask *)let* at = encode_int32 buf 0 ~at in
 (* field_optional *)
 (* field_optional *)
 (* field_optional *)
@@ -2435,7 +2435,7 @@ let at = at + 2 in
 (* field_optional *)
 (* field_optional *)
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type get_keyboard_control_reply = { global_auto_repeat : auto_repeat_mode_enum; led_mask : int; key_click_percent : int; bell_percent : int; bell_pitch : int; bell_duration : int; auto_repeats : int list; } [@@deriving sexp];;
 let encode_get_keyboard_control  buf ~at : int option =
@@ -2444,7 +2444,7 @@ let orig = at in
 let* at = encode_uint8 buf 103 ~at in
 
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_get_keyboard_control_reply length buf ~at : (get_keyboard_control_reply * int) option = let orig = at in let at = at + 1 in
 let* global_auto_repeat, at = decode_enum decode_char Char.code auto_repeat_mode_enum_of_int buf ~at in
@@ -2467,7 +2467,7 @@ let* at = encode_int8 buf percent ~at in
 let at = at + 2 in
 
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_change_pointer_control ~(acceleration_numerator : int) ~(acceleration_denominator : int) ~(threshold : int) ~(do_acceleration : bool) ~(do_threshold : bool)  buf ~at : int option =
 let orig = at in
@@ -2482,7 +2482,7 @@ let* at = encode_int16 buf threshold ~at in
 let* at = encode_bool buf do_acceleration ~at in
 let* at = encode_bool buf do_threshold ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type get_pointer_control_reply = { acceleration_numerator : int; acceleration_denominator : int; threshold : int; } [@@deriving sexp];;
 let encode_get_pointer_control  buf ~at : int option =
@@ -2491,7 +2491,7 @@ let orig = at in
 let* at = encode_uint8 buf 106 ~at in
 
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_get_pointer_control_reply length buf ~at : (get_pointer_control_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -2520,7 +2520,7 @@ let* at = encode_int16 buf interval ~at in
 let* at = encode_enum encode_uint8 identity blanking_int_of_enum buf prefer_blanking ~at in
 let* at = encode_enum encode_uint8 identity exposures_int_of_enum buf allow_exposures ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type get_screen_saver_reply = { timeout : int; interval : int; prefer_blanking : blanking_enum; allow_exposures : exposures_enum; } [@@deriving sexp];;
 let encode_get_screen_saver  buf ~at : int option =
@@ -2529,7 +2529,7 @@ let orig = at in
 let* at = encode_uint8 buf 108 ~at in
 
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_get_screen_saver_reply length buf ~at : (get_screen_saver_reply * int) option = let orig = at in let at = at + 1 in
 let at = at + 1 in
@@ -2559,7 +2559,7 @@ let at = at + 1 in
 let* at = encode_uint16 buf (identity ((* Parsetree.Byte *) List.length address)) ~at in
 let* at = encode_list encode_char buf address ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type host = { family : family_enum; address : char list; } [@@deriving sexp];;
 let decode_host buf ~at : (host * int) option = let orig = at in let* family, at = decode_enum decode_uint8 identity family_enum_of_int buf ~at in
@@ -2581,7 +2581,7 @@ let orig = at in
 let* at = encode_uint8 buf 110 ~at in
 
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_list_hosts_reply length buf ~at : (list_hosts_reply * int) option = let orig = at in let at = at + 1 in
 let* mode, at = decode_enum decode_char Char.code access_control_enum_of_int buf ~at in
@@ -2600,7 +2600,7 @@ let* at = encode_enum encode_uint8 identity access_control_int_of_enum buf mode 
 let at = at + 2 in
 
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type close_down_enum = [ `Destroy_all | `Retain_permanent | `Retain_temporary ] [@@deriving sexp];;
 let close_down_enum_of_int : int -> [> close_down_enum ] option = function 0 -> Some `Destroy_all | 1 -> Some `Retain_permanent | 2 -> Some `Retain_temporary | n -> Printf.printf "unknown close_down_enum: %d\n" n; None;;
@@ -2614,7 +2614,7 @@ let* at = encode_enum encode_uint8 identity close_down_int_of_enum buf mode ~at 
 let at = at + 2 in
 
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type kill_enum = [ `All_temporary ] [@@deriving sexp];;
 let kill_enum_of_int : int -> [> kill_enum ] option = function 0 -> Some `All_temporary | n -> Printf.printf "unknown kill_enum: %d\n" n; None;;
@@ -2628,7 +2628,7 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_alt_enum encode_int32 identity kill_int_of_enum buf resource ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let encode_rotate_properties ~(window : window) ~(delta : int) ~(atoms : atom list)  buf ~at : int option =
 let orig = at in
@@ -2642,7 +2642,7 @@ let* at = encode_uint16 buf (identity ((* Parsetree.Xid *) List.length atoms)) ~
 let* at = encode_int16 buf delta ~at in
 let* at = encode_list encode_atom buf atoms ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type screen_saver_enum = [ `Reset | `Active ] [@@deriving sexp];;
 let screen_saver_enum_of_int : int -> [> screen_saver_enum ] option = function 0 -> Some `Reset | 1 -> Some `Active | n -> Printf.printf "unknown screen_saver_enum: %d\n" n; None;;
@@ -2656,7 +2656,7 @@ let* at = encode_enum encode_uint8 identity screen_saver_int_of_enum buf mode ~a
 let at = at + 2 in
 
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 type mapping_status_enum = [ `Success | `Busy | `Failure ] [@@deriving sexp];;
 let mapping_status_enum_of_int : int -> [> mapping_status_enum ] option = function 0 -> Some `Success | 1 -> Some `Busy | 2 -> Some `Failure | n -> Printf.printf "unknown mapping_status_enum: %d\n" n; None;;
@@ -2671,7 +2671,7 @@ let* at = encode_uint8 buf (identity ((* Parsetree.Card8 *) List.length map)) ~a
 let at = at + 2 in
 let* at = encode_list encode_uint8 buf map ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_set_pointer_mapping_reply length buf ~at : (set_pointer_mapping_reply * int) option = let orig = at in let at = at + 1 in
 let* status, at = decode_enum decode_char Char.code mapping_status_enum_of_int buf ~at in
@@ -2685,7 +2685,7 @@ let orig = at in
 let* at = encode_uint8 buf 117 ~at in
 
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_get_pointer_mapping_reply length buf ~at : (get_pointer_mapping_reply * int) option = let orig = at in let at = at + 1 in
 let* map_len, at = decode_uint8 buf ~at in let map_len = map_len in
@@ -2707,7 +2707,7 @@ let* at = encode_uint8 buf (identity ((* Parsetree.Card8 *) List.length keycodes
 let at = at + 2 in
 let* at = encode_list encode_keycode buf keycodes ~at in
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_set_modifier_mapping_reply length buf ~at : (set_modifier_mapping_reply * int) option = let orig = at in let at = at + 1 in
 let* status, at = decode_enum decode_char Char.code mapping_status_enum_of_int buf ~at in
@@ -2721,7 +2721,7 @@ let orig = at in
 let* at = encode_uint8 buf 119 ~at in
 
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
 let decode_get_modifier_mapping_reply length buf ~at : (get_modifier_mapping_reply * int) option = let orig = at in let at = at + 1 in
 let* keycodes_per_modifier, at = decode_uint8 buf ~at in let keycodes_per_modifier = (keycodes_per_modifier) / (8) in
@@ -2736,5 +2736,5 @@ let orig = at in
 let* at = encode_uint8 buf 127 ~at in
 
 (* write request length *)
-let* _ = encode_uint16 buf at ~at:(orig + 2) in
+let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
