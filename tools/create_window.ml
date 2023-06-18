@@ -3,9 +3,13 @@ open Xobl
 let ( let& ) = Lwt.bind
 
 let rec read_loop (conn : Connection.connection) =
+  let& () = Lwt_unix.wait_read conn.socket in
   let& buf = Connection.read_response conn.socket in
-  let& () = Lwt_io.printf "Response: %s\n" (Xobl.Codec.hex buf) in
-  read_loop conn
+  match buf with
+  | Some buf ->
+      let& _ = Lwt_io.printf "Response: %s\n" (Xobl.Codec.hex buf) in
+      read_loop conn
+  | None -> Lwt.return_unit
 
 let connect () =
   let hostname = Display_name.default in
@@ -29,6 +33,23 @@ let main (conn : Connection.connection) =
     Lwt_io.printf "CreateWindow(len=%d): %s\n" len (Xobl.Codec.hex buf)
   in
   let& _ = Lwt_unix.write conn.socket buf 0 len in
+
+  (*
+  let buf = Bytes.make 120 '\x00' in
+  let len =
+    Xproto.encode_intern_atom ~only_if_exists:true ~name:"_WM_NAME" buf ~at:0
+  in
+  let& _ = Lwt_unix.write conn.socket buf 0 len in
+
+  let buf = Bytes.make 120 '\x00' in
+  let title = "xobl" in
+  let len =
+    Xproto.encode_change_property ~mode:`Replace ~window:(Int32.to_int wid)
+      ~property:wm_name
+      ~type_:(Xproto.atom_int_of_enum `String)
+      ~format:8 ~data_len:(String.length title) ~data:title buf ~at:0
+  in
+  *)
 
   (*
   let buf = Bytes.make 120 '\x00' in
