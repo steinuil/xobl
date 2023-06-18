@@ -24,6 +24,11 @@ let get_socket_params ~display = function
       let Unix.{ ai_family; ai_addr; _ } = List.hd addresses in
       Lwt.return (ai_family, ai_addr, ("", ""))
 
+type setup_response =
+  | Success of Xproto.setup
+  | Failed of Xproto.setup_failed
+  | Authenticate of Xproto.setup_authenticate
+
 let read_handshake_response sock =
   let buf = Bytes.create 8 in
   let* _ = Lwt_unix.read sock buf 0 8 in
@@ -31,7 +36,21 @@ let read_handshake_response sock =
   let whole_buf = Bytes.create (8 + (additional_data_length * 4)) in
   Bytes.blit buf 0 whole_buf 0 8;
   let* _ = Lwt_unix.read sock whole_buf 8 (additional_data_length * 4) in
-  Lwt.return whole_buf
+  match Bytes.get whole_buf 0 with
+  | '\x01' ->
+      let display_info, _ = Xproto.decode_setup whole_buf ~at:0 |> Option.get in
+      Lwt.return (Success display_info)
+  | '\x00' ->
+      let failed, _ =
+        Xproto.decode_setup_failed whole_buf ~at:0 |> Option.get
+      in
+      Lwt.return (Failed failed)
+  | '\x02' ->
+      let authenticate, _ =
+        Xproto.decode_setup_authenticate whole_buf ~at:0 |> Option.get
+      in
+      Lwt.return (Authenticate authenticate)
+  | _ -> failwith "invalid setup response received"
 
 let read_response sock =
   let buf = Bytes.create 32 in
@@ -51,8 +70,7 @@ let read_response sock =
             Lwt_unix.read sock whole_buf 32 (additional_data_length * 4)
           in
           Lwt.return (Some whole_buf)
-    | msg_kind ->
-        failwith (Printf.sprintf "invalid message kind received: %c" msg_kind)
+    | _ (* event *) -> Lwt.return (Some buf)
 
 let pad n = (if n = 0 then 0 else ((n - 1) lsr 2) + 1) * 4
 
@@ -103,11 +121,13 @@ let open_display ~hostname ?display () =
     |> Option.get
   in
   let* _ = Lwt_unix.write socket handshake 0 len in
-  let* in_buf = read_handshake_response socket in
-  let display_info, _ = Xproto.decode_setup in_buf ~at:0 |> Option.get in
-  let xid_seed =
-    Xid_seed.make
-      ~base:(Int32.of_int display_info.resource_id_base)
-      ~mask:(Int32.of_int display_info.resource_id_mask)
-  in
-  Lwt.return { socket; display_info; xid_seed }
+  let* resp = read_handshake_response socket in
+  match resp with
+  | Success display_info ->
+      let xid_seed =
+        Xid_seed.make
+          ~base:(Int32.of_int display_info.resource_id_base)
+          ~mask:(Int32.of_int display_info.resource_id_mask)
+      in
+      Lwt.return { socket; display_info; xid_seed }
+  | _ -> failwith "connection failure"
