@@ -1,6 +1,52 @@
 open Elaboratetree
 module Ident = Casing.OCaml
 
+module Ctx : sig
+  type t = { current_module : string; xcbs : xcb list }
+
+  val resolve_prim : t -> type_ -> prim option
+  (** A result of [None] means the type is not a primitive. *)
+end = struct
+  type t = { current_module : string; xcbs : xcb list }
+
+  let ( let& ) = Option.bind
+
+  let find_module_by_name module_name xcbs =
+    List.find_map
+      (function
+        | Core decls when module_name = "xproto" -> Some (decls, [])
+        | Extension { file_name; declarations; imports; _ }
+          when file_name = module_name ->
+            Some (declarations, imports)
+        | _ -> None)
+      xcbs
+
+  let find_prim n = function
+    | Type_alias { name; type_ = Type_primitive prim } when name = n ->
+        Some (`Prim prim)
+    | Type_alias { name; type_ = Type_union _ } when name = n ->
+        Some (`Prim Xid)
+    | Type_alias { name; type_ = Type_ref ident } when name = n ->
+        Some (`Ref ident)
+    | _ -> None
+
+  let rec resolve_name_as_prim { current_module; xcbs } name =
+    let& decls, _ = find_module_by_name current_module xcbs in
+    match List.find_map (find_prim name) decls with
+    | Some `Prim p -> Some p
+    | Some `Ref { id_module; id_name } ->
+        resolve_name_as_prim { current_module = id_module; xcbs } id_name
+    | None -> None
+
+  let resolve_prim { xcbs; _ } = function
+    | Type_primitive prim -> Some prim
+    | Type_ref ident ->
+        resolve_name_as_prim
+          { current_module = ident.id_module; xcbs }
+          ident.id_name
+    | Type_union _ -> Some Xid
+end
+
 let list_sep sep f out = function
   | [] -> ()
   | head :: tail ->
@@ -60,40 +106,7 @@ let gen_to_int64 = function
   | Card64 -> None
   | Void | Float | Double -> failwith "gen_to_int64"
 
-let find_module_by_name xcbs name =
-  List.find_map
-    (function
-      | Core decls when name = "xproto" -> Some (decls, [])
-      | Extension { file_name; declarations; imports; _ } when file_name = name
-        ->
-          Some (declarations, imports)
-      | _ -> None)
-    xcbs
-  |> Option.get
-
-let find_prim name_to_find = function
-  | Type_alias { name; type_ = Type_primitive prim } when name = name_to_find ->
-      Some (`Prim prim)
-  | Type_alias { name; type_ = Type_union _ } when name = name_to_find ->
-      Some (`Prim Xid)
-  | Type_alias { name; type_ = Type_ref ident } when name = name_to_find ->
-      Some (`Ref ident)
-  | _ -> None
-
-let rec resolve_type_to_prim (current_module, xcbs) name =
-  let decls, _ = find_module_by_name xcbs current_module in
-  match List.find_map (find_prim name) decls |> Option.get with
-  | `Prim p -> p
-  | `Ref { id_module; id_name } ->
-      resolve_type_to_prim (id_module, xcbs) id_name
-
-let resolve_as_prim (_, xcbs) = function
-  | Type_primitive prim -> prim
-  | Type_ref ident -> resolve_type_to_prim (ident.id_module, xcbs) ident.id_name
-  | Type_union _ -> Xid
-
 let gen_decode_prim = function
-  (* | Void -> "failwith \"a\"" *)
   | Void -> "decode_char"
   | Char -> "decode_char"
   | Byte -> "decode_char"
@@ -187,31 +200,31 @@ let gen_expr_type type_ ctx out expr =
       Printf.fprintf out "Char.chr (%a)" (gen_expr ctx) expr
   | _ -> gen_expr ctx out expr
 
-let gen_ident (curr_module, _) out { id_module; id_name } =
-  if curr_module = id_module then output_string out (Ident.snake id_name)
+let gen_ident Ctx.{ current_module; _ } out { id_module; id_name } =
+  if current_module = id_module then output_string out (Ident.snake id_name)
   else
     Printf.fprintf out "%s.%s"
       (String.capitalize_ascii id_module)
       (Ident.snake id_name)
 
-let gen_decode_ident (curr_module, _) out { id_module; id_name } =
-  if curr_module = id_module then
+let gen_decode_ident Ctx.{ current_module; _ } out { id_module; id_name } =
+  if current_module = id_module then
     output_string out (Ident.snake ~prefix:"decode" id_name)
   else
     Printf.fprintf out "%s.%s"
       (String.capitalize_ascii id_module)
       (Ident.snake ~prefix:"decode" id_name)
 
-let gen_encode_ident (curr_module, _) out { id_module; id_name } =
-  if curr_module = id_module then
+let gen_encode_ident Ctx.{ current_module; _ } out { id_module; id_name } =
+  if current_module = id_module then
     output_string out (Ident.snake ~prefix:"encode" id_name)
   else
     Printf.fprintf out "%s.%s"
       (String.capitalize_ascii id_module)
       (Ident.snake ~prefix:"encode" id_name)
 
-let gen_size_of_ident (curr_module, _) out { id_module; id_name } =
-  if curr_module = id_module then
+let gen_size_of_ident Ctx.{ current_module; _ } out { id_module; id_name } =
+  if current_module = id_module then
     output_string out (Ident.snake ~prefix:"size_of" id_name)
   else
     Printf.fprintf out "%s.%s"
@@ -277,17 +290,15 @@ let gen_field_type ctx out = function
         (gen_type ctx) ft_type
 
 let gen_list_type ctx out t =
-  match resolve_as_prim ctx t.ft_type with
-  | Char | Void -> output_string out "string"
-  | (exception Invalid_argument _) | _ ->
-      Printf.fprintf out "%a list" (gen_field_type ctx) t
+  match Ctx.resolve_prim ctx t.ft_type with
+  | Some Char | Some Void -> output_string out "string"
+  | Some _ | None -> Printf.fprintf out "%a list" (gen_field_type ctx) t
 
 let gen_list_length ctx out t =
-  match resolve_as_prim ctx t with
-  | Char | Void -> output_string out "String.length"
-  | exception Invalid_argument _ ->
-      output_string out "(* invalid_argument *) List.length"
-  | t ->
+  match Ctx.resolve_prim ctx t with
+  | Some Char | Some Void -> output_string out "String.length"
+  | None -> output_string out "(* invalid_argument *) List.length"
+  | Some t ->
       Printf.fprintf out "(* %s *) " (show_prim t);
       output_string out "List.length"
 
@@ -312,26 +323,26 @@ let gen_field ctx out = function
 
 let gen_decode_field_type ctx out = function
   | { ft_type; ft_allowed = Some (Allowed_enum enum) } ->
-      let p = resolve_as_prim ctx ft_type in
+      let p = Ctx.resolve_prim ctx ft_type |> Option.get in
       Printf.fprintf out "decode_enum %a %s %a" (gen_decode_type ctx) ft_type
         (Option.value ~default:"identity" (gen_to_int p))
         (gen_ident ctx)
         { enum with id_name = Ident.snake enum.id_name ~suffix:"enum_of_int" }
   | { ft_type; ft_allowed = Some (Allowed_alt_enum enum) } ->
-      let p = resolve_as_prim ctx ft_type in
+      let p = Ctx.resolve_prim ctx ft_type |> Option.get in
       Printf.fprintf out "decode_alt_enum %a %s %a" (gen_decode_type ctx)
         ft_type
         (Option.value ~default:"identity" (gen_to_int p))
         (gen_ident ctx)
         { enum with id_name = Ident.snake enum.id_name ~suffix:"enum_of_int" }
   | { ft_type; ft_allowed = Some (Allowed_mask mask) } ->
-      let p = resolve_as_prim ctx ft_type in
+      let p = Ctx.resolve_prim ctx ft_type |> Option.get in
       Printf.fprintf out "decode_mask %a %s %a" (gen_decode_type ctx) ft_type
         (Option.value ~default:"identity" (gen_to_int64 p))
         (gen_ident ctx)
         { mask with id_name = Ident.snake mask.id_name ~suffix:"mask_of_int64" }
   | { ft_type; ft_allowed = Some (Allowed_alt_mask mask) } ->
-      let p = resolve_as_prim ctx ft_type in
+      let p = Ctx.resolve_prim ctx ft_type |> Option.get in
       Printf.fprintf out "decode_alt_mask %a %s %a" (gen_decode_type ctx)
         ft_type
         (Option.value ~default:"identity" (gen_to_int64 p))
@@ -342,19 +353,19 @@ let gen_decode_field_type ctx out = function
 let gen_encode_field_type ctx out = function
   | { ft_type; ft_allowed = None } -> gen_encode_type ctx out ft_type
   | { ft_type; ft_allowed = Some (Allowed_enum enum) } ->
-      let p = resolve_as_prim ctx ft_type in
+      let p = Ctx.resolve_prim ctx ft_type |> Option.get in
       Printf.fprintf out "encode_enum %a %s %a" (gen_encode_type ctx) ft_type
         (Option.value ~default:"identity" (gen_of_int p))
         (gen_ident ctx)
         { enum with id_name = Ident.snake enum.id_name ~suffix:"int_of_enum" }
   | { ft_type; ft_allowed = Some (Allowed_mask mask) } ->
-      let p = resolve_as_prim ctx ft_type in
+      let p = Ctx.resolve_prim ctx ft_type |> Option.get in
       Printf.fprintf out "encode_mask %a %s %a" (gen_encode_type ctx) ft_type
         (Option.value ~default:"identity" (gen_of_int p))
         (gen_ident ctx)
         { mask with id_name = Ident.snake mask.id_name ~suffix:"int_of_mask" }
   | { ft_type; ft_allowed = Some (Allowed_alt_enum enum) } ->
-      let p = resolve_as_prim ctx ft_type in
+      let p = Ctx.resolve_prim ctx ft_type |> Option.get in
       Printf.fprintf out "encode_alt_enum %a %s %a" (gen_encode_type ctx)
         ft_type
         (Option.value ~default:"identity" (gen_of_int p))
@@ -363,15 +374,15 @@ let gen_encode_field_type ctx out = function
   | { ft_type; ft_allowed = Some _ } -> gen_encode_type ctx out ft_type
 
 let gen_encode_list ctx out t =
-  match resolve_as_prim ctx t.ft_type with
-  | Char | Void -> output_string out "encode_string"
-  | (exception Invalid_argument _) | _ ->
+  match Ctx.resolve_prim ctx t.ft_type with
+  | Some (Char | Void) -> output_string out "encode_string"
+  | Some _ | None ->
       Printf.fprintf out "encode_list %a" (gen_encode_field_type ctx) t
 
 let gen_decode_list ctx out t =
-  match resolve_as_prim ctx t.ft_type with
-  | Char | Void -> output_string out "decode_string"
-  | (exception Invalid_argument _) | _ ->
+  match Ctx.resolve_prim ctx t.ft_type with
+  | Some (Char | Void) -> output_string out "decode_string"
+  | Some _ | None ->
       Printf.fprintf out "decode_list (%a)" (gen_decode_field_type ctx) t
 
 let gen_size_of_field_type ctx out { ft_type; _ } =
@@ -396,7 +407,7 @@ let gen_decode_field ctx _fields out = function
         (fun to_int ->
           Printf.fprintf out "let %s = %s %s in " (Ident.snake name) to_int
             (Ident.snake name))
-        (resolve_as_prim ctx type_ |> gen_to_int);
+        (Ctx.resolve_prim ctx type_ |> Option.get |> gen_to_int);
       Printf.fprintf out "let %s = %a in" (Ident.snake name) (gen_expr None)
         expr
   | Field_list_simple { name; type_; length } ->
@@ -439,7 +450,7 @@ let gen_encode_field ctx out = function
       Printf.fprintf out "let* at = %a buf (%s (%a v.%s)) ~at in"
         (gen_encode_type ctx) type_
         (Option.value ~default:"identity"
-           (gen_of_int (resolve_as_prim ctx type_)))
+           (gen_of_int (Ctx.resolve_prim ctx type_ |> Option.get)))
         (gen_list_length ctx) list_type (Ident.snake list)
   | Field_list { name; type_; _ } ->
       Printf.fprintf out "let* at = %a buf v.%s ~at in" (gen_encode_list ctx)
@@ -472,12 +483,10 @@ let gen_encode_arg_field ctx out = function
         expr
   | Field_list_length { type_; list; list_type; _ } ->
       (* Can be wrong *)
-      (* Printf.fprintf out "let* at = %a buf (List.length %s) ~at in"
-         (gen_encode_type ctx) type_ (Ident.snake list) *)
       Printf.fprintf out "let* at = %a buf (%s (%a %s)) ~at in"
         (gen_encode_type ctx) type_
         (Option.value ~default:"identity"
-           (gen_of_int (resolve_as_prim ctx type_)))
+           (gen_of_int (Ctx.resolve_prim ctx type_ |> Option.get)))
         (gen_list_length ctx) list_type (Ident.snake list)
   | Field_list { name; type_; _ } ->
       Printf.fprintf out "let* at = %a buf %s ~at in" (gen_encode_list ctx)
@@ -769,13 +778,13 @@ let gen_xcb xcbs out = function
   | Core decls ->
       (* output_string out "module[@warning \"-27,-11\"] Xproto = struct\n"; *)
       output_string out "open Sexplib.Conv\n\n";
-      let ctx = ("xproto", xcbs) in
+      let ctx = Ctx.{ current_module = "xproto"; xcbs } in
       (list_sep "\n" (gen_declaration ctx)) out decls
       (* output_string out "\nend\n" *)
   | Extension { declarations; name = _; file_name; _ } ->
       Printf.fprintf out "module[@warning \"-27\"] %s = struct\n"
         (String.capitalize_ascii file_name);
-      let ctx = (file_name, xcbs) in
+      let ctx = Ctx.{ current_module = file_name; xcbs } in
       (list_sep "\n" (gen_declaration ctx)) out declarations;
       output_string out "\nend\n"
 
