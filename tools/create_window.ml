@@ -11,8 +11,11 @@ let rec read_loop (conn : Connection.connection) =
   | None -> Lwt.return_unit
 
 let connect () =
-  let Display_name.{ hostname; display; _ } = Display_name.default in
-
+  let display =
+    Option.bind (Sys.getenv_opt "DISPLAY") Display_name.parse
+    |> Option.value ~default:Display_name.default
+  in
+  let Display_name.{ hostname; display; _ } = display in
   Connection.open_display ~hostname ~display ()
 
 let main (conn : Connection.connection) =
