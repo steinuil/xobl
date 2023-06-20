@@ -6,8 +6,11 @@ let get_socket_params ~display = function
       let* localhost = Lwt_unix.gethostname () in
       let auth =
         let& xauth_path = Xauth.get_path () in
-        Xauth.entries_from_file xauth_path
-        |> Xauth.get_best ~family:Xauth.Family.Local ~address:localhost ~display
+        try
+          Xauth.entries_from_file xauth_path
+          |> Xauth.get_best ~family:Xauth.Family.Local ~address:localhost
+               ~display
+        with Sys_error _ -> None
       in
       let auth = Option.value ~default:("", "") auth in
       Lwt.return (Unix.PF_UNIX, Unix.ADDR_UNIX path, auth)
