@@ -52,7 +52,7 @@ let read_handshake_response sock =
       Lwt.return (Authenticate authenticate)
   | _ -> failwith "invalid setup response received"
 
-let read_response sock =
+let read_response_from sock =
   let buf = Bytes.create 32 in
   let* len = Lwt_unix.read sock buf 0 32 in
   if len = 0 then Lwt.return None
@@ -97,6 +97,7 @@ type connection = {
   socket : Lwt_unix.file_descr;
   display_info : Xproto.setup;
   xid_seed : Xid_seed.seed;
+  mutable sequence_number : int;
 }
 
 let open_display ~hostname ?display () =
@@ -129,5 +130,17 @@ let open_display ~hostname ?display () =
           ~base:(Int32.of_int display_info.resource_id_base)
           ~mask:(Int32.of_int display_info.resource_id_mask)
       in
-      Lwt.return { socket; display_info; xid_seed }
+      Lwt.return { socket; display_info; xid_seed; sequence_number = 1 }
   | _ -> failwith "connection failure"
+
+let read conn =
+  let* () = Lwt_unix.wait_read conn.socket in
+  let* buf = read_response_from conn.socket in
+  Lwt.return buf
+
+let write conn ?(offset = 0) ?length buf =
+  let length = Option.value ~default:(Bytes.length buf) length in
+  let* _ = Lwt_unix.write conn.socket buf offset length in
+  let seq = conn.sequence_number in
+  conn.sequence_number <- seq + 1;
+  Lwt.return seq

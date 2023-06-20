@@ -1,21 +1,19 @@
 open Xobl
 
-let ( let& ) = Lwt.bind
+let ( let* ) = Lwt.bind
 
 let rec read_loop (conn : Connection.connection) =
-  let& () = Lwt_unix.wait_read conn.socket in
-  let& buf = Connection.read_response conn.socket in
+  let* buf = Connection.read conn in
   match buf with
   | Some buf ->
-      let& _ = Lwt_io.printf "Response: %s\n" (Xobl.Codec.hex buf) in
+      let* _ = Lwt_io.printf "Response: %s\n" (Xobl.Codec.hex buf) in
       read_loop conn
   | None -> Lwt.return_unit
 
 let connect () =
-  let hostname = Display_name.default in
+  let Display_name.{ hostname; display; _ } = Display_name.default in
 
-  Connection.open_display ~hostname:hostname.hostname ~display:hostname.display
-    ()
+  Connection.open_display ~hostname ~display ()
 
 let main (conn : Connection.connection) =
   let wid = Connection.Xid_seed.generate conn.xid_seed in
@@ -29,47 +27,23 @@ let main (conn : Connection.connection) =
     |> Option.get
   in
   let buf = Bytes.sub buf 0 len in
-  let& () =
+  let* () =
     Lwt_io.printf "CreateWindow(len=%d): %s\n" len (Xobl.Codec.hex buf)
   in
-  let& _ = Lwt_unix.write conn.socket buf 0 len in
+  let* _ = Connection.write conn buf in
 
-  (*
-  let buf = Bytes.make 120 '\x00' in
-  let len =
-    Xproto.encode_intern_atom ~only_if_exists:true ~name:"_WM_NAME" buf ~at:0
-  in
-  let& _ = Lwt_unix.write conn.socket buf 0 len in
-
-  let buf = Bytes.make 120 '\x00' in
-  let title = "xobl" in
-  let len =
-    Xproto.encode_change_property ~mode:`Replace ~window:(Int32.to_int wid)
-      ~property:wm_name
-      ~type_:(Xproto.atom_int_of_enum `String)
-      ~format:8 ~data_len:(String.length title) ~data:title buf ~at:0
-  in
-  *)
-
-  (*
-  let buf = Bytes.make 120 '\x00' in
-  let len =
-    Xproto.encode_change_property ~mode:`Replace ~window:(Int32.to_int wid)
-      ~property:wm_name
-      ~type_:string
-  *)
   let buf = Bytes.make 120 '\x00' in
   let len =
     Xproto.encode_map_window ~window:(Int32.to_int wid) buf ~at:0 |> Option.get
   in
   let buf = Bytes.sub buf 0 len in
-  let& () = Lwt_io.printf "MapWindow(len=%d): %s\n" len (Xobl.Codec.hex buf) in
-  let& _ = Lwt_unix.write conn.socket buf 0 len in
+  let* () = Lwt_io.printf "MapWindow(len=%d): %s\n" len (Xobl.Codec.hex buf) in
+  let* _ = Connection.write conn buf in
 
   Lwt.return_unit
 
 let () =
   Lwt_main.run
-    (let& conn = connect () in
-     let& _ = Lwt.both (main conn) (read_loop conn) in
+    (let* conn = connect () in
+     let* _ = Lwt.both (main conn) (read_loop conn) in
      Lwt.return_unit)
