@@ -27,7 +27,7 @@ let main (conn : Connection.connection) =
     Xproto.encode_create_window ~depth:root.root_depth ~wid:(Int32.to_int wid)
       ~parent:root.root ~x:10 ~y:10 ~width:300 ~height:300 ~border_width:10
       ~class_:`Input_output ~visual:root.root_visual ~at:0
-      ~event_mask:(F [ `Enter_window ]) buf
+      ~event_mask:(Some [ `Enter_window ]) buf
     |> Option.get
   in
   let buf = Bytes.sub buf 0 len in

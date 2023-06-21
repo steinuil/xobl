@@ -560,6 +560,11 @@ let split_enums name enum_items =
         (function name, Parsetree.Item_value n -> Some (name, n) | _ -> None)
         enum_items
     in
+    let additional_values =
+      match additional_values with
+      | [ (_, 0L) ] -> Elaboratetree.None_value
+      | _ -> Additional_values additional_values
+    in
     Elaboratetree.Mask { name; items; additional_values }
 
 let variant_to_decl (name, items) = Elaboratetree.Variant { name; items }

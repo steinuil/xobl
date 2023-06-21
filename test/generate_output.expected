@@ -317,38 +317,36 @@ let encode_depth buf (v : depth) ~at : int option =
   Some at
 
 type event_mask =
-  ( [ `Key_press
-    | `Key_release
-    | `Button_press
-    | `Button_release
-    | `Enter_window
-    | `Leave_window
-    | `Pointer_motion
-    | `Pointer_motion_hint
-    | `Button1_motion
-    | `Button2_motion
-    | `Button3_motion
-    | `Button4_motion
-    | `Button5_motion
-    | `Button_motion
-    | `Keymap_state
-    | `Exposure
-    | `Visibility_change
-    | `Structure_notify
-    | `Resize_redirect
-    | `Substructure_notify
-    | `Substructure_redirect
-    | `Focus_change
-    | `Property_change
-    | `Color_map_change
-    | `Owner_grab_button ]
-    list,
-    [ `No_event ] )
-  mask
+  [ `Key_press
+  | `Key_release
+  | `Button_press
+  | `Button_release
+  | `Enter_window
+  | `Leave_window
+  | `Pointer_motion
+  | `Pointer_motion_hint
+  | `Button1_motion
+  | `Button2_motion
+  | `Button3_motion
+  | `Button4_motion
+  | `Button5_motion
+  | `Button_motion
+  | `Keymap_state
+  | `Exposure
+  | `Visibility_change
+  | `Structure_notify
+  | `Resize_redirect
+  | `Substructure_notify
+  | `Substructure_redirect
+  | `Focus_change
+  | `Property_change
+  | `Color_map_change
+  | `Owner_grab_button ]
+  list
+  option
 [@@deriving sexp]
 
 let event_mask_mask_of_int64 mask : event_mask option =
-  let of_enum = function 0L -> Some `No_event | _ -> None in
   let of_mask = function
     | 0 -> Some `Key_press
     | 1 -> Some `Key_release
@@ -377,10 +375,10 @@ let event_mask_mask_of_int64 mask : event_mask option =
     | 24 -> Some `Owner_grab_button
     | _ -> None
   in
-  mask_value_of_int of_mask of_enum mask
+  if mask = 0L then Some None
+  else mask_of_int of_mask mask |> Option.map (fun m -> Some m)
 
 let event_mask_int_of_mask (mask : event_mask) : int =
-  let to_enum = function `No_event -> 0 in
   let to_mask = function
     | `Key_press -> 0
     | `Key_release -> 1
@@ -408,7 +406,7 @@ let event_mask_int_of_mask (mask : event_mask) : int =
     | `Color_map_change -> 23
     | `Owner_grab_button -> 24
   in
-  mask_value_to_int to_mask to_enum mask
+  match mask with None -> 0 | Some mask -> int_of_mask to_mask mask
 
 type backing_store_enum = [ `Not_useful | `When_mapped | `Always ]
 [@@deriving sexp]
@@ -15963,14 +15961,12 @@ module Present = struct
     | `Redirect_notify -> 3
 
   type event_mask =
-    ( [ `Configure_notify | `Complete_notify | `Idle_notify | `Redirect_notify ]
-      list,
-      [ `No_event ] )
-    mask
+    [ `Configure_notify | `Complete_notify | `Idle_notify | `Redirect_notify ]
+    list
+    option
   [@@deriving sexp]
 
   let event_mask_mask_of_int64 mask : event_mask option =
-    let of_enum = function 0L -> Some `No_event | _ -> None in
     let of_mask = function
       | 0 -> Some `Configure_notify
       | 1 -> Some `Complete_notify
@@ -15978,24 +15974,22 @@ module Present = struct
       | 3 -> Some `Redirect_notify
       | _ -> None
     in
-    mask_value_of_int of_mask of_enum mask
+    if mask = 0L then Some None
+    else mask_of_int of_mask mask |> Option.map (fun m -> Some m)
 
   let event_mask_int_of_mask (mask : event_mask) : int =
-    let to_enum = function `No_event -> 0 in
     let to_mask = function
       | `Configure_notify -> 0
       | `Complete_notify -> 1
       | `Idle_notify -> 2
       | `Redirect_notify -> 3
     in
-    mask_value_to_int to_mask to_enum mask
+    match mask with None -> 0 | Some mask -> int_of_mask to_mask mask
 
-  type option_mask =
-    ([ `Async | `Copy | `Ust | `Suboptimal ] list, [ `None ]) mask
+  type option_mask = [ `Async | `Copy | `Ust | `Suboptimal ] list option
   [@@deriving sexp]
 
   let option_mask_of_int64 mask : option_mask option =
-    let of_enum = function 0L -> Some `None | _ -> None in
     let of_mask = function
       | 0 -> Some `Async
       | 1 -> Some `Copy
@@ -16003,35 +15997,34 @@ module Present = struct
       | 3 -> Some `Suboptimal
       | _ -> None
     in
-    mask_value_of_int of_mask of_enum mask
+    if mask = 0L then Some None
+    else mask_of_int of_mask mask |> Option.map (fun m -> Some m)
 
   let option_int_of_mask (mask : option_mask) : int =
-    let to_enum = function `None -> 0 in
     let to_mask = function
       | `Async -> 0
       | `Copy -> 1
       | `Ust -> 2
       | `Suboptimal -> 3
     in
-    mask_value_to_int to_mask to_enum mask
+    match mask with None -> 0 | Some mask -> int_of_mask to_mask mask
 
-  type capability_mask = ([ `Async | `Fence | `Ust ] list, [ `None ]) mask
+  type capability_mask = [ `Async | `Fence | `Ust ] list option
   [@@deriving sexp]
 
   let capability_mask_of_int64 mask : capability_mask option =
-    let of_enum = function 0L -> Some `None | _ -> None in
     let of_mask = function
       | 0 -> Some `Async
       | 1 -> Some `Fence
       | 2 -> Some `Ust
       | _ -> None
     in
-    mask_value_of_int of_mask of_enum mask
+    if mask = 0L then Some None
+    else mask_of_int of_mask mask |> Option.map (fun m -> Some m)
 
   let capability_int_of_mask (mask : capability_mask) : int =
-    let to_enum = function `None -> 0 in
     let to_mask = function `Async -> 0 | `Fence -> 1 | `Ust -> 2 in
-    mask_value_to_int to_mask to_enum mask
+    match mask with None -> 0 | Some mask -> int_of_mask to_mask mask
 
   type complete_kind_enum = [ `Pixmap | `Notify_msc ] [@@deriving sexp]
 
@@ -24431,23 +24424,20 @@ module Xprint = struct
     | `Finished -> 0
     | `Second_consumer -> 1
 
-  type ev_mask =
-    ([ `Print_mask | `Attribute_mask ] list, [ `No_event_mask ]) mask
-  [@@deriving sexp]
+  type ev_mask = [ `Print_mask | `Attribute_mask ] list option [@@deriving sexp]
 
   let ev_mask_mask_of_int64 mask : ev_mask option =
-    let of_enum = function 0L -> Some `No_event_mask | _ -> None in
     let of_mask = function
       | 0 -> Some `Print_mask
       | 1 -> Some `Attribute_mask
       | _ -> None
     in
-    mask_value_of_int of_mask of_enum mask
+    if mask = 0L then Some None
+    else mask_of_int of_mask mask |> Option.map (fun m -> Some m)
 
   let ev_mask_int_of_mask (mask : ev_mask) : int =
-    let to_enum = function `No_event_mask -> 0 in
     let to_mask = function `Print_mask -> 0 | `Attribute_mask -> 1 in
-    mask_value_to_int to_mask to_enum mask
+    match mask with None -> 0 | Some mask -> int_of_mask to_mask mask
 
   type detail_enum =
     [ `Start_job_notify

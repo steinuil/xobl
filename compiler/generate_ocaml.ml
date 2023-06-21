@@ -690,7 +690,7 @@ let gen_declaration ctx out = function
         (Ident.snake name ~suffix:"enum")
         (list_sep " | " gen_encode_enum_item)
         items
-  | Mask { name; items; additional_values = [] } ->
+  | Mask { name; items; additional_values = Additional_values [] } ->
       Printf.fprintf out "type %s = [ %a ] list [@@deriving sexp];;\n"
         (Ident.snake name ~suffix:"mask")
         (list_sep " | " mask_item) items;
@@ -707,7 +707,7 @@ let gen_declaration ctx out = function
         (Ident.snake name ~suffix:"mask")
         (list_sep " | " gen_encode_mask_item)
         items
-  | Mask { name; items; additional_values = values } ->
+  | Mask { name; items; additional_values = Additional_values values } ->
       Printf.fprintf out
         "type %s = ([ %a ] list, [ %a ]) mask [@@deriving sexp];;"
         (Ident.snake name ~suffix:"mask")
@@ -729,6 +729,25 @@ let gen_declaration ctx out = function
         (Ident.snake name ~suffix:"mask")
         (list_sep " | " gen_encode_enum_item)
         values
+        (list_sep " | " gen_encode_mask_item)
+        items
+  | Mask { name; items; additional_values = None_value } ->
+      Printf.fprintf out "type %s = [ %a ] list option [@@deriving sexp];;"
+        (Ident.snake name ~suffix:"mask")
+        (list_sep " | " mask_item) items;
+      Printf.fprintf out
+        "let %s mask : %s option =\n\
+         let of_mask = function %a | _ -> None in if mask = 0L then Some None \
+         else (mask_of_int of_mask mask |> Option.map (fun m -> Some m));;\n"
+        (Ident.snake name ~suffix:"mask_of_int64")
+        (Ident.snake name ~suffix:"mask")
+        (list_sep " | " gen_decode_mask_item)
+        items;
+      Printf.fprintf out
+        "let %s (mask : %s) : int = let to_mask = function %a in match mask \
+         with None -> 0 | Some mask -> int_of_mask to_mask mask;;"
+        (Ident.snake name ~suffix:"int_of_mask")
+        (Ident.snake name ~suffix:"mask")
         (list_sep " | " gen_encode_mask_item)
         items
   | Variant { name; items } ->

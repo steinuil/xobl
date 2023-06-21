@@ -112,6 +112,11 @@ type field =
 type variant_item = { vi_name : string; vi_tag : int64; vi_fields : field list }
 [@@deriving show, sexp]
 
+type mask_additional_value =
+  | None_value
+  | Additional_values of (string * int64) list
+[@@deriving show, sexp]
+
 type declaration =
   | Type_alias of { name : string; type_ : type_ }
   | Struct of { name : string; fields : field list }
@@ -121,7 +126,7 @@ type declaration =
   | Mask of {
       name : string;
       items : (string * int) list;
-      additional_values : (string * int64) list;
+      additional_values : mask_additional_value;
     }
   | Event_copy of { name : string; event : ident; number : int }
   | Error_copy of { name : string; error : ident; number : int }

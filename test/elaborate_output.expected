@@ -1075,7 +1075,7 @@
       (GL_ENABLE_BIT 13) (GL_COLOR_BUFFER_BIT 14) (GL_HINT_BIT 15)
       (GL_EVAL_BIT 16) (GL_LIST_BIT 17) (GL_TEXTURE_BIT 18)
       (GL_SCISSOR_BIT 19)))
-    (additional_values ((GL_ALL_ATTRIB_BITS 16777215))))
+    (additional_values (Additional_values ((GL_ALL_ATTRIB_BITS 16777215)))))
    (Request (name SwapBuffers) (opcode 11) (combine_adjacent true)
     (fields
      ((Field (name context_tag)
@@ -2787,11 +2787,11 @@
     (items
      ((ConfigureNotify 0) (CompleteNotify 1) (IdleNotify 2)
       (RedirectNotify 3)))
-    (additional_values ((NoEvent 0))))
+    (additional_values None_value))
    (Mask (name Option) (items ((Async 0) (Copy 1) (UST 2) (Suboptimal 3)))
-    (additional_values ((None 0))))
+    (additional_values None_value))
    (Mask (name Capability) (items ((Async 0) (Fence 1) (UST 2)))
-    (additional_values ((None 0))))
+    (additional_values None_value))
    (Enum (name CompleteKind) (items ((Pixmap 0) (NotifyMSC 1))))
    (Enum (name CompleteMode)
     (items ((Copy 0) (Flip 1) (Skip 2) (SuboptimalCopy 3))))
@@ -3086,7 +3086,7 @@
     (items
      ((Rotate_0 0) (Rotate_90 1) (Rotate_180 2) (Rotate_270 3) (Reflect_X 4)
       (Reflect_Y 5)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Struct (name ScreenSize)
     (fields
      ((Field (name width)
@@ -3171,7 +3171,7 @@
     (items
      ((ScreenChange 0) (CrtcChange 1) (OutputChange 2) (OutputProperty 3)
       (ProviderChange 4) (ProviderProperty 5) (ResourceChange 6) (Lease 7)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Request (name SelectInput) (opcode 4) (combine_adjacent true)
     (fields
      ((Field (name window)
@@ -3272,7 +3272,7 @@
       (Interlace 4) (DoubleScan 5) (Csync 6) (CsyncPositive 7)
       (CsyncNegative 8) (HskewPresent 9) (Bcast 10) (PixelMultiplex 11)
       (DoubleClock 12) (HalveClock 13)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Struct (name ModeInfo)
     (fields
      ((Field (name id)
@@ -3816,7 +3816,7 @@
         (length names_len))))))
    (Mask (name Transform)
     (items ((Unit 0) (ScaleUp 1) (ScaleDown 2) (Projective 3)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Request (name SetCrtcTransform) (opcode 26) (combine_adjacent true)
     (fields
      ((Field (name crtc)
@@ -4025,7 +4025,7 @@
    (Mask (name ProviderCapability)
     (items
      ((SourceOutput 0) (SinkOutput 1) (SourceOffload 2) (SinkOffload 3)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Request (name GetProviderInfo) (opcode 33) (combine_adjacent true)
     (fields
      ((Field (name provider)
@@ -4683,7 +4683,7 @@
    (Type_alias (name ElementHeader) (type_ (Type_primitive Card8)))
    (Mask (name HType)
     (items ((FromServerTime 0) (FromClientTime 1) (FromClientSequence 2)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Type_alias (name ClientSpec) (type_ (Type_primitive Card32)))
    (Enum (name CS)
     (items ((CurrentClients 1) (FutureClients 2) (AllClients 3))))
@@ -4883,7 +4883,7 @@
       (ClipXOrigin 4) (ClipYOrigin 5) (ClipMask 6) (GraphicsExposure 7)
       (SubwindowMode 8) (PolyEdge 9) (PolyMode 10) (Dither 11)
       (ComponentAlpha 12)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Enum (name SubPixel)
     (items
      ((Unknown 0) (HorizontalRGB 1) (HorizontalBGR 2) (VerticalRGB 3)
@@ -5886,7 +5886,7 @@
       (Field (name count)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))))))
    (Mask (name ClientIdMask) (items ((ClientXID 0) (LocalClientPID 1)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Struct (name ClientIdSpec)
     (fields
      ((Field (name client)
@@ -6041,7 +6041,7 @@
  (declarations
   ((Enum (name Kind) (items ((Blanked 0) (Internal 1) (External 2))))
    (Mask (name Event) (items ((NotifyMask 0) (CycleMask 1)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Enum (name State) (items ((Off 0) (On 1) (Cycle 2) (Disabled 3))))
    (Request (name QueryVersion) (opcode 0) (combine_adjacent true)
     (fields
@@ -6645,7 +6645,7 @@
    (Mask (name CA)
     (items
      ((Counter 0) (ValueType 1) (Value 2) (TestType 3) (Delta 4) (Events 5)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Struct (name INT64)
     (fields
      ((Field (name hi)
@@ -7301,10 +7301,11 @@
       (Negative_VSync 3) (Interlace 4) (Composite_Sync 5) (Positive_CSync 6)
       (Negative_CSync 7) (HSkew 8) (Broadcast 9) (Pixmux 10)
       (Double_Clock 11) (Half_Clock 12)))
-    (additional_values ()))
-   (Mask (name ClockFlag) (items ((Programable 0))) (additional_values ()))
+    (additional_values (Additional_values ())))
+   (Mask (name ClockFlag) (items ((Programable 0)))
+    (additional_values (Additional_values ())))
    (Mask (name Permission) (items ((Read 0) (Write 1)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Struct (name ModeInfo)
     (fields
      ((Field (name dotclock)
@@ -7899,7 +7900,7 @@
     (items
      ((SetSelectionOwner 0) (SelectionWindowDestroy 1)
       (SelectionClientClose 2)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Event (name SelectionNotify) (number 0) (is_generic false)
     (is_serializable false) (no_sequence_number false)
     (fields
@@ -7947,7 +7948,7 @@
     (reply ()))
    (Enum (name CursorNotify) (items ((DisplayCursor 0))))
    (Mask (name CursorNotifyMask) (items ((DisplayCursor 0)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Event (name CursorNotify) (number 1) (is_generic false)
     (is_serializable false) (no_sequence_number false)
     (fields
@@ -8381,7 +8382,7 @@
    (Type_alias (name BARRIER) (type_ (Type_primitive Xid)))
    (Mask (name BarrierDirections)
     (items ((PositiveX 0) (PositiveY 1) (NegativeX 2) (NegativeY 3)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Request (name CreatePointerBarrier) (opcode 31) (combine_adjacent true)
     (fields
      ((Field (name barrier)
@@ -9518,7 +9519,7 @@
      ((KeyClickPercent 0) (Percent 1) (Pitch 2) (Duration 3) (Led 4)
       (LedMode 5) (Key 6) (AutoRepeatMode 7) (String 0) (Integer 0)
       (AccelNum 0) (AccelDenom 1) (Threshold 2)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Request (name ChangeFeedbackControl) (opcode 23) (combine_adjacent true)
     (fields
      ((Field (name mask)
@@ -9686,7 +9687,7 @@
        (length ((Expr_value 32)))))))
    (Mask (name ValuatorStateModeMask)
     (items ((DeviceModeAbsolute 0) (OutOfProximity 1)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Struct (name ValuatorState)
     (fields
      ((Field (name class_id)
@@ -10508,7 +10509,7 @@
       (RawMotion 17) (TouchBegin 18) (TouchUpdate 19) (TouchEnd 20)
       (TouchOwnership 21) (RawTouchBegin 22) (RawTouchUpdate 23)
       (RawTouchEnd 24) (BarrierHit 25) (BarrierLeave 26)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Struct (name EventMask)
     (fields
      ((Field (name deviceid)
@@ -10561,7 +10562,7 @@
      ((MasterPointer 1) (MasterKeyboard 2) (SlavePointer 3) (SlaveKeyboard 4)
       (FloatingSlave 5))))
    (Mask (name ScrollFlags) (items ((NoEmulation 0) (Preferred 1)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Enum (name ScrollType) (items ((Vertical 1) (Horizontal 2))))
    (Enum (name TouchMode) (items ((Direct 1) (Dependent 2))))
    (Struct (name ButtonClass)
@@ -10975,7 +10976,8 @@
    (Enum (name GrabMode22) (items ((Sync 0) (Async 1) (Touch 2))))
    (Enum (name GrabType)
     (items ((Button 0) (Keycode 1) (Enter 2) (FocusIn 3) (TouchBegin 4))))
-   (Mask (name ModifierMask) (items ((Any 31))) (additional_values ()))
+   (Mask (name ModifierMask) (items ((Any 31)))
+    (additional_values (Additional_values ())))
    (Struct (name GrabModifierInfo)
     (fields
      ((Field (name modifiers)
@@ -11238,7 +11240,7 @@
        (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
        (length ((Expr_value 6)))))))
    (Mask (name MoreEventsMask) (items ((MoreEvents 7)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Event (name DeviceKeyPress) (number 1) (is_generic false)
     (is_serializable false) (no_sequence_number false)
     (fields
@@ -11323,7 +11325,7 @@
     (items
      ((OutOfProximity 7) (DeviceModeAbsolute 6) (ReportingValuators 2)
       (ReportingButtons 1) (ReportingKeys 0)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Event (name DeviceStateNotify) (number 10) (is_generic false)
     (is_serializable false) (no_sequence_number false)
     (fields
@@ -11490,7 +11492,7 @@
          (ft_allowed ())))
        (length num_classes)))))
    (Mask (name KeyEventFlags) (items ((KeyRepeat 16)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Event (name KeyPress) (number 2) (is_generic true)
     (is_serializable false) (no_sequence_number false)
     (fields
@@ -11575,7 +11577,7 @@
    (Event_copy (name KeyRelease)
     (event ((id_module xinput) (id_name KeyPress))) (number 3))
    (Mask (name PointerEventFlags) (items ((PointerEmulated 16)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Event (name ButtonPress) (number 4) (is_generic true)
     (is_serializable false) (no_sequence_number false)
     (fields
@@ -11754,7 +11756,7 @@
      ((MasterAdded 0) (MasterRemoved 1) (SlaveAdded 2) (SlaveRemoved 3)
       (SlaveAttached 4) (SlaveDetached 5) (DeviceEnabled 6)
       (DeviceDisabled 7)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Struct (name HierarchyInfo)
     (fields
      ((Field (name deviceid)
@@ -11929,7 +11931,7 @@
     (event ((id_module xinput) (id_name RawButtonPress))) (number 17))
    (Mask (name TouchEventFlags)
     (items ((TouchPendingEnd 16) (TouchEmulatingPointer 17)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Event (name TouchBegin) (number 18) (is_generic true)
     (is_serializable false) (no_sequence_number false)
     (fields
@@ -12105,7 +12107,8 @@
    (Event_copy (name RawTouchEnd)
     (event ((id_module xinput) (id_name RawTouchBegin))) (number 24))
    (Mask (name BarrierFlags)
-    (items ((PointerReleased 0) (DeviceIsGrabbed 1))) (additional_values ()))
+    (items ((PointerReleased 0) (DeviceIsGrabbed 1)))
+    (additional_values (Additional_values ())))
    (Event (name BarrierHit) (number 25) (is_generic true)
     (is_serializable false) (no_sequence_number false)
     (fields
@@ -12243,7 +12246,7 @@
    (Type_alias (name PCONTEXT) (type_ (Type_primitive Xid)))
    (Enum (name GetDoc) (items ((Finished 0) (SecondConsumer 1))))
    (Mask (name EvMask) (items ((PrintMask 0) (AttributeMask 1)))
-    (additional_values ((NoEventMask 0))))
+    (additional_values None_value))
    (Enum (name Detail)
     (items
      ((StartJobNotify 1) (EndJobNotify 2) (StartDocNotify 3) (EndDocNotify 4)
@@ -12709,7 +12712,7 @@
      (ResizeRedirect 18) (SubstructureNotify 19) (SubstructureRedirect 20)
      (FocusChange 21) (PropertyChange 22) (ColorMapChange 23)
      (OwnerGrabButton 24)))
-   (additional_values ((NoEvent 0))))
+   (additional_values None_value))
   (Enum (name BackingStore)
    (items ((NotUseful 0) (WhenMapped 1) (Always 2))))
   (Struct (name SCREEN)
@@ -12890,12 +12893,12 @@
   (Mask (name ModMask)
    (items
     ((Shift 0) (Lock 1) (Control 2) (1 3) (2 4) (3 5) (4 6) (5 7) (Any 15)))
-   (additional_values ()))
+   (additional_values (Additional_values ())))
   (Mask (name KeyButMask)
    (items
     ((Shift 0) (Lock 1) (Control 2) (Mod1 3) (Mod2 4) (Mod3 5) (Mod4 6)
      (Mod5 7) (Button1 8) (Button2 9) (Button3 10) (Button4 11) (Button5 12)))
-   (additional_values ()))
+   (additional_values (Additional_values ())))
   (Enum (name Window) (items ((None 0))))
   (Event (name KeyPress) (number 2) (is_generic false)
    (is_serializable false) (no_sequence_number false)
@@ -12940,7 +12943,7 @@
   (Event_copy (name KeyRelease)
    (event ((id_module xproto) (id_name KeyPress))) (number 3))
   (Mask (name ButtonMask) (items ((1 8) (2 9) (3 10) (4 11) (5 12) (Any 15)))
-   (additional_values ()))
+   (additional_values (Additional_values ())))
   (Event (name ButtonPress) (number 4) (is_generic false)
    (is_serializable false) (no_sequence_number false)
    (fields
@@ -13312,7 +13315,7 @@
    (items
     ((X 0) (Y 1) (Width 2) (Height 3) (BorderWidth 4) (Sibling 5)
      (StackMode 6)))
-   (additional_values ()))
+   (additional_values (Additional_values ())))
   (Event (name ConfigureRequest) (number 23) (is_generic false)
    (is_serializable false) (no_sequence_number false)
    (fields
@@ -13639,7 +13642,7 @@
      (BitGravity 4) (WinGravity 5) (BackingStore 6) (BackingPlanes 7)
      (BackingPixel 8) (OverrideRedirect 9) (SaveUnder 10) (EventMask 11)
      (DontPropagate 12) (Colormap 13) (Cursor 14)))
-   (additional_values ()))
+   (additional_values (Additional_values ())))
   (Enum (name BackPixmap) (items ((None 0) (ParentRelative 1))))
   (Enum (name Gravity)
    (items
@@ -14944,7 +14947,7 @@
      (Font 14) (SubwindowMode 15) (GraphicsExposures 16) (ClipOriginX 17)
      (ClipOriginY 18) (ClipMask 19) (DashOffset 20) (DashList 21)
      (ArcMode 22)))
-   (additional_values ()))
+   (additional_values (Additional_values ())))
   (Enum (name GX)
    (items
     ((clear 0) (and 1) (andReverse 2) (copy 3) (andInverted 4) (noop 5)
@@ -15809,7 +15812,7 @@
       (length ()))))
    (reply ()))
   (Mask (name ColorFlag) (items ((Red 0) (Green 1) (Blue 2)))
-   (additional_values ()))
+   (additional_values (Additional_values ())))
   (Struct (name COLORITEM)
    (fields
     ((Field (name pixel)
@@ -16106,7 +16109,7 @@
    (items
     ((KeyClickPercent 0) (BellPercent 1) (BellPitch 2) (BellDuration 3)
      (Led 4) (LedMode 5) (Key 6) (AutoRepeatMode 7)))
-   (additional_values ()))
+   (additional_values (Additional_values ())))
   (Enum (name LedMode) (items ((Off 0) (On 1))))
   (Enum (name AutoRepeatMode) (items ((Off 0) (On 1) (Default 2))))
   (Request (name ChangeKeyboardControl) (opcode 102) (combine_adjacent true)
@@ -16773,11 +16776,11 @@
    (Mask (name Type)
     (items
      ((InputMask 0) (OutputMask 1) (VideoMask 2) (StillMask 3) (ImageMask 4)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Enum (name ImageFormatInfoType) (items ((RGB 0) (YUV 1))))
    (Enum (name ImageFormatInfoFormat) (items ((Packed 0) (Planar 1))))
    (Mask (name AttributeFlag) (items ((Gettable 0) (Settable 1)))
-    (additional_values ()))
+    (additional_values (Additional_values ())))
    (Enum (name VideoNotifyReason)
     (items ((Started 0) (Stopped 1) (Busy 2) (Preempted 3) (HardError 4))))
    (Enum (name ScanlineOrder) (items ((TopToBottom 0) (BottomToTop 1))))
