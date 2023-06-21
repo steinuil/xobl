@@ -685,6 +685,8 @@ let in_declarations (curr_module, xcbs) decls =
        []
   |> List.rev
 
+(* Fix an allowed_alt_enum that actually refers to a mask.
+   TODO is this correct? *)
 let fix_modifier_mask = function
   | Elaboratetree.Struct { name = "GrabModifierInfo"; fields } ->
       Elaboratetree.Struct

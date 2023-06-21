@@ -9,3 +9,9 @@
  (modules create_window)
  (public_name create-window)
  (libraries xobl lwt.unix))
+
+(executable
+ (name window_manager)
+ (modules window_manager)
+ (public_name window-manager)
+ (libraries xobl lwt.unix))

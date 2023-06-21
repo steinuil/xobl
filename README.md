@@ -2,6 +2,11 @@
 
 The X11 OCaml Bindings Library. A Pure OCaml implementation of the X11 protocol.
 
+## TODO
+
+- Tweaks to Elaborate
+  - [ ] GetProperty reply: remove value_len. It's left in because the length field is calculated using both value_len and format.
+
 ## Documentation
 
 - https://www.x.org/releases/X11R7.7/doc/
