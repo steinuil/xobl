@@ -1,10 +1,27 @@
 (tests
  (modes byte)
- (names
-  parser_output
-  elaborate_resolve_output
-  elaborate_output
-  generate_output)
- (libraries xobl_compiler lwt lwt.unix sexplib xobl)
+ (names parser_output elaborate_resolve_output elaborate_output)
+ (modules parser_output elaborate_resolve_output elaborate_output)
+ (libraries xobl_compiler lwt lwt.unix sexplib)
  (deps
   (glob_files ../xml-xcb/*.xml)))
+
+(rule
+ (deps
+  (glob_files ../xml-xcb/*.xml))
+ (action
+  (with-stdout-to
+   generate_output.output
+   (pipe-stdout
+    (run ./generate_output.exe)
+    (run ocamlformat - --impl)))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff generate_output.expected generate_output.output)))
+
+(executable
+ (name generate_output)
+ (modules generate_output)
+ (libraries xobl_compiler))

@@ -565,6 +565,7 @@ let gen_encode_fields ctx out fields =
 
 (* TODO make sure the total length of the request includes the request length field
     when there are less than two fields *)
+
 (** Generate fields without the v. prefix *)
 let gen_encode_arg_fields ctx opcode out fields =
   output_string out "let orig = at in\n";
