@@ -490,7 +490,7 @@ let gen_encode_arg_field ctx out = function
         (gen_expr_type type_ (Some "v"))
         expr
   | Field_list_length { type_; list; list_type; _ } ->
-      (* Can be wrong *)
+      (* Can be wrong TODO how?? *)
       Printf.fprintf out "let* at = %a buf (%s (%a %s)) ~at in"
         (gen_encode_type ctx) type_
         (Option.value ~default:"identity"

@@ -166,7 +166,7 @@ let encode_mask encode of_int to_int buf v ~at =
   encode buf (of_int v) ~at
 
 let int_of_mask to_bit mask =
-  List.fold_left (fun mask v -> mask lor to_bit v) 0 mask
+  List.fold_left (fun mask v -> mask lor (1 lsl to_bit v)) 0 mask
 
 let mask_value_to_int to_mask to_enum = function
   | F f -> int_of_mask to_mask f
@@ -182,7 +182,7 @@ let encode_optional_mask encode buf fields ~at =
   let rec loop mask = function
     | [] -> mask
     | (exists, pos) :: rest ->
-        let mask = if exists then pos lor (1 lsl pos) else mask in
+        let mask = if exists then mask lor (1 lsl pos) else mask in
         loop mask rest
   in
   let mask = loop 0 fields in
