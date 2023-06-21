@@ -5143,7 +5143,12 @@
        (type_
         ((ft_type (Type_ref ((id_module render) (id_name PICTFORMAT))))
          (ft_allowed ()))))
-      (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32)))
+      (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32))
+       (fields
+        ((repeat 0) (alphamap 1) (alphaxorigin 2) (alphayorigin 3)
+         (clipxorigin 4) (clipyorigin 5) (clipmask 6) (graphicsexposure 7)
+         (subwindowmode 8) (polyedge 9) (polymode 10) (dither 11)
+         (componentalpha 12))))
       (Field_optional (name repeat) (mask value_mask) (bit 0)
        (type_
         ((ft_type (Type_primitive Card32))
@@ -5194,7 +5199,12 @@
        (type_
         ((ft_type (Type_ref ((id_module render) (id_name PICTURE))))
          (ft_allowed ()))))
-      (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32)))
+      (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32))
+       (fields
+        ((repeat 0) (alphamap 1) (alphaxorigin 2) (alphayorigin 3)
+         (clipxorigin 4) (clipyorigin 5) (clipmask 6) (graphicsexposure 7)
+         (subwindowmode 8) (polyedge 9) (polymode 10) (dither 11)
+         (componentalpha 12))))
       (Field_optional (name repeat) (mask value_mask) (bit 0)
        (type_
         ((ft_type (Type_primitive Card32))
@@ -6111,7 +6121,13 @@
        (type_
         ((ft_type (Type_ref ((id_module xproto) (id_name VISUALID))))
          (ft_allowed ()))))
-      (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32)))
+      (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32))
+       (fields
+        ((background_pixmap 0) (background_pixel 1) (border_pixmap 2)
+         (border_pixel 3) (bit_gravity 4) (win_gravity 5) (backing_store 6)
+         (backing_planes 7) (backing_pixel 8) (override_redirect 9)
+         (save_under 10) (event_mask 11) (do_not_propogate_mask 12)
+         (colormap 13) (cursor 14))))
       (Field_optional (name background_pixmap) (mask value_mask) (bit 0)
        (type_
         ((ft_type (Type_ref ((id_module xproto) (id_name PIXMAP))))
@@ -6789,7 +6805,10 @@
        (type_
         ((ft_type (Type_ref ((id_module sync) (id_name ALARM))))
          (ft_allowed ()))))
-      (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32)))
+      (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32))
+       (fields
+        ((counter 0) (valueType 1) (value 2) (testType 3) (delta 4)
+         (events 5))))
       (Field_optional (name counter) (mask value_mask) (bit 0)
        (type_
         ((ft_type (Type_ref ((id_module sync) (id_name COUNTER))))
@@ -6819,7 +6838,10 @@
        (type_
         ((ft_type (Type_ref ((id_module sync) (id_name ALARM))))
          (ft_allowed ()))))
-      (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32)))
+      (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32))
+       (fields
+        ((counter 0) (valueType 1) (value 2) (testType 3) (delta 4)
+         (events 5))))
       (Field_optional (name counter) (mask value_mask) (bit 0)
        (type_
         ((ft_type (Type_ref ((id_module sync) (id_name COUNTER))))
@@ -13657,7 +13679,13 @@
       (type_
        ((ft_type (Type_ref ((id_module xproto) (id_name VISUALID))))
         (ft_allowed ()))))
-     (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32)))
+     (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32))
+      (fields
+       ((background_pixmap 0) (background_pixel 1) (border_pixmap 2)
+        (border_pixel 3) (bit_gravity 4) (win_gravity 5) (backing_store 6)
+        (backing_planes 7) (backing_pixel 8) (override_redirect 9)
+        (save_under 10) (event_mask 11) (do_not_propogate_mask 12)
+        (colormap 13) (cursor 14))))
      (Field_optional (name background_pixmap) (mask value_mask) (bit 0)
       (type_
        ((ft_type (Type_ref ((id_module xproto) (id_name PIXMAP))))
@@ -13725,7 +13753,13 @@
       (type_
        ((ft_type (Type_ref ((id_module xproto) (id_name WINDOW))))
         (ft_allowed ()))))
-     (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32)))
+     (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32))
+      (fields
+       ((background_pixmap 0) (background_pixel 1) (border_pixmap 2)
+        (border_pixel 3) (bit_gravity 4) (win_gravity 5) (backing_store 6)
+        (backing_planes 7) (backing_pixel 8) (override_redirect 9)
+        (save_under 10) (event_mask 11) (do_not_propogate_mask 12)
+        (colormap 13) (cursor 14))))
      (Field_optional (name background_pixmap) (mask value_mask) (bit 0)
       (type_
        ((ft_type (Type_ref ((id_module xproto) (id_name PIXMAP))))
@@ -13936,7 +13970,10 @@
       (type_
        ((ft_type (Type_ref ((id_module xproto) (id_name WINDOW))))
         (ft_allowed ()))))
-     (Field_optional_mask (name value_mask) (type_ (Type_primitive Card16)))
+     (Field_optional_mask (name value_mask) (type_ (Type_primitive Card16))
+      (fields
+       ((x 0) (y 1) (width 2) (height 3) (border_width 4) (sibling 5)
+        (stack_mode 6))))
      (Field_pad (pad (Pad_bytes 2)) (serialize false))
      (Field_optional (name x) (mask value_mask) (bit 0)
       (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ()))))
@@ -14935,7 +14972,15 @@
       (type_
        ((ft_type (Type_ref ((id_module xproto) (id_name DRAWABLE))))
         (ft_allowed ()))))
-     (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32)))
+     (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32))
+      (fields
+       ((function 0) (plane_mask 1) (foreground 2) (background 3)
+        (line_width 4) (line_style 5) (cap_style 6) (join_style 7)
+        (fill_style 8) (fill_rule 9) (tile 10) (stipple 11)
+        (tile_stipple_x_origin 12) (tile_stipple_y_origin 13) (font 14)
+        (subwindow_mode 15) (graphics_exposures 16) (clip_x_origin 17)
+        (clip_y_origin 18) (clip_mask 19) (dash_offset 20) (dashes 21)
+        (arc_mode 22))))
      (Field_optional (name function) (mask value_mask) (bit 0)
       (type_
        ((ft_type (Type_primitive Card32))
@@ -15023,7 +15068,15 @@
       (type_
        ((ft_type (Type_ref ((id_module xproto) (id_name GCONTEXT))))
         (ft_allowed ()))))
-     (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32)))
+     (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32))
+      (fields
+       ((function 0) (plane_mask 1) (foreground 2) (background 3)
+        (line_width 4) (line_style 5) (cap_style 6) (join_style 7)
+        (fill_style 8) (fill_rule 9) (tile 10) (stipple 11)
+        (tile_stipple_x_origin 12) (tile_stipple_y_origin 13) (font 14)
+        (subwindow_mode 15) (graphics_exposures 16) (clip_x_origin 17)
+        (clip_y_origin 18) (clip_mask 19) (dash_offset 20) (dashes 21)
+        (arc_mode 22))))
      (Field_optional (name function) (mask value_mask) (bit 0)
       (type_
        ((ft_type (Type_primitive Card32))
@@ -16059,7 +16112,10 @@
   (Request (name ChangeKeyboardControl) (opcode 102) (combine_adjacent true)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
-     (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32)))
+     (Field_optional_mask (name value_mask) (type_ (Type_primitive Card32))
+      (fields
+       ((key_click_percent 0) (bell_percent 1) (bell_pitch 2)
+        (bell_duration 3) (led 4) (led_mode 5) (key 6) (auto_repeat_mode 7))))
      (Field_optional (name key_click_percent) (mask value_mask) (bit 0)
       (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ()))))
      (Field_optional (name bell_percent) (mask value_mask) (bit 1)

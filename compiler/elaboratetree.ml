@@ -99,7 +99,11 @@ type field =
       (** Field that can be [None] (or [null] depending on the language).
           The presence of the field is recorded in the associated mask
           by setting the bit at position {!fieldref:bit}. *)
-  | Field_optional_mask of { name : string; type_ : type_ }
+  | Field_optional_mask of {
+      name : string;
+      type_ : type_;
+      fields : (string * int) list;
+    }
       (** Contains the mask that indicates whether the optional fields
           associated are present or not in the struct.
           Should be hidden in the public API. *)

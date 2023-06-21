@@ -176,3 +176,14 @@ let encode_alt_enum encode of_int to_int buf v ~at =
   match v with
   | E v -> encode_enum encode of_int to_int buf v ~at
   | Custom v -> encode buf v ~at
+
+(* TODO should we use an Int64 here? *)
+let encode_optional_mask encode buf fields ~at =
+  let rec loop mask = function
+    | [] -> mask
+    | (exists, pos) :: rest ->
+        let mask = if exists then pos lor (1 lsl pos) else mask in
+        loop mask rest
+  in
+  let mask = loop 0 fields in
+  encode buf mask ~at

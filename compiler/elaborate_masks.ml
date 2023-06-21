@@ -414,9 +414,24 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
            when List.exists
                   (fun (_, _, cond_field) -> name = cond_field)
                   optional_fields ->
+             let optional_fields =
+               List.find_map
+                 (fun (_, fields, cond_field) ->
+                   if name = cond_field then
+                     Some
+                       (List.map
+                          (function
+                            | Elaboratetree.Field_optional { name; bit; _ } ->
+                                (name, bit)
+                            | _ -> failwith "not a Field_optional")
+                          fields)
+                   else None)
+                 optional_fields
+               |> Option.get
+             in
              ( [
                  Elaboratetree.Field_optional_mask
-                   { name; type_ = conv_type ft_type };
+                   { name; type_ = conv_type ft_type; fields = optional_fields };
                ],
                [] )
          (* Lists *)

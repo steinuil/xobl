@@ -413,7 +413,7 @@ let gen_decode_field ctx _fields out = function
   | Field_list_simple { name; type_; length } ->
       Printf.fprintf out "let* %s, at = %a %s buf ~at in" (Ident.snake name)
         (gen_decode_list ctx) type_ (Ident.snake length)
-  | Field_optional_mask { name; type_ } ->
+  | Field_optional_mask { name; type_; _ } ->
       Printf.fprintf out "let* %s, at = %a buf ~at in" (Ident.snake name)
         (gen_decode_type ctx) type_
   | Field_optional { name; type_; mask; bit } ->
@@ -428,6 +428,14 @@ let gen_decode_field ctx _fields out = function
         (Ident.snake name) (gen_expr None) length (gen_decode_list ctx) type_
   | Field_list { name; type_ = _; length = None } -> failwith name
   | Field_expr _ | Field_variant _ | Field_variant_tag _ -> ()
+
+let gen_encode_optional_mask_fields out fields =
+  output_string out "[";
+  list_sep "; "
+    (fun out (name, bit) ->
+      Printf.fprintf out "(Option.is_some %s, %d)" (Ident.snake name) bit)
+    out fields;
+  output_string out "]"
 
 let gen_encode_field ctx out = function
   | Field { name; type_ } ->
@@ -497,9 +505,9 @@ let gen_encode_arg_field ctx out = function
   | Field_variant _ -> Printf.fprintf out "(* field_variant *)"
   | Field_variant_tag _ -> Printf.fprintf out "(* field_variant_tag *)"
   | Field_optional _ -> Printf.fprintf out "(* field_optional *)"
-  | Field_optional_mask { type_; _ } ->
-      Printf.fprintf out "(* field_optional_mask *)";
-      Printf.fprintf out "let* at = %a buf 0 ~at in" (gen_encode_type ctx) type_
+  | Field_optional_mask { type_; fields; _ } ->
+      Printf.fprintf out "let* at = encode_optional_mask %a buf %a ~at in"
+        (gen_encode_type ctx) type_ gen_encode_optional_mask_fields fields
 
 let gen_size_of_field ctx out = function
   | Field { type_; _ } -> gen_size_of_field_type ctx out type_
