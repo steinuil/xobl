@@ -468,8 +468,8 @@ let gen_encode_field ctx out = function
         type_ (Ident.snake name)
   | Field_variant _ -> Printf.fprintf out "(* field_variant *)"
   | Field_variant_tag _ -> Printf.fprintf out "(* field_variant_tag *)"
-  | Field_optional _ -> Printf.fprintf out "(* field_optional *)"
-  | Field_optional_mask _ -> Printf.fprintf out "(* field_optional_mask *)"
+  | Field_optional _ | Field_optional_mask _ ->
+      invalid_arg "there are no optional fields in structs"
 
 let gen_encode_arg_field ctx out = function
   | Field { name; type_ } ->
@@ -504,7 +504,10 @@ let gen_encode_arg_field ctx out = function
         type_ (Ident.snake name)
   | Field_variant _ -> Printf.fprintf out "(* field_variant *)"
   | Field_variant_tag _ -> Printf.fprintf out "(* field_variant_tag *)"
-  | Field_optional _ -> Printf.fprintf out "(* field_optional *)"
+  | Field_optional { name; type_; _ } ->
+      Printf.fprintf out "let* at = match %s with None -> Some at | Some v -> "
+        (Ident.snake name);
+      Printf.fprintf out "%a buf v ~at in" (gen_encode_field_type ctx) type_
   | Field_optional_mask { type_; fields; _ } ->
       Printf.fprintf out "let* at = encode_optional_mask %a buf %a ~at in"
         (gen_encode_type ctx) type_ gen_encode_optional_mask_fields fields

@@ -561,21 +561,21 @@ let* at = encode_uint16 buf border_width ~at in
 let* at = encode_enum encode_uint16 identity window_class_int_of_enum buf class_ ~at in
 let* at = encode_visualid buf visual ~at in
 let* at = encode_optional_mask encode_int32 buf [(Option.is_some background_pixmap, 0); (Option.is_some background_pixel, 1); (Option.is_some border_pixmap, 2); (Option.is_some border_pixel, 3); (Option.is_some bit_gravity, 4); (Option.is_some win_gravity, 5); (Option.is_some backing_store, 6); (Option.is_some backing_planes, 7); (Option.is_some backing_pixel, 8); (Option.is_some override_redirect, 9); (Option.is_some save_under, 10); (Option.is_some event_mask, 11); (Option.is_some do_not_propogate_mask, 12); (Option.is_some colormap, 13); (Option.is_some cursor, 14)] ~at in
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
+let* at = match background_pixmap with None -> Some at | Some v -> encode_alt_enum encode_pixmap identity back_pixmap_int_of_enum buf v ~at in
+let* at = match background_pixel with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match border_pixmap with None -> Some at | Some v -> encode_alt_enum encode_pixmap identity pixmap_int_of_enum buf v ~at in
+let* at = match border_pixel with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match bit_gravity with None -> Some at | Some v -> encode_enum encode_int32 identity gravity_int_of_enum buf v ~at in
+let* at = match win_gravity with None -> Some at | Some v -> encode_enum encode_int32 identity gravity_int_of_enum buf v ~at in
+let* at = match backing_store with None -> Some at | Some v -> encode_enum encode_int32 identity backing_store_int_of_enum buf v ~at in
+let* at = match backing_planes with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match backing_pixel with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match override_redirect with None -> Some at | Some v -> encode_bool32 buf v ~at in
+let* at = match save_under with None -> Some at | Some v -> encode_bool32 buf v ~at in
+let* at = match event_mask with None -> Some at | Some v -> encode_mask encode_int32 identity event_mask_int_of_mask buf v ~at in
+let* at = match do_not_propogate_mask with None -> Some at | Some v -> encode_mask encode_int32 identity event_mask_int_of_mask buf v ~at in
+let* at = match colormap with None -> Some at | Some v -> encode_alt_enum encode_colormap identity colormap_int_of_enum buf v ~at in
+let* at = match cursor with None -> Some at | Some v -> encode_alt_enum encode_cursor identity cursor_int_of_enum buf v ~at in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -588,21 +588,21 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_window buf window ~at in
 let* at = encode_optional_mask encode_int32 buf [(Option.is_some background_pixmap, 0); (Option.is_some background_pixel, 1); (Option.is_some border_pixmap, 2); (Option.is_some border_pixel, 3); (Option.is_some bit_gravity, 4); (Option.is_some win_gravity, 5); (Option.is_some backing_store, 6); (Option.is_some backing_planes, 7); (Option.is_some backing_pixel, 8); (Option.is_some override_redirect, 9); (Option.is_some save_under, 10); (Option.is_some event_mask, 11); (Option.is_some do_not_propogate_mask, 12); (Option.is_some colormap, 13); (Option.is_some cursor, 14)] ~at in
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
+let* at = match background_pixmap with None -> Some at | Some v -> encode_alt_enum encode_pixmap identity back_pixmap_int_of_enum buf v ~at in
+let* at = match background_pixel with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match border_pixmap with None -> Some at | Some v -> encode_alt_enum encode_pixmap identity pixmap_int_of_enum buf v ~at in
+let* at = match border_pixel with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match bit_gravity with None -> Some at | Some v -> encode_enum encode_int32 identity gravity_int_of_enum buf v ~at in
+let* at = match win_gravity with None -> Some at | Some v -> encode_enum encode_int32 identity gravity_int_of_enum buf v ~at in
+let* at = match backing_store with None -> Some at | Some v -> encode_enum encode_int32 identity backing_store_int_of_enum buf v ~at in
+let* at = match backing_planes with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match backing_pixel with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match override_redirect with None -> Some at | Some v -> encode_bool32 buf v ~at in
+let* at = match save_under with None -> Some at | Some v -> encode_bool32 buf v ~at in
+let* at = match event_mask with None -> Some at | Some v -> encode_mask encode_int32 identity event_mask_int_of_mask buf v ~at in
+let* at = match do_not_propogate_mask with None -> Some at | Some v -> encode_mask encode_int32 identity event_mask_int_of_mask buf v ~at in
+let* at = match colormap with None -> Some at | Some v -> encode_alt_enum encode_colormap identity colormap_int_of_enum buf v ~at in
+let* at = match cursor with None -> Some at | Some v -> encode_alt_enum encode_cursor identity cursor_int_of_enum buf v ~at in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -745,13 +745,13 @@ let at = at + 2 in
 let* at = encode_window buf window ~at in
 let* at = encode_optional_mask encode_uint16 buf [(Option.is_some x, 0); (Option.is_some y, 1); (Option.is_some width, 2); (Option.is_some height, 3); (Option.is_some border_width, 4); (Option.is_some sibling, 5); (Option.is_some stack_mode, 6)] ~at in
 let at = at + 2 in
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
+let* at = match x with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match y with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match width with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match height with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match border_width with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match sibling with None -> Some at | Some v -> encode_alt_enum encode_window identity window_int_of_enum buf v ~at in
+let* at = match stack_mode with None -> Some at | Some v -> encode_enum encode_int32 identity stack_mode_int_of_enum buf v ~at in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -1563,29 +1563,29 @@ let at = at + 2 in
 let* at = encode_gcontext buf cid ~at in
 let* at = encode_drawable buf drawable ~at in
 let* at = encode_optional_mask encode_int32 buf [(Option.is_some function_, 0); (Option.is_some plane_mask, 1); (Option.is_some foreground, 2); (Option.is_some background, 3); (Option.is_some line_width, 4); (Option.is_some line_style, 5); (Option.is_some cap_style, 6); (Option.is_some join_style, 7); (Option.is_some fill_style, 8); (Option.is_some fill_rule, 9); (Option.is_some tile, 10); (Option.is_some stipple, 11); (Option.is_some tile_stipple_x_origin, 12); (Option.is_some tile_stipple_y_origin, 13); (Option.is_some font, 14); (Option.is_some subwindow_mode, 15); (Option.is_some graphics_exposures, 16); (Option.is_some clip_x_origin, 17); (Option.is_some clip_y_origin, 18); (Option.is_some clip_mask, 19); (Option.is_some dash_offset, 20); (Option.is_some dashes, 21); (Option.is_some arc_mode, 22)] ~at in
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
+let* at = match function_ with None -> Some at | Some v -> encode_enum encode_int32 identity gx_int_of_enum buf v ~at in
+let* at = match plane_mask with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match foreground with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match background with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match line_width with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match line_style with None -> Some at | Some v -> encode_enum encode_int32 identity line_style_int_of_enum buf v ~at in
+let* at = match cap_style with None -> Some at | Some v -> encode_enum encode_int32 identity cap_style_int_of_enum buf v ~at in
+let* at = match join_style with None -> Some at | Some v -> encode_enum encode_int32 identity join_style_int_of_enum buf v ~at in
+let* at = match fill_style with None -> Some at | Some v -> encode_enum encode_int32 identity fill_style_int_of_enum buf v ~at in
+let* at = match fill_rule with None -> Some at | Some v -> encode_enum encode_int32 identity fill_rule_int_of_enum buf v ~at in
+let* at = match tile with None -> Some at | Some v -> encode_alt_enum encode_pixmap identity pixmap_int_of_enum buf v ~at in
+let* at = match stipple with None -> Some at | Some v -> encode_alt_enum encode_pixmap identity pixmap_int_of_enum buf v ~at in
+let* at = match tile_stipple_x_origin with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match tile_stipple_y_origin with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match font with None -> Some at | Some v -> encode_alt_enum encode_font identity font_int_of_enum buf v ~at in
+let* at = match subwindow_mode with None -> Some at | Some v -> encode_enum encode_int32 identity subwindow_mode_int_of_enum buf v ~at in
+let* at = match graphics_exposures with None -> Some at | Some v -> encode_bool32 buf v ~at in
+let* at = match clip_x_origin with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match clip_y_origin with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match clip_mask with None -> Some at | Some v -> encode_alt_enum encode_pixmap identity pixmap_int_of_enum buf v ~at in
+let* at = match dash_offset with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match dashes with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match arc_mode with None -> Some at | Some v -> encode_enum encode_int32 identity arc_mode_int_of_enum buf v ~at in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -1598,29 +1598,29 @@ let at = at + 1 in
 let at = at + 2 in
 let* at = encode_gcontext buf gc ~at in
 let* at = encode_optional_mask encode_int32 buf [(Option.is_some function_, 0); (Option.is_some plane_mask, 1); (Option.is_some foreground, 2); (Option.is_some background, 3); (Option.is_some line_width, 4); (Option.is_some line_style, 5); (Option.is_some cap_style, 6); (Option.is_some join_style, 7); (Option.is_some fill_style, 8); (Option.is_some fill_rule, 9); (Option.is_some tile, 10); (Option.is_some stipple, 11); (Option.is_some tile_stipple_x_origin, 12); (Option.is_some tile_stipple_y_origin, 13); (Option.is_some font, 14); (Option.is_some subwindow_mode, 15); (Option.is_some graphics_exposures, 16); (Option.is_some clip_x_origin, 17); (Option.is_some clip_y_origin, 18); (Option.is_some clip_mask, 19); (Option.is_some dash_offset, 20); (Option.is_some dashes, 21); (Option.is_some arc_mode, 22)] ~at in
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
+let* at = match function_ with None -> Some at | Some v -> encode_enum encode_int32 identity gx_int_of_enum buf v ~at in
+let* at = match plane_mask with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match foreground with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match background with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match line_width with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match line_style with None -> Some at | Some v -> encode_enum encode_int32 identity line_style_int_of_enum buf v ~at in
+let* at = match cap_style with None -> Some at | Some v -> encode_enum encode_int32 identity cap_style_int_of_enum buf v ~at in
+let* at = match join_style with None -> Some at | Some v -> encode_enum encode_int32 identity join_style_int_of_enum buf v ~at in
+let* at = match fill_style with None -> Some at | Some v -> encode_enum encode_int32 identity fill_style_int_of_enum buf v ~at in
+let* at = match fill_rule with None -> Some at | Some v -> encode_enum encode_int32 identity fill_rule_int_of_enum buf v ~at in
+let* at = match tile with None -> Some at | Some v -> encode_alt_enum encode_pixmap identity pixmap_int_of_enum buf v ~at in
+let* at = match stipple with None -> Some at | Some v -> encode_alt_enum encode_pixmap identity pixmap_int_of_enum buf v ~at in
+let* at = match tile_stipple_x_origin with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match tile_stipple_y_origin with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match font with None -> Some at | Some v -> encode_alt_enum encode_font identity font_int_of_enum buf v ~at in
+let* at = match subwindow_mode with None -> Some at | Some v -> encode_enum encode_int32 identity subwindow_mode_int_of_enum buf v ~at in
+let* at = match graphics_exposures with None -> Some at | Some v -> encode_bool32 buf v ~at in
+let* at = match clip_x_origin with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match clip_y_origin with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match clip_mask with None -> Some at | Some v -> encode_alt_enum encode_pixmap identity pixmap_int_of_enum buf v ~at in
+let* at = match dash_offset with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match dashes with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match arc_mode with None -> Some at | Some v -> encode_enum encode_int32 identity arc_mode_int_of_enum buf v ~at in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -2443,14 +2443,14 @@ let at = at + 1 in
 (* reserve request length *)
 let at = at + 2 in
 let* at = encode_optional_mask encode_int32 buf [(Option.is_some key_click_percent, 0); (Option.is_some bell_percent, 1); (Option.is_some bell_pitch, 2); (Option.is_some bell_duration, 3); (Option.is_some led, 4); (Option.is_some led_mode, 5); (Option.is_some key, 6); (Option.is_some auto_repeat_mode, 7)] ~at in
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
+let* at = match key_click_percent with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match bell_percent with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match bell_pitch with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match bell_duration with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match led with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match led_mode with None -> Some at | Some v -> encode_enum encode_int32 identity led_mode_int_of_enum buf v ~at in
+let* at = match key with None -> Some at | Some v -> encode_keycode32 buf v ~at in
+let* at = match auto_repeat_mode with None -> Some at | Some v -> encode_enum encode_int32 identity auto_repeat_mode_int_of_enum buf v ~at in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -2987,19 +2987,19 @@ let at = at + 2 in
 let* at = Xproto.encode_drawable buf drawable ~at in
 let* at = encode_pictformat buf format ~at in
 let* at = encode_optional_mask encode_int32 buf [(Option.is_some repeat, 0); (Option.is_some alphamap, 1); (Option.is_some alphaxorigin, 2); (Option.is_some alphayorigin, 3); (Option.is_some clipxorigin, 4); (Option.is_some clipyorigin, 5); (Option.is_some clipmask, 6); (Option.is_some graphicsexposure, 7); (Option.is_some subwindowmode, 8); (Option.is_some polyedge, 9); (Option.is_some polymode, 10); (Option.is_some dither, 11); (Option.is_some componentalpha, 12)] ~at in
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
+let* at = match repeat with None -> Some at | Some v -> encode_enum encode_int32 identity repeat_int_of_enum buf v ~at in
+let* at = match alphamap with None -> Some at | Some v -> encode_picture buf v ~at in
+let* at = match alphaxorigin with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match alphayorigin with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match clipxorigin with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match clipyorigin with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match clipmask with None -> Some at | Some v -> Xproto.encode_pixmap buf v ~at in
+let* at = match graphicsexposure with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match subwindowmode with None -> Some at | Some v -> encode_enum encode_int32 identity Xproto.subwindow_mode_int_of_enum buf v ~at in
+let* at = match polyedge with None -> Some at | Some v -> encode_enum encode_int32 identity poly_edge_int_of_enum buf v ~at in
+let* at = match polymode with None -> Some at | Some v -> encode_enum encode_int32 identity poly_mode_int_of_enum buf v ~at in
+let* at = match dither with None -> Some at | Some v -> Xproto.encode_atom buf v ~at in
+let* at = match componentalpha with None -> Some at | Some v -> encode_int32 buf v ~at in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -3011,19 +3011,19 @@ let* at = encode_picture buf picture ~at in
 (* reserve request length *)
 let at = at + 2 in
 let* at = encode_optional_mask encode_int32 buf [(Option.is_some repeat, 0); (Option.is_some alphamap, 1); (Option.is_some alphaxorigin, 2); (Option.is_some alphayorigin, 3); (Option.is_some clipxorigin, 4); (Option.is_some clipyorigin, 5); (Option.is_some clipmask, 6); (Option.is_some graphicsexposure, 7); (Option.is_some subwindowmode, 8); (Option.is_some polyedge, 9); (Option.is_some polymode, 10); (Option.is_some dither, 11); (Option.is_some componentalpha, 12)] ~at in
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
+let* at = match repeat with None -> Some at | Some v -> encode_enum encode_int32 identity repeat_int_of_enum buf v ~at in
+let* at = match alphamap with None -> Some at | Some v -> encode_picture buf v ~at in
+let* at = match alphaxorigin with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match alphayorigin with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match clipxorigin with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match clipyorigin with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match clipmask with None -> Some at | Some v -> Xproto.encode_pixmap buf v ~at in
+let* at = match graphicsexposure with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match subwindowmode with None -> Some at | Some v -> encode_enum encode_int32 identity Xproto.subwindow_mode_int_of_enum buf v ~at in
+let* at = match polyedge with None -> Some at | Some v -> encode_enum encode_int32 identity poly_edge_int_of_enum buf v ~at in
+let* at = match polymode with None -> Some at | Some v -> encode_enum encode_int32 identity poly_mode_int_of_enum buf v ~at in
+let* at = match dither with None -> Some at | Some v -> Xproto.encode_atom buf v ~at in
+let* at = match componentalpha with None -> Some at | Some v -> encode_int32 buf v ~at in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -8162,12 +8162,12 @@ let* at = encode_alarm buf id ~at in
 (* reserve request length *)
 let at = at + 2 in
 let* at = encode_optional_mask encode_int32 buf [(Option.is_some counter, 0); (Option.is_some value_type, 1); (Option.is_some value, 2); (Option.is_some test_type, 3); (Option.is_some delta, 4); (Option.is_some events, 5)] ~at in
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
+let* at = match counter with None -> Some at | Some v -> encode_counter buf v ~at in
+let* at = match value_type with None -> Some at | Some v -> encode_enum encode_int32 identity valuetype_int_of_enum buf v ~at in
+let* at = match value with None -> Some at | Some v -> encode_int64 buf v ~at in
+let* at = match test_type with None -> Some at | Some v -> encode_enum encode_int32 identity testtype_int_of_enum buf v ~at in
+let* at = match delta with None -> Some at | Some v -> encode_int64 buf v ~at in
+let* at = match events with None -> Some at | Some v -> encode_int32 buf v ~at in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -8179,12 +8179,12 @@ let* at = encode_alarm buf id ~at in
 (* reserve request length *)
 let at = at + 2 in
 let* at = encode_optional_mask encode_int32 buf [(Option.is_some counter, 0); (Option.is_some value_type, 1); (Option.is_some value, 2); (Option.is_some test_type, 3); (Option.is_some delta, 4); (Option.is_some events, 5)] ~at in
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
+let* at = match counter with None -> Some at | Some v -> encode_counter buf v ~at in
+let* at = match value_type with None -> Some at | Some v -> encode_enum encode_int32 identity valuetype_int_of_enum buf v ~at in
+let* at = match value with None -> Some at | Some v -> encode_int64 buf v ~at in
+let* at = match test_type with None -> Some at | Some v -> encode_enum encode_int32 identity testtype_int_of_enum buf v ~at in
+let* at = match delta with None -> Some at | Some v -> encode_int64 buf v ~at in
+let* at = match events with None -> Some at | Some v -> encode_int32 buf v ~at in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -8901,21 +8901,21 @@ let* at = encode_enum encode_char Char.chr Xproto.window_class_int_of_enum buf c
 let* at = encode_uint8 buf depth ~at in
 let* at = Xproto.encode_visualid buf visual ~at in
 let* at = encode_optional_mask encode_int32 buf [(Option.is_some background_pixmap, 0); (Option.is_some background_pixel, 1); (Option.is_some border_pixmap, 2); (Option.is_some border_pixel, 3); (Option.is_some bit_gravity, 4); (Option.is_some win_gravity, 5); (Option.is_some backing_store, 6); (Option.is_some backing_planes, 7); (Option.is_some backing_pixel, 8); (Option.is_some override_redirect, 9); (Option.is_some save_under, 10); (Option.is_some event_mask, 11); (Option.is_some do_not_propogate_mask, 12); (Option.is_some colormap, 13); (Option.is_some cursor, 14)] ~at in
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
-(* field_optional *)
+let* at = match background_pixmap with None -> Some at | Some v -> encode_alt_enum Xproto.encode_pixmap identity Xproto.back_pixmap_int_of_enum buf v ~at in
+let* at = match background_pixel with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match border_pixmap with None -> Some at | Some v -> encode_alt_enum Xproto.encode_pixmap identity Xproto.pixmap_int_of_enum buf v ~at in
+let* at = match border_pixel with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match bit_gravity with None -> Some at | Some v -> encode_enum encode_int32 identity Xproto.gravity_int_of_enum buf v ~at in
+let* at = match win_gravity with None -> Some at | Some v -> encode_enum encode_int32 identity Xproto.gravity_int_of_enum buf v ~at in
+let* at = match backing_store with None -> Some at | Some v -> encode_enum encode_int32 identity Xproto.backing_store_int_of_enum buf v ~at in
+let* at = match backing_planes with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match backing_pixel with None -> Some at | Some v -> encode_int32 buf v ~at in
+let* at = match override_redirect with None -> Some at | Some v -> Xproto.encode_bool32 buf v ~at in
+let* at = match save_under with None -> Some at | Some v -> Xproto.encode_bool32 buf v ~at in
+let* at = match event_mask with None -> Some at | Some v -> encode_mask encode_int32 identity Xproto.event_mask_int_of_mask buf v ~at in
+let* at = match do_not_propogate_mask with None -> Some at | Some v -> encode_mask encode_int32 identity Xproto.event_mask_int_of_mask buf v ~at in
+let* at = match colormap with None -> Some at | Some v -> encode_alt_enum Xproto.encode_colormap identity Xproto.colormap_int_of_enum buf v ~at in
+let* at = match cursor with None -> Some at | Some v -> encode_alt_enum Xproto.encode_cursor identity Xproto.cursor_int_of_enum buf v ~at in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
