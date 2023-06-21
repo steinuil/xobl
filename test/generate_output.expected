@@ -4,7 +4,8 @@ let encode_enable  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 0 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -994,7 +995,8 @@ let encode_grab_server  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 36 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -1002,7 +1004,8 @@ let encode_ungrab_server  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 37 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -1122,7 +1125,8 @@ let encode_get_input_focus  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 43 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -1137,7 +1141,8 @@ let encode_query_keymap  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 44 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -1311,7 +1316,8 @@ let encode_get_font_path  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 52 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -2206,7 +2212,8 @@ let encode_list_extensions  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 99 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -2284,7 +2291,8 @@ let encode_get_keyboard_control  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 103 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -2331,7 +2339,8 @@ let encode_get_pointer_control  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 106 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -2369,7 +2378,8 @@ let encode_get_screen_saver  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 108 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -2421,7 +2431,8 @@ let encode_list_hosts  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 110 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -2525,7 +2536,8 @@ let encode_get_pointer_mapping  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 117 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -2561,7 +2573,8 @@ let encode_get_modifier_mapping  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 119 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -2576,7 +2589,8 @@ let encode_no_operation  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 127 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;module[@warning "-27"] Render = struct
@@ -2764,7 +2778,8 @@ let encode_query_pict_formats  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 1 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -3293,7 +3308,8 @@ let encode_query_version  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 0 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -3533,7 +3549,8 @@ let encode_get_cursor_image  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 4 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -3820,7 +3837,8 @@ let encode_get_cursor_image_and_name  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 25 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -4168,7 +4186,8 @@ let encode_capable  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 1 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -4184,7 +4203,8 @@ let encode_get_timeouts  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 2 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -4213,7 +4233,8 @@ let encode_enable  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 4 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -4221,7 +4242,8 @@ let encode_disable  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 5 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -4244,7 +4266,8 @@ let encode_info  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 7 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -7894,7 +7917,8 @@ let encode_list_system_counters  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 1 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -8552,7 +8576,8 @@ let encode_query_clients  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 1 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -8780,7 +8805,8 @@ let encode_query_version  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 0 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -8948,7 +8974,8 @@ let encode_get_xid_range  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 1 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -8995,7 +9022,8 @@ let encode_query_version  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 0 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -9254,7 +9282,8 @@ let encode_query_version  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 0 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -9786,7 +9815,8 @@ let encode_is_active  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 4 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -9801,7 +9831,8 @@ let encode_query_screens  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 5 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -9938,7 +9969,8 @@ let encode_list_input_devices  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 2 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -11774,7 +11806,8 @@ let encode_print_query_version  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 0 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -11811,7 +11844,8 @@ let encode_print_rehash_printer_list  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 20 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -11845,7 +11879,8 @@ let encode_print_get_context  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 4 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -11871,7 +11906,8 @@ let encode_print_get_screen_of_context  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 6 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -12102,7 +12138,8 @@ let encode_print_query_screens  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 22 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -12191,7 +12228,8 @@ let encode_get_device_create_context  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 2 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -12251,7 +12289,8 @@ let encode_get_window_create_context  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 6 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -12311,7 +12350,8 @@ let encode_get_property_create_context  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 9 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -12339,7 +12379,8 @@ let encode_get_property_use_context  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 11 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -12427,7 +12468,8 @@ let encode_get_selection_create_context  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 16 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -12455,7 +12497,8 @@ let encode_get_selection_use_context  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 18 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -12512,7 +12555,8 @@ let encode_list_selections  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 21 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -12754,7 +12798,8 @@ let encode_query_extension  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 0 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;
@@ -13153,7 +13198,8 @@ let encode_query_version  buf ~at : int option =
 let orig = at in
 (* opcode *)
 let* at = encode_uint8 buf 0 ~at in
-
+(* reserve request length *)
+let at = at + 3 in
 (* write request length *)
 let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in
 Some at;;

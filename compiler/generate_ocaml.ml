@@ -563,6 +563,8 @@ let gen_encode_fields ctx out fields =
   list_sep " " (gen_encode_field ctx) out fields;
   Printf.fprintf out " ignore orig; Some at"
 
+(* TODO make sure the total length of the request includes the request length field
+    when there are less than two fields *)
 (** Generate fields without the v. prefix *)
 let gen_encode_arg_fields ctx opcode out fields =
   output_string out "let orig = at in\n";
@@ -573,7 +575,7 @@ let gen_encode_arg_fields ctx opcode out fields =
       gen_encode_arg_field ctx out first;
       output_string out "\n(* reserve request length *)\nlet at = at + 2 in\n";
       list_sep "\n" (gen_encode_arg_field ctx) out rest
-  | [] -> ());
+  | [] -> output_string out "(* reserve request length *)\nlet at = at + 3 in");
   output_string out
     "\n\
      (* write request length *)\n\
