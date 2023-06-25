@@ -26,14 +26,6 @@ Need a change in the AST:
 let unions_to_switches = Pass_remove_unions.unions_to_switch
 let resolve_idents = Pass_resolve_idents.resolve
 
-let do_stuff xcbs = function
-  | Parsetree.Core declarations ->
-      let declarations =
-        Pass_declaration_order.fix_xproto_declaration_order declarations
-      in
-      Elaborate_masks.in_xcb xcbs (Parsetree.Core declarations)
-  | extension ->
-      let extension =
-        Pass_xinput_modifier_mask.fix_xinput_modifier_mask extension
-      in
-      Elaborate_masks.in_xcb xcbs extension
+let do_stuff xcbs xcb =
+  let xcb = Pass_fixes.apply_fixes xcb in
+  Elaborate_masks.in_xcb xcbs xcb

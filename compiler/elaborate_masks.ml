@@ -103,23 +103,6 @@ let%test _ =
   = Hir.(Binop (Sub, Field_ref "test", Expr_value 4L))
 
 let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
-  (* Apply random fixes *)
-  let fields =
-    match (curr_module, struct_name) with
-    | "dri2", "GetBuffers" | "dri2", "GetBuffersWithFormat" ->
-        fields
-        |> List.map (function
-             | Parsetree.Field_list
-                 { name = "attachments"; type_; length = None } ->
-                 Parsetree.Field_list
-                   {
-                     name = "attachments";
-                     type_;
-                     length = Some (Parsetree.Field_ref "count");
-                   }
-             | f -> f)
-    | _ -> fields
-  in
   let variants =
     fields
     |> List.filter_map (function
