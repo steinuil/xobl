@@ -6,5 +6,6 @@ module Parser = struct
     |> Patche.Xml.make_input |> Patche.Xml.run Parser.xcb
 end
 
+module Hir = Hir
 module Elaborate = Elaborate
 module Parsetree = Parsetree

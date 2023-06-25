@@ -23,6 +23,13 @@ Need a change in the AST:
 
 *)
 
-let unions_to_switches = Elaborate_unions_to_switch.unions_to_switch
-let resolve_idents = Elaborate_resolve.resolve
-let do_stuff = Elaborate_masks.in_xcb
+let unions_to_switches = Pass_remove_unions.unions_to_switch
+let resolve_idents = Pass_resolve_idents.resolve
+
+let do_stuff xcbs = function
+  | Parsetree.Core declarations ->
+      let declarations =
+        Pass_declaration_order.fix_xproto_declaration_order declarations
+      in
+      Elaborate_masks.in_xcb xcbs (Parsetree.Core declarations)
+  | extension -> Elaborate_masks.in_xcb xcbs extension

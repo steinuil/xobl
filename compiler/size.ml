@@ -1,4 +1,4 @@
-open Elaboratetree
+open Hir
 
 let find_module xcbs n =
   xcbs

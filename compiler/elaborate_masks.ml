@@ -21,68 +21,36 @@
 - figure out how to deal with masks
 *)
 
-open Ext
-
-(* This is a hack to avoid having to topologically sort the declarations.
-   The Right Thing(tm) would be to have a list that goes through all the
-   declarations and checks if all the types referenced throughout were
-   declared before the current one, and if there's any move them before
-   the current one and go back to check them too. *)
-let fix_declaration_order fixes decls =
-  List.fold_left
-    (fun decls (enum, before) ->
-      let decl, decls =
-        ListExt.find_remove
-          ~pred:(fun d ->
-            match (d, enum) with
-            | Elaboratetree.Enum { name; _ }, `Enum other_name
-            | Mask { name; _ }, `Mask other_name ->
-                name = other_name
-            | _ -> false)
-          decls
-      in
-      ListExt.insert_before ~item:decl
-        ~pred:(fun d ->
-          match (d, before) with
-          | Elaboratetree.Event { name; _ }, `Event other_name
-          | Request { name; _ }, `Request other_name ->
-              name = other_name
-          | _ -> false)
-        decls)
-    decls fixes
-
 let conv_ident Parsetree.{ id_module; id_name } =
-  Elaboratetree.{ id_module = Option.get id_module; id_name }
+  Hir.{ id_module = Option.get id_module; id_name }
 
 let conv_type = function
-  | Parsetree.Type_primitive prim -> Elaboratetree.Type_primitive prim
-  | Type_ref id -> Elaboratetree.Type_ref (conv_ident id)
+  | Parsetree.Type_primitive prim -> Hir.Type_primitive prim
+  | Type_ref id -> Hir.Type_ref (conv_ident id)
 
 let rec conv_expression = function
   | Parsetree.Binop (op, e1, e2) ->
-      Elaboratetree.Binop (op, conv_expression e1, conv_expression e2)
-  | Unop (op, e) -> Elaboratetree.Unop (op, conv_expression e)
-  | Field_ref f -> Elaboratetree.Field_ref f
+      Hir.Binop (op, conv_expression e1, conv_expression e2)
+  | Unop (op, e) -> Hir.Unop (op, conv_expression e)
+  | Field_ref f -> Hir.Field_ref f
   | Param_ref { param; type_ } ->
-      Elaboratetree.Param_ref { param; type_ = conv_type type_ }
-  | Enum_ref { enum; item } ->
-      Elaboratetree.Enum_ref { enum = conv_ident enum; item }
-  | Pop_count e -> Elaboratetree.Pop_count (conv_expression e)
+      Hir.Param_ref { param; type_ = conv_type type_ }
+  | Enum_ref { enum; item } -> Hir.Enum_ref { enum = conv_ident enum; item }
+  | Pop_count e -> Hir.Pop_count (conv_expression e)
   | Sum_of { field; by_expr } ->
-      Elaboratetree.Sum_of
-        { field; by_expr = Option.map conv_expression by_expr }
-  | List_element_ref -> Elaboratetree.List_element_ref
-  | Expr_value n -> Elaboratetree.Expr_value n
-  | Expr_bit b -> Elaboratetree.Expr_bit b
+      Hir.Sum_of { field; by_expr = Option.map conv_expression by_expr }
+  | List_element_ref -> Hir.List_element_ref
+  | Expr_value n -> Hir.Expr_value n
+  | Expr_bit b -> Hir.Expr_bit b
 
 let conv_field_allowed = function
-  | Parsetree.Allowed_enum id -> Elaboratetree.Allowed_enum (conv_ident id)
-  | Allowed_mask id -> Elaboratetree.Allowed_mask (conv_ident id)
-  | Allowed_alt_enum id -> Elaboratetree.Allowed_alt_enum (conv_ident id)
-  | Allowed_alt_mask id -> Elaboratetree.Allowed_alt_mask (conv_ident id)
+  | Parsetree.Allowed_enum id -> Hir.Allowed_enum (conv_ident id)
+  | Allowed_mask id -> Hir.Allowed_mask (conv_ident id)
+  | Allowed_alt_enum id -> Hir.Allowed_alt_enum (conv_ident id)
+  | Allowed_alt_mask id -> Hir.Allowed_alt_mask (conv_ident id)
 
 let conv_field_type Parsetree.{ ft_type; ft_allowed } =
-  Elaboratetree.
+  Hir.
     {
       ft_type = conv_type ft_type;
       ft_allowed = Option.map conv_field_allowed ft_allowed;
@@ -105,34 +73,34 @@ let invert expr =
     | Parsetree.Binop (Add, e1, e2) ->
         let e1, is_var1 = invert e1 in
         let e2, is_var2 = invert e2 in
-        if is_var1 then (Elaboratetree.(Binop (Sub, e1, e2)), true)
-        else (Elaboratetree.(Binop (Sub, e2, e1)), is_var1 && is_var2)
+        if is_var1 then (Hir.(Binop (Sub, e1, e2)), true)
+        else (Hir.(Binop (Sub, e2, e1)), is_var1 && is_var2)
     | Binop (Sub, e1, e2) ->
         let e1, is_var1 = invert e1 in
         let e2, is_var2 = invert e2 in
-        (Elaboratetree.(Binop (Add, e1, e2)), is_var1 && is_var2)
+        (Hir.(Binop (Add, e1, e2)), is_var1 && is_var2)
     | Binop (Mul, e1, e2) ->
         let e1, is_var1 = invert e1 in
         let e2, is_var2 = invert e2 in
-        if is_var1 then (Elaboratetree.(Binop (Div, e1, e2)), true)
-        else (Elaboratetree.(Binop (Div, e2, e1)), is_var1 && is_var2)
+        if is_var1 then (Hir.(Binop (Div, e1, e2)), true)
+        else (Hir.(Binop (Div, e2, e1)), is_var1 && is_var2)
     | Binop (Div, e1, e2) ->
         let e1, is_var1 = invert e1 in
         let e2, is_var2 = invert e2 in
-        (Elaboratetree.(Binop (Mul, e1, e2)), is_var1 && is_var2)
+        (Hir.(Binop (Mul, e1, e2)), is_var1 && is_var2)
     | Unop (Bit_not, e) ->
         let e, is_var = invert e in
-        (Elaboratetree.(Unop (Bit_not, e)), is_var)
-    | Field_ref f -> (Elaboratetree.Field_ref f, true)
-    | Expr_value n -> (Elaboratetree.Expr_value n, false)
-    | Expr_bit b -> (Elaboratetree.Expr_bit b, false)
+        (Hir.(Unop (Bit_not, e)), is_var)
+    | Field_ref f -> (Hir.Field_ref f, true)
+    | Expr_value n -> (Hir.Expr_value n, false)
+    | Expr_bit b -> (Hir.Expr_bit b, false)
     | e -> failwith (Parsetree.show_expression e)
   in
   invert expr |> fst
 
 let%test _ =
   invert Parsetree.(Binop (Add, Expr_value 4L, Field_ref "test"))
-  = Elaboratetree.(Binop (Sub, Field_ref "test", Expr_value 4L))
+  = Hir.(Binop (Sub, Field_ref "test", Expr_value 4L))
 
 let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
   (* Apply random fixes *)
@@ -200,8 +168,7 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
                           |> enum_switches_to_variants (curr_module, xcbs)
                                (struct_name ^ "." ^ sw_name)
                         in
-                        ( Elaboratetree.{ vi_name = item; vi_tag; vi_fields },
-                          variants )
+                        (Hir.{ vi_name = item; vi_tag; vi_fields }, variants)
                     | _ -> failwith "lol, lmao")
                |> List.split
              in
@@ -266,7 +233,7 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
                           |> Option.get
                         in
                         let type_ = conv_field_type type_ in
-                        Elaboratetree.Field_optional
+                        Hir.Field_optional
                           { name; mask = cond_field; bit; type_ }
                     | case -> failwith (Parsetree.show_case case))
              in
@@ -366,7 +333,7 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
                List.find (fun (name, _, _, _, _) -> name = sw_name) variants
              in
 
-             ( Elaboratetree.
+             ( Hir.
                  [
                    Field_variant
                      {
@@ -386,7 +353,7 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
                  variants
              in
              ( [
-                 Elaboratetree.Field_variant_tag
+                 Hir.Field_variant_tag
                    { variant = field_name; type_ = conv_type ft_type };
                ],
                [] )
@@ -407,8 +374,7 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
                      Some
                        (List.map
                           (function
-                            | Elaboratetree.Field_optional { name; bit; _ } ->
-                                (name, bit)
+                            | Hir.Field_optional { name; bit; _ } -> (name, bit)
                             | _ -> failwith "not a Field_optional")
                           fields)
                    else None)
@@ -416,7 +382,7 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
                |> Option.get
              in
              ( [
-                 Elaboratetree.Field_optional_mask
+                 Hir.Field_optional_mask
                    { name; type_ = conv_type ft_type; fields = optional_fields };
                ],
                [] )
@@ -428,7 +394,7 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
                List.find (fun (list_name, _, _, _) -> name = list_name) lists
              in
              ( [
-                 Elaboratetree.Field_list_simple
+                 Hir.Field_list_simple
                    {
                      name;
                      type_ = conv_field_type type_;
@@ -446,7 +412,7 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
                  lists
              in
              ( [
-                 Elaboratetree.Field_list_length
+                 Hir.Field_list_length
                    {
                      name;
                      type_ = conv_type ft_type;
@@ -458,11 +424,10 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
                [] )
          (* Rest *)
          | Field { name; type_ } ->
-             ( [ Elaboratetree.Field { name; type_ = conv_field_type type_ } ],
-               [] )
+             ([ Hir.Field { name; type_ = conv_field_type type_ } ], [])
          | Field_expr { name; type_; expr } ->
              ( [
-                 Elaboratetree.Field_expr
+                 Hir.Field_expr
                    {
                      name;
                      type_ = conv_field_type type_;
@@ -470,13 +435,12 @@ let rec enum_switches_to_variants (curr_module, xcbs) struct_name fields =
                    };
                ],
                [] )
-         | Field_file_descriptor f ->
-             ([ Elaboratetree.Field_file_descriptor f ], [])
+         | Field_file_descriptor f -> ([ Hir.Field_file_descriptor f ], [])
          | Field_pad { pad; serialize } ->
-             ([ Elaboratetree.Field_pad { pad; serialize } ], [])
+             ([ Hir.Field_pad { pad; serialize } ], [])
          | Field_list { name; type_; length } ->
              ( [
-                 Elaboratetree.Field_list
+                 Hir.Field_list
                    {
                      name;
                      type_ = conv_field_type type_;
@@ -511,7 +475,7 @@ let resolve_allowed_event xcbs
       | Parsetree.Event { name; number; _ }
       | Parsetree.Event_copy { name; ev_number = number; _ }
         when number = ev_number ->
-          Some Elaboratetree.{ id_module; id_name = name }
+          Some Hir.{ id_module; id_name = name }
       | _ -> None)
   in
   let file_name, declarations = find_module_by_extension_name xcbs ae_module in
@@ -534,7 +498,7 @@ let split_enums name enum_items =
           | _ -> failwith "unexpected")
         enum_items
     in
-    Elaboratetree.Enum { name; items }
+    Hir.Enum { name; items }
   else
     let items =
       List.filter_map
@@ -548,42 +512,38 @@ let split_enums name enum_items =
     in
     let additional_values =
       match additional_values with
-      | [ (_, 0L) ] -> Elaboratetree.None_value
+      | [ (_, 0L) ] -> Hir.None_value
       | _ -> Additional_values additional_values
     in
-    Elaboratetree.Mask { name; items; additional_values }
+    Hir.Mask { name; items; additional_values }
 
-let variant_to_decl (name, items) = Elaboratetree.Variant { name; items }
+let variant_to_decl (name, items) = Hir.Variant { name; items }
 
 let in_declarations (curr_module, xcbs) decls =
   decls
   |> List.filter (function Parsetree.Import _ -> false | _ -> true)
   |> List.map (function
        | Parsetree.Xid name ->
-           [ Elaboratetree.(Type_alias { name; type_ = Type_primitive Xid }) ]
+           [ Hir.(Type_alias { name; type_ = Type_primitive Xid }) ]
        | Typedef { name; type_ } ->
-           [ Elaboratetree.Type_alias { name; type_ = conv_type type_ } ]
+           [ Hir.Type_alias { name; type_ = conv_type type_ } ]
        | Xid_union { name; types } ->
-           Elaboratetree.
+           Hir.
              [
                Type_alias
                  { name; type_ = Type_union (List.map conv_ident types) };
              ]
        | Event_copy { name; event; ev_number = number } ->
-           [
-             Elaboratetree.Event_copy { name; event = conv_ident event; number };
-           ]
+           [ Hir.Event_copy { name; event = conv_ident event; number } ]
        | Error_copy { name; error; er_number = number } ->
-           [
-             Elaboratetree.Error_copy { name; error = conv_ident error; number };
-           ]
+           [ Hir.Error_copy { name; error = conv_ident error; number } ]
        | Event_struct { name; allowed_events } ->
            let events =
              allowed_events
              |> List.map (resolve_allowed_event xcbs)
              |> List.flatten
            in
-           [ Elaboratetree.Event_struct { name; events } ]
+           [ Hir.Event_struct { name; events } ]
        | Enum { name; items; doc = _ } -> [ split_enums name items ]
        | Import _ | Union _ ->
            failwith "imports and unions should already have been pruned"
@@ -594,7 +554,7 @@ let in_declarations (curr_module, xcbs) decls =
            in
            List.map variant_to_decl variants
            @ [
-               Elaboratetree.Event
+               Hir.Event
                  {
                    name;
                    number;
@@ -609,13 +569,12 @@ let in_declarations (curr_module, xcbs) decls =
              enum_switches_to_variants (curr_module, xcbs) name fields
            in
            List.map variant_to_decl variants
-           @ [ Elaboratetree.Error { name; number; fields } ]
+           @ [ Hir.Error { name; number; fields } ]
        | Struct { name; fields } ->
            let fields, variants =
              enum_switches_to_variants (curr_module, xcbs) name fields
            in
-           List.map variant_to_decl variants
-           @ [ Elaboratetree.Struct { name; fields } ]
+           List.map variant_to_decl variants @ [ Hir.Struct { name; fields } ]
        | Request
            {
              name;
@@ -635,7 +594,7 @@ let in_declarations (curr_module, xcbs) decls =
            List.map variant_to_decl variants
            @ List.map variant_to_decl reply_variants
            @ [
-               Elaboratetree.Request
+               Hir.Request
                  {
                    name;
                    opcode;
@@ -651,18 +610,17 @@ let in_declarations (curr_module, xcbs) decls =
            in
            List.map variant_to_decl variants
            @ [
-               Elaboratetree.Request
+               Hir.Request
                  { name; opcode; combine_adjacent; fields; reply = None };
              ])
   |> List.flatten
   |> List.fold_left
        (fun acc -> function
-         | Elaboratetree.Variant { name; _ } as item ->
+         | Hir.Variant { name; _ } as item ->
              if
                List.exists
                  (function
-                   | Elaboratetree.Variant { name = other_name; _ } ->
-                       name = other_name
+                   | Hir.Variant { name = other_name; _ } -> name = other_name
                    | _ -> false)
                  acc
              then acc
@@ -674,20 +632,20 @@ let in_declarations (curr_module, xcbs) decls =
 (* Fix an allowed_alt_enum that actually refers to a mask.
    TODO is this correct? *)
 let fix_modifier_mask = function
-  | Elaboratetree.Struct { name = "GrabModifierInfo"; fields } ->
-      Elaboratetree.Struct
+  | Hir.Struct { name = "GrabModifierInfo"; fields } ->
+      Hir.Struct
         {
           name = "GrabModifierInfo";
           fields =
             List.map
               (function
-                | Elaboratetree.Field
+                | Hir.Field
                     {
                       name = "modifiers";
                       type_ =
                         { ft_allowed = Some (Allowed_alt_enum mask); _ } as t;
                     } ->
-                    Elaboratetree.Field
+                    Hir.Field
                       {
                         name = "modifiers";
                         type_ =
@@ -700,17 +658,7 @@ let fix_modifier_mask = function
 
 let in_xcb xcbs = function
   | Parsetree.Core declarations ->
-      Elaboratetree.Core
-        (in_declarations ("xproto", xcbs) declarations
-        |> fix_declaration_order
-             [
-               (`Enum "StackMode", `Event "ConfigureRequest");
-               (`Enum "Pixmap", `Request "CreateWindow");
-               (`Enum "Cursor", `Request "CreateWindow");
-               (`Enum "AccessControl", `Request "ListHosts");
-               (`Enum "Font", `Request "CreateGC");
-               (`Mask "ConfigWindow", `Event "ConfigureRequest");
-             ])
+      Hir.Core (in_declarations ("xproto", xcbs) declarations)
   | Extension { name; file_name; query_name; multiword; version; declarations }
     ->
       let imports =
@@ -722,7 +670,7 @@ let in_xcb xcbs = function
         if file_name = "xinput" then List.map fix_modifier_mask declarations
         else declarations
       in
-      Elaboratetree.Extension
+      Hir.Extension
         {
           name;
           file_name;

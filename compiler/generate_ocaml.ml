@@ -1,4 +1,4 @@
-open Elaboratetree
+open Hir
 module Ident = Casing.OCaml
 
 module Ctx : sig

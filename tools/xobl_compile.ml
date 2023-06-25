@@ -24,13 +24,13 @@ let sort_topological (nodes : (string * string list) list) =
 let sort_xcbs xcbs =
   xcbs
   |> List.map (function
-       | Xobl_compiler__Elaboratetree.Core _ -> ("xproto", [])
+       | Xobl_compiler__Hir.Core _ -> ("xproto", [])
        | Extension { file_name; imports; _ } -> (file_name, imports))
   |> sort_topological
   |> List.map (fun name ->
          xcbs
          |> List.find (function
-              | Xobl_compiler__Elaboratetree.Core _ when name = "xproto" -> true
+              | Xobl_compiler__Hir.Core _ when name = "xproto" -> true
               | Extension { file_name; _ } when file_name = name -> true
               | _ -> false))
 
