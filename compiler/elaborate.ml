@@ -32,4 +32,8 @@ let do_stuff xcbs = function
         Pass_declaration_order.fix_xproto_declaration_order declarations
       in
       Elaborate_masks.in_xcb xcbs (Parsetree.Core declarations)
-  | extension -> Elaborate_masks.in_xcb xcbs extension
+  | extension ->
+      let extension =
+        Pass_xinput_modifier_mask.fix_xinput_modifier_mask extension
+      in
+      Elaborate_masks.in_xcb xcbs extension

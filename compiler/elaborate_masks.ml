@@ -629,33 +629,6 @@ let in_declarations (curr_module, xcbs) decls =
        []
   |> List.rev
 
-(* Fix an allowed_alt_enum that actually refers to a mask.
-   TODO is this correct? *)
-let fix_modifier_mask = function
-  | Hir.Struct { name = "GrabModifierInfo"; fields } ->
-      Hir.Struct
-        {
-          name = "GrabModifierInfo";
-          fields =
-            List.map
-              (function
-                | Hir.Field
-                    {
-                      name = "modifiers";
-                      type_ =
-                        { ft_allowed = Some (Allowed_alt_enum mask); _ } as t;
-                    } ->
-                    Hir.Field
-                      {
-                        name = "modifiers";
-                        type_ =
-                          { t with ft_allowed = Some (Allowed_alt_mask mask) };
-                      }
-                | item -> item)
-              fields;
-        }
-  | item -> item
-
 let in_xcb xcbs = function
   | Parsetree.Core declarations ->
       Hir.Core (in_declarations ("xproto", xcbs) declarations)
@@ -666,10 +639,6 @@ let in_xcb xcbs = function
         |> List.filter_map (function Parsetree.Import i -> Some i | _ -> None)
       in
       let declarations = in_declarations (file_name, xcbs) declarations in
-      let declarations =
-        if file_name = "xinput" then List.map fix_modifier_mask declarations
-        else declarations
-      in
       Hir.Extension
         {
           name;
