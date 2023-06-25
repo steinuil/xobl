@@ -38,9 +38,7 @@ let main (conn : Connection.connection) =
   let* _ = Connection.write conn buf in
 
   let buf = Bytes.make 4 '\x00' in
-  let len =
-    Xproto.encode_get_input_focus buf ~at:0 |> Option.get
-  in
+  let len = Xproto.encode_get_input_focus buf ~at:0 |> Option.get in
   let* () = Lwt_io.printf "MapWindow(len=%d): %s\n" len (Xobl.Codec.hex buf) in
   let* _ = Connection.write conn buf in
 

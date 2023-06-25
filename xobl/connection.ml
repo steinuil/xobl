@@ -153,6 +153,5 @@ let check_for_error conn =
   let buf = Bytes.make 4 '\x00' in
   let _ = Xproto.encode_get_input_focus buf ~at:0 |> Option.get in
   let* _ = write conn buf in
-  (** TODO read response *)
+  (* TODO read response *)
   Lwt.return_unit
-  

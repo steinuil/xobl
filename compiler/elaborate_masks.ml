@@ -21,33 +21,19 @@
 - figure out how to deal with masks
 *)
 
+open Ext
+
 (* This is a hack to avoid having to topologically sort the declarations.
    The Right Thing(tm) would be to have a list that goes through all the
    declarations and checks if all the types referenced throughout were
    declared before the current one, and if there's any move them before
    the current one and go back to check them too. *)
 let fix_declaration_order fixes decls =
-  let list_remove f l =
-    let rec loop acc = function
-      | [] -> invalid_arg "l"
-      | item :: rest when f item -> (item, List.rev acc @ rest)
-      | item :: rest -> loop (item :: acc) rest
-    in
-    loop [] l
-  in
-  let list_splice ~item f l =
-    let rec loop acc = function
-      | [] -> invalid_arg "l"
-      | curr :: _ as rest when f curr -> List.rev acc @ [ item ] @ rest
-      | curr :: rest -> loop (curr :: acc) rest
-    in
-    loop [] l
-  in
   List.fold_left
     (fun decls (enum, before) ->
       let decl, decls =
-        list_remove
-          (fun d ->
+        ListExt.find_remove
+          ~pred:(fun d ->
             match (d, enum) with
             | Elaboratetree.Enum { name; _ }, `Enum other_name
             | Mask { name; _ }, `Mask other_name ->
@@ -55,8 +41,8 @@ let fix_declaration_order fixes decls =
             | _ -> false)
           decls
       in
-      list_splice ~item:decl
-        (fun d ->
+      ListExt.insert_before ~item:decl
+        ~pred:(fun d ->
           match (d, before) with
           | Elaboratetree.Event { name; _ }, `Event other_name
           | Request { name; _ }, `Request other_name ->
@@ -601,8 +587,8 @@ let in_declarations (curr_module, xcbs) decls =
        | Enum { name; items; doc = _ } -> [ split_enums name items ]
        | Import _ | Union _ ->
            failwith "imports and unions should already have been pruned"
-       | Parsetree.Event
-           { name; number; is_generic; no_sequence_number; fields; doc = _ } ->
+       | Event { name; number; is_generic; no_sequence_number; fields; doc = _ }
+         ->
            let fields, variants =
              enum_switches_to_variants (curr_module, xcbs) name fields
            in
@@ -618,19 +604,19 @@ let in_declarations (curr_module, xcbs) decls =
                    fields;
                  };
              ]
-       | Parsetree.Error { name; number; fields } ->
+       | Error { name; number; fields } ->
            let fields, variants =
              enum_switches_to_variants (curr_module, xcbs) name fields
            in
            List.map variant_to_decl variants
            @ [ Elaboratetree.Error { name; number; fields } ]
-       | Parsetree.Struct { name; fields } ->
+       | Struct { name; fields } ->
            let fields, variants =
              enum_switches_to_variants (curr_module, xcbs) name fields
            in
            List.map variant_to_decl variants
            @ [ Elaboratetree.Struct { name; fields } ]
-       | Parsetree.Request
+       | Request
            {
              name;
              opcode;
@@ -658,7 +644,7 @@ let in_declarations (curr_module, xcbs) decls =
                    reply = Some reply_fields;
                  };
              ]
-       | Parsetree.Request
+       | Request
            { name; opcode; combine_adjacent; fields; reply = None; doc = _ } ->
            let fields, variants =
              enum_switches_to_variants (curr_module, xcbs) name fields
