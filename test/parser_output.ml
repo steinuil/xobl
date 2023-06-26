@@ -35,9 +35,9 @@ let modules =
 
 let parse_module m =
   let fname = Printf.sprintf "../xml-xcb/%s.xml" m in
-  In_channel.with_open_text fname (fun inp ->
-      Xobl_compiler.Parser.parse (`Channel inp))
-  |> Result.get_ok |> Xobl_compiler.Parsetree.sexp_of_xcb
-  |> Sexplib.Sexp.to_string_hum |> print_endline
+  Xobl_compiler.Parser.parse_file fname |> Result.get_ok
 
-let () = List.iter parse_module modules
+let () =
+  ListLabels.iter modules ~f:(fun m ->
+      parse_module m |> Xobl_compiler.Parsetree.sexp_of_xcb
+      |> Sexplib.Sexp.to_string_hum |> print_endline)

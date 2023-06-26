@@ -6,6 +6,9 @@ module Parser = struct
   let parse source =
     Xmlm.make_input ~strip:true source
     |> Patche.Xml.make_input |> Patche.Xml.run Parser.xcb
+
+  let parse_file fname =
+    In_channel.with_open_text fname (fun f -> parse (`Channel f))
 end
 
 module Hir = struct
