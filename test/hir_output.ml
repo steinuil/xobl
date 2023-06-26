@@ -24,7 +24,7 @@ let modules =
     "xfixes";
     "xinerama";
     "xinput";
-    "xkb";
+    (* "xkb"; *)
     "xprint";
     "xproto";
     "xselinux";
@@ -35,9 +35,12 @@ let modules =
 
 let parse_module m =
   let fname = Printf.sprintf "../xml-xcb/%s.xml" m in
-  In_channel.with_open_text fname (fun inp ->
-      Xobl_compiler.Parser.parse (`Channel inp))
-  |> Result.get_ok |> Xobl_compiler.Parsetree.sexp_of_xcb
-  |> Sexplib.Sexp.to_string_hum |> print_endline
+  In_channel.with_open_text fname (fun f ->
+      Xobl_compiler.Parser.parse (`Channel f))
+  |> Result.get_ok
 
-let () = List.iter parse_module modules
+let () =
+  modules |> List.map parse_module |> Xobl_compiler.Hir.of_parsetree
+  |> List.iter (fun xcb ->
+         Xobl_compiler.Hir.sexp_of_xcb xcb
+         |> Sexplib.Sexp.to_string_hum |> print_endline)

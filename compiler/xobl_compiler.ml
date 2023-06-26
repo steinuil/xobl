@@ -1,3 +1,5 @@
+module Parsetree = Parsetree
+
 module Parser = struct
   type error = Parser_utils.error
 
@@ -6,6 +8,12 @@ module Parser = struct
     |> Patche.Xml.make_input |> Patche.Xml.run Parser.xcb
 end
 
-module Hir = Hir
-module Elaborate = Elaborate
-module Parsetree = Parsetree
+module Hir = struct
+  include Hir
+
+  let of_parsetree xcbs =
+    let xcbs = Pass_resolve_idents.resolve xcbs in
+    let xcbs = List.map Pass_remove_unions.unions_to_switch xcbs in
+    let xcbs = List.map Pass_fixes.apply_fixes xcbs in
+    List.map (Compile_hir.compile_hir xcbs) xcbs
+end

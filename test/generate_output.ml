@@ -34,14 +34,10 @@ let modules =
   ]
 
 let parse_module m =
-  let f = open_in (Printf.sprintf "../xml-xcb/%s.xml" m) in
-  try
-    let m = Xobl_compiler.Parser.parse (`Channel f) |> Result.get_ok in
-    close_in f;
-    m
-  with exn ->
-    close_in f;
-    raise exn
+  let fname = Printf.sprintf "../xml-xcb/%s.xml" m in
+  In_channel.with_open_text fname (fun f ->
+      Xobl_compiler.Parser.parse (`Channel f))
+  |> Result.get_ok
 
 let sort_topological (nodes : (string * string list) list) =
   let rec dfs out (node, dependencies) =
@@ -70,11 +66,6 @@ let sort_xcbs xcbs =
               | _ -> false))
 
 let () =
-  let xcbs =
-    modules |> List.map parse_module
-    |> List.map Xobl_compiler.Elaborate.unions_to_switches
-    |> Xobl_compiler.Elaborate.resolve_idents
-  in
-  List.map (Xobl_compiler.Elaborate.do_stuff xcbs) xcbs
+  modules |> List.map parse_module |> Xobl_compiler.Hir.of_parsetree
   |> sort_xcbs
   |> Xobl_compiler__.Generate_ocaml.gen stdout

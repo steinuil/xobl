@@ -1,12 +1,6 @@
 let parse_module m =
-  let f = open_in m in
-  try
-    let m = Xobl_compiler.Parser.parse (`Channel f) |> Result.get_ok in
-    close_in f;
-    m
-  with exn ->
-    close_in f;
-    raise exn
+  In_channel.with_open_text m (fun f -> Xobl_compiler.Parser.parse (`Channel f))
+  |> Result.get_ok
 
 let sort_topological (nodes : (string * string list) list) =
   let rec dfs out (node, dependencies) =
@@ -36,13 +30,11 @@ let sort_xcbs xcbs =
 
 let () =
   let m = Sys.argv.(1) |> parse_module in
-  let x = Xobl_compiler.Elaborate.unions_to_switches m in
-  let xcb = Xobl_compiler.Elaborate.resolve_idents [ x ] in
-  let xcb = List.map (Xobl_compiler.Elaborate.do_stuff xcb) xcb in
-  let xcb = sort_xcbs xcb in
+  let xcbs = Xobl_compiler.Hir.of_parsetree [ m ] in
+  let xcbs = sort_xcbs xcbs in
 
   let out = open_out Sys.argv.(2) in
   output_string out "[@@@warning \"-27\"]\n\n";
   output_string out "[@@@warning \"-11\"]\n\n";
-  output_string out "open Codec\n\n";
-  Xobl_compiler__.Generate_ocaml.gen out xcb
+  output_string out "open Codec\n";
+  Xobl_compiler__.Generate_ocaml.gen out xcbs
