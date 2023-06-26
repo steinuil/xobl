@@ -28,4 +28,4 @@ let resolve_idents = Pass_resolve_idents.resolve
 
 let do_stuff xcbs xcb =
   let xcb = Pass_fixes.apply_fixes xcb in
-  Elaborate_masks.in_xcb xcbs xcb
+  Compile_hir.compile_hir xcbs xcb

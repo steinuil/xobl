@@ -4,8 +4,9 @@ The X11 OCaml Bindings Library. A Pure OCaml implementation of the X11 protocol.
 
 ## TODO
 
-- Tweaks to Elaborate
+- Tweaks to HIR
   - [ ] GetProperty reply: remove value_len. It's left in because the length field is calculated using both value_len and format.
+  - [ ] prune unused enums and masks after converting them to variants and optional fields.
 
 ## Documentation
 

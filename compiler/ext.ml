@@ -24,6 +24,8 @@ module ListExt = struct
       | curr :: rest -> splice' (curr :: acc) rest
     in
     splice' [] list
+
+  let find_map_exn ~f list = List.find_map f list |> Option.get
 end
 
 module SexpExt = struct
