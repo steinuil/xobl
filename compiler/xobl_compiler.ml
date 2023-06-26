@@ -19,4 +19,6 @@ module Hir = struct
     let xcbs = List.map Pass_remove_unions.unions_to_switch xcbs in
     let xcbs = List.map Pass_fixes.apply_fixes xcbs in
     List.map (Compile_hir.compile_hir xcbs) xcbs
+
+  let sort = Sort_modules.sort_hir
 end

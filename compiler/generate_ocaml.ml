@@ -807,18 +807,17 @@ let gen_declaration ctx out = function
         (list_sep " | " (gen_event_struct_field ctx))
         events
 
-let gen_xcb xcbs out = function
+let gen_xcb xcbs out xcb =
+  output_string out "[@@@warning \"-27\"]\n";
+  output_string out "[@@@warning \"-11\"]\n";
+  output_string out "open Codec\n";
+  output_string out "open Sexplib.Conv\n";
+  match xcb with
   | Core decls ->
-      (* output_string out "module[@warning \"-27,-11\"] Xproto = struct\n"; *)
-      output_string out "open Sexplib.Conv\n\n";
       let ctx = Ctx.{ current_module = "xproto"; xcbs } in
       (list_sep "\n" (gen_declaration ctx)) out decls
-      (* output_string out "\nend\n" *)
   | Extension { declarations; name = _; file_name; _ } ->
-      Printf.fprintf out "module[@warning \"-27\"] %s = struct\n"
-        (String.capitalize_ascii file_name);
       let ctx = Ctx.{ current_module = file_name; xcbs } in
-      (list_sep "\n" (gen_declaration ctx)) out declarations;
-      output_string out "\nend\n"
+      (list_sep "\n" (gen_declaration ctx)) out declarations
 
 let gen out xcbs = List.iter (gen_xcb xcbs out) xcbs

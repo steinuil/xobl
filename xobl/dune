@@ -12,4 +12,4 @@
  (action
   (chdir
    %{workspace_root}
-   (run %{bin:xobl-compile} %{deps} %{target}))))
+   (run %{bin:xobl-compile} --out-dir xobl %{deps}))))
