@@ -245,7 +245,7 @@ let with_variants v t =
 
 type variant_name_cache = {
   v_by_switch : (string * string) list;
-  v_by_cond : (string * string) list;
+  switch_by_cond : (string * string) list;
 }
 
 type optional_fields_cache = {
@@ -260,6 +260,13 @@ type conv_field_output = {
 
 let mk_list f = [ f ]
 
+(** Switches that have a cond of = are turned into variant fields.
+    To do this we find the enum they use to switch on and create
+    a variant type where each case contains the fields declared in the switch.
+    Equality switches can be nested, so [conv_variant_field] has to
+    be mutually recursive with [conv_fields] and return a list of variant
+    types to be added to the list of top-level declarations along with
+    the switch field info. *)
 let rec conv_variant_field ~cond ~cases fields (curr_module, xcbs) =
   let enum =
     ListExt.find_map_exn fields ~f:(function
@@ -293,6 +300,11 @@ let rec conv_variant_field ~cond ~cases fields (curr_module, xcbs) =
   let variant_type = { name = enum.id_name; items = variant_items } in
   (enum.id_name, variant_type :: List.flatten variant_types)
 
+(** In summary:
+    - detect inferrable list fields
+    - turn equality switches into variant fields and types
+    - turn & switches into optional fields
+    - convert the rest of the AST to Hir types *)
 and conv_fields fields (curr_module, xcbs) =
   let lists, _ = collect_invertible_lists fields in
   let switches =
@@ -318,11 +330,12 @@ and conv_fields fields (curr_module, xcbs) =
   in
   let variants, variant_types = List.split variants in
   let variants =
-    ListLabels.fold_left variants ~init:{ v_by_switch = []; v_by_cond = [] }
+    ListLabels.fold_left variants
+      ~init:{ v_by_switch = []; switch_by_cond = [] }
       ~f:(fun acc (switch, cond, variant_name) ->
         {
           v_by_switch = (switch, variant_name) :: acc.v_by_switch;
-          v_by_cond = (cond, switch) :: acc.v_by_cond;
+          switch_by_cond = (cond, switch) :: acc.switch_by_cond;
         })
   in
   let optionals =
@@ -371,8 +384,8 @@ and conv_fields fields (curr_module, xcbs) =
           |> mk_list
       (* Variant tag *)
       | Field { name; type_ = { ft_type; _ } }
-        when List.mem_assoc name variants.v_by_cond ->
-          let field_name = List.assoc name variants.v_by_cond in
+        when List.mem_assoc name variants.switch_by_cond ->
+          let field_name = List.assoc name variants.switch_by_cond in
           Hir.Field_variant_tag
             { variant = field_name; type_ = conv_type ft_type }
           |> mk_list
