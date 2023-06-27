@@ -15,3 +15,9 @@
  (modules window_manager)
  (public_name window-manager)
  (libraries xobl lwt.unix))
+
+(executable
+ (name xeyes)
+ (modules xeyes)
+ (public_name xeyes)
+ (libraries xobl lwt.unix))

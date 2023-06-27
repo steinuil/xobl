@@ -5,7 +5,13 @@ let ( let* ) = Lwt.bind
 let rec read_loop (conn : Connection.connection) =
   let* buf = Connection.read conn in
   match buf with
-  | Some buf ->
+  | Some (`Error buf) ->
+      let* _ = Lwt_io.printf "Response: %s\n" (Xobl.Codec.hex buf) in
+      read_loop conn
+  | Some (`Event buf) ->
+      let* _ = Lwt_io.printf "Response: %s\n" (Xobl.Codec.hex buf) in
+      read_loop conn
+  | Some (`Reply buf) ->
       let* _ = Lwt_io.printf "Response: %s\n" (Xobl.Codec.hex buf) in
       read_loop conn
   | None -> Lwt.return_unit

@@ -62,18 +62,18 @@ let read_response_from sock =
   else
     let buf = Bytes.sub buf 0 len in
     match Bytes.get buf 0 with
-    | '\x00' (* error *) -> Lwt.return (Some buf)
+    | '\x00' (* error *) -> Lwt.return (Some (`Error buf))
     | '\x01' (* reply *) ->
         let additional_data_length = Bytes.get_int32_le buf 4 |> Int32.to_int in
-        if additional_data_length < 1 then Lwt.return (Some buf)
+        if additional_data_length < 1 then Lwt.return (Some (`Reply buf))
         else
           let whole_buf = Bytes.create (32 + (additional_data_length * 4)) in
           Bytes.blit buf 0 whole_buf 0 8;
           let* _ =
             Lwt_unix.read sock whole_buf 32 (additional_data_length * 4)
           in
-          Lwt.return (Some whole_buf)
-    | _ (* event *) -> Lwt.return (Some buf)
+          Lwt.return (Some (`Reply whole_buf))
+    | _ (* event *) -> Lwt.return (Some (`Event buf))
 
 let pad n = (if n = 0 then 0 else ((n - 1) lsr 2) + 1) * 4
 
