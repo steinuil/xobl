@@ -42,12 +42,11 @@ let eye_position ~sclera ~pupil ~center ~mouse =
     ~height:(Float.to_int sclera.h)
 
 let connect () =
-  let display =
+  let Display_name.{ hostname; display; screen } =
     Option.bind (Sys.getenv_opt "DISPLAY") Display_name.parse
     |> Option.value ~default:Display_name.default
   in
-  let Display_name.{ hostname; display; _ } = display in
-  Connection.open_display ~hostname ~display ()
+  Connection.open_display ~hostname ~display ~screen ()
 
 let main (conn : Connection.connection) =
   let queued_events = ref [] in
@@ -74,7 +73,7 @@ let main (conn : Connection.connection) =
     loop ()
   in
 
-  let root = List.hd conn.display_info.roots in
+  let root = Connection.screen conn in
 
   let wid = Connection.Xid_seed.generate conn.xid_seed |> Int32.to_int in
 

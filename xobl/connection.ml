@@ -101,9 +101,10 @@ type connection = {
   display_info : Xproto.setup;
   xid_seed : Xid_seed.seed;
   mutable sequence_number : int;
+  screen : int;
 }
 
-let open_display ~hostname ?display () =
+let open_display ~hostname ?display ?(screen = 0) () =
   let* domain, address, (xauth_name, xauth_data) =
     get_socket_params hostname ~display
   in
@@ -133,8 +134,10 @@ let open_display ~hostname ?display () =
           ~base:(Int32.of_int display_info.resource_id_base)
           ~mask:(Int32.of_int display_info.resource_id_mask)
       in
-      Lwt.return { socket; display_info; xid_seed; sequence_number = 1 }
+      Lwt.return { socket; display_info; xid_seed; sequence_number = 1; screen }
   | _ -> failwith "connection failure"
+
+let screen conn = List.nth conn.display_info.roots conn.screen
 
 let read conn =
   let* () = Lwt_unix.wait_read conn.socket in
