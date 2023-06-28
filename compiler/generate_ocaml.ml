@@ -580,7 +580,7 @@ let gen_encode_arg_fields ctx opcode out fields =
   output_string out
     "\n\
      (* write request length *)\n\
-     let* _ = encode_uint16 buf (at / 4) ~at:(orig + 2) in\n";
+     let* _ = encode_uint16 buf ((at - orig) / 4) ~at:(orig + 2) in\n";
   output_string out "Some at"
 
 let gen_size_of_fields ctx out fields =
