@@ -7,6 +7,8 @@ The X11 OCaml Bindings Library. A Pure OCaml implementation of the X11 protocol.
 - Tweaks to HIR
   - [ ] GetProperty reply: remove value_len. It's left in because the length field is calculated using both value_len and format.
   - [ ] prune unused enums and masks after converting them to variants and optional fields.
+  - [ ] fix QueryTextExtents
+    - there is a field that depends on the length of the whole request(!) so we should probably handle it.
 - Bindings
   - [ ] come up with a better API for sending multiple requests at once.
     - how do we encode stuff which needs a reply?

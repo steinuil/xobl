@@ -163,8 +163,10 @@ let main (conn : Connection.connection) =
         let* () = draw_eyes !mouse ~unit_x ~unit_y in
         Lwt.return_unit
     | 0x06 ->
-        let x = Bytes.get_int16_le buf 24 in
-        let y = Bytes.get_int16_le buf 26 in
+        let ev, _ = Xproto.decode_motion_notify_event buf ~at:0 |> Option.get in
+        let x = ev.event_x in
+        let y = ev.event_y in
+
         mouse := { x = x - !win_pos.x; y = y - !win_pos.y };
         let unit_x = Float.of_int !width /. 20. in
         let unit_y = Float.of_int !height /. 10. in
@@ -172,10 +174,13 @@ let main (conn : Connection.connection) =
         let* () = draw_eyes !mouse ~unit_x ~unit_y in
         Lwt.return_unit
     | 0x16 ->
-        let x = Bytes.get_int16_le buf 16 in
-        let y = Bytes.get_int16_le buf 18 in
-        let w = Bytes.get_int16_le buf 20 in
-        let h = Bytes.get_int16_le buf 22 in
+        let ev, _ =
+          Xproto.decode_configure_notify_event buf ~at:0 |> Option.get
+        in
+        let x = ev.x in
+        let y = ev.y in
+        let w = ev.width in
+        let h = ev.height in
         width := w;
         height := h;
         win_pos := { x; y };

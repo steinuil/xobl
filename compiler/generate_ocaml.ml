@@ -426,8 +426,22 @@ let gen_decode_field ctx _fields out = function
   | Field_list { name; type_; length = Some length } ->
       Printf.fprintf out "let* %s, at = let length = %a in %a length buf ~at in"
         (Ident.snake name) (gen_expr None) length (gen_decode_list ctx) type_
-  | Field_list { name; type_ = _; length = None } -> failwith name
-  | Field_expr _ | Field_variant _ | Field_variant_tag _ -> ()
+  | Field_list { name; type_ = _; length = None } ->
+      Printf.ksprintf failwith "decoding list field with length = None: %s" name
+  | Field_expr _ -> output_string out "(* field_expr *)"
+  | Field_variant_tag { variant; type_ } ->
+      Printf.fprintf out "let* %s, at = %a buf ~at in"
+        (Ident.snake variant ~suffix:"tag")
+        (gen_decode_type ctx) type_
+  | Field_variant { name; variant } ->
+      Printf.fprintf out "let* %s, at = %a %s buf ~at in" (Ident.snake name)
+        (gen_ident ctx)
+        {
+          variant with
+          id_name =
+            Ident.snake variant.id_name ~prefix:"decode" ~suffix:"variant";
+        }
+        (Ident.snake name ~suffix:"tag")
 
 let gen_encode_optional_mask_fields out fields =
   output_string out "[";
@@ -554,9 +568,28 @@ let name_of_field = function
 let gen_decode_fields ctx out fields =
   output_string out "let orig = at in ";
   list_sep "\n" (gen_decode_field ctx fields) out fields;
-  Printf.fprintf out "\nignore orig;\nSome ({ %s }, at)"
-    (List.filter_map name_of_field fields
-    |> List.map Ident.snake |> String.concat "; ")
+  if List.length (List.filter_map name_of_field fields) = 0 then
+    Printf.fprintf out "\nignore orig;\nSome ((), at)"
+  else
+    Printf.fprintf out "\nignore orig;\nSome ({ %s }, at)"
+      (List.filter_map name_of_field fields
+      |> List.map Ident.snake |> String.concat "; ")
+
+let gen_decode_event_fields ctx out fields =
+  output_string out "let orig = at in ";
+  output_string out "let at = at + 1 in ";
+  (match fields with
+  | first :: rest ->
+      gen_decode_field ctx [] out first;
+      output_string out " let* _sequence_number, at = decode_uint16 buf ~at in ";
+      list_sep " " (gen_decode_field ctx fields) out rest
+  | [] -> ());
+  if List.length (List.filter_map name_of_field fields) = 0 then
+    Printf.fprintf out "\nignore orig;\nSome ((), at)"
+  else
+    Printf.fprintf out "\nignore orig;\nSome ({ %s }, at)"
+      (List.filter_map name_of_field fields
+      |> List.map Ident.snake |> String.concat "; ")
 
 let gen_encode_fields ctx out fields =
   output_string out "let orig = at in ";
@@ -606,6 +639,13 @@ let gen_variant_item ctx out { vi_name; vi_tag = _; vi_fields } =
   Printf.fprintf out "%s of { %a}" (Ident.caml vi_name)
     (list (gen_field ctx))
     vi_fields
+
+let gen_decode_variant_item ctx out { vi_name; vi_tag; vi_fields } =
+  Printf.fprintf out "%Ld -> %a Some (%s { %a}, at)" vi_tag
+    (list_sep " " (gen_decode_field ctx []))
+    vi_fields (Ident.caml vi_name)
+    (list_sep "; " output_string)
+    (List.filter_map name_of_field vi_fields)
 
 let gen_named_arg ctx out = function
   | Field { name; type_ } ->
@@ -754,11 +794,32 @@ let gen_declaration ctx out = function
       Printf.fprintf out "type %s = %a [@@deriving sexp];;"
         (Ident.snake name ~suffix:"variant")
         (list_sep " | " (gen_variant_item ctx))
+        items;
+      Printf.fprintf out
+        "let %s tag buf ~at : (%s * int) option = match tag with %a | _ -> None"
+        (Ident.snake name ~prefix:"decode" ~suffix:"variant")
+        (Ident.snake name ~suffix:"variant")
+        (list_sep " | " (gen_decode_variant_item ctx))
         items
-  | Event { name; fields; _ } ->
+  | Event { name = "RedirectNotify" as name; fields; _ }
+  | Event { name = "KeyPress" as name; fields; _ }
+  | Event { name = "RawKeyPress" as name; fields; _ }
+  | Event { name = "ButtonPress" as name; fields; _ }
+  | Event { name = "RawButtonPress" as name; fields; _ }
+  | Event { name = "TouchBegin" as name; fields; _ }
+  | Event { name = "RawTouchBegin" as name; fields; _ } ->
       Printf.fprintf out "type %s = %a [@@deriving sexp];;"
         (Ident.snake name ~suffix:"event")
         (gen_fields ctx) fields
+  | Event { name; fields; _ } ->
+      Printf.fprintf out "type %s = %a [@@deriving sexp];;"
+        (Ident.snake name ~suffix:"event")
+        (gen_fields ctx) fields;
+      Printf.fprintf out "let %s buf ~at : (%s * int) option = %a;;\n"
+        (Ident.snake name ~prefix:"decode" ~suffix:"event")
+        (Ident.snake name ~suffix:"event")
+        (gen_decode_event_fields ctx)
+        fields
   | Error { name; fields; _ } ->
       Printf.fprintf out "type %s = %a [@@deriving sexp];;"
         (Ident.snake name ~suffix:"error")

@@ -966,6 +966,45 @@ type motion_notify_event = {
 }
 [@@deriving sexp]
 
+let decode_motion_notify_event buf ~at : (motion_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* detail, at =
+    decode_enum decode_char Char.code motion_enum_of_int buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at = decode_timestamp buf ~at in
+  let* root, at = decode_window buf ~at in
+  let* event, at = decode_window buf ~at in
+  let* child, at =
+    decode_alt_enum decode_window identity window_enum_of_int buf ~at
+  in
+  let* root_x, at = decode_int16 buf ~at in
+  let* root_y, at = decode_int16 buf ~at in
+  let* event_x, at = decode_int16 buf ~at in
+  let* event_y, at = decode_int16 buf ~at in
+  let* state, at =
+    decode_mask decode_uint16 Int64.of_int key_but_mask_mask_of_int64 buf ~at
+  in
+  let* same_screen, at = decode_bool buf ~at in
+  let at = at + 1 in
+  ignore orig;
+  Some
+    ( {
+        detail;
+        time;
+        root;
+        event;
+        child;
+        root_x;
+        root_y;
+        event_x;
+        event_y;
+        state;
+        same_screen;
+      },
+      at )
+
 type notify_detail_enum =
   [ `Ancestor
   | `Virtual
@@ -1034,6 +1073,48 @@ type enter_notify_event = {
 }
 [@@deriving sexp]
 
+let decode_enter_notify_event buf ~at : (enter_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* detail, at =
+    decode_enum decode_char Char.code notify_detail_enum_of_int buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at = decode_timestamp buf ~at in
+  let* root, at = decode_window buf ~at in
+  let* event, at = decode_window buf ~at in
+  let* child, at =
+    decode_alt_enum decode_window identity window_enum_of_int buf ~at
+  in
+  let* root_x, at = decode_int16 buf ~at in
+  let* root_y, at = decode_int16 buf ~at in
+  let* event_x, at = decode_int16 buf ~at in
+  let* event_y, at = decode_int16 buf ~at in
+  let* state, at =
+    decode_mask decode_uint16 Int64.of_int key_but_mask_mask_of_int64 buf ~at
+  in
+  let* mode, at =
+    decode_enum decode_char Char.code notify_mode_enum_of_int buf ~at
+  in
+  let* same_screen_focus, at = decode_char buf ~at in
+  ignore orig;
+  Some
+    ( {
+        detail;
+        time;
+        root;
+        event;
+        child;
+        root_x;
+        root_y;
+        event_x;
+        event_y;
+        state;
+        mode;
+        same_screen_focus;
+      },
+      at )
+
 type leave_notify_event = enter_notify_event [@@deriving sexp]
 
 type focus_in_event = {
@@ -1043,8 +1124,34 @@ type focus_in_event = {
 }
 [@@deriving sexp]
 
+let decode_focus_in_event buf ~at : (focus_in_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* detail, at =
+    decode_enum decode_char Char.code notify_detail_enum_of_int buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* event, at = decode_window buf ~at in
+  let* mode, at =
+    decode_enum decode_char Char.code notify_mode_enum_of_int buf ~at
+  in
+  let at = at + 3 in
+  ignore orig;
+  Some ({ detail; event; mode }, at)
+
 type focus_out_event = focus_in_event [@@deriving sexp]
 type keymap_notify_event = { keys : int list } [@@deriving sexp]
+
+let decode_keymap_notify_event buf ~at : (keymap_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* keys, at =
+    let length = 31 in
+    decode_list decode_uint8 length buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  ignore orig;
+  Some ({ keys }, at)
 
 type expose_event = {
   window : window;
@@ -1055,6 +1162,21 @@ type expose_event = {
   count : int;
 }
 [@@deriving sexp]
+
+let decode_expose_event buf ~at : (expose_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* window, at = decode_window buf ~at in
+  let* x, at = decode_uint16 buf ~at in
+  let* y, at = decode_uint16 buf ~at in
+  let* width, at = decode_uint16 buf ~at in
+  let* height, at = decode_uint16 buf ~at in
+  let* count, at = decode_uint16 buf ~at in
+  let at = at + 2 in
+  ignore orig;
+  Some ({ window; x; y; width; height; count }, at)
 
 type graphics_exposure_event = {
   drawable : drawable;
@@ -1068,12 +1190,42 @@ type graphics_exposure_event = {
 }
 [@@deriving sexp]
 
+let decode_graphics_exposure_event buf ~at :
+    (graphics_exposure_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* drawable, at = decode_drawable buf ~at in
+  let* x, at = decode_uint16 buf ~at in
+  let* y, at = decode_uint16 buf ~at in
+  let* width, at = decode_uint16 buf ~at in
+  let* height, at = decode_uint16 buf ~at in
+  let* minor_opcode, at = decode_uint16 buf ~at in
+  let* count, at = decode_uint16 buf ~at in
+  let* major_opcode, at = decode_uint8 buf ~at in
+  let at = at + 3 in
+  ignore orig;
+  Some ({ drawable; x; y; width; height; minor_opcode; count; major_opcode }, at)
+
 type no_exposure_event = {
   drawable : drawable;
   minor_opcode : int;
   major_opcode : int;
 }
 [@@deriving sexp]
+
+let decode_no_exposure_event buf ~at : (no_exposure_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* drawable, at = decode_drawable buf ~at in
+  let* minor_opcode, at = decode_uint16 buf ~at in
+  let* major_opcode, at = decode_uint8 buf ~at in
+  let at = at + 1 in
+  ignore orig;
+  Some ({ drawable; minor_opcode; major_opcode }, at)
 
 type visibility_enum = [ `Unobscured | `Partially_obscured | `Fully_obscured ]
 [@@deriving sexp]
@@ -1094,6 +1246,20 @@ let visibility_int_of_enum : visibility_enum -> int = function
 type visibility_notify_event = { window : window; state : visibility_enum }
 [@@deriving sexp]
 
+let decode_visibility_notify_event buf ~at :
+    (visibility_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* window, at = decode_window buf ~at in
+  let* state, at =
+    decode_enum decode_char Char.code visibility_enum_of_int buf ~at
+  in
+  let at = at + 3 in
+  ignore orig;
+  Some ({ window; state }, at)
+
 type create_notify_event = {
   parent : window;
   window : window;
@@ -1106,8 +1272,37 @@ type create_notify_event = {
 }
 [@@deriving sexp]
 
+let decode_create_notify_event buf ~at : (create_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* parent, at = decode_window buf ~at in
+  let* window, at = decode_window buf ~at in
+  let* x, at = decode_int16 buf ~at in
+  let* y, at = decode_int16 buf ~at in
+  let* width, at = decode_uint16 buf ~at in
+  let* height, at = decode_uint16 buf ~at in
+  let* border_width, at = decode_uint16 buf ~at in
+  let* override_redirect, at = decode_bool buf ~at in
+  let at = at + 1 in
+  ignore orig;
+  Some
+    ( { parent; window; x; y; width; height; border_width; override_redirect },
+      at )
+
 type destroy_notify_event = { event : window; window : window }
 [@@deriving sexp]
+
+let decode_destroy_notify_event buf ~at : (destroy_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* event, at = decode_window buf ~at in
+  let* window, at = decode_window buf ~at in
+  ignore orig;
+  Some ({ event; window }, at)
 
 type unmap_notify_event = {
   event : window;
@@ -1116,6 +1311,18 @@ type unmap_notify_event = {
 }
 [@@deriving sexp]
 
+let decode_unmap_notify_event buf ~at : (unmap_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* event, at = decode_window buf ~at in
+  let* window, at = decode_window buf ~at in
+  let* from_configure, at = decode_bool buf ~at in
+  let at = at + 3 in
+  ignore orig;
+  Some ({ event; window; from_configure }, at)
+
 type map_notify_event = {
   event : window;
   window : window;
@@ -1123,7 +1330,29 @@ type map_notify_event = {
 }
 [@@deriving sexp]
 
+let decode_map_notify_event buf ~at : (map_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* event, at = decode_window buf ~at in
+  let* window, at = decode_window buf ~at in
+  let* override_redirect, at = decode_bool buf ~at in
+  let at = at + 3 in
+  ignore orig;
+  Some ({ event; window; override_redirect }, at)
+
 type map_request_event = { parent : window; window : window } [@@deriving sexp]
+
+let decode_map_request_event buf ~at : (map_request_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* parent, at = decode_window buf ~at in
+  let* window, at = decode_window buf ~at in
+  ignore orig;
+  Some ({ parent; window }, at)
 
 type reparent_notify_event = {
   event : window;
@@ -1134,6 +1363,22 @@ type reparent_notify_event = {
   override_redirect : bool;
 }
 [@@deriving sexp]
+
+let decode_reparent_notify_event buf ~at : (reparent_notify_event * int) option
+    =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* event, at = decode_window buf ~at in
+  let* window, at = decode_window buf ~at in
+  let* parent, at = decode_window buf ~at in
+  let* x, at = decode_int16 buf ~at in
+  let* y, at = decode_int16 buf ~at in
+  let* override_redirect, at = decode_bool buf ~at in
+  let at = at + 3 in
+  ignore orig;
+  Some ({ event; window; parent; x; y; override_redirect }, at)
 
 type configure_notify_event = {
   event : window;
@@ -1147,6 +1392,39 @@ type configure_notify_event = {
   override_redirect : bool;
 }
 [@@deriving sexp]
+
+let decode_configure_notify_event buf ~at :
+    (configure_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* event, at = decode_window buf ~at in
+  let* window, at = decode_window buf ~at in
+  let* above_sibling, at =
+    decode_alt_enum decode_window identity window_enum_of_int buf ~at
+  in
+  let* x, at = decode_int16 buf ~at in
+  let* y, at = decode_int16 buf ~at in
+  let* width, at = decode_uint16 buf ~at in
+  let* height, at = decode_uint16 buf ~at in
+  let* border_width, at = decode_uint16 buf ~at in
+  let* override_redirect, at = decode_bool buf ~at in
+  let at = at + 1 in
+  ignore orig;
+  Some
+    ( {
+        event;
+        window;
+        above_sibling;
+        x;
+        y;
+        width;
+        height;
+        border_width;
+        override_redirect;
+      },
+      at )
 
 type stack_mode_enum = [ `Above | `Below | `Top_if | `Bottom_if | `Opposite ]
 [@@deriving sexp]
@@ -1211,6 +1489,43 @@ type configure_request_event = {
 }
 [@@deriving sexp]
 
+let decode_configure_request_event buf ~at :
+    (configure_request_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* stack_mode, at =
+    decode_enum decode_char Char.code stack_mode_enum_of_int buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* parent, at = decode_window buf ~at in
+  let* window, at = decode_window buf ~at in
+  let* sibling, at =
+    decode_alt_enum decode_window identity window_enum_of_int buf ~at
+  in
+  let* x, at = decode_int16 buf ~at in
+  let* y, at = decode_int16 buf ~at in
+  let* width, at = decode_uint16 buf ~at in
+  let* height, at = decode_uint16 buf ~at in
+  let* border_width, at = decode_uint16 buf ~at in
+  let* value_mask, at =
+    decode_mask decode_uint16 Int64.of_int config_window_mask_of_int64 buf ~at
+  in
+  ignore orig;
+  Some
+    ( {
+        stack_mode;
+        parent;
+        window;
+        sibling;
+        x;
+        y;
+        width;
+        height;
+        border_width;
+        value_mask;
+      },
+      at )
+
 type gravity_notify_event = {
   event : window;
   window : window;
@@ -1219,8 +1534,31 @@ type gravity_notify_event = {
 }
 [@@deriving sexp]
 
+let decode_gravity_notify_event buf ~at : (gravity_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* event, at = decode_window buf ~at in
+  let* window, at = decode_window buf ~at in
+  let* x, at = decode_int16 buf ~at in
+  let* y, at = decode_int16 buf ~at in
+  ignore orig;
+  Some ({ event; window; x; y }, at)
+
 type resize_request_event = { window : window; width : int; height : int }
 [@@deriving sexp]
+
+let decode_resize_request_event buf ~at : (resize_request_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* window, at = decode_window buf ~at in
+  let* width, at = decode_uint16 buf ~at in
+  let* height, at = decode_uint16 buf ~at in
+  ignore orig;
+  Some ({ window; width; height }, at)
 
 type place_enum = [ `On_top | `On_bottom ] [@@deriving sexp]
 
@@ -1241,6 +1579,22 @@ type circulate_notify_event = {
   place : place_enum;
 }
 [@@deriving sexp]
+
+let decode_circulate_notify_event buf ~at :
+    (circulate_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* event, at = decode_window buf ~at in
+  let* window, at = decode_window buf ~at in
+  let at = at + 4 in
+  let* place, at =
+    decode_enum decode_char Char.code place_enum_of_int buf ~at
+  in
+  let at = at + 3 in
+  ignore orig;
+  Some ({ event; window; place }, at)
 
 type circulate_request_event = circulate_notify_event [@@deriving sexp]
 type property_enum = [ `New_value | `Delete ] [@@deriving sexp]
@@ -1264,12 +1618,40 @@ type property_notify_event = {
 }
 [@@deriving sexp]
 
+let decode_property_notify_event buf ~at : (property_notify_event * int) option
+    =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* window, at = decode_window buf ~at in
+  let* atom, at = decode_atom buf ~at in
+  let* time, at = decode_timestamp buf ~at in
+  let* state, at =
+    decode_enum decode_char Char.code property_enum_of_int buf ~at
+  in
+  let at = at + 3 in
+  ignore orig;
+  Some ({ window; atom; time; state }, at)
+
 type selection_clear_event = {
   time : timestamp;
   owner : window;
   selection : atom;
 }
 [@@deriving sexp]
+
+let decode_selection_clear_event buf ~at : (selection_clear_event * int) option
+    =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at = decode_timestamp buf ~at in
+  let* owner, at = decode_window buf ~at in
+  let* selection, at = decode_atom buf ~at in
+  ignore orig;
+  Some ({ time; owner; selection }, at)
 
 type time_enum = [ `Current_time ] [@@deriving sexp]
 
@@ -1511,6 +1893,25 @@ type selection_request_event = {
 }
 [@@deriving sexp]
 
+let decode_selection_request_event buf ~at :
+    (selection_request_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at =
+    decode_alt_enum decode_timestamp identity time_enum_of_int buf ~at
+  in
+  let* owner, at = decode_window buf ~at in
+  let* requestor, at = decode_window buf ~at in
+  let* selection, at = decode_atom buf ~at in
+  let* target, at = decode_atom buf ~at in
+  let* property, at =
+    decode_alt_enum decode_atom identity atom_enum_of_int buf ~at
+  in
+  ignore orig;
+  Some ({ time; owner; requestor; selection; target; property }, at)
+
 type selection_notify_event = {
   time : time_enum alt_enum;
   requestor : window;
@@ -1519,6 +1920,24 @@ type selection_notify_event = {
   property : atom_enum alt_enum;
 }
 [@@deriving sexp]
+
+let decode_selection_notify_event buf ~at :
+    (selection_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at =
+    decode_alt_enum decode_timestamp identity time_enum_of_int buf ~at
+  in
+  let* requestor, at = decode_window buf ~at in
+  let* selection, at = decode_atom buf ~at in
+  let* target, at = decode_atom buf ~at in
+  let* property, at =
+    decode_alt_enum decode_atom identity atom_enum_of_int buf ~at
+  in
+  ignore orig;
+  Some ({ time; requestor; selection; target; property }, at)
 
 type colormap_state_enum = [ `Uninstalled | `Installed ] [@@deriving sexp]
 
@@ -1552,6 +1971,24 @@ type colormap_notify_event = {
 }
 [@@deriving sexp]
 
+let decode_colormap_notify_event buf ~at : (colormap_notify_event * int) option
+    =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* window, at = decode_window buf ~at in
+  let* colormap, at =
+    decode_alt_enum decode_colormap identity colormap_enum_of_int buf ~at
+  in
+  let* new_, at = decode_bool buf ~at in
+  let* state, at =
+    decode_enum decode_char Char.code colormap_state_enum_of_int buf ~at
+  in
+  let at = at + 2 in
+  ignore orig;
+  Some ({ window; colormap; new_; state }, at)
+
 type client_message_data_format_enum = [ `Data8 | `Data16 | `Data32 ]
 [@@deriving sexp]
 
@@ -1576,12 +2013,46 @@ type client_message_data_format_variant =
   | Data32 of { data32 : int list }
 [@@deriving sexp]
 
+let decode_client_message_data_format_variant tag buf ~at :
+    (client_message_data_format_variant * int) option =
+  match tag with
+  | 8 ->
+      let* data8, at =
+        let length = 20 in
+        decode_list decode_uint8 length buf ~at
+      in
+      Some (Data8 { data8 }, at)
+  | 16 ->
+      let* data16, at =
+        let length = 10 in
+        decode_list decode_uint16 length buf ~at
+      in
+      Some (Data16 { data16 }, at)
+  | 32 ->
+      let* data32, at =
+        let length = 5 in
+        decode_list decode_int32 length buf ~at
+      in
+      Some (Data32 { data32 }, at)
+  | _ -> None
+
 type client_message_event = {
   window : window;
   type_ : atom;
   data : client_message_data_format_variant;
 }
 [@@deriving sexp]
+
+let decode_client_message_event buf ~at : (client_message_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* data_tag, at = decode_uint8 buf ~at in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* window, at = decode_window buf ~at in
+  let* type_, at = decode_atom buf ~at in
+  let* data, at = decode_client_message_data_format_variant data_tag buf ~at in
+  ignore orig;
+  Some ({ window; type_; data }, at)
 
 type mapping_enum = [ `Modifier | `Keyboard | `Pointer ] [@@deriving sexp]
 
@@ -1605,7 +2076,29 @@ type mapping_notify_event = {
 }
 [@@deriving sexp]
 
+let decode_mapping_notify_event buf ~at : (mapping_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* request, at =
+    decode_enum decode_char Char.code mapping_enum_of_int buf ~at
+  in
+  let* first_keycode, at = decode_keycode buf ~at in
+  let* count, at = decode_uint8 buf ~at in
+  let at = at + 1 in
+  ignore orig;
+  Some ({ request; first_keycode; count }, at)
+
 type ge_generic_event = unit [@@deriving sexp]
+
+let decode_ge_generic_event buf ~at : (ge_generic_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 22 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  ignore orig;
+  Some ((), at)
 
 type request_error = { bad_value : int; minor_opcode : int; major_opcode : int }
 [@@deriving sexp]
@@ -7818,6 +8311,35 @@ type notify_event = {
 }
 [@@deriving sexp]
 
+let decode_notify_event buf ~at : (notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* shape_kind, at =
+    decode_enum decode_kind identity sk_enum_of_int buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* affected_window, at = Xproto.decode_window buf ~at in
+  let* extents_x, at = decode_int16 buf ~at in
+  let* extents_y, at = decode_int16 buf ~at in
+  let* extents_width, at = decode_uint16 buf ~at in
+  let* extents_height, at = decode_uint16 buf ~at in
+  let* server_time, at = Xproto.decode_timestamp buf ~at in
+  let* shaped, at = decode_bool buf ~at in
+  let at = at + 11 in
+  ignore orig;
+  Some
+    ( {
+        shape_kind;
+        affected_window;
+        extents_x;
+        extents_y;
+        extents_width;
+        extents_height;
+        server_time;
+        shaped;
+      },
+      at )
+
 type query_version_reply = { major_version : int; minor_version : int }
 [@@deriving sexp]
 
@@ -8221,6 +8743,24 @@ type selection_notify_event = {
 }
 [@@deriving sexp]
 
+let decode_selection_notify_event buf ~at :
+    (selection_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* subtype, at =
+    decode_enum decode_uint8 identity selection_event_enum_of_int buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* window, at = Xproto.decode_window buf ~at in
+  let* owner, at = Xproto.decode_window buf ~at in
+  let* selection, at = Xproto.decode_atom buf ~at in
+  let* timestamp, at = Xproto.decode_timestamp buf ~at in
+  let* selection_timestamp, at = Xproto.decode_timestamp buf ~at in
+  let at = at + 8 in
+  ignore orig;
+  Some
+    ({ subtype; window; owner; selection; timestamp; selection_timestamp }, at)
+
 let encode_select_selection_input ~(window : Xproto.window)
     ~(selection : Xproto.atom) ~(event_mask : selection_event_mask) buf ~at :
     int option =
@@ -8268,6 +8808,23 @@ type cursor_notify_event = {
   name : Xproto.atom_enum alt_enum;
 }
 [@@deriving sexp]
+
+let decode_cursor_notify_event buf ~at : (cursor_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* subtype, at =
+    decode_enum decode_uint8 identity cursor_notify_enum_of_int buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* window, at = Xproto.decode_window buf ~at in
+  let* cursor_serial, at = decode_int32 buf ~at in
+  let* timestamp, at = Xproto.decode_timestamp buf ~at in
+  let* name, at =
+    decode_alt_enum Xproto.decode_atom identity Xproto.atom_enum_of_int buf ~at
+  in
+  let at = at + 12 in
+  ignore orig;
+  Some ({ subtype; window; cursor_serial; timestamp; name }, at)
 
 let encode_select_cursor_input ~(window : Xproto.window)
     ~(event_mask : cursor_notify_mask) buf ~at : int option =
@@ -9184,6 +9741,21 @@ type notify_event = {
 }
 [@@deriving sexp]
 
+let decode_notify_event buf ~at : (notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* level, at =
+    decode_enum decode_uint8 identity report_level_enum_of_int buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* drawable, at = Xproto.decode_drawable buf ~at in
+  let* damage, at = decode_damage buf ~at in
+  let* timestamp, at = Xproto.decode_timestamp buf ~at in
+  let* area, at = Xproto.decode_rectangle buf ~at in
+  let* geometry, at = Xproto.decode_rectangle buf ~at in
+  ignore orig;
+  Some ({ level; drawable; damage; timestamp; area; geometry }, at)
+
 [@@@warning "-27"]
 [@@@warning "-11"]
 
@@ -9918,7 +10490,36 @@ type buffer_swap_complete_event = {
 }
 [@@deriving sexp]
 
+let decode_buffer_swap_complete_event buf ~at :
+    (buffer_swap_complete_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* event_type, at =
+    decode_enum decode_uint16 identity event_type_enum_of_int buf ~at
+  in
+  let at = at + 2 in
+  let* drawable, at = Xproto.decode_drawable buf ~at in
+  let* ust_hi, at = decode_int32 buf ~at in
+  let* ust_lo, at = decode_int32 buf ~at in
+  let* msc_hi, at = decode_int32 buf ~at in
+  let* msc_lo, at = decode_int32 buf ~at in
+  let* sbc, at = decode_int32 buf ~at in
+  ignore orig;
+  Some ({ event_type; drawable; ust_hi; ust_lo; msc_hi; msc_lo; sbc }, at)
+
 type invalidate_buffers_event = { drawable : Xproto.drawable } [@@deriving sexp]
+
+let decode_invalidate_buffers_event buf ~at :
+    (invalidate_buffers_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* drawable, at = Xproto.decode_drawable buf ~at in
+  ignore orig;
+  Some ({ drawable }, at)
 
 [@@@warning "-27"]
 [@@@warning "-11"]
@@ -10328,6 +10929,39 @@ type pbuffer_clobber_event = {
 }
 [@@deriving sexp]
 
+let decode_pbuffer_clobber_event buf ~at : (pbuffer_clobber_event * int) option
+    =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* event_type, at = decode_uint16 buf ~at in
+  let* draw_type, at = decode_uint16 buf ~at in
+  let* drawable, at = decode_drawable buf ~at in
+  let* b_mask, at = decode_int32 buf ~at in
+  let* aux_buffer, at = decode_uint16 buf ~at in
+  let* x, at = decode_uint16 buf ~at in
+  let* y, at = decode_uint16 buf ~at in
+  let* width, at = decode_uint16 buf ~at in
+  let* height, at = decode_uint16 buf ~at in
+  let* count, at = decode_uint16 buf ~at in
+  let at = at + 4 in
+  ignore orig;
+  Some
+    ( {
+        event_type;
+        draw_type;
+        drawable;
+        b_mask;
+        aux_buffer;
+        x;
+        y;
+        width;
+        height;
+        count;
+      },
+      at )
+
 type buffer_swap_complete_event = {
   event_type : int;
   drawable : drawable;
@@ -10338,6 +10972,23 @@ type buffer_swap_complete_event = {
   sbc : int;
 }
 [@@deriving sexp]
+
+let decode_buffer_swap_complete_event buf ~at :
+    (buffer_swap_complete_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* event_type, at = decode_uint16 buf ~at in
+  let at = at + 2 in
+  let* drawable, at = decode_drawable buf ~at in
+  let* ust_hi, at = decode_int32 buf ~at in
+  let* ust_lo, at = decode_int32 buf ~at in
+  let* msc_hi, at = decode_int32 buf ~at in
+  let* msc_lo, at = decode_int32 buf ~at in
+  let* sbc, at = decode_int32 buf ~at in
+  ignore orig;
+  Some ({ event_type; drawable; ust_hi; ust_lo; msc_hi; msc_lo; sbc }, at)
 
 type pbcet_enum = [ `Damaged | `Saved ] [@@deriving sexp]
 
@@ -14774,6 +15425,43 @@ type screen_change_notify_event = {
 }
 [@@deriving sexp]
 
+let decode_screen_change_notify_event buf ~at :
+    (screen_change_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* rotation, at =
+    decode_mask decode_uint8 Int64.of_int rotation_mask_of_int64 buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* timestamp, at = Xproto.decode_timestamp buf ~at in
+  let* config_timestamp, at = Xproto.decode_timestamp buf ~at in
+  let* root, at = Xproto.decode_window buf ~at in
+  let* request_window, at = Xproto.decode_window buf ~at in
+  let* size_id, at = decode_uint16 buf ~at in
+  let* subpixel_order, at =
+    decode_enum decode_uint16 identity Render.sub_pixel_enum_of_int buf ~at
+  in
+  let* width, at = decode_uint16 buf ~at in
+  let* height, at = decode_uint16 buf ~at in
+  let* mwidth, at = decode_uint16 buf ~at in
+  let* mheight, at = decode_uint16 buf ~at in
+  ignore orig;
+  Some
+    ( {
+        rotation;
+        timestamp;
+        config_timestamp;
+        root;
+        request_window;
+        size_id;
+        subpixel_order;
+        width;
+        height;
+        mwidth;
+        mheight;
+      },
+      at )
+
 type notify_enum =
   [ `Crtc_change
   | `Output_change
@@ -15238,7 +15926,41 @@ type notify_variant =
   | Lease of { lc : lease_notify }
 [@@deriving sexp]
 
+let decode_notify_variant tag buf ~at : (notify_variant * int) option =
+  match tag with
+  | 0 ->
+      let* cc, at = decode_crtc_change buf ~at in
+      Some (Crtc_change { cc }, at)
+  | 1 ->
+      let* oc, at = decode_output_change buf ~at in
+      Some (Output_change { oc }, at)
+  | 2 ->
+      let* op, at = decode_output_property buf ~at in
+      Some (Output_property { op }, at)
+  | 3 ->
+      let* pc, at = decode_provider_change buf ~at in
+      Some (Provider_change { pc }, at)
+  | 4 ->
+      let* pp, at = decode_provider_property buf ~at in
+      Some (Provider_property { pp }, at)
+  | 5 ->
+      let* rc, at = decode_resource_change buf ~at in
+      Some (Resource_change { rc }, at)
+  | 6 ->
+      let* lc, at = decode_lease_notify buf ~at in
+      Some (Lease { lc }, at)
+  | _ -> None
+
 type notify_event = { u : notify_variant } [@@deriving sexp]
+
+let decode_notify_event buf ~at : (notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* u_tag, at = decode_uint8 buf ~at in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* u, at = decode_notify_variant u_tag buf ~at in
+  ignore orig;
+  Some ({ u }, at)
 
 [@@@warning "-27"]
 [@@@warning "-11"]
@@ -15857,6 +16579,23 @@ type counter_notify_event = {
 }
 [@@deriving sexp]
 
+let decode_counter_notify_event buf ~at : (counter_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* kind, at = decode_uint8 buf ~at in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* counter, at = decode_counter buf ~at in
+  let* wait_value, at = decode_int64 buf ~at in
+  let* counter_value, at = decode_int64 buf ~at in
+  let* timestamp, at = Xproto.decode_timestamp buf ~at in
+  let* count, at = decode_uint16 buf ~at in
+  let* destroyed, at = decode_bool buf ~at in
+  let at = at + 1 in
+  ignore orig;
+  Some
+    ( { kind; counter; wait_value; counter_value; timestamp; count; destroyed },
+      at )
+
 type alarm_notify_event = {
   kind : int;
   alarm : alarm;
@@ -15866,6 +16605,22 @@ type alarm_notify_event = {
   state : alarmstate_enum;
 }
 [@@deriving sexp]
+
+let decode_alarm_notify_event buf ~at : (alarm_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* kind, at = decode_uint8 buf ~at in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* alarm, at = decode_alarm buf ~at in
+  let* counter_value, at = decode_int64 buf ~at in
+  let* alarm_value, at = decode_int64 buf ~at in
+  let* timestamp, at = Xproto.decode_timestamp buf ~at in
+  let* state, at =
+    decode_enum decode_uint8 identity alarmstate_enum_of_int buf ~at
+  in
+  let at = at + 3 in
+  ignore orig;
+  Some ({ kind; alarm; counter_value; alarm_value; timestamp; state }, at)
 
 [@@@warning "-27"]
 [@@@warning "-11"]
@@ -16133,6 +16888,18 @@ type generic_event = {
 }
 [@@deriving sexp]
 
+let decode_generic_event buf ~at : (generic_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* extension, at = decode_uint8 buf ~at in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* length, at = decode_int32 buf ~at in
+  let* evtype, at = decode_uint16 buf ~at in
+  let at = at + 2 in
+  let* event, at = decode_event buf ~at in
+  ignore orig;
+  Some ({ extension; length; evtype; event }, at)
+
 type configure_notify_event = {
   event : event;
   window : Xproto.window;
@@ -16148,6 +16915,40 @@ type configure_notify_event = {
 }
 [@@deriving sexp]
 
+let decode_configure_notify_event buf ~at :
+    (configure_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 2 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* event, at = decode_event buf ~at in
+  let* window, at = Xproto.decode_window buf ~at in
+  let* x, at = decode_int16 buf ~at in
+  let* y, at = decode_int16 buf ~at in
+  let* width, at = decode_uint16 buf ~at in
+  let* height, at = decode_uint16 buf ~at in
+  let* off_x, at = decode_int16 buf ~at in
+  let* off_y, at = decode_int16 buf ~at in
+  let* pixmap_width, at = decode_uint16 buf ~at in
+  let* pixmap_height, at = decode_uint16 buf ~at in
+  let* pixmap_flags, at = decode_int32 buf ~at in
+  ignore orig;
+  Some
+    ( {
+        event;
+        window;
+        x;
+        y;
+        width;
+        height;
+        off_x;
+        off_y;
+        pixmap_width;
+        pixmap_height;
+        pixmap_flags;
+      },
+      at )
+
 type complete_notify_event = {
   kind : complete_kind_enum;
   mode : complete_mode_enum;
@@ -16159,6 +16960,25 @@ type complete_notify_event = {
 }
 [@@deriving sexp]
 
+let decode_complete_notify_event buf ~at : (complete_notify_event * int) option
+    =
+  let orig = at in
+  let a = a + 1 in
+  let* kind, at =
+    decode_enum decode_uint8 identity complete_kind_enum_of_int buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* mode, at =
+    decode_enum decode_uint8 identity complete_mode_enum_of_int buf ~at
+  in
+  let* event, at = decode_event buf ~at in
+  let* window, at = Xproto.decode_window buf ~at in
+  let* serial, at = decode_int32 buf ~at in
+  let* ust, at = decode_int64 buf ~at in
+  let* msc, at = decode_int64 buf ~at in
+  ignore orig;
+  Some ({ kind; mode; event; window; serial; ust; msc }, at)
+
 type idle_notify_event = {
   event : event;
   window : Xproto.window;
@@ -16167,6 +16987,19 @@ type idle_notify_event = {
   idle_fence : Sync.fence;
 }
 [@@deriving sexp]
+
+let decode_idle_notify_event buf ~at : (idle_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 2 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* event, at = decode_event buf ~at in
+  let* window, at = Xproto.decode_window buf ~at in
+  let* serial, at = decode_int32 buf ~at in
+  let* pixmap, at = Xproto.decode_pixmap buf ~at in
+  let* idle_fence, at = Sync.decode_fence buf ~at in
+  ignore orig;
+  Some ({ event; window; serial; pixmap; idle_fence }, at)
 
 type redirect_notify_event = {
   update_window : bool;
@@ -17242,6 +18075,22 @@ type notify_event = {
 }
 [@@deriving sexp]
 
+let decode_notify_event buf ~at : (notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* state, at =
+    decode_enum decode_char Char.code state_enum_of_int buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at = Xproto.decode_timestamp buf ~at in
+  let* root, at = Xproto.decode_window buf ~at in
+  let* window, at = Xproto.decode_window buf ~at in
+  let* kind, at = decode_enum decode_char Char.code kind_enum_of_int buf ~at in
+  let* forced, at = decode_bool buf ~at in
+  let at = at + 14 in
+  ignore orig;
+  Some ({ state; time; root; window; kind; forced }, at)
+
 [@@@warning "-27"]
 [@@@warning "-11"]
 
@@ -17261,6 +18110,20 @@ type completion_event = {
   offset : int;
 }
 [@@deriving sexp]
+
+let decode_completion_event buf ~at : (completion_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* drawable, at = Xproto.decode_drawable buf ~at in
+  let* minor_event, at = decode_uint16 buf ~at in
+  let* major_event, at = decode_char buf ~at in
+  let at = at + 1 in
+  let* shmseg, at = decode_seg buf ~at in
+  let* offset, at = decode_int32 buf ~at in
+  ignore orig;
+  Some ({ drawable; minor_event; major_event; shmseg; offset }, at)
 
 type bad_seg_error = Xproto.value_error [@@deriving sexp]
 
@@ -19221,12 +20084,36 @@ type input_class_variant =
     }
 [@@deriving sexp]
 
+let decode_input_class_variant tag buf ~at : (input_class_variant * int) option
+    =
+  match tag with
+  | 0 ->
+      let* min_keycode, at = decode_key_code buf ~at in
+      let* max_keycode, at = decode_key_code buf ~at in
+      let* num_keys, at = decode_uint16 buf ~at in
+      let at = at + 2 in
+      Some (Key { min_keycode; max_keycode; num_keys }, at)
+  | 1 ->
+      let* num_buttons, at = decode_uint16 buf ~at in
+      Some (Button { num_buttons }, at)
+  | 2 ->
+      let* axes_len, at = decode_uint8 buf ~at in
+      let axes_len = axes_len in
+      let* mode, at =
+        decode_enum decode_uint8 identity valuator_mode_enum_of_int buf ~at
+      in
+      let* motion_size, at = decode_int32 buf ~at in
+      let* axes, at = decode_list decode_axis_info axes_len buf ~at in
+      Some (Valuator { mode; motion_size; axes }, at)
+  | _ -> None
+
 type input_info = { len : int; info : input_class_variant } [@@deriving sexp]
 
 let decode_input_info buf ~at : (input_info * int) option =
   let orig = at in
+  let* info_tag, at = decode_uint8 buf ~at in
   let* len, at = decode_uint8 buf ~at in
-
+  let* info, at = decode_input_class_variant info_tag buf ~at in
   ignore orig;
   Some ({ len; info }, at)
 
@@ -20310,6 +21197,64 @@ type feedback_class_variant =
   | Bell of { percent : int; pitch : int; duration : int }
 [@@deriving sexp]
 
+let decode_feedback_class_variant tag buf ~at :
+    (feedback_class_variant * int) option =
+  match tag with
+  | 0 ->
+      let* pitch, at = decode_uint16 buf ~at in
+      let* duration, at = decode_uint16 buf ~at in
+      let* led_mask, at = decode_int32 buf ~at in
+      let* led_values, at = decode_int32 buf ~at in
+      let* global_auto_repeat, at = decode_bool buf ~at in
+      let* click, at = decode_uint8 buf ~at in
+      let* percent, at = decode_uint8 buf ~at in
+      let at = at + 1 in
+      let* auto_repeats, at =
+        let length = 32 in
+        decode_list decode_uint8 length buf ~at
+      in
+      Some
+        ( Keyboard
+            {
+              pitch;
+              duration;
+              led_mask;
+              led_values;
+              global_auto_repeat;
+              click;
+              percent;
+              auto_repeats;
+            },
+          at )
+  | 1 ->
+      let at = at + 2 in
+      let* accel_num, at = decode_uint16 buf ~at in
+      let* accel_denom, at = decode_uint16 buf ~at in
+      let* threshold, at = decode_uint16 buf ~at in
+      Some (Pointer { accel_num; accel_denom; threshold }, at)
+  | 2 ->
+      let* max_symbols, at = decode_uint16 buf ~at in
+      let* num_keysyms, at = decode_uint16 buf ~at in
+      let num_keysyms = num_keysyms in
+      let* keysyms, at = decode_list Xproto.decode_keysym num_keysyms buf ~at in
+      Some (String { max_symbols; keysyms }, at)
+  | 3 ->
+      let* resolution, at = decode_int32 buf ~at in
+      let* min_value, at = decode_int32 buf ~at in
+      let* max_value, at = decode_int32 buf ~at in
+      Some (Integer { resolution; min_value; max_value }, at)
+  | 4 ->
+      let* led_mask, at = decode_int32 buf ~at in
+      let* led_values, at = decode_int32 buf ~at in
+      Some (Led { led_mask; led_values }, at)
+  | 5 ->
+      let* percent, at = decode_uint8 buf ~at in
+      let at = at + 3 in
+      let* pitch, at = decode_uint16 buf ~at in
+      let* duration, at = decode_uint16 buf ~at in
+      Some (Bell { percent; pitch; duration }, at)
+  | _ -> None
+
 type feedback_state = {
   feedback_id : int;
   len : int;
@@ -20319,9 +21264,10 @@ type feedback_state = {
 
 let decode_feedback_state buf ~at : (feedback_state * int) option =
   let orig = at in
+  let* data_tag, at = decode_uint8 buf ~at in
   let* feedback_id, at = decode_uint8 buf ~at in
   let* len, at = decode_uint16 buf ~at in
-
+  let* data, at = decode_feedback_class_variant data_tag buf ~at in
   ignore orig;
   Some ({ feedback_id; len; data }, at)
 
@@ -20626,9 +21572,10 @@ type feedback_ctl = {
 
 let decode_feedback_ctl buf ~at : (feedback_ctl * int) option =
   let orig = at in
+  let* data_tag, at = decode_uint8 buf ~at in
   let* feedback_id, at = decode_uint8 buf ~at in
   let* len, at = decode_uint16 buf ~at in
-
+  let* data, at = decode_feedback_class_variant data_tag buf ~at in
   ignore orig;
   Some ({ feedback_id; len; data }, at)
 
@@ -21038,8 +21985,9 @@ type input_state = { len : int; data : input_class_variant } [@@deriving sexp]
 
 let decode_input_state buf ~at : (input_state * int) option =
   let orig = at in
+  let* data_tag, at = decode_uint8 buf ~at in
   let* len, at = decode_uint8 buf ~at in
-
+  let* data, at = decode_input_class_variant data_tag buf ~at in
   ignore orig;
   Some ({ len; data }, at)
 
@@ -21404,13 +22352,72 @@ type device_control_variant =
     }
 [@@deriving sexp]
 
+let decode_device_control_variant tag buf ~at :
+    (device_control_variant * int) option =
+  match tag with
+  | 1 ->
+      let* num_valuators, at = decode_int32 buf ~at in
+      let num_valuators = num_valuators in
+      let* resolution_values, at =
+        decode_list decode_int32 num_valuators buf ~at
+      in
+      let* resolution_min, at =
+        decode_list decode_int32 num_valuators buf ~at
+      in
+      let* resolution_max, at =
+        decode_list decode_int32 num_valuators buf ~at
+      in
+      Some (Resolution { resolution_values; resolution_min; resolution_max }, at)
+  | 2 ->
+      let* min_x, at = decode_int32 buf ~at in
+      let* max_x, at = decode_int32 buf ~at in
+      let* min_y, at = decode_int32 buf ~at in
+      let* max_y, at = decode_int32 buf ~at in
+      let* flip_x, at = decode_int32 buf ~at in
+      let* flip_y, at = decode_int32 buf ~at in
+      let* rotation, at = decode_int32 buf ~at in
+      let* button_threshold, at = decode_int32 buf ~at in
+      Some
+        ( Abs_calib
+            {
+              min_x;
+              max_x;
+              min_y;
+              max_y;
+              flip_x;
+              flip_y;
+              rotation;
+              button_threshold;
+            },
+          at )
+  | 3 ->
+      let* status, at = decode_uint8 buf ~at in
+      let* iscore, at = decode_uint8 buf ~at in
+      let at = at + 2 in
+      Some (Core { status; iscore }, at)
+  | 4 ->
+      let* enable, at = decode_uint8 buf ~at in
+      let at = at + 3 in
+      Some (Enable { enable }, at)
+  | 5 ->
+      let* offset_x, at = decode_int32 buf ~at in
+      let* offset_y, at = decode_int32 buf ~at in
+      let* width, at = decode_int32 buf ~at in
+      let* height, at = decode_int32 buf ~at in
+      let* screen, at = decode_int32 buf ~at in
+      let* following, at = decode_int32 buf ~at in
+      Some
+        (Abs_area { offset_x; offset_y; width; height; screen; following }, at)
+  | _ -> None
+
 type device_state = { len : int; data : device_control_variant }
 [@@deriving sexp]
 
 let decode_device_state buf ~at : (device_state * int) option =
   let orig = at in
+  let* data_tag, at = decode_uint16 buf ~at in
   let* len, at = decode_uint16 buf ~at in
-
+  let* data, at = decode_device_control_variant data_tag buf ~at in
   ignore orig;
   Some ({ len; data }, at)
 
@@ -21675,8 +22682,9 @@ type device_ctl = { len : int; data : device_control_variant } [@@deriving sexp]
 
 let decode_device_ctl buf ~at : (device_ctl * int) option =
   let orig = at in
+  let* data_tag, at = decode_uint16 buf ~at in
   let* len, at = decode_uint16 buf ~at in
-
+  let* data, at = decode_device_control_variant data_tag buf ~at in
   ignore orig;
   Some ({ len; data }, at)
 
@@ -21779,6 +22787,31 @@ type property_format_variant =
   | D32_bits of { data32 : int list }
 [@@deriving sexp]
 
+let decode_property_format_variant tag buf ~at :
+    (property_format_variant * int) option =
+  match tag with
+  | 8 ->
+      let* data8, at =
+        let length = num_items in
+        decode_list decode_uint8 length buf ~at
+      in
+      let at = at + ((at - orig) mod 4) in
+      Some (D8_bits { data8 }, at)
+  | 16 ->
+      let* data16, at =
+        let length = num_items in
+        decode_list decode_uint16 length buf ~at
+      in
+      let at = at + ((at - orig) mod 4) in
+      Some (D16_bits { data16 }, at)
+  | 32 ->
+      let* data32, at =
+        let length = num_items in
+        decode_list decode_int32 length buf ~at
+      in
+      Some (D32_bits { data32 }, at)
+  | _ -> None
+
 let encode_change_device_property ~(property : Xproto.atom)
     ~(type_ : Xproto.atom) ~(device_id : int) ~(mode : Xproto.prop_mode_enum)
     ~(num_items : int) ~(items : property_format_variant) buf ~at : int option =
@@ -21853,10 +22886,10 @@ let decode_get_device_property_reply length buf ~at :
   let* type_, at = Xproto.decode_atom buf ~at in
   let* bytes_after, at = decode_int32 buf ~at in
   let* num_items, at = decode_int32 buf ~at in
-
+  let* items_tag, at = decode_uint8 buf ~at in
   let* device_id, at = decode_uint8 buf ~at in
   let at = at + 10 in
-
+  let* items, at = decode_property_format_variant items_tag buf ~at in
   ignore orig;
   Some ({ xi_reply_type; type_; bytes_after; num_items; device_id; items }, at)
 
@@ -22254,13 +23287,59 @@ type hierarchy_change_type_variant =
   | Detach_slave of { deviceid : device_enum alt_enum }
 [@@deriving sexp]
 
+let decode_hierarchy_change_type_variant tag buf ~at :
+    (hierarchy_change_type_variant * int) option =
+  match tag with
+  | 1 ->
+      let* name_len, at = decode_uint16 buf ~at in
+      let name_len = name_len in
+      let* send_core, at = decode_bool buf ~at in
+      let* enable, at = decode_bool buf ~at in
+      let* name, at = decode_string name_len buf ~at in
+      let at = at + ((at - orig) mod 4) in
+      Some (Add_master { send_core; enable; name }, at)
+  | 2 ->
+      let* deviceid, at =
+        decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+      in
+      let* return_mode, at =
+        decode_enum decode_uint8 identity change_mode_enum_of_int buf ~at
+      in
+      let at = at + 1 in
+      let* return_pointer, at =
+        decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+      in
+      let* return_keyboard, at =
+        decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+      in
+      Some
+        ( Remove_master
+            { deviceid; return_mode; return_pointer; return_keyboard },
+          at )
+  | 3 ->
+      let* deviceid, at =
+        decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+      in
+      let* master, at =
+        decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+      in
+      Some (Attach_slave { deviceid; master }, at)
+  | 4 ->
+      let* deviceid, at =
+        decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+      in
+      let at = at + 2 in
+      Some (Detach_slave { deviceid }, at)
+  | _ -> None
+
 type hierarchy_change = { len : int; data : hierarchy_change_type_variant }
 [@@deriving sexp]
 
 let decode_hierarchy_change buf ~at : (hierarchy_change * int) option =
   let orig = at in
+  let* data_tag, at = decode_uint16 buf ~at in
   let* len, at = decode_uint16 buf ~at in
-
+  let* data, at = decode_hierarchy_change_type_variant data_tag buf ~at in
   ignore orig;
   Some ({ len; data }, at)
 
@@ -22842,6 +23921,54 @@ type device_class_type_variant =
   | Touch of { mode : touch_mode_enum; num_touches : int }
 [@@deriving sexp]
 
+let decode_device_class_type_variant tag buf ~at :
+    (device_class_type_variant * int) option =
+  match tag with
+  | 0 ->
+      let* num_keys, at = decode_uint16 buf ~at in
+      let num_keys = num_keys in
+      let* keys, at = decode_list decode_int32 num_keys buf ~at in
+      Some (Key { keys }, at)
+  | 1 ->
+      let* num_buttons, at = decode_uint16 buf ~at in
+      let num_buttons = num_buttons in
+      let* state, at =
+        let length = (num_buttons + 31) / 32 in
+        decode_list decode_int32 length buf ~at
+      in
+      let* labels, at = decode_list Xproto.decode_atom num_buttons buf ~at in
+      Some (Button { state; labels }, at)
+  | 2 ->
+      let* number, at = decode_uint16 buf ~at in
+      let* label, at = Xproto.decode_atom buf ~at in
+      let* min, at = decode_fp3232 buf ~at in
+      let* max, at = decode_fp3232 buf ~at in
+      let* value, at = decode_fp3232 buf ~at in
+      let* resolution, at = decode_int32 buf ~at in
+      let* mode, at =
+        decode_enum decode_uint8 identity valuator_mode_enum_of_int buf ~at
+      in
+      let at = at + 3 in
+      Some (Valuator { number; label; min; max; value; resolution; mode }, at)
+  | 3 ->
+      let* number, at = decode_uint16 buf ~at in
+      let* scroll_type, at =
+        decode_enum decode_uint16 identity scroll_type_enum_of_int buf ~at
+      in
+      let at = at + 2 in
+      let* flags, at =
+        decode_mask decode_int32 Int64.of_int scroll_flags_mask_of_int64 buf ~at
+      in
+      let* increment, at = decode_fp3232 buf ~at in
+      Some (Scroll { number; scroll_type; flags; increment }, at)
+  | 8 ->
+      let* mode, at =
+        decode_enum decode_uint8 identity touch_mode_enum_of_int buf ~at
+      in
+      let* num_touches, at = decode_uint8 buf ~at in
+      Some (Touch { mode; num_touches }, at)
+  | _ -> None
+
 type device_class = {
   len : int;
   sourceid : device_id;
@@ -22851,9 +23978,10 @@ type device_class = {
 
 let decode_device_class buf ~at : (device_class * int) option =
   let orig = at in
+  let* data_tag, at = decode_uint16 buf ~at in
   let* len, at = decode_uint16 buf ~at in
   let* sourceid, at = decode_device_id buf ~at in
-
+  let* data, at = decode_device_class_type_variant data_tag buf ~at in
   ignore orig;
   Some ({ len; sourceid; data }, at)
 
@@ -23443,9 +24571,9 @@ let decode_xi_get_property_reply length buf ~at :
   let* type_, at = Xproto.decode_atom buf ~at in
   let* bytes_after, at = decode_int32 buf ~at in
   let* num_items, at = decode_int32 buf ~at in
-
+  let* items_tag, at = decode_uint8 buf ~at in
   let at = at + 11 in
-
+  let* items, at = decode_property_format_variant items_tag buf ~at in
   ignore orig;
   Some ({ type_; bytes_after; num_items; items }, at)
 
@@ -23531,6 +24659,23 @@ type device_valuator_event = {
 }
 [@@deriving sexp]
 
+let decode_device_valuator_event buf ~at : (device_valuator_event * int) option
+    =
+  let orig = at in
+  let a = a + 1 in
+  let* device_id, at = decode_uint8 buf ~at in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* device_state, at = decode_uint16 buf ~at in
+  let* num_valuators, at = decode_uint8 buf ~at in
+  let* first_valuator, at = decode_uint8 buf ~at in
+  let* valuators, at =
+    let length = 6 in
+    decode_list decode_int32 length buf ~at
+  in
+  ignore orig;
+  Some
+    ({ device_id; device_state; num_valuators; first_valuator; valuators }, at)
+
 type more_events_mask = [ `More_events ] list [@@deriving sexp]
 
 let more_events_mask_mask_of_int64 mask : more_events_mask option =
@@ -23557,6 +24702,50 @@ type device_key_press_event = {
 }
 [@@deriving sexp]
 
+let decode_device_key_press_event buf ~at :
+    (device_key_press_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* detail, at = decode_char buf ~at in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at = Xproto.decode_timestamp buf ~at in
+  let* root, at = Xproto.decode_window buf ~at in
+  let* event, at = Xproto.decode_window buf ~at in
+  let* child, at =
+    decode_alt_enum Xproto.decode_window identity Xproto.window_enum_of_int buf
+      ~at
+  in
+  let* root_x, at = decode_int16 buf ~at in
+  let* root_y, at = decode_int16 buf ~at in
+  let* event_x, at = decode_int16 buf ~at in
+  let* event_y, at = decode_int16 buf ~at in
+  let* state, at =
+    decode_mask decode_uint16 Int64.of_int Xproto.key_but_mask_mask_of_int64 buf
+      ~at
+  in
+  let* same_screen, at = decode_bool buf ~at in
+  let* device_id, at =
+    decode_alt_mask decode_uint8 Int64.of_int more_events_mask_mask_of_int64 buf
+      ~at
+  in
+  ignore orig;
+  Some
+    ( {
+        detail;
+        time;
+        root;
+        event;
+        child;
+        root_x;
+        root_y;
+        event_x;
+        event_y;
+        state;
+        same_screen;
+        device_id;
+      },
+      at )
+
 type device_key_release_event = device_key_press_event [@@deriving sexp]
 type device_button_press_event = device_key_press_event [@@deriving sexp]
 type device_button_release_event = device_key_press_event [@@deriving sexp]
@@ -23570,6 +24759,24 @@ type device_focus_in_event = {
   device_id : int;
 }
 [@@deriving sexp]
+
+let decode_device_focus_in_event buf ~at : (device_focus_in_event * int) option
+    =
+  let orig = at in
+  let a = a + 1 in
+  let* detail, at =
+    decode_enum decode_char Char.code Xproto.notify_detail_enum_of_int buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at = Xproto.decode_timestamp buf ~at in
+  let* window, at = Xproto.decode_window buf ~at in
+  let* mode, at =
+    decode_enum decode_char Char.code Xproto.notify_mode_enum_of_int buf ~at
+  in
+  let* device_id, at = decode_uint8 buf ~at in
+  let at = at + 18 in
+  ignore orig;
+  Some ({ detail; time; window; mode; device_id }, at)
 
 type device_focus_out_event = device_focus_in_event [@@deriving sexp]
 type proximity_in_event = device_key_press_event [@@deriving sexp]
@@ -23618,6 +24825,50 @@ type device_state_notify_event = {
 }
 [@@deriving sexp]
 
+let decode_device_state_notify_event buf ~at :
+    (device_state_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* device_id, at =
+    decode_alt_mask decode_char char_to_int64 more_events_mask_mask_of_int64 buf
+      ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at = Xproto.decode_timestamp buf ~at in
+  let* num_keys, at = decode_uint8 buf ~at in
+  let* num_buttons, at = decode_uint8 buf ~at in
+  let* num_valuators, at = decode_uint8 buf ~at in
+  let* classes_reported, at =
+    decode_mask decode_uint8 Int64.of_int classes_reported_mask_mask_of_int64
+      buf ~at
+  in
+  let* buttons, at =
+    let length = 4 in
+    decode_list decode_uint8 length buf ~at
+  in
+  let* keys, at =
+    let length = 4 in
+    decode_list decode_uint8 length buf ~at
+  in
+  let* valuators, at =
+    let length = 3 in
+    decode_list decode_int32 length buf ~at
+  in
+  ignore orig;
+  Some
+    ( {
+        device_id;
+        time;
+        num_keys;
+        num_buttons;
+        num_valuators;
+        classes_reported;
+        buttons;
+        keys;
+        valuators;
+      },
+      at )
+
 type device_mapping_notify_event = {
   device_id : char;
   request : Xproto.mapping_enum;
@@ -23626,6 +24877,23 @@ type device_mapping_notify_event = {
   time : Xproto.timestamp;
 }
 [@@deriving sexp]
+
+let decode_device_mapping_notify_event buf ~at :
+    (device_mapping_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* device_id, at = decode_char buf ~at in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* request, at =
+    decode_enum decode_uint8 identity Xproto.mapping_enum_of_int buf ~at
+  in
+  let* first_keycode, at = decode_key_code buf ~at in
+  let* count, at = decode_uint8 buf ~at in
+  let at = at + 1 in
+  let* time, at = Xproto.decode_timestamp buf ~at in
+  let at = at + 20 in
+  ignore orig;
+  Some ({ device_id; request; first_keycode; count; time }, at)
 
 type change_device_enum = [ `New_pointer | `New_keyboard ] [@@deriving sexp]
 
@@ -23647,17 +24915,63 @@ type change_device_notify_event = {
 }
 [@@deriving sexp]
 
+let decode_change_device_notify_event buf ~at :
+    (change_device_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* device_id, at = decode_char buf ~at in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at = Xproto.decode_timestamp buf ~at in
+  let* request, at =
+    decode_enum decode_uint8 identity change_device_enum_of_int buf ~at
+  in
+  let at = at + 23 in
+  ignore orig;
+  Some ({ device_id; time; request }, at)
+
 type device_key_state_notify_event = {
   device_id : (more_events_mask, char) mask;
   keys : int list;
 }
 [@@deriving sexp]
 
+let decode_device_key_state_notify_event buf ~at :
+    (device_key_state_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* device_id, at =
+    decode_alt_mask decode_char char_to_int64 more_events_mask_mask_of_int64 buf
+      ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* keys, at =
+    let length = 28 in
+    decode_list decode_uint8 length buf ~at
+  in
+  ignore orig;
+  Some ({ device_id; keys }, at)
+
 type device_button_state_notify_event = {
   device_id : (more_events_mask, char) mask;
   buttons : int list;
 }
 [@@deriving sexp]
+
+let decode_device_button_state_notify_event buf ~at :
+    (device_button_state_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* device_id, at =
+    decode_alt_mask decode_char char_to_int64 more_events_mask_mask_of_int64 buf
+      ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* buttons, at =
+    let length = 28 in
+    decode_list decode_uint8 length buf ~at
+  in
+  ignore orig;
+  Some ({ device_id; buttons }, at)
 
 type device_change_enum =
   [ `Added
@@ -23695,6 +25009,22 @@ type device_presence_notify_event = {
 }
 [@@deriving sexp]
 
+let decode_device_presence_notify_event buf ~at :
+    (device_presence_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at = Xproto.decode_timestamp buf ~at in
+  let* devchange, at =
+    decode_enum decode_char Char.code device_change_enum_of_int buf ~at
+  in
+  let* device_id, at = decode_char buf ~at in
+  let* control, at = decode_uint16 buf ~at in
+  let at = at + 20 in
+  ignore orig;
+  Some ({ time; devchange; device_id; control }, at)
+
 type device_property_notify_event = {
   state : Xproto.property_enum;
   time : Xproto.timestamp;
@@ -23702,6 +25032,21 @@ type device_property_notify_event = {
   device_id : int;
 }
 [@@deriving sexp]
+
+let decode_device_property_notify_event buf ~at :
+    (device_property_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* state, at =
+    decode_enum decode_char Char.code Xproto.property_enum_of_int buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at = Xproto.decode_timestamp buf ~at in
+  let* property, at = Xproto.decode_atom buf ~at in
+  let at = at + 19 in
+  let* device_id, at = decode_uint8 buf ~at in
+  ignore orig;
+  Some ({ state; time; property; device_id }, at)
 
 type change_reason_enum = [ `Slave_switch | `Device_change ] [@@deriving sexp]
 
@@ -23724,6 +25069,30 @@ type device_changed_event = {
   classes : device_class list;
 }
 [@@deriving sexp]
+
+let decode_device_changed_event buf ~at : (device_changed_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* deviceid, at =
+    decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at =
+    decode_alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int buf
+      ~at
+  in
+  let* num_classes, at = decode_uint16 buf ~at in
+  let num_classes = num_classes in
+  let* sourceid, at =
+    decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+  in
+  let* reason, at =
+    decode_enum decode_uint8 identity change_reason_enum_of_int buf ~at
+  in
+  let at = at + 11 in
+  let* classes, at = decode_list decode_device_class num_classes buf ~at in
+  ignore orig;
+  Some ({ deviceid; time; sourceid; reason; classes }, at)
 
 type key_event_flags_mask = [ `Key_repeat ] list [@@deriving sexp]
 
@@ -23874,6 +25243,63 @@ type enter_event = {
 }
 [@@deriving sexp]
 
+let decode_enter_event buf ~at : (enter_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* deviceid, at =
+    decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at =
+    decode_alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int buf
+      ~at
+  in
+  let* sourceid, at =
+    decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+  in
+  let* mode, at =
+    decode_enum decode_uint8 identity notify_mode_enum_of_int buf ~at
+  in
+  let* detail, at =
+    decode_enum decode_uint8 identity notify_detail_enum_of_int buf ~at
+  in
+  let* root, at = Xproto.decode_window buf ~at in
+  let* event, at = Xproto.decode_window buf ~at in
+  let* child, at = Xproto.decode_window buf ~at in
+  let* root_x, at = decode_fp1616 buf ~at in
+  let* root_y, at = decode_fp1616 buf ~at in
+  let* event_x, at = decode_fp1616 buf ~at in
+  let* event_y, at = decode_fp1616 buf ~at in
+  let* same_screen, at = decode_bool buf ~at in
+  let* focus, at = decode_bool buf ~at in
+  let* buttons_len, at = decode_uint16 buf ~at in
+  let buttons_len = buttons_len in
+  let* mods, at = decode_modifier_info buf ~at in
+  let* group, at = decode_group_info buf ~at in
+  let* buttons, at = decode_list decode_int32 buttons_len buf ~at in
+  ignore orig;
+  Some
+    ( {
+        deviceid;
+        time;
+        sourceid;
+        mode;
+        detail;
+        root;
+        event;
+        child;
+        root_x;
+        root_y;
+        event_x;
+        event_y;
+        same_screen;
+        focus;
+        mods;
+        group;
+        buttons;
+      },
+      at )
+
 type leave_event = enter_event [@@deriving sexp]
 type focus_in_event = enter_event [@@deriving sexp]
 type focus_out_event = enter_event [@@deriving sexp]
@@ -23974,6 +25400,27 @@ type hierarchy_event = {
 }
 [@@deriving sexp]
 
+let decode_hierarchy_event buf ~at : (hierarchy_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* deviceid, at =
+    decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at =
+    decode_alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int buf
+      ~at
+  in
+  let* flags, at =
+    decode_mask decode_int32 Int64.of_int hierarchy_mask_mask_of_int64 buf ~at
+  in
+  let* num_infos, at = decode_uint16 buf ~at in
+  let num_infos = num_infos in
+  let at = at + 10 in
+  let* infos, at = decode_list decode_hierarchy_info num_infos buf ~at in
+  ignore orig;
+  Some ({ deviceid; time; flags; infos }, at)
+
 type property_flag_enum = [ `Deleted | `Created | `Modified ] [@@deriving sexp]
 
 let property_flag_enum_of_int : int -> [> property_flag_enum ] option = function
@@ -23996,6 +25443,25 @@ type property_event = {
   what : property_flag_enum;
 }
 [@@deriving sexp]
+
+let decode_property_event buf ~at : (property_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* deviceid, at =
+    decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at =
+    decode_alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int buf
+      ~at
+  in
+  let* property, at = Xproto.decode_atom buf ~at in
+  let* what, at =
+    decode_enum decode_uint8 identity property_flag_enum_of_int buf ~at
+  in
+  let at = at + 11 in
+  ignore orig;
+  Some ({ deviceid; time; property; what }, at)
 
 type raw_key_press_event = {
   deviceid : device_enum alt_enum;
@@ -24093,6 +25559,33 @@ type touch_ownership_event = {
 }
 [@@deriving sexp]
 
+let decode_touch_ownership_event buf ~at : (touch_ownership_event * int) option
+    =
+  let orig = at in
+  let a = a + 1 in
+  let* deviceid, at =
+    decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at =
+    decode_alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int buf
+      ~at
+  in
+  let* touchid, at = decode_int32 buf ~at in
+  let* root, at = Xproto.decode_window buf ~at in
+  let* event, at = Xproto.decode_window buf ~at in
+  let* child, at = Xproto.decode_window buf ~at in
+  let* sourceid, at =
+    decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+  in
+  let at = at + 2 in
+  let* flags, at =
+    decode_enum decode_int32 identity touch_ownership_flags_enum_of_int buf ~at
+  in
+  let at = at + 8 in
+  ignore orig;
+  Some ({ deviceid; time; touchid; root; event; child; sourceid; flags }, at)
+
 type raw_touch_begin_event = {
   deviceid : device_enum alt_enum;
   time : Xproto.time_enum alt_enum;
@@ -24139,6 +25632,52 @@ type barrier_hit_event = {
   dy : fp3232;
 }
 [@@deriving sexp]
+
+let decode_barrier_hit_event buf ~at : (barrier_hit_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* deviceid, at =
+    decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at =
+    decode_alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int buf
+      ~at
+  in
+  let* eventid, at = decode_int32 buf ~at in
+  let* root, at = Xproto.decode_window buf ~at in
+  let* event, at = Xproto.decode_window buf ~at in
+  let* barrier, at = Xfixes.decode_barrier buf ~at in
+  let* dtime, at = decode_int32 buf ~at in
+  let* flags, at =
+    decode_mask decode_int32 Int64.of_int barrier_flags_mask_of_int64 buf ~at
+  in
+  let* sourceid, at =
+    decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+  in
+  let at = at + 2 in
+  let* root_x, at = decode_fp1616 buf ~at in
+  let* root_y, at = decode_fp1616 buf ~at in
+  let* dx, at = decode_fp3232 buf ~at in
+  let* dy, at = decode_fp3232 buf ~at in
+  ignore orig;
+  Some
+    ( {
+        deviceid;
+        time;
+        eventid;
+        root;
+        event;
+        barrier;
+        dtime;
+        flags;
+        sourceid;
+        root_x;
+        root_y;
+        dx;
+        dy;
+      },
+      at )
 
 type barrier_leave_event = barrier_hit_event [@@deriving sexp]
 
@@ -24848,8 +26387,28 @@ let decode_print_get_image_resolution_reply length buf ~at :
 type notify_event = { detail : int; context : pcontext; cancel : bool }
 [@@deriving sexp]
 
+let decode_notify_event buf ~at : (notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* detail, at = decode_uint8 buf ~at in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* context, at = decode_pcontext buf ~at in
+  let* cancel, at = decode_bool buf ~at in
+  ignore orig;
+  Some ({ detail; context; cancel }, at)
+
 type attribut_notify_event = { detail : int; context : pcontext }
 [@@deriving sexp]
+
+let decode_attribut_notify_event buf ~at : (attribut_notify_event * int) option
+    =
+  let orig = at in
+  let a = a + 1 in
+  let* detail, at = decode_uint8 buf ~at in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* context, at = decode_pcontext buf ~at in
+  ignore orig;
+  Some ({ detail; context }, at)
 
 type bad_context_error = unit [@@deriving sexp]
 type bad_sequence_error = unit [@@deriving sexp]
@@ -26006,6 +27565,19 @@ type video_notify_event = {
 }
 [@@deriving sexp]
 
+let decode_video_notify_event buf ~at : (video_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let* reason, at =
+    decode_enum decode_char Char.code video_notify_reason_enum_of_int buf ~at
+  in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at = Xproto.decode_timestamp buf ~at in
+  let* drawable, at = Xproto.decode_drawable buf ~at in
+  let* port, at = decode_port buf ~at in
+  ignore orig;
+  Some ({ reason; time; drawable; port }, at)
+
 type port_notify_event = {
   time : Xproto.timestamp;
   port : port;
@@ -26013,6 +27585,18 @@ type port_notify_event = {
   value : int;
 }
 [@@deriving sexp]
+
+let decode_port_notify_event buf ~at : (port_notify_event * int) option =
+  let orig = at in
+  let a = a + 1 in
+  let at = at + 1 in
+  let* _sequence_number, at = decode_uint16 buf ~at in
+  let* time, at = Xproto.decode_timestamp buf ~at in
+  let* port, at = decode_port buf ~at in
+  let* attribute, at = Xproto.decode_atom buf ~at in
+  let* value, at = decode_int32 buf ~at in
+  ignore orig;
+  Some ({ time; port; attribute; value }, at)
 
 type query_extension_reply = { major : int; minor : int } [@@deriving sexp]
 
