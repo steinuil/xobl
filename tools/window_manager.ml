@@ -6,13 +6,19 @@ let rec read_loop (conn : Connection.connection) =
   let* buf = Connection.read conn in
   match buf with
   | Some (`Error buf) ->
-      let* _ = Lwt_io.printf "Response: %s\n" (Xobl.Codec.hex buf) in
+      let* _ =
+        Lwt_io.printf "Response: %s\n" (Xobl.Codec.hex_string_of_bytes buf)
+      in
       read_loop conn
   | Some (`Event buf) ->
-      let* _ = Lwt_io.printf "Response: %s\n" (Xobl.Codec.hex buf) in
+      let* _ =
+        Lwt_io.printf "Response: %s\n" (Xobl.Codec.hex_string_of_bytes buf)
+      in
       read_loop conn
   | Some (`Reply buf) ->
-      let* _ = Lwt_io.printf "Response: %s\n" (Xobl.Codec.hex buf) in
+      let* _ =
+        Lwt_io.printf "Response: %s\n" (Xobl.Codec.hex_string_of_bytes buf)
+      in
       read_loop conn
   | None -> Lwt.return_unit
 
@@ -39,13 +45,16 @@ let main (conn : Connection.connection) =
   let buf = Bytes.sub buf 0 len in
   let* () =
     Lwt_io.printf "ChangeWindowAttributes(len=%d): %s\n" len
-      (Xobl.Codec.hex buf)
+      (Xobl.Codec.hex_string_of_bytes buf)
   in
   let* _ = Connection.write conn buf in
 
   let buf = Bytes.make 4 '\x00' in
   let len = Xproto.encode_get_input_focus buf ~at:0 |> Option.get in
-  let* () = Lwt_io.printf "MapWindow(len=%d): %s\n" len (Xobl.Codec.hex buf) in
+  let* () =
+    Lwt_io.printf "MapWindow(len=%d): %s\n" len
+      (Xobl.Codec.hex_string_of_bytes buf)
+  in
   let* _ = Connection.write conn buf in
 
   Lwt.return_unit

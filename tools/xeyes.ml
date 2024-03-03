@@ -186,7 +186,9 @@ let main (conn : Connection.connection) =
         win_pos := { x; y };
         Lwt.return_unit
     | _ ->
-        let* () = Lwt_io.printf "Event: %s\n" (Xobl.Codec.hex buf) in
+        let* () =
+          Lwt_io.printf "Event: %s\n" (Xobl.Codec.hex_string_of_bytes buf)
+        in
         Lwt.return_unit
   in
 
@@ -203,10 +205,14 @@ let main (conn : Connection.connection) =
             let* () = handle_event buf in
             loop ()
         | Some (`Error buf) ->
-            let* _ = Lwt_io.printf "Error: %s\n" (Xobl.Codec.hex buf) in
+            let* _ =
+              Lwt_io.printf "Error: %s\n" (Xobl.Codec.hex_string_of_bytes buf)
+            in
             loop ()
         | Some (`Reply buf) ->
-            let* _ = Lwt_io.printf "Reply: %s\n" (Xobl.Codec.hex buf) in
+            let* _ =
+              Lwt_io.printf "Reply: %s\n" (Xobl.Codec.hex_string_of_bytes buf)
+            in
             loop ()
         | None -> Lwt.return_unit)
   in
