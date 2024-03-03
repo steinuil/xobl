@@ -28,6 +28,9 @@ let char_to_int64 c = Char.code c |> Int64.of_int
 let bool_to_int64 b = Bool.to_int b |> Int64.of_int
 let bool_of_int b = if b then 1 else 0
 
+let sum_of_expr get_field =
+  List.fold_left (fun acc elem -> acc + get_field elem) 0
+
 let decode f buf ~at ~size =
   if Bytes.length buf < at + size - 1 then None else Some (f buf at, at + size)
 

@@ -179,8 +179,7 @@ let rec gen_expr ctx out = function
   | Sum_of { field; by_expr = None } ->
       Printf.fprintf out "List.fold_left ( + ) 0 %s" (Ident.snake field)
   | Sum_of { field; by_expr = Some by_expr } ->
-      Printf.fprintf out
-        "List.fold_left (fun acc list_element_ref -> acc + (%a)) 0 %s"
+      Printf.fprintf out "sum_of_expr (fun list_element_ref -> %a) %s"
         (gen_expr (Some "list_element_ref"))
         by_expr (Ident.snake field)
   (* Param refs just don't work this way. *)

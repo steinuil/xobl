@@ -968,7 +968,7 @@ type motion_notify_event = {
 
 let decode_motion_notify_event buf ~at : (motion_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* detail, at =
     decode_enum decode_char Char.code motion_enum_of_int buf ~at
   in
@@ -1075,7 +1075,7 @@ type enter_notify_event = {
 
 let decode_enter_notify_event buf ~at : (enter_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* detail, at =
     decode_enum decode_char Char.code notify_detail_enum_of_int buf ~at
   in
@@ -1126,7 +1126,7 @@ type focus_in_event = {
 
 let decode_focus_in_event buf ~at : (focus_in_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* detail, at =
     decode_enum decode_char Char.code notify_detail_enum_of_int buf ~at
   in
@@ -1144,7 +1144,7 @@ type keymap_notify_event = { keys : int list } [@@deriving sexp]
 
 let decode_keymap_notify_event buf ~at : (keymap_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* keys, at =
     let length = 31 in
     decode_list decode_uint8 length buf ~at
@@ -1165,7 +1165,7 @@ type expose_event = {
 
 let decode_expose_event buf ~at : (expose_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* window, at = decode_window buf ~at in
@@ -1193,7 +1193,7 @@ type graphics_exposure_event = {
 let decode_graphics_exposure_event buf ~at :
     (graphics_exposure_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* drawable, at = decode_drawable buf ~at in
@@ -1217,7 +1217,7 @@ type no_exposure_event = {
 
 let decode_no_exposure_event buf ~at : (no_exposure_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* drawable, at = decode_drawable buf ~at in
@@ -1249,7 +1249,7 @@ type visibility_notify_event = { window : window; state : visibility_enum }
 let decode_visibility_notify_event buf ~at :
     (visibility_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* window, at = decode_window buf ~at in
@@ -1274,7 +1274,7 @@ type create_notify_event = {
 
 let decode_create_notify_event buf ~at : (create_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* parent, at = decode_window buf ~at in
@@ -1296,7 +1296,7 @@ type destroy_notify_event = { event : window; window : window }
 
 let decode_destroy_notify_event buf ~at : (destroy_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* event, at = decode_window buf ~at in
@@ -1313,7 +1313,7 @@ type unmap_notify_event = {
 
 let decode_unmap_notify_event buf ~at : (unmap_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* event, at = decode_window buf ~at in
@@ -1332,7 +1332,7 @@ type map_notify_event = {
 
 let decode_map_notify_event buf ~at : (map_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* event, at = decode_window buf ~at in
@@ -1346,7 +1346,7 @@ type map_request_event = { parent : window; window : window } [@@deriving sexp]
 
 let decode_map_request_event buf ~at : (map_request_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* parent, at = decode_window buf ~at in
@@ -1367,7 +1367,7 @@ type reparent_notify_event = {
 let decode_reparent_notify_event buf ~at : (reparent_notify_event * int) option
     =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* event, at = decode_window buf ~at in
@@ -1396,7 +1396,7 @@ type configure_notify_event = {
 let decode_configure_notify_event buf ~at :
     (configure_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* event, at = decode_window buf ~at in
@@ -1492,7 +1492,7 @@ type configure_request_event = {
 let decode_configure_request_event buf ~at :
     (configure_request_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* stack_mode, at =
     decode_enum decode_char Char.code stack_mode_enum_of_int buf ~at
   in
@@ -1536,7 +1536,7 @@ type gravity_notify_event = {
 
 let decode_gravity_notify_event buf ~at : (gravity_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* event, at = decode_window buf ~at in
@@ -1551,7 +1551,7 @@ type resize_request_event = { window : window; width : int; height : int }
 
 let decode_resize_request_event buf ~at : (resize_request_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* window, at = decode_window buf ~at in
@@ -1583,7 +1583,7 @@ type circulate_notify_event = {
 let decode_circulate_notify_event buf ~at :
     (circulate_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* event, at = decode_window buf ~at in
@@ -1621,7 +1621,7 @@ type property_notify_event = {
 let decode_property_notify_event buf ~at : (property_notify_event * int) option
     =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* window, at = decode_window buf ~at in
@@ -1644,7 +1644,7 @@ type selection_clear_event = {
 let decode_selection_clear_event buf ~at : (selection_clear_event * int) option
     =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* time, at = decode_timestamp buf ~at in
@@ -1896,7 +1896,7 @@ type selection_request_event = {
 let decode_selection_request_event buf ~at :
     (selection_request_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* time, at =
@@ -1924,7 +1924,7 @@ type selection_notify_event = {
 let decode_selection_notify_event buf ~at :
     (selection_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* time, at =
@@ -1974,7 +1974,7 @@ type colormap_notify_event = {
 let decode_colormap_notify_event buf ~at : (colormap_notify_event * int) option
     =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* window, at = decode_window buf ~at in
@@ -2045,7 +2045,7 @@ type client_message_event = {
 
 let decode_client_message_event buf ~at : (client_message_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* data_tag, at = decode_uint8 buf ~at in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* window, at = decode_window buf ~at in
@@ -2078,7 +2078,7 @@ type mapping_notify_event = {
 
 let decode_mapping_notify_event buf ~at : (mapping_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* request, at =
@@ -2094,7 +2094,7 @@ type ge_generic_event = unit [@@deriving sexp]
 
 let decode_ge_generic_event buf ~at : (ge_generic_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 22 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   ignore orig;
@@ -8313,7 +8313,7 @@ type notify_event = {
 
 let decode_notify_event buf ~at : (notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* shape_kind, at =
     decode_enum decode_kind identity sk_enum_of_int buf ~at
   in
@@ -8746,7 +8746,7 @@ type selection_notify_event = {
 let decode_selection_notify_event buf ~at :
     (selection_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* subtype, at =
     decode_enum decode_uint8 identity selection_event_enum_of_int buf ~at
   in
@@ -8811,7 +8811,7 @@ type cursor_notify_event = {
 
 let decode_cursor_notify_event buf ~at : (cursor_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* subtype, at =
     decode_enum decode_uint8 identity cursor_notify_enum_of_int buf ~at
   in
@@ -9743,7 +9743,7 @@ type notify_event = {
 
 let decode_notify_event buf ~at : (notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* level, at =
     decode_enum decode_uint8 identity report_level_enum_of_int buf ~at
   in
@@ -10493,7 +10493,7 @@ type buffer_swap_complete_event = {
 let decode_buffer_swap_complete_event buf ~at :
     (buffer_swap_complete_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* event_type, at =
@@ -10514,7 +10514,7 @@ type invalidate_buffers_event = { drawable : Xproto.drawable } [@@deriving sexp]
 let decode_invalidate_buffers_event buf ~at :
     (invalidate_buffers_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* drawable, at = Xproto.decode_drawable buf ~at in
@@ -10932,7 +10932,7 @@ type pbuffer_clobber_event = {
 let decode_pbuffer_clobber_event buf ~at : (pbuffer_clobber_event * int) option
     =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* event_type, at = decode_uint16 buf ~at in
@@ -10976,7 +10976,7 @@ type buffer_swap_complete_event = {
 let decode_buffer_swap_complete_event buf ~at :
     (buffer_swap_complete_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* event_type, at = decode_uint16 buf ~at in
@@ -15428,7 +15428,7 @@ type screen_change_notify_event = {
 let decode_screen_change_notify_event buf ~at :
     (screen_change_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* rotation, at =
     decode_mask decode_uint8 Int64.of_int rotation_mask_of_int64 buf ~at
   in
@@ -15955,7 +15955,7 @@ type notify_event = { u : notify_variant } [@@deriving sexp]
 
 let decode_notify_event buf ~at : (notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* u_tag, at = decode_uint8 buf ~at in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* u, at = decode_notify_variant u_tag buf ~at in
@@ -16581,7 +16581,7 @@ type counter_notify_event = {
 
 let decode_counter_notify_event buf ~at : (counter_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* kind, at = decode_uint8 buf ~at in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* counter, at = decode_counter buf ~at in
@@ -16608,7 +16608,7 @@ type alarm_notify_event = {
 
 let decode_alarm_notify_event buf ~at : (alarm_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* kind, at = decode_uint8 buf ~at in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* alarm, at = decode_alarm buf ~at in
@@ -16890,7 +16890,7 @@ type generic_event = {
 
 let decode_generic_event buf ~at : (generic_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* extension, at = decode_uint8 buf ~at in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* length, at = decode_int32 buf ~at in
@@ -16918,7 +16918,7 @@ type configure_notify_event = {
 let decode_configure_notify_event buf ~at :
     (configure_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 2 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* event, at = decode_event buf ~at in
@@ -16963,7 +16963,7 @@ type complete_notify_event = {
 let decode_complete_notify_event buf ~at : (complete_notify_event * int) option
     =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* kind, at =
     decode_enum decode_uint8 identity complete_kind_enum_of_int buf ~at
   in
@@ -16990,7 +16990,7 @@ type idle_notify_event = {
 
 let decode_idle_notify_event buf ~at : (idle_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 2 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* event, at = decode_event buf ~at in
@@ -18077,7 +18077,7 @@ type notify_event = {
 
 let decode_notify_event buf ~at : (notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* state, at =
     decode_enum decode_char Char.code state_enum_of_int buf ~at
   in
@@ -18113,7 +18113,7 @@ type completion_event = {
 
 let decode_completion_event buf ~at : (completion_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* drawable, at = Xproto.decode_drawable buf ~at in
@@ -20172,9 +20172,9 @@ let decode_list_input_devices_reply length buf ~at :
   let* devices, at = decode_list decode_device_info devices_len buf ~at in
   let* infos, at =
     let length =
-      List.fold_left
-        (fun acc list_element_ref -> acc + list_element_ref.num_class_info)
-        0 devices
+      sum_of_expr
+        (fun list_element_ref -> list_element_ref.num_class_info)
+        devices
     in
     decode_list decode_input_info length buf ~at
   in
@@ -24662,7 +24662,7 @@ type device_valuator_event = {
 let decode_device_valuator_event buf ~at : (device_valuator_event * int) option
     =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* device_id, at = decode_uint8 buf ~at in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* device_state, at = decode_uint16 buf ~at in
@@ -24705,7 +24705,7 @@ type device_key_press_event = {
 let decode_device_key_press_event buf ~at :
     (device_key_press_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* detail, at = decode_char buf ~at in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* time, at = Xproto.decode_timestamp buf ~at in
@@ -24763,7 +24763,7 @@ type device_focus_in_event = {
 let decode_device_focus_in_event buf ~at : (device_focus_in_event * int) option
     =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* detail, at =
     decode_enum decode_char Char.code Xproto.notify_detail_enum_of_int buf ~at
   in
@@ -24828,7 +24828,7 @@ type device_state_notify_event = {
 let decode_device_state_notify_event buf ~at :
     (device_state_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* device_id, at =
     decode_alt_mask decode_char char_to_int64 more_events_mask_mask_of_int64 buf
       ~at
@@ -24881,7 +24881,7 @@ type device_mapping_notify_event = {
 let decode_device_mapping_notify_event buf ~at :
     (device_mapping_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* device_id, at = decode_char buf ~at in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* request, at =
@@ -24918,7 +24918,7 @@ type change_device_notify_event = {
 let decode_change_device_notify_event buf ~at :
     (change_device_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* device_id, at = decode_char buf ~at in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* time, at = Xproto.decode_timestamp buf ~at in
@@ -24938,7 +24938,7 @@ type device_key_state_notify_event = {
 let decode_device_key_state_notify_event buf ~at :
     (device_key_state_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* device_id, at =
     decode_alt_mask decode_char char_to_int64 more_events_mask_mask_of_int64 buf
       ~at
@@ -24960,7 +24960,7 @@ type device_button_state_notify_event = {
 let decode_device_button_state_notify_event buf ~at :
     (device_button_state_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* device_id, at =
     decode_alt_mask decode_char char_to_int64 more_events_mask_mask_of_int64 buf
       ~at
@@ -25012,7 +25012,7 @@ type device_presence_notify_event = {
 let decode_device_presence_notify_event buf ~at :
     (device_presence_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* time, at = Xproto.decode_timestamp buf ~at in
@@ -25036,7 +25036,7 @@ type device_property_notify_event = {
 let decode_device_property_notify_event buf ~at :
     (device_property_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* state, at =
     decode_enum decode_char Char.code Xproto.property_enum_of_int buf ~at
   in
@@ -25072,7 +25072,7 @@ type device_changed_event = {
 
 let decode_device_changed_event buf ~at : (device_changed_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* deviceid, at =
     decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
   in
@@ -25245,7 +25245,7 @@ type enter_event = {
 
 let decode_enter_event buf ~at : (enter_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* deviceid, at =
     decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
   in
@@ -25402,7 +25402,7 @@ type hierarchy_event = {
 
 let decode_hierarchy_event buf ~at : (hierarchy_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* deviceid, at =
     decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
   in
@@ -25446,7 +25446,7 @@ type property_event = {
 
 let decode_property_event buf ~at : (property_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* deviceid, at =
     decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
   in
@@ -25562,7 +25562,7 @@ type touch_ownership_event = {
 let decode_touch_ownership_event buf ~at : (touch_ownership_event * int) option
     =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* deviceid, at =
     decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
   in
@@ -25635,7 +25635,7 @@ type barrier_hit_event = {
 
 let decode_barrier_hit_event buf ~at : (barrier_hit_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* deviceid, at =
     decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
   in
@@ -26389,7 +26389,7 @@ type notify_event = { detail : int; context : pcontext; cancel : bool }
 
 let decode_notify_event buf ~at : (notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* detail, at = decode_uint8 buf ~at in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* context, at = decode_pcontext buf ~at in
@@ -26403,7 +26403,7 @@ type attribut_notify_event = { detail : int; context : pcontext }
 let decode_attribut_notify_event buf ~at : (attribut_notify_event * int) option
     =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* detail, at = decode_uint8 buf ~at in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* context, at = decode_pcontext buf ~at in
@@ -27567,7 +27567,7 @@ type video_notify_event = {
 
 let decode_video_notify_event buf ~at : (video_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let* reason, at =
     decode_enum decode_char Char.code video_notify_reason_enum_of_int buf ~at
   in
@@ -27588,7 +27588,7 @@ type port_notify_event = {
 
 let decode_port_notify_event buf ~at : (port_notify_event * int) option =
   let orig = at in
-  let a = a + 1 in
+  let at = at + 1 in
   let at = at + 1 in
   let* _sequence_number, at = decode_uint16 buf ~at in
   let* time, at = Xproto.decode_timestamp buf ~at in
