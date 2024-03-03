@@ -871,6 +871,8 @@ let gen_xcb xcbs out xcb =
   output_string out "[@@@warning \"-27\"]\n";
   output_string out "[@@@warning \"-11\"]\n";
   output_string out "open Codec\n";
+  output_string out "open X11_types\n";
+  output_string out "open Util\n";
   output_string out "open Sexplib.Conv\n";
   match xcb with
   | Core decls ->
