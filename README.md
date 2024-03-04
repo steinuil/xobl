@@ -12,6 +12,8 @@ The X11 OCaml Bindings Library. A Pure OCaml implementation of the X11 protocol.
 - Bindings
   - [ ] come up with a better API for sending multiple requests at once.
     - how do we encode stuff which needs a reply?
+  - [ ] events/variant structs/errors that are only made of one field should be converted to that one field.
+    - notify_variant
 - OCaml backend
   - [ ] encode/decode events and errors.
   - [ ] change handling of flags?

@@ -7,7 +7,7 @@ module BigRequests = struct
   open Util
   open Sexplib.Conv
 
-  type enable_reply = { maximum_request_length : int } [@@deriving sexp]
+  type enable_reply = int [@@deriving sexp]
 
   let encode_enable buf =
     (* opcode *)
@@ -24,7 +24,7 @@ module BigRequests = struct
     let at = at + 6 in
     let* maximum_request_length, at = decode_int32 buf ~at in
     ignore orig;
-    Some ({ maximum_request_length }, at)
+    Some (maximum_request_length, at)
 end
 
 [@@@warning "-27"]
@@ -1090,7 +1090,7 @@ let decode_focus_in_event buf ~at : (focus_in_event * int) option =
   Some ({ detail; event; mode }, at)
 
 type focus_out_event = focus_in_event [@@deriving sexp]
-type keymap_notify_event = { keys : int list } [@@deriving sexp]
+type keymap_notify_event = int list [@@deriving sexp]
 
 let decode_keymap_notify_event buf ~at : (keymap_notify_event * int) option =
   let orig = at in
@@ -1101,7 +1101,7 @@ let decode_keymap_notify_event buf ~at : (keymap_notify_event * int) option =
   in
   let* _sequence_number, at = decode_uint16 buf ~at in
   ignore orig;
-  Some ({ keys }, at)
+  Some (keys, at)
 
 type expose_event = {
   window : window;
@@ -2713,7 +2713,7 @@ let decode_query_tree_reply length buf ~at : (query_tree_reply * int) option =
   ignore orig;
   Some ({ root; parent; children }, at)
 
-type intern_atom_reply = { atom : atom_enum alt_enum } [@@deriving sexp]
+type intern_atom_reply = atom_enum alt_enum [@@deriving sexp]
 
 let encode_intern_atom ~(only_if_exists : bool) ~(name : string) buf =
   (* opcode *)
@@ -2736,9 +2736,9 @@ let decode_intern_atom_reply length buf ~at : (intern_atom_reply * int) option =
     decode_alt_enum decode_atom identity atom_enum_of_int buf ~at
   in
   ignore orig;
-  Some ({ atom }, at)
+  Some (atom, at)
 
-type get_atom_name_reply = { name : string } [@@deriving sexp]
+type get_atom_name_reply = string [@@deriving sexp]
 
 let encode_get_atom_name ~(atom : atom) buf =
   (* opcode *)
@@ -2761,7 +2761,7 @@ let decode_get_atom_name_reply length buf ~at :
   let at = at + 22 in
   let* name, at = decode_string name_len buf ~at in
   ignore orig;
-  Some ({ name }, at)
+  Some (name, at)
 
 type prop_mode_enum = [ `Replace | `Prepend | `Append ] [@@deriving sexp]
 
@@ -2861,7 +2861,7 @@ let decode_get_property_reply length buf ~at : (get_property_reply * int) option
   ignore orig;
   Some ({ format; type_; bytes_after; value_len; value }, at)
 
-type list_properties_reply = { atoms : atom list } [@@deriving sexp]
+type list_properties_reply = atom list [@@deriving sexp]
 
 let encode_list_properties ~(window : window) buf =
   (* opcode *)
@@ -2884,7 +2884,7 @@ let decode_list_properties_reply length buf ~at :
   let at = at + 22 in
   let* atoms, at = decode_list decode_atom atoms_len buf ~at in
   ignore orig;
-  Some ({ atoms }, at)
+  Some (atoms, at)
 
 let encode_set_selection_owner ~(owner : window_enum alt_enum)
     ~(selection : atom) ~(time : time_enum alt_enum) buf =
@@ -2899,8 +2899,7 @@ let encode_set_selection_owner ~(owner : window_enum alt_enum)
   (* write request length *)
   encode_request_length buf
 
-type get_selection_owner_reply = { owner : window_enum alt_enum }
-[@@deriving sexp]
+type get_selection_owner_reply = window_enum alt_enum [@@deriving sexp]
 
 let encode_get_selection_owner ~(selection : atom) buf =
   (* opcode *)
@@ -2922,7 +2921,7 @@ let decode_get_selection_owner_reply length buf ~at :
     decode_alt_enum decode_window identity window_enum_of_int buf ~at
   in
   ignore orig;
-  Some ({ owner }, at)
+  Some (owner, at)
 
 let encode_convert_selection ~(requestor : window) ~(selection : atom)
     ~(target : atom) ~(property : atom_enum alt_enum)
@@ -3003,7 +3002,7 @@ let grab_status_int_of_enum : grab_status_enum -> int = function
   | `Not_viewable -> 3
   | `Frozen -> 4
 
-type grab_pointer_reply = { status : grab_status_enum } [@@deriving sexp]
+type grab_pointer_reply = grab_status_enum [@@deriving sexp]
 
 let encode_grab_pointer ~(owner_events : bool) ~(grab_window : window)
     ~(event_mask : event_mask) ~(pointer_mode : grab_mode_enum)
@@ -3033,7 +3032,7 @@ let decode_grab_pointer_reply length buf ~at : (grab_pointer_reply * int) option
   in
   let at = at + 6 in
   ignore orig;
-  Some ({ status }, at)
+  Some (status, at)
 
 let encode_ungrab_pointer ~(time : time_enum alt_enum) buf =
   (* opcode *)
@@ -3116,7 +3115,7 @@ let encode_change_active_pointer_grab ~(cursor : cursor_enum alt_enum)
   (* write request length *)
   encode_request_length buf
 
-type grab_keyboard_reply = { status : grab_status_enum } [@@deriving sexp]
+type grab_keyboard_reply = grab_status_enum [@@deriving sexp]
 
 let encode_grab_keyboard ~(owner_events : bool) ~(grab_window : window)
     ~(time : time_enum alt_enum) ~(pointer_mode : grab_mode_enum)
@@ -3143,7 +3142,7 @@ let decode_grab_keyboard_reply length buf ~at :
   in
   let at = at + 6 in
   ignore orig;
-  Some ({ status }, at)
+  Some (status, at)
 
 let encode_ungrab_keyboard ~(time : time_enum alt_enum) buf =
   (* opcode *)
@@ -3314,7 +3313,7 @@ let encode_timecoord buf (v : timecoord) =
   encode_int16 buf v.y;
   ()
 
-type get_motion_events_reply = { events : timecoord list } [@@deriving sexp]
+type get_motion_events_reply = timecoord list [@@deriving sexp]
 
 let encode_get_motion_events ~(window : window) ~(start : time_enum alt_enum)
     ~(stop : time_enum alt_enum) buf =
@@ -3340,7 +3339,7 @@ let decode_get_motion_events_reply length buf ~at :
   let at = at + 20 in
   let* events, at = decode_list decode_timecoord events_len buf ~at in
   ignore orig;
-  Some ({ events }, at)
+  Some (events, at)
 
 type translate_coordinates_reply = {
   same_screen : bool;
@@ -3455,7 +3454,7 @@ let decode_get_input_focus_reply length buf ~at :
   ignore orig;
   Some ({ revert_to; focus }, at)
 
-type query_keymap_reply = { keys : int list } [@@deriving sexp]
+type query_keymap_reply = int list [@@deriving sexp]
 
 let encode_query_keymap buf =
   (* opcode *)
@@ -3476,7 +3475,7 @@ let decode_query_keymap_reply length buf ~at : (query_keymap_reply * int) option
     decode_list decode_uint8 length buf ~at
   in
   ignore orig;
-  Some ({ keys }, at)
+  Some (keys, at)
 
 let encode_open_font ~(fid : font) ~(name : string) buf =
   (* opcode *)
@@ -3639,7 +3638,7 @@ let decode_query_font_reply length buf ~at : (query_font_reply * int) option =
       },
       at )
 
-type str = { name : string } [@@deriving sexp]
+type str = string [@@deriving sexp]
 
 let decode_str buf ~at : (str * int) option =
   let orig = at in
@@ -3647,14 +3646,13 @@ let decode_str buf ~at : (str * int) option =
   let name_len = name_len in
   let* name, at = decode_string name_len buf ~at in
   ignore orig;
-  Some ({ name }, at)
+  Some (name, at)
 
 let encode_str buf (v : str) =
-  encode_uint8 buf (identity (String.length v.name));
-  encode_string buf v.name;
+  encode_string buf v;
   ()
 
-type list_fonts_reply = { names : str list } [@@deriving sexp]
+type list_fonts_reply = str list [@@deriving sexp]
 
 let encode_list_fonts ~(max_names : int) ~(pattern : string) buf =
   (* opcode *)
@@ -3678,7 +3676,7 @@ let decode_list_fonts_reply length buf ~at : (list_fonts_reply * int) option =
   let at = at + 22 in
   let* names, at = decode_list decode_str names_len buf ~at in
   ignore orig;
-  Some ({ names }, at)
+  Some (names, at)
 
 type list_fonts_with_info_reply = {
   min_bounds : charinfo;
@@ -3769,7 +3767,7 @@ let encode_set_font_path ~(font : str list) buf =
   (* write request length *)
   encode_request_length buf
 
-type get_font_path_reply = { path : str list } [@@deriving sexp]
+type get_font_path_reply = str list [@@deriving sexp]
 
 let encode_get_font_path buf =
   (* opcode *)
@@ -3790,7 +3788,7 @@ let decode_get_font_path_reply length buf ~at :
   let at = at + 22 in
   let* path, at = decode_list decode_str path_len buf ~at in
   ignore orig;
-  Some ({ path }, at)
+  Some (path, at)
 
 let encode_create_pixmap ~(depth : int) ~(pid : pixmap) ~(drawable : drawable)
     ~(width : int) ~(height : int) buf =
@@ -4750,8 +4748,7 @@ let encode_uninstall_colormap ~(cmap : colormap) buf =
   (* write request length *)
   encode_request_length buf
 
-type list_installed_colormaps_reply = { cmaps : colormap list }
-[@@deriving sexp]
+type list_installed_colormaps_reply = colormap list [@@deriving sexp]
 
 let encode_list_installed_colormaps ~(window : window) buf =
   (* opcode *)
@@ -4774,7 +4771,7 @@ let decode_list_installed_colormaps_reply length buf ~at :
   let at = at + 22 in
   let* cmaps, at = decode_list decode_colormap cmaps_len buf ~at in
   ignore orig;
-  Some ({ cmaps }, at)
+  Some (cmaps, at)
 
 type alloc_color_reply = { red : int; green : int; blue : int; pixel : int }
 [@@deriving sexp]
@@ -5032,7 +5029,7 @@ let encode_rgb buf (v : rgb) =
   encode_pad buf 2;
   ()
 
-type query_colors_reply = { colors : rgb list } [@@deriving sexp]
+type query_colors_reply = rgb list [@@deriving sexp]
 
 let encode_query_colors ~(cmap : colormap) ~(pixels : int list) buf =
   (* opcode *)
@@ -5056,7 +5053,7 @@ let decode_query_colors_reply length buf ~at : (query_colors_reply * int) option
   let at = at + 22 in
   let* colors, at = decode_list decode_rgb colors_len buf ~at in
   ignore orig;
-  Some ({ colors }, at)
+  Some (colors, at)
 
 type lookup_color_reply = {
   exact_red : int;
@@ -5255,7 +5252,7 @@ let decode_query_extension_reply length buf ~at :
   ignore orig;
   Some ({ present; major_opcode; first_event; first_error }, at)
 
-type list_extensions_reply = { names : str list } [@@deriving sexp]
+type list_extensions_reply = str list [@@deriving sexp]
 
 let encode_list_extensions buf =
   (* opcode *)
@@ -5275,7 +5272,7 @@ let decode_list_extensions_reply length buf ~at :
   let at = at + 24 in
   let* names, at = decode_list decode_str names_len buf ~at in
   ignore orig;
-  Some ({ names }, at)
+  Some (names, at)
 
 let encode_change_keyboard_mapping ~(keycode_count : int)
     ~(first_keycode : keycode) ~(keysyms_per_keycode : int)
@@ -5830,8 +5827,7 @@ let mapping_status_int_of_enum : mapping_status_enum -> int = function
   | `Busy -> 1
   | `Failure -> 2
 
-type set_pointer_mapping_reply = { status : mapping_status_enum }
-[@@deriving sexp]
+type set_pointer_mapping_reply = mapping_status_enum [@@deriving sexp]
 
 let encode_set_pointer_mapping ~(map : int list) buf =
   (* opcode *)
@@ -5852,9 +5848,9 @@ let decode_set_pointer_mapping_reply length buf ~at :
   in
   let at = at + 6 in
   ignore orig;
-  Some ({ status }, at)
+  Some (status, at)
 
-type get_pointer_mapping_reply = { map : int list } [@@deriving sexp]
+type get_pointer_mapping_reply = int list [@@deriving sexp]
 
 let encode_get_pointer_mapping buf =
   (* opcode *)
@@ -5874,7 +5870,7 @@ let decode_get_pointer_mapping_reply length buf ~at :
   let at = at + 24 in
   let* map, at = decode_list decode_uint8 map_len buf ~at in
   ignore orig;
-  Some ({ map }, at)
+  Some (map, at)
 
 type map_index_enum = [ `Shift | `Lock | `Control | `D1 | `D2 | `D3 | `D4 | `D5 ]
 [@@deriving sexp]
@@ -5902,8 +5898,7 @@ let map_index_int_of_enum : map_index_enum -> int = function
   | `D4 -> 6
   | `D5 -> 7
 
-type set_modifier_mapping_reply = { status : mapping_status_enum }
-[@@deriving sexp]
+type set_modifier_mapping_reply = mapping_status_enum [@@deriving sexp]
 
 let encode_set_modifier_mapping ~(keycodes : keycode list) buf =
   (* opcode *)
@@ -5924,9 +5919,9 @@ let decode_set_modifier_mapping_reply length buf ~at :
   in
   let at = at + 6 in
   ignore orig;
-  Some ({ status }, at)
+  Some (status, at)
 
-type get_modifier_mapping_reply = { keycodes : keycode list } [@@deriving sexp]
+type get_modifier_mapping_reply = keycode list [@@deriving sexp]
 
 let encode_get_modifier_mapping buf =
   (* opcode *)
@@ -5948,7 +5943,7 @@ let decode_get_modifier_mapping_reply length buf ~at :
     decode_list decode_keycode keycodes_per_modifier buf ~at
   in
   ignore orig;
-  Some ({ keycodes }, at)
+  Some (keycodes, at)
 
 let encode_no_operation buf =
   (* opcode *)
@@ -6660,8 +6655,7 @@ module Render = struct
     ignore orig;
     Some ({ num_depths; num_visuals; formats; screens; subpixels }, at)
 
-  type query_pict_index_values_reply = { values : indexvalue list }
-  [@@deriving sexp]
+  type query_pict_index_values_reply = indexvalue list [@@deriving sexp]
 
   let encode_query_pict_index_values ~(format : pictformat) buf =
     (* opcode *)
@@ -6684,7 +6678,7 @@ module Render = struct
     let at = at + 20 in
     let* values, at = decode_list decode_indexvalue num_values buf ~at in
     ignore orig;
-    Some ({ values }, at)
+    Some (values, at)
 
   let encode_create_picture ~(pid : picture) ~(drawable : Xproto.drawable)
       ~(format : pictformat) ?(repeat : repeat_enum option)
@@ -7547,7 +7541,7 @@ module Shape = struct
     (* write request length *)
     encode_request_length buf
 
-  type input_selected_reply = { enabled : bool } [@@deriving sexp]
+  type input_selected_reply = bool [@@deriving sexp]
 
   let encode_input_selected ~(destination_window : Xproto.window) buf =
     (* opcode *)
@@ -7566,7 +7560,7 @@ module Shape = struct
     let* enabled, at = decode_bool buf ~at in
     let at = at + 6 in
     ignore orig;
-    Some ({ enabled }, at)
+    Some (enabled, at)
 
   type get_rectangles_reply = {
     ordering : Xproto.clip_ordering_enum;
@@ -8473,8 +8467,7 @@ module Composite = struct
     (* write request length *)
     encode_request_length buf
 
-  type get_overlay_window_reply = { overlay_win : Xproto.window }
-  [@@deriving sexp]
+  type get_overlay_window_reply = Xproto.window [@@deriving sexp]
 
   let encode_get_overlay_window ~(window : Xproto.window) buf =
     (* opcode *)
@@ -8495,7 +8488,7 @@ module Composite = struct
     let* overlay_win, at = Xproto.decode_window buf ~at in
     let at = at + 20 in
     ignore orig;
-    Some ({ overlay_win }, at)
+    Some (overlay_win, at)
 
   let encode_release_overlay_window ~(window : Xproto.window) buf =
     (* opcode *)
@@ -8679,7 +8672,7 @@ module DPMS = struct
     ignore orig;
     Some ({ server_major_version; server_minor_version }, at)
 
-  type capable_reply = { capable : bool } [@@deriving sexp]
+  type capable_reply = bool [@@deriving sexp]
 
   let encode_capable buf =
     (* opcode *)
@@ -8697,7 +8690,7 @@ module DPMS = struct
     let* capable, at = decode_bool buf ~at in
     let at = at + 23 in
     ignore orig;
-    Some ({ capable }, at)
+    Some (capable, at)
 
   type get_timeouts_reply = {
     standby_timeout : int;
@@ -8997,7 +8990,7 @@ module DRI2 = struct
     ignore orig;
     Some ({ driver_name; alignment_pad; device_name }, at)
 
-  type authenticate_reply = { authenticated : int } [@@deriving sexp]
+  type authenticate_reply = int [@@deriving sexp]
 
   let encode_authenticate ~(window : Xproto.window) ~(magic : int) buf =
     (* opcode *)
@@ -9017,7 +9010,7 @@ module DRI2 = struct
     let at = at + 6 in
     let* authenticated, at = decode_int32 buf ~at in
     ignore orig;
-    Some ({ authenticated }, at)
+    Some (authenticated, at)
 
   let encode_create_drawable ~(drawable : Xproto.drawable) buf =
     (* opcode *)
@@ -9336,8 +9329,7 @@ module DRI2 = struct
     ignore orig;
     Some ({ event_type; drawable; ust_hi; ust_lo; msc_hi; msc_lo; sbc }, at)
 
-  type invalidate_buffers_event = { drawable : Xproto.drawable }
-  [@@deriving sexp]
+  type invalidate_buffers_event = Xproto.drawable [@@deriving sexp]
 
   let decode_invalidate_buffers_event buf ~at :
       (invalidate_buffers_event * int) option =
@@ -9347,7 +9339,7 @@ module DRI2 = struct
     let* _sequence_number, at = decode_uint16 buf ~at in
     let* drawable, at = Xproto.decode_drawable buf ~at in
     ignore orig;
-    Some ({ drawable }, at)
+    Some (drawable, at)
 end
 
 module DRI3 = struct
@@ -9882,7 +9874,7 @@ module Glx = struct
     (* write request length *)
     encode_request_length buf
 
-  type make_current_reply = { context_tag : context_tag } [@@deriving sexp]
+  type make_current_reply = context_tag [@@deriving sexp]
 
   let encode_make_current ~(drawable : drawable) ~(context : context)
       ~(old_context_tag : context_tag) buf =
@@ -9905,9 +9897,9 @@ module Glx = struct
     let* context_tag, at = decode_context_tag buf ~at in
     let at = at + 20 in
     ignore orig;
-    Some ({ context_tag }, at)
+    Some (context_tag, at)
 
-  type is_direct_reply = { is_direct : bool } [@@deriving sexp]
+  type is_direct_reply = bool [@@deriving sexp]
 
   let encode_is_direct ~(context : context) buf =
     (* opcode *)
@@ -9927,7 +9919,7 @@ module Glx = struct
     let* is_direct, at = decode_bool buf ~at in
     let at = at + 23 in
     ignore orig;
-    Some ({ is_direct }, at)
+    Some (is_direct, at)
 
   type query_version_reply = { major_version : int; minor_version : int }
   [@@deriving sexp]
@@ -10199,7 +10191,7 @@ module Glx = struct
     ignore orig;
     Some ({ retval; data1; data2 }, at)
 
-  type query_extensions_string_reply = { n : int } [@@deriving sexp]
+  type query_extensions_string_reply = int [@@deriving sexp]
 
   let encode_query_extensions_string ~(screen : int) buf =
     (* opcode *)
@@ -10221,9 +10213,9 @@ module Glx = struct
     let* n, at = decode_int32 buf ~at in
     let at = at + 16 in
     ignore orig;
-    Some ({ n }, at)
+    Some (n, at)
 
-  type query_server_string_reply = { string : string } [@@deriving sexp]
+  type query_server_string_reply = string [@@deriving sexp]
 
   let encode_query_server_string ~(screen : int) ~(name : int) buf =
     (* opcode *)
@@ -10247,7 +10239,7 @@ module Glx = struct
     let at = at + 16 in
     let* string, at = decode_string str_len buf ~at in
     ignore orig;
-    Some ({ string }, at)
+    Some (string, at)
 
   let encode_client_info ~(major_version : int) ~(minor_version : int)
       ~(string : string) buf =
@@ -10338,7 +10330,7 @@ module Glx = struct
     (* write request length *)
     encode_request_length buf
 
-  type query_context_reply = { attribs : int list } [@@deriving sexp]
+  type query_context_reply = int list [@@deriving sexp]
 
   let encode_query_context ~(context : context) buf =
     (* opcode *)
@@ -10361,10 +10353,9 @@ module Glx = struct
     let at = at + 20 in
     let* attribs, at = decode_list decode_int32 num_attribs buf ~at in
     ignore orig;
-    Some ({ attribs }, at)
+    Some (attribs, at)
 
-  type make_context_current_reply = { context_tag : context_tag }
-  [@@deriving sexp]
+  type make_context_current_reply = context_tag [@@deriving sexp]
 
   let encode_make_context_current ~(old_context_tag : context_tag)
       ~(drawable : drawable) ~(read_drawable : drawable) ~(context : context)
@@ -10389,7 +10380,7 @@ module Glx = struct
     let* context_tag, at = decode_context_tag buf ~at in
     let at = at + 20 in
     ignore orig;
-    Some ({ context_tag }, at)
+    Some (context_tag, at)
 
   let encode_create_pbuffer ~(screen : int) ~(fbconfig : fbconfig)
       ~(pbuffer : pbuffer) ~(attribs : int list) buf =
@@ -10415,7 +10406,7 @@ module Glx = struct
     (* write request length *)
     encode_request_length buf
 
-  type get_drawable_attributes_reply = { attribs : int list } [@@deriving sexp]
+  type get_drawable_attributes_reply = int list [@@deriving sexp]
 
   let encode_get_drawable_attributes ~(drawable : drawable) buf =
     (* opcode *)
@@ -10438,7 +10429,7 @@ module Glx = struct
     let at = at + 20 in
     let* attribs, at = decode_list decode_int32 num_attribs buf ~at in
     ignore orig;
-    Some ({ attribs }, at)
+    Some (attribs, at)
 
   let encode_change_drawable_attributes ~(drawable : drawable)
       ~(attribs : int list) buf =
@@ -10566,7 +10557,7 @@ module Glx = struct
     (* write request length *)
     encode_request_length buf
 
-  type gen_lists_reply = { ret_val : int } [@@deriving sexp]
+  type gen_lists_reply = int [@@deriving sexp]
 
   let encode_gen_lists ~(context_tag : context_tag) ~(range : int) buf =
     (* opcode *)
@@ -10585,7 +10576,7 @@ module Glx = struct
     let at = at + 6 in
     let* ret_val, at = decode_int32 buf ~at in
     ignore orig;
-    Some ({ ret_val }, at)
+    Some (ret_val, at)
 
   let encode_feedback_buffer ~(context_tag : context_tag) ~(size : int)
       ~(type_ : int) buf =
@@ -10693,7 +10684,7 @@ module Glx = struct
     (* write request length *)
     encode_request_length buf
 
-  type read_pixels_reply = { data : char list } [@@deriving sexp]
+  type read_pixels_reply = char list [@@deriving sexp]
 
   let encode_read_pixels ~(context_tag : context_tag) ~(x : int) ~(y : int)
       ~(width : int) ~(height : int) ~(format : int) ~(type_ : int)
@@ -10726,7 +10717,7 @@ module Glx = struct
       decode_list decode_char length buf ~at
     in
     ignore orig;
-    Some ({ data }, at)
+    Some (data, at)
 
   type get_booleanv_reply = { datum : bool; data : bool list } [@@deriving sexp]
 
@@ -10755,7 +10746,7 @@ module Glx = struct
     ignore orig;
     Some ({ datum; data }, at)
 
-  type get_clip_plane_reply = { data : float64 list } [@@deriving sexp]
+  type get_clip_plane_reply = float64 list [@@deriving sexp]
 
   let encode_get_clip_plane ~(context_tag : context_tag) ~(plane : int) buf =
     (* opcode *)
@@ -10779,7 +10770,7 @@ module Glx = struct
       decode_list decode_float64 length buf ~at
     in
     ignore orig;
-    Some ({ data }, at)
+    Some (data, at)
 
   type get_doublev_reply = { datum : float64; data : float64 list }
   [@@deriving sexp]
@@ -10809,7 +10800,7 @@ module Glx = struct
     ignore orig;
     Some ({ datum; data }, at)
 
-  type get_error_reply = { error : int } [@@deriving sexp]
+  type get_error_reply = int [@@deriving sexp]
 
   let encode_get_error ~(context_tag : context_tag) buf =
     (* opcode *)
@@ -10828,7 +10819,7 @@ module Glx = struct
     let at = at + 6 in
     let* error, at = decode_int32 buf ~at in
     ignore orig;
-    Some ({ error }, at)
+    Some (error, at)
 
   type get_floatv_reply = { datum : float32; data : float32 list }
   [@@deriving sexp]
@@ -11172,7 +11163,7 @@ module Glx = struct
     ignore orig;
     Some ({ datum; data }, at)
 
-  type get_polygon_stipple_reply = { data : char list } [@@deriving sexp]
+  type get_polygon_stipple_reply = char list [@@deriving sexp]
 
   let encode_get_polygon_stipple ~(context_tag : context_tag)
       ~(lsb_first : bool) buf =
@@ -11197,9 +11188,9 @@ module Glx = struct
       decode_list decode_char length buf ~at
     in
     ignore orig;
-    Some ({ data }, at)
+    Some (data, at)
 
-  type get_string_reply = { string : string } [@@deriving sexp]
+  type get_string_reply = string [@@deriving sexp]
 
   let encode_get_string ~(context_tag : context_tag) ~(name : int) buf =
     (* opcode *)
@@ -11222,7 +11213,7 @@ module Glx = struct
     let at = at + 16 in
     let* string, at = decode_string n buf ~at in
     ignore orig;
-    Some ({ string }, at)
+    Some (string, at)
 
   type get_tex_envfv_reply = { datum : float32; data : float32 list }
   [@@deriving sexp]
@@ -11538,7 +11529,7 @@ module Glx = struct
     ignore orig;
     Some ({ datum; data }, at)
 
-  type is_enabled_reply = { ret_val : bool32 } [@@deriving sexp]
+  type is_enabled_reply = bool32 [@@deriving sexp]
 
   let encode_is_enabled ~(context_tag : context_tag) ~(capability : int) buf =
     (* opcode *)
@@ -11557,9 +11548,9 @@ module Glx = struct
     let at = at + 6 in
     let* ret_val, at = decode_bool32 buf ~at in
     ignore orig;
-    Some ({ ret_val }, at)
+    Some (ret_val, at)
 
-  type is_list_reply = { ret_val : bool32 } [@@deriving sexp]
+  type is_list_reply = bool32 [@@deriving sexp]
 
   let encode_is_list ~(context_tag : context_tag) ~(list : int) buf =
     (* opcode *)
@@ -11578,7 +11569,7 @@ module Glx = struct
     let at = at + 6 in
     let* ret_val, at = decode_bool32 buf ~at in
     ignore orig;
-    Some ({ ret_val }, at)
+    Some (ret_val, at)
 
   let encode_flush ~(context_tag : context_tag) buf =
     (* opcode *)
@@ -11632,7 +11623,7 @@ module Glx = struct
     (* write request length *)
     encode_request_length buf
 
-  type gen_textures_reply = { data : int list } [@@deriving sexp]
+  type gen_textures_reply = int list [@@deriving sexp]
 
   let encode_gen_textures ~(context_tag : context_tag) ~(n : int) buf =
     (* opcode *)
@@ -11656,9 +11647,9 @@ module Glx = struct
       decode_list decode_int32 length buf ~at
     in
     ignore orig;
-    Some ({ data }, at)
+    Some (data, at)
 
-  type is_texture_reply = { ret_val : bool32 } [@@deriving sexp]
+  type is_texture_reply = bool32 [@@deriving sexp]
 
   let encode_is_texture ~(context_tag : context_tag) ~(texture : int) buf =
     (* opcode *)
@@ -11677,7 +11668,7 @@ module Glx = struct
     let at = at + 6 in
     let* ret_val, at = decode_bool32 buf ~at in
     ignore orig;
-    Some ({ ret_val }, at)
+    Some (ret_val, at)
 
   type get_color_table_reply = { width : int; data : char list }
   [@@deriving sexp]
@@ -12010,7 +12001,7 @@ module Glx = struct
     ignore orig;
     Some ({ datum; data }, at)
 
-  type get_minmax_reply = { data : char list } [@@deriving sexp]
+  type get_minmax_reply = char list [@@deriving sexp]
 
   let encode_get_minmax ~(context_tag : context_tag) ~(target : int)
       ~(format : int) ~(type_ : int) ~(swap_bytes : bool) ~(reset : bool) buf =
@@ -12038,7 +12029,7 @@ module Glx = struct
       decode_list decode_char length buf ~at
     in
     ignore orig;
-    Some ({ data }, at)
+    Some (data, at)
 
   type get_minmax_parameterfv_reply = { datum : float32; data : float32 list }
   [@@deriving sexp]
@@ -12143,7 +12134,7 @@ module Glx = struct
     (* write request length *)
     encode_request_length buf
 
-  type gen_queries_arb_reply = { data : int list } [@@deriving sexp]
+  type gen_queries_arb_reply = int list [@@deriving sexp]
 
   let encode_gen_queries_arb ~(context_tag : context_tag) ~(n : int) buf =
     (* opcode *)
@@ -12167,9 +12158,9 @@ module Glx = struct
       decode_list decode_int32 length buf ~at
     in
     ignore orig;
-    Some ({ data }, at)
+    Some (data, at)
 
-  type is_query_arb_reply = { ret_val : bool32 } [@@deriving sexp]
+  type is_query_arb_reply = bool32 [@@deriving sexp]
 
   let encode_is_query_arb ~(context_tag : context_tag) ~(id : int) buf =
     (* opcode *)
@@ -12189,7 +12180,7 @@ module Glx = struct
     let at = at + 6 in
     let* ret_val, at = decode_bool32 buf ~at in
     ignore orig;
-    Some ({ ret_val }, at)
+    Some (ret_val, at)
 
   type get_queryiv_arb_reply = { datum : int; data : int list }
   [@@deriving sexp]
@@ -12373,7 +12364,7 @@ module RandR = struct
     encode_uint16 buf v.mheight;
     ()
 
-  type refresh_rates = { rates : int list } [@@deriving sexp]
+  type refresh_rates = int list [@@deriving sexp]
 
   let decode_refresh_rates buf ~at : (refresh_rates * int) option =
     let orig = at in
@@ -12381,11 +12372,10 @@ module RandR = struct
     let n_rates = n_rates in
     let* rates, at = decode_list decode_uint16 n_rates buf ~at in
     ignore orig;
-    Some ({ rates }, at)
+    Some (rates, at)
 
   let encode_refresh_rates buf (v : refresh_rates) =
-    encode_uint16 buf (identity ((* Parsetree.Card16 *) List.length v.rates));
-    encode_list encode_uint16 buf v.rates;
+    encode_list encode_uint16 buf v;
     ()
 
   type query_version_reply = { major_version : int; minor_version : int }
@@ -12900,8 +12890,7 @@ module RandR = struct
         },
         at )
 
-  type list_output_properties_reply = { atoms : Xproto.atom list }
-  [@@deriving sexp]
+  type list_output_properties_reply = Xproto.atom list [@@deriving sexp]
 
   let encode_list_output_properties ~(output : output) buf =
     (* opcode *)
@@ -12924,7 +12913,7 @@ module RandR = struct
     let at = at + 22 in
     let* atoms, at = decode_list Xproto.decode_atom num_atoms buf ~at in
     ignore orig;
-    Some ({ atoms }, at)
+    Some (atoms, at)
 
   type query_output_property_reply = {
     pending : bool;
@@ -13055,7 +13044,7 @@ module RandR = struct
     ignore orig;
     Some ({ format; type_; bytes_after; num_items; data }, at)
 
-  type create_mode_reply = { mode : mode } [@@deriving sexp]
+  type create_mode_reply = mode [@@deriving sexp]
 
   let encode_create_mode ~(window : Xproto.window) ~(mode_info : mode_info)
       ~(name : string) buf =
@@ -13078,7 +13067,7 @@ module RandR = struct
     let* mode, at = decode_mode buf ~at in
     let at = at + 20 in
     ignore orig;
-    Some ({ mode }, at)
+    Some (mode, at)
 
   let encode_destroy_mode ~(mode : mode) buf =
     (* opcode *)
@@ -13219,7 +13208,7 @@ module RandR = struct
     ignore orig;
     Some ({ status; timestamp }, at)
 
-  type get_crtc_gamma_size_reply = { size : int } [@@deriving sexp]
+  type get_crtc_gamma_size_reply = int [@@deriving sexp]
 
   let encode_get_crtc_gamma_size ~(crtc : crtc) buf =
     (* opcode *)
@@ -13240,7 +13229,7 @@ module RandR = struct
     let* size, at = decode_uint16 buf ~at in
     let at = at + 22 in
     ignore orig;
-    Some ({ size }, at)
+    Some (size, at)
 
   type get_crtc_gamma_reply = {
     red : int list;
@@ -13558,7 +13547,7 @@ module RandR = struct
     (* write request length *)
     encode_request_length buf
 
-  type get_output_primary_reply = { output : output } [@@deriving sexp]
+  type get_output_primary_reply = output [@@deriving sexp]
 
   let encode_get_output_primary ~(window : Xproto.window) buf =
     (* opcode *)
@@ -13578,7 +13567,7 @@ module RandR = struct
     let at = at + 6 in
     let* output, at = decode_output buf ~at in
     ignore orig;
-    Some ({ output }, at)
+    Some (output, at)
 
   type get_providers_reply = {
     timestamp : Xproto.timestamp;
@@ -13723,8 +13712,7 @@ module RandR = struct
     (* write request length *)
     encode_request_length buf
 
-  type list_provider_properties_reply = { atoms : Xproto.atom list }
-  [@@deriving sexp]
+  type list_provider_properties_reply = Xproto.atom list [@@deriving sexp]
 
   let encode_list_provider_properties ~(provider : provider) buf =
     (* opcode *)
@@ -13747,7 +13735,7 @@ module RandR = struct
     let at = at + 22 in
     let* atoms, at = decode_list Xproto.decode_atom num_atoms buf ~at in
     ignore orig;
-    Some ({ atoms }, at)
+    Some (atoms, at)
 
   type query_provider_property_reply = {
     pending : bool;
@@ -14373,7 +14361,7 @@ module RandR = struct
         Some (Lease { lc }, at)
     | _ -> None
 
-  type notify_event = { u : notify_variant } [@@deriving sexp]
+  type notify_event = notify_variant [@@deriving sexp]
 
   let decode_notify_event buf ~at : (notify_event * int) option =
     let orig = at in
@@ -14382,7 +14370,7 @@ module RandR = struct
     let* _sequence_number, at = decode_uint16 buf ~at in
     let* u, at = decode_notify_variant u_tag buf ~at in
     ignore orig;
-    Some ({ u }, at)
+    Some (u, at)
 end
 
 module Sync = struct
@@ -14600,8 +14588,7 @@ module Sync = struct
     ignore orig;
     Some ({ major_version; minor_version }, at)
 
-  type list_system_counters_reply = { counters : systemcounter list }
-  [@@deriving sexp]
+  type list_system_counters_reply = systemcounter list [@@deriving sexp]
 
   let encode_list_system_counters buf =
     (* opcode *)
@@ -14622,7 +14609,7 @@ module Sync = struct
     let at = at + 20 in
     let* counters, at = decode_list decode_systemcounter counters_len buf ~at in
     ignore orig;
-    Some ({ counters }, at)
+    Some (counters, at)
 
   let encode_create_counter ~(id : counter) ~(initial_value : int64) buf =
     (* opcode *)
@@ -14644,7 +14631,7 @@ module Sync = struct
     (* write request length *)
     encode_request_length buf
 
-  type query_counter_reply = { counter_value : int64 } [@@deriving sexp]
+  type query_counter_reply = int64 [@@deriving sexp]
 
   let encode_query_counter ~(counter : counter) buf =
     (* opcode *)
@@ -14664,7 +14651,7 @@ module Sync = struct
     let at = at + 6 in
     let* counter_value, at = decode_int64 buf ~at in
     ignore orig;
-    Some ({ counter_value }, at)
+    Some (counter_value, at)
 
   let encode_await ~(wait_list : waitcondition list) buf =
     (* opcode *)
@@ -14812,7 +14799,7 @@ module Sync = struct
     (* write request length *)
     encode_request_length buf
 
-  type get_priority_reply = { priority : int } [@@deriving sexp]
+  type get_priority_reply = int [@@deriving sexp]
 
   let encode_get_priority ~(id : int) buf =
     (* opcode *)
@@ -14832,7 +14819,7 @@ module Sync = struct
     let at = at + 6 in
     let* priority, at = decode_int32 buf ~at in
     ignore orig;
-    Some ({ priority }, at)
+    Some (priority, at)
 
   let encode_create_fence ~(drawable : Xproto.drawable) ~(fence : fence)
       ~(initially_triggered : bool) buf =
@@ -14876,7 +14863,7 @@ module Sync = struct
     (* write request length *)
     encode_request_length buf
 
-  type query_fence_reply = { triggered : bool } [@@deriving sexp]
+  type query_fence_reply = bool [@@deriving sexp]
 
   let encode_query_fence ~(fence : fence) buf =
     (* opcode *)
@@ -14897,7 +14884,7 @@ module Sync = struct
     let* triggered, at = decode_bool buf ~at in
     let at = at + 23 in
     ignore orig;
-    Some ({ triggered }, at)
+    Some (triggered, at)
 
   let encode_await_fence ~(fence_list : fence list) buf =
     (* opcode *)
@@ -15191,7 +15178,7 @@ module Present = struct
     (* write request length *)
     encode_request_length buf
 
-  type query_capabilities_reply = { capabilities : int } [@@deriving sexp]
+  type query_capabilities_reply = int [@@deriving sexp]
 
   let encode_query_capabilities ~(target : int) buf =
     (* opcode *)
@@ -15211,7 +15198,7 @@ module Present = struct
     let at = at + 6 in
     let* capabilities, at = decode_int32 buf ~at in
     ignore orig;
-    Some ({ capabilities }, at)
+    Some (capabilities, at)
 
   type generic_event = {
     extension : int;
@@ -15531,7 +15518,7 @@ module Record = struct
     encode_list encode_range buf v.ranges;
     ()
 
-  type bad_context_error = { invalid_record : int } [@@deriving sexp]
+  type bad_context_error = int [@@deriving sexp]
 
   type query_version_reply = { major_version : int; minor_version : int }
   [@@deriving sexp]
@@ -15885,7 +15872,7 @@ module Res = struct
     ignore orig;
     Some ({ server_major; server_minor }, at)
 
-  type query_clients_reply = { clients : client list } [@@deriving sexp]
+  type query_clients_reply = client list [@@deriving sexp]
 
   let encode_query_clients buf =
     (* opcode *)
@@ -15906,9 +15893,9 @@ module Res = struct
     let at = at + 20 in
     let* clients, at = decode_list decode_client num_clients buf ~at in
     ignore orig;
-    Some ({ clients }, at)
+    Some (clients, at)
 
-  type query_client_resources_reply = { types : type_ list } [@@deriving sexp]
+  type query_client_resources_reply = type_ list [@@deriving sexp]
 
   let encode_query_client_resources ~(xid : int) buf =
     (* opcode *)
@@ -15931,7 +15918,7 @@ module Res = struct
     let at = at + 20 in
     let* types, at = decode_list decode_type num_types buf ~at in
     ignore orig;
-    Some ({ types }, at)
+    Some (types, at)
 
   type query_client_pixmap_bytes_reply = { bytes : int; bytes_overflow : int }
   [@@deriving sexp]
@@ -15957,7 +15944,7 @@ module Res = struct
     ignore orig;
     Some ({ bytes; bytes_overflow }, at)
 
-  type query_client_ids_reply = { ids : client_id_value list } [@@deriving sexp]
+  type query_client_ids_reply = client_id_value list [@@deriving sexp]
 
   let encode_query_client_ids ~(specs : client_id_spec list) buf =
     (* opcode *)
@@ -15980,10 +15967,9 @@ module Res = struct
     let at = at + 20 in
     let* ids, at = decode_list decode_client_id_value num_ids buf ~at in
     ignore orig;
-    Some ({ ids }, at)
+    Some (ids, at)
 
-  type query_resource_bytes_reply = { sizes : resource_size_value list }
-  [@@deriving sexp]
+  type query_resource_bytes_reply = resource_size_value list [@@deriving sexp]
 
   let encode_query_resource_bytes ~(client : int)
       ~(specs : resource_id_spec list) buf =
@@ -16008,7 +15994,7 @@ module Res = struct
     let at = at + 20 in
     let* sizes, at = decode_list decode_resource_size_value num_sizes buf ~at in
     ignore orig;
-    Some ({ sizes }, at)
+    Some (sizes, at)
 end
 
 module ScreenSaver = struct
@@ -16574,7 +16560,7 @@ module XCMisc = struct
     ignore orig;
     Some ({ start_id; count }, at)
 
-  type get_xid_list_reply = { ids : int list } [@@deriving sexp]
+  type get_xid_list_reply = int list [@@deriving sexp]
 
   let encode_get_xid_list ~(count : int) buf =
     (* opcode *)
@@ -16597,7 +16583,7 @@ module XCMisc = struct
     let at = at + 20 in
     let* ids, at = decode_list decode_int32 ids_len buf ~at in
     ignore orig;
-    Some ({ ids }, at)
+    Some (ids, at)
 end
 
 module XF86Dri = struct
@@ -16655,8 +16641,7 @@ module XF86Dri = struct
     ignore orig;
     Some ({ dri_major_version; dri_minor_version; dri_minor_patch }, at)
 
-  type query_direct_rendering_capable_reply = { is_capable : bool }
-  [@@deriving sexp]
+  type query_direct_rendering_capable_reply = bool [@@deriving sexp]
 
   let encode_query_direct_rendering_capable ~(screen : int) buf =
     (* opcode *)
@@ -16676,7 +16661,7 @@ module XF86Dri = struct
     let at = at + 6 in
     let* is_capable, at = decode_bool buf ~at in
     ignore orig;
-    Some ({ is_capable }, at)
+    Some (is_capable, at)
 
   type open_connection_reply = {
     sarea_handle_low : int;
@@ -16763,7 +16748,7 @@ module XF86Dri = struct
         },
         at )
 
-  type create_context_reply = { hw_context : int } [@@deriving sexp]
+  type create_context_reply = int [@@deriving sexp]
 
   let encode_create_context ~(screen : int) ~(visual : int) ~(context : int) buf
       =
@@ -16785,7 +16770,7 @@ module XF86Dri = struct
     let at = at + 6 in
     let* hw_context, at = decode_int32 buf ~at in
     ignore orig;
-    Some ({ hw_context }, at)
+    Some (hw_context, at)
 
   let encode_destroy_context ~(screen : int) ~(context : int) buf =
     (* opcode *)
@@ -16797,7 +16782,7 @@ module XF86Dri = struct
     (* write request length *)
     encode_request_length buf
 
-  type create_drawable_reply = { hw_drawable_handle : int } [@@deriving sexp]
+  type create_drawable_reply = int [@@deriving sexp]
 
   let encode_create_drawable ~(screen : int) ~(drawable : int) buf =
     (* opcode *)
@@ -16817,7 +16802,7 @@ module XF86Dri = struct
     let at = at + 6 in
     let* hw_drawable_handle, at = decode_int32 buf ~at in
     ignore orig;
-    Some ({ hw_drawable_handle }, at)
+    Some (hw_drawable_handle, at)
 
   let encode_destroy_drawable ~(screen : int) ~(drawable : int) buf =
     (* opcode *)
@@ -16941,7 +16926,7 @@ module XF86Dri = struct
         },
         at )
 
-  type auth_connection_reply = { authenticated : int } [@@deriving sexp]
+  type auth_connection_reply = int [@@deriving sexp]
 
   let encode_auth_connection ~(screen : int) ~(magic : int) buf =
     (* opcode *)
@@ -16961,7 +16946,7 @@ module XF86Dri = struct
     let at = at + 6 in
     let* authenticated, at = decode_int32 buf ~at in
     ignore orig;
-    Some ({ authenticated }, at)
+    Some (authenticated, at)
 end
 
 module XF86VidMode = struct
@@ -17307,8 +17292,7 @@ module XF86VidMode = struct
     (* write request length *)
     encode_request_length buf
 
-  type get_all_mode_lines_reply = { modeinfo : mode_info list }
-  [@@deriving sexp]
+  type get_all_mode_lines_reply = mode_info list [@@deriving sexp]
 
   let encode_get_all_mode_lines ~(screen : int) buf =
     (* opcode *)
@@ -17331,7 +17315,7 @@ module XF86VidMode = struct
     let at = at + 20 in
     let* modeinfo, at = decode_list decode_mode_info modecount buf ~at in
     ignore orig;
-    Some ({ modeinfo }, at)
+    Some (modeinfo, at)
 
   let encode_add_mode_line ~(screen : int) ~(dotclock : dotclock)
       ~(hdisplay : int) ~(hsyncstart : int) ~(hsyncend : int) ~(htotal : int)
@@ -17404,7 +17388,7 @@ module XF86VidMode = struct
     (* write request length *)
     encode_request_length buf
 
-  type validate_mode_line_reply = { status : int } [@@deriving sexp]
+  type validate_mode_line_reply = int [@@deriving sexp]
 
   let encode_validate_mode_line ~(screen : int) ~(dotclock : dotclock)
       ~(hdisplay : int) ~(hsyncstart : int) ~(hsyncend : int) ~(htotal : int)
@@ -17442,7 +17426,7 @@ module XF86VidMode = struct
     let* status, at = decode_int32 buf ~at in
     let at = at + 20 in
     ignore orig;
-    Some ({ status }, at)
+    Some (status, at)
 
   let encode_switch_to_mode ~(screen : int) ~(dotclock : dotclock)
       ~(hdisplay : int) ~(hsyncstart : int) ~(hsyncend : int) ~(htotal : int)
@@ -17649,7 +17633,7 @@ module XF86VidMode = struct
     (* write request length *)
     encode_request_length buf
 
-  type get_gamma_ramp_size_reply = { size : int } [@@deriving sexp]
+  type get_gamma_ramp_size_reply = int [@@deriving sexp]
 
   let encode_get_gamma_ramp_size ~(screen : int) buf =
     (* opcode *)
@@ -17670,10 +17654,9 @@ module XF86VidMode = struct
     let* size, at = decode_uint16 buf ~at in
     let at = at + 22 in
     ignore orig;
-    Some ({ size }, at)
+    Some (size, at)
 
-  type get_permissions_reply = { permissions : permission_mask }
-  [@@deriving sexp]
+  type get_permissions_reply = permission_mask [@@deriving sexp]
 
   let encode_get_permissions ~(screen : int) buf =
     (* opcode *)
@@ -17696,7 +17679,7 @@ module XF86VidMode = struct
     in
     let at = at + 20 in
     ignore orig;
-    Some ({ permissions }, at)
+    Some (permissions, at)
 
   type bad_clock_error = unit [@@deriving sexp]
   type bad_h_timings_error = unit [@@deriving sexp]
@@ -17834,7 +17817,7 @@ module Xinerama = struct
     ignore orig;
     Some ({ width; height; window; screen }, at)
 
-  type is_active_reply = { state : int } [@@deriving sexp]
+  type is_active_reply = int [@@deriving sexp]
 
   let encode_is_active buf =
     (* opcode *)
@@ -17851,10 +17834,9 @@ module Xinerama = struct
     let at = at + 6 in
     let* state, at = decode_int32 buf ~at in
     ignore orig;
-    Some ({ state }, at)
+    Some (state, at)
 
-  type query_screens_reply = { screen_info : screen_info list }
-  [@@deriving sexp]
+  type query_screens_reply = screen_info list [@@deriving sexp]
 
   let encode_query_screens buf =
     (* opcode *)
@@ -17875,7 +17857,7 @@ module Xinerama = struct
     let at = at + 20 in
     let* screen_info, at = decode_list decode_screen_info number buf ~at in
     ignore orig;
-    Some ({ screen_info }, at)
+    Some (screen_info, at)
 end
 
 module Input = struct
@@ -18198,7 +18180,7 @@ module Input = struct
     encode_uint8 buf v.len;
     (* field_variant *) ()
 
-  type device_name = { string : string } [@@deriving sexp]
+  type device_name = string [@@deriving sexp]
 
   let decode_device_name buf ~at : (device_name * int) option =
     let orig = at in
@@ -18206,11 +18188,10 @@ module Input = struct
     let len = len in
     let* string, at = decode_string len buf ~at in
     ignore orig;
-    Some ({ string }, at)
+    Some (string, at)
 
   let encode_device_name buf (v : device_name) =
-    encode_uint8 buf (identity (String.length v.string));
-    encode_string buf v.string;
+    encode_string buf v;
     ()
 
   type list_input_devices_reply = {
@@ -21685,7 +21666,7 @@ module Input = struct
     encode_list encode_device_class buf v.classes;
     ()
 
-  type xi_query_device_reply = { infos : xi_device_info list } [@@deriving sexp]
+  type xi_query_device_reply = xi_device_info list [@@deriving sexp]
 
   let encode_xi_query_device ~(deviceid : device_enum alt_enum) buf =
     (* opcode *)
@@ -21708,7 +21689,7 @@ module Input = struct
     let at = at + 22 in
     let* infos, at = decode_list decode_xi_device_info num_infos buf ~at in
     ignore orig;
-    Some ({ infos }, at)
+    Some (infos, at)
 
   let encode_xi_set_focus ~(window : Xproto.window)
       ~(time : Xproto.time_enum alt_enum) ~(deviceid : device_enum alt_enum) buf
@@ -21725,7 +21706,7 @@ module Input = struct
     (* write request length *)
     encode_request_length buf
 
-  type xi_get_focus_reply = { focus : Xproto.window } [@@deriving sexp]
+  type xi_get_focus_reply = Xproto.window [@@deriving sexp]
 
   let encode_xi_get_focus ~(deviceid : device_enum alt_enum) buf =
     (* opcode *)
@@ -21746,7 +21727,7 @@ module Input = struct
     let* focus, at = Xproto.decode_window buf ~at in
     let at = at + 20 in
     ignore orig;
-    Some ({ focus }, at)
+    Some (focus, at)
 
   type grab_owner_enum = [ `No_owner | `Owner ] [@@deriving sexp]
 
@@ -21761,8 +21742,7 @@ module Input = struct
     | `No_owner -> 0
     | `Owner -> 1
 
-  type xi_grab_device_reply = { status : Xproto.grab_status_enum }
-  [@@deriving sexp]
+  type xi_grab_device_reply = Xproto.grab_status_enum [@@deriving sexp]
 
   let encode_xi_grab_device ~(window : Xproto.window)
       ~(time : Xproto.time_enum alt_enum) ~(cursor : Xproto.cursor)
@@ -21799,7 +21779,7 @@ module Input = struct
     in
     let at = at + 23 in
     ignore orig;
-    Some ({ status }, at)
+    Some (status, at)
 
   let encode_xi_ungrab_device ~(time : Xproto.time_enum alt_enum)
       ~(deviceid : device_enum alt_enum) buf =
@@ -21937,8 +21917,7 @@ module Input = struct
     encode_pad buf 3;
     ()
 
-  type xi_passive_grab_device_reply = { modifiers : grab_modifier_info list }
-  [@@deriving sexp]
+  type xi_passive_grab_device_reply = grab_modifier_info list [@@deriving sexp]
 
   let encode_xi_passive_grab_device ~(time : Xproto.time_enum alt_enum)
       ~(grab_window : Xproto.window) ~(cursor : Xproto.cursor) ~(detail : int)
@@ -21983,7 +21962,7 @@ module Input = struct
       decode_list decode_grab_modifier_info num_modifiers buf ~at
     in
     ignore orig;
-    Some ({ modifiers }, at)
+    Some (modifiers, at)
 
   let encode_xi_passive_ungrab_device ~(grab_window : Xproto.window)
       ~(detail : int) ~(deviceid : device_enum alt_enum)
@@ -22002,8 +21981,7 @@ module Input = struct
     (* write request length *)
     encode_request_length buf
 
-  type xi_list_properties_reply = { properties : Xproto.atom list }
-  [@@deriving sexp]
+  type xi_list_properties_reply = Xproto.atom list [@@deriving sexp]
 
   let encode_xi_list_properties ~(deviceid : device_enum alt_enum) buf =
     (* opcode *)
@@ -22028,7 +22006,7 @@ module Input = struct
       decode_list Xproto.decode_atom num_properties buf ~at
     in
     ignore orig;
-    Some ({ properties }, at)
+    Some (properties, at)
 
   let encode_xi_change_property ~(deviceid : device_enum alt_enum)
       ~(mode : Xproto.prop_mode_enum) ~(property : Xproto.atom)
@@ -22100,8 +22078,7 @@ module Input = struct
     ignore orig;
     Some ({ type_; bytes_after; num_items; items }, at)
 
-  type xi_get_selected_events_reply = { masks : event_mask list }
-  [@@deriving sexp]
+  type xi_get_selected_events_reply = event_mask list [@@deriving sexp]
 
   let encode_xi_get_selected_events ~(window : Xproto.window) buf =
     (* opcode *)
@@ -22124,7 +22101,7 @@ module Input = struct
     let at = at + 22 in
     let* masks, at = decode_list decode_event_mask num_masks buf ~at in
     ignore orig;
-    Some ({ masks }, at)
+    Some (masks, at)
 
   type barrier_release_pointer_info = {
     deviceid : device_id;
@@ -23387,8 +23364,7 @@ module XPrint = struct
     ignore orig;
     Some ({ major_version; minor_version }, at)
 
-  type print_get_printer_list_reply = { printers : printer list }
-  [@@deriving sexp]
+  type print_get_printer_list_reply = printer list [@@deriving sexp]
 
   let encode_print_get_printer_list ~(printer_name : string) ~(locale : string)
       buf =
@@ -23414,7 +23390,7 @@ module XPrint = struct
     let at = at + 20 in
     let* printers, at = decode_list decode_printer list_count buf ~at in
     ignore orig;
-    Some ({ printers }, at)
+    Some (printers, at)
 
   let encode_print_rehash_printer_list buf =
     (* opcode *)
@@ -23448,7 +23424,7 @@ module XPrint = struct
     (* write request length *)
     encode_request_length buf
 
-  type print_get_context_reply = { context : int } [@@deriving sexp]
+  type print_get_context_reply = int [@@deriving sexp]
 
   let encode_print_get_context buf =
     (* opcode *)
@@ -23466,7 +23442,7 @@ module XPrint = struct
     let at = at + 6 in
     let* context, at = decode_int32 buf ~at in
     ignore orig;
-    Some ({ context }, at)
+    Some (context, at)
 
   let encode_print_destroy_context ~(context : int) buf =
     (* opcode *)
@@ -23478,8 +23454,7 @@ module XPrint = struct
     (* write request length *)
     encode_request_length buf
 
-  type print_get_screen_of_context_reply = { root : Xproto.window }
-  [@@deriving sexp]
+  type print_get_screen_of_context_reply = Xproto.window [@@deriving sexp]
 
   let encode_print_get_screen_of_context buf =
     (* opcode *)
@@ -23497,7 +23472,7 @@ module XPrint = struct
     let at = at + 6 in
     let* root, at = Xproto.decode_window buf ~at in
     ignore orig;
-    Some ({ root }, at)
+    Some (root, at)
 
   let encode_print_start_job ~(output_mode : int) buf =
     (* opcode *)
@@ -23642,7 +23617,7 @@ module XPrint = struct
     ignore orig;
     Some ({ event_mask; all_events_mask }, at)
 
-  type print_get_attributes_reply = { attributes : string } [@@deriving sexp]
+  type print_get_attributes_reply = string [@@deriving sexp]
 
   let encode_print_get_attributes ~(context : pcontext) ~(pool : int) buf =
     (* opcode *)
@@ -23666,9 +23641,9 @@ module XPrint = struct
     let at = at + 20 in
     let* attributes, at = decode_string string_len buf ~at in
     ignore orig;
-    Some ({ attributes }, at)
+    Some (attributes, at)
 
-  type print_get_one_attributes_reply = { value : string } [@@deriving sexp]
+  type print_get_one_attributes_reply = string [@@deriving sexp]
 
   let encode_print_get_one_attributes ~(context : pcontext) ~(pool : int)
       ~(name : string) buf =
@@ -23695,7 +23670,7 @@ module XPrint = struct
     let at = at + 20 in
     let* value, at = decode_string value_len buf ~at in
     ignore orig;
-    Some ({ value }, at)
+    Some (value, at)
 
   let encode_print_set_attributes ~(context : pcontext) ~(string_len : int)
       ~(pool : int) ~(rule : int) ~(attributes : string) buf =
@@ -23756,8 +23731,7 @@ module XPrint = struct
         },
         at )
 
-  type print_query_screens_reply = { roots : Xproto.window list }
-  [@@deriving sexp]
+  type print_query_screens_reply = Xproto.window list [@@deriving sexp]
 
   let encode_print_query_screens buf =
     (* opcode *)
@@ -23778,7 +23752,7 @@ module XPrint = struct
     let at = at + 20 in
     let* roots, at = decode_list Xproto.decode_window list_count buf ~at in
     ignore orig;
-    Some ({ roots }, at)
+    Some (roots, at)
 
   type print_set_image_resolution_reply = {
     status : bool;
@@ -23807,8 +23781,7 @@ module XPrint = struct
     ignore orig;
     Some ({ status; previous_resolutions }, at)
 
-  type print_get_image_resolution_reply = { image_resolution : int }
-  [@@deriving sexp]
+  type print_get_image_resolution_reply = int [@@deriving sexp]
 
   let encode_print_get_image_resolution ~(context : pcontext) buf =
     (* opcode *)
@@ -23828,7 +23801,7 @@ module XPrint = struct
     let at = at + 6 in
     let* image_resolution, at = decode_uint16 buf ~at in
     ignore orig;
-    Some ({ image_resolution }, at)
+    Some (image_resolution, at)
 
   type notify_event = { detail : int; context : pcontext; cancel : bool }
   [@@deriving sexp]
@@ -23903,7 +23876,7 @@ module SELinux = struct
     (* write request length *)
     encode_request_length buf
 
-  type get_device_create_context_reply = { context : string } [@@deriving sexp]
+  type get_device_create_context_reply = string [@@deriving sexp]
 
   let encode_get_device_create_context buf =
     (* opcode *)
@@ -23924,7 +23897,7 @@ module SELinux = struct
     let at = at + 20 in
     let* context, at = decode_string context_len buf ~at in
     ignore orig;
-    Some ({ context }, at)
+    Some (context, at)
 
   let encode_set_device_context ~(device : int) ~(context : string) buf =
     (* opcode *)
@@ -23937,7 +23910,7 @@ module SELinux = struct
     (* write request length *)
     encode_request_length buf
 
-  type get_device_context_reply = { context : string } [@@deriving sexp]
+  type get_device_context_reply = string [@@deriving sexp]
 
   let encode_get_device_context ~(device : int) buf =
     (* opcode *)
@@ -23960,7 +23933,7 @@ module SELinux = struct
     let at = at + 20 in
     let* context, at = decode_string context_len buf ~at in
     ignore orig;
-    Some ({ context }, at)
+    Some (context, at)
 
   let encode_set_window_create_context ~(context : string) buf =
     (* opcode *)
@@ -23972,7 +23945,7 @@ module SELinux = struct
     (* write request length *)
     encode_request_length buf
 
-  type get_window_create_context_reply = { context : string } [@@deriving sexp]
+  type get_window_create_context_reply = string [@@deriving sexp]
 
   let encode_get_window_create_context buf =
     (* opcode *)
@@ -23993,9 +23966,9 @@ module SELinux = struct
     let at = at + 20 in
     let* context, at = decode_string context_len buf ~at in
     ignore orig;
-    Some ({ context }, at)
+    Some (context, at)
 
-  type get_window_context_reply = { context : string } [@@deriving sexp]
+  type get_window_context_reply = string [@@deriving sexp]
 
   let encode_get_window_context ~(window : Xproto.window) buf =
     (* opcode *)
@@ -24018,7 +23991,7 @@ module SELinux = struct
     let at = at + 20 in
     let* context, at = decode_string context_len buf ~at in
     ignore orig;
-    Some ({ context }, at)
+    Some (context, at)
 
   type list_item = {
     name : Xproto.atom;
@@ -24061,8 +24034,7 @@ module SELinux = struct
     (* write request length *)
     encode_request_length buf
 
-  type get_property_create_context_reply = { context : string }
-  [@@deriving sexp]
+  type get_property_create_context_reply = string [@@deriving sexp]
 
   let encode_get_property_create_context buf =
     (* opcode *)
@@ -24083,7 +24055,7 @@ module SELinux = struct
     let at = at + 20 in
     let* context, at = decode_string context_len buf ~at in
     ignore orig;
-    Some ({ context }, at)
+    Some (context, at)
 
   let encode_set_property_use_context ~(context : string) buf =
     (* opcode *)
@@ -24095,7 +24067,7 @@ module SELinux = struct
     (* write request length *)
     encode_request_length buf
 
-  type get_property_use_context_reply = { context : string } [@@deriving sexp]
+  type get_property_use_context_reply = string [@@deriving sexp]
 
   let encode_get_property_use_context buf =
     (* opcode *)
@@ -24116,9 +24088,9 @@ module SELinux = struct
     let at = at + 20 in
     let* context, at = decode_string context_len buf ~at in
     ignore orig;
-    Some ({ context }, at)
+    Some (context, at)
 
-  type get_property_context_reply = { context : string } [@@deriving sexp]
+  type get_property_context_reply = string [@@deriving sexp]
 
   let encode_get_property_context ~(window : Xproto.window)
       ~(property : Xproto.atom) buf =
@@ -24142,9 +24114,9 @@ module SELinux = struct
     let at = at + 20 in
     let* context, at = decode_string context_len buf ~at in
     ignore orig;
-    Some ({ context }, at)
+    Some (context, at)
 
-  type get_property_data_context_reply = { context : string } [@@deriving sexp]
+  type get_property_data_context_reply = string [@@deriving sexp]
 
   let encode_get_property_data_context ~(window : Xproto.window)
       ~(property : Xproto.atom) buf =
@@ -24168,9 +24140,9 @@ module SELinux = struct
     let at = at + 20 in
     let* context, at = decode_string context_len buf ~at in
     ignore orig;
-    Some ({ context }, at)
+    Some (context, at)
 
-  type list_properties_reply = { properties : list_item list } [@@deriving sexp]
+  type list_properties_reply = list_item list [@@deriving sexp]
 
   let encode_list_properties ~(window : Xproto.window) buf =
     (* opcode *)
@@ -24193,7 +24165,7 @@ module SELinux = struct
     let at = at + 20 in
     let* properties, at = decode_list decode_list_item properties_len buf ~at in
     ignore orig;
-    Some ({ properties }, at)
+    Some (properties, at)
 
   let encode_set_selection_create_context ~(context : string) buf =
     (* opcode *)
@@ -24205,8 +24177,7 @@ module SELinux = struct
     (* write request length *)
     encode_request_length buf
 
-  type get_selection_create_context_reply = { context : string }
-  [@@deriving sexp]
+  type get_selection_create_context_reply = string [@@deriving sexp]
 
   let encode_get_selection_create_context buf =
     (* opcode *)
@@ -24227,7 +24198,7 @@ module SELinux = struct
     let at = at + 20 in
     let* context, at = decode_string context_len buf ~at in
     ignore orig;
-    Some ({ context }, at)
+    Some (context, at)
 
   let encode_set_selection_use_context ~(context : string) buf =
     (* opcode *)
@@ -24239,7 +24210,7 @@ module SELinux = struct
     (* write request length *)
     encode_request_length buf
 
-  type get_selection_use_context_reply = { context : string } [@@deriving sexp]
+  type get_selection_use_context_reply = string [@@deriving sexp]
 
   let encode_get_selection_use_context buf =
     (* opcode *)
@@ -24260,9 +24231,9 @@ module SELinux = struct
     let at = at + 20 in
     let* context, at = decode_string context_len buf ~at in
     ignore orig;
-    Some ({ context }, at)
+    Some (context, at)
 
-  type get_selection_context_reply = { context : string } [@@deriving sexp]
+  type get_selection_context_reply = string [@@deriving sexp]
 
   let encode_get_selection_context ~(selection : Xproto.atom) buf =
     (* opcode *)
@@ -24285,9 +24256,9 @@ module SELinux = struct
     let at = at + 20 in
     let* context, at = decode_string context_len buf ~at in
     ignore orig;
-    Some ({ context }, at)
+    Some (context, at)
 
-  type get_selection_data_context_reply = { context : string } [@@deriving sexp]
+  type get_selection_data_context_reply = string [@@deriving sexp]
 
   let encode_get_selection_data_context ~(selection : Xproto.atom) buf =
     (* opcode *)
@@ -24310,9 +24281,9 @@ module SELinux = struct
     let at = at + 20 in
     let* context, at = decode_string context_len buf ~at in
     ignore orig;
-    Some ({ context }, at)
+    Some (context, at)
 
-  type list_selections_reply = { selections : list_item list } [@@deriving sexp]
+  type list_selections_reply = list_item list [@@deriving sexp]
 
   let encode_list_selections buf =
     (* opcode *)
@@ -24333,9 +24304,9 @@ module SELinux = struct
     let at = at + 20 in
     let* selections, at = decode_list decode_list_item selections_len buf ~at in
     ignore orig;
-    Some ({ selections }, at)
+    Some (selections, at)
 
-  type get_client_context_reply = { context : string } [@@deriving sexp]
+  type get_client_context_reply = string [@@deriving sexp]
 
   let encode_get_client_context ~(resource : int) buf =
     (* opcode *)
@@ -24358,7 +24329,7 @@ module SELinux = struct
     let at = at + 20 in
     let* context, at = decode_string context_len buf ~at in
     ignore orig;
-    Some ({ context }, at)
+    Some (context, at)
 end
 
 module Test = struct
@@ -24407,7 +24378,7 @@ module Test = struct
     | `None -> 0
     | `Current -> 1
 
-  type compare_cursor_reply = { same : bool } [@@deriving sexp]
+  type compare_cursor_reply = bool [@@deriving sexp]
 
   let encode_compare_cursor ~(window : Xproto.window) ~(cursor : Xproto.cursor)
       buf =
@@ -24427,7 +24398,7 @@ module Test = struct
     let* same, at = decode_bool buf ~at in
     let at = at + 6 in
     ignore orig;
-    Some ({ same }, at)
+    Some (same, at)
 
   let encode_fake_input ~(type_ : char) ~(detail : char) ~(time : int)
       ~(root : Xproto.window) ~(root_x : int) ~(root_y : int) ~(deviceid : int)
@@ -24985,7 +24956,7 @@ module Xv = struct
     ignore orig;
     Some ({ major; minor }, at)
 
-  type query_adaptors_reply = { info : adaptor_info list } [@@deriving sexp]
+  type query_adaptors_reply = adaptor_info list [@@deriving sexp]
 
   let encode_query_adaptors ~(window : Xproto.window) buf =
     (* opcode *)
@@ -25008,9 +24979,9 @@ module Xv = struct
     let at = at + 22 in
     let* info, at = decode_list decode_adaptor_info num_adaptors buf ~at in
     ignore orig;
-    Some ({ info }, at)
+    Some (info, at)
 
-  type query_encodings_reply = { info : encoding_info list } [@@deriving sexp]
+  type query_encodings_reply = encoding_info list [@@deriving sexp]
 
   let encode_query_encodings ~(port : port) buf =
     (* opcode *)
@@ -25033,9 +25004,9 @@ module Xv = struct
     let at = at + 22 in
     let* info, at = decode_list decode_encoding_info num_encodings buf ~at in
     ignore orig;
-    Some ({ info }, at)
+    Some (info, at)
 
-  type grab_port_reply = { result : grab_port_status_enum } [@@deriving sexp]
+  type grab_port_reply = grab_port_status_enum [@@deriving sexp]
 
   let encode_grab_port ~(port : port) ~(time : Xproto.time_enum alt_enum) buf =
     (* opcode *)
@@ -25056,7 +25027,7 @@ module Xv = struct
     in
     let at = at + 6 in
     ignore orig;
-    Some ({ result }, at)
+    Some (result, at)
 
   let encode_ungrab_port ~(port : port) ~(time : Xproto.time_enum alt_enum) buf
       =
@@ -25233,7 +25204,7 @@ module Xv = struct
     (* write request length *)
     encode_request_length buf
 
-  type get_port_attribute_reply = { value : int } [@@deriving sexp]
+  type get_port_attribute_reply = int [@@deriving sexp]
 
   let encode_get_port_attribute ~(port : port) ~(attribute : Xproto.atom) buf =
     (* opcode *)
@@ -25253,7 +25224,7 @@ module Xv = struct
     let at = at + 6 in
     let* value, at = decode_int32 buf ~at in
     ignore orig;
-    Some ({ value }, at)
+    Some (value, at)
 
   type query_port_attributes_reply = {
     text_size : int;
@@ -25287,8 +25258,7 @@ module Xv = struct
     ignore orig;
     Some ({ text_size; attributes }, at)
 
-  type list_image_formats_reply = { format : image_format_info list }
-  [@@deriving sexp]
+  type list_image_formats_reply = image_format_info list [@@deriving sexp]
 
   let encode_list_image_formats ~(port : port) buf =
     (* opcode *)
@@ -25313,7 +25283,7 @@ module Xv = struct
       decode_list decode_image_format_info num_formats buf ~at
     in
     ignore orig;
-    Some ({ format }, at)
+    Some (format, at)
 
   type query_image_attributes_reply = {
     data_size : int;
@@ -25507,8 +25477,7 @@ module XvMC = struct
     ignore orig;
     Some ({ major; minor }, at)
 
-  type list_surface_types_reply = { surfaces : surface_info list }
-  [@@deriving sexp]
+  type list_surface_types_reply = surface_info list [@@deriving sexp]
 
   let encode_list_surface_types ~(port_id : Xv.port) buf =
     (* opcode *)
@@ -25531,7 +25500,7 @@ module XvMC = struct
     let at = at + 20 in
     let* surfaces, at = decode_list decode_surface_info num buf ~at in
     ignore orig;
-    Some ({ surfaces }, at)
+    Some (surfaces, at)
 
   type create_context_reply = {
     width_actual : int;
@@ -25584,7 +25553,7 @@ module XvMC = struct
     (* write request length *)
     encode_request_length buf
 
-  type create_surface_reply = { priv_data : int list } [@@deriving sexp]
+  type create_surface_reply = int list [@@deriving sexp]
 
   let encode_create_surface ~(surface_id : surface) ~(context_id : context) buf
       =
@@ -25609,7 +25578,7 @@ module XvMC = struct
       decode_list decode_int32 length buf ~at
     in
     ignore orig;
-    Some ({ priv_data }, at)
+    Some (priv_data, at)
 
   let encode_destroy_surface ~(surface_id : surface) buf =
     (* opcode *)
@@ -25687,8 +25656,7 @@ module XvMC = struct
     (* write request length *)
     encode_request_length buf
 
-  type list_subpicture_types_reply = { types : Xv.image_format_info list }
-  [@@deriving sexp]
+  type list_subpicture_types_reply = Xv.image_format_info list [@@deriving sexp]
 
   let encode_list_subpicture_types ~(port_id : Xv.port) ~(surface_id : surface)
       buf =
@@ -25712,5 +25680,5 @@ module XvMC = struct
     let at = at + 20 in
     let* types, at = decode_list Xv.decode_image_format_info num buf ~at in
     ignore orig;
-    Some ({ types }, at)
+    Some (types, at)
 end

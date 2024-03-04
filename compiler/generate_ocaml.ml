@@ -301,6 +301,20 @@ let gen_list_length ctx out t =
       Printf.fprintf out "(* %s *) " (show_prim t);
       output_string out "List.length"
 
+let gen_field_type_of_field ctx out = function
+  | Field { type_; _ } -> Printf.fprintf out "%a" (gen_field_type ctx) type_
+  | Field_file_descriptor _ -> Printf.fprintf out "Unix.file_descr"
+  | Field_optional { type_; _ } ->
+      Printf.fprintf out "%a option" (gen_field_type ctx) type_
+  | Field_list { type_; _ } | Field_list_simple { type_; _ } ->
+      Printf.fprintf out "%a" (gen_list_type ctx) type_
+  | Field_variant { variant; _ } ->
+      Printf.fprintf out "%a" (gen_ident ctx)
+        { variant with id_name = Ident.snake variant.id_name ~suffix:"variant" }
+  | Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _
+  | Field_optional_mask _ ->
+      failwith "invalid field"
+
 let gen_field ctx out = function
   | Field { name; type_ } ->
       Printf.fprintf out "%s : %a; " (Ident.snake name) (gen_field_type ctx)
@@ -521,6 +535,28 @@ let gen_encode_arg_field ctx out = function
       Printf.fprintf out "encode_optional_mask %a buf %a;" (gen_encode_type ctx)
         type_ gen_encode_optional_mask_fields fields
 
+let gen_encode_single_field ctx out ~name = function
+  | Field { type_; _ } ->
+      Printf.fprintf out "%a buf %s;"
+        (gen_encode_field_type ctx)
+        type_ (Ident.snake name)
+  | Field_file_descriptor _ ->
+      Printf.fprintf out "encode_file_descriptor buf %s;" (Ident.snake name)
+  | Field_list { type_; _ } ->
+      Printf.fprintf out "%a buf %s;" (gen_encode_list ctx) type_
+        (Ident.snake name)
+  | Field_list_simple { type_; _ } ->
+      Printf.fprintf out "%a buf %s;" (gen_encode_list ctx) type_
+        (Ident.snake name)
+  | Field_optional { type_; _ } ->
+      Printf.fprintf out "(match %s with None -> () | Some v -> "
+        (Ident.snake name);
+      Printf.fprintf out "%a buf v);" (gen_encode_field_type ctx) type_
+  | Field_expr _ | Field_pad _ | Field_optional_mask _ | Field_list_length _ ->
+      failwith "a"
+  | Field_variant _ -> Printf.fprintf out "(* field_variant *)"
+  | Field_variant_tag _ -> Printf.fprintf out "(* field_variant_tag *)"
+
 let gen_size_of_field ctx out = function
   | Field { type_; _ } -> gen_size_of_field_type ctx out type_
   | Field_file_descriptor _ -> output_string out "2"
@@ -563,12 +599,15 @@ let name_of_field = function
 let gen_decode_fields ctx out fields =
   output_string out "let orig = at in ";
   list_sep "\n" (gen_decode_field ctx fields) out fields;
-  if List.length (List.filter_map name_of_field fields) = 0 then
-    Printf.fprintf out "\nignore orig;\nSome ((), at)"
-  else
-    Printf.fprintf out "\nignore orig;\nSome ({ %s }, at)"
-      (List.filter_map name_of_field fields
-      |> List.map Ident.snake |> String.concat "; ")
+  let names_of_fields = List.filter_map name_of_field fields in
+  match names_of_fields with
+  | [] -> Printf.fprintf out "\nignore orig;\nSome ((), at)"
+  | [ field_name ] ->
+      Printf.fprintf out "\nignore orig;\nSome (%s, at)"
+        (Ident.snake field_name)
+  | _ ->
+      Printf.fprintf out "\nignore orig;\nSome ({ %s }, at)"
+        (names_of_fields |> List.map Ident.snake |> String.concat "; ")
 
 let gen_decode_event_fields ctx out fields =
   output_string out "let orig = at in ";
@@ -579,15 +618,30 @@ let gen_decode_event_fields ctx out fields =
       output_string out " let* _sequence_number, at = decode_uint16 buf ~at in ";
       list_sep " " (gen_decode_field ctx fields) out rest
   | [] -> ());
-  if List.length (List.filter_map name_of_field fields) = 0 then
-    Printf.fprintf out "\nignore orig;\nSome ((), at)"
-  else
-    Printf.fprintf out "\nignore orig;\nSome ({ %s }, at)"
-      (List.filter_map name_of_field fields
-      |> List.map Ident.snake |> String.concat "; ")
+  let names_of_fields = List.filter_map name_of_field fields in
+  match names_of_fields with
+  | [] -> Printf.fprintf out "\nignore orig;\nSome ((), at)"
+  | [ field_name ] ->
+      Printf.fprintf out "\nignore orig;\nSome (%s, at)"
+        (Ident.snake field_name)
+  | _ ->
+      Printf.fprintf out "\nignore orig;\nSome ({ %s }, at)"
+        (names_of_fields |> List.map Ident.snake |> String.concat "; ")
+
+let is_field_visible = function
+  | Field _ | Field_file_descriptor _ | Field_optional _ | Field_list _
+  | Field_list_simple _ | Field_variant _ ->
+      true
+  | Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _
+  | Field_optional_mask _ ->
+      false
+
+let visible_fields fields = fields |> List.filter is_field_visible
 
 let gen_encode_fields ctx out fields =
-  list_sep " " (gen_encode_field ctx) out fields;
+  (match visible_fields fields with
+  | [ field ] -> gen_encode_single_field ctx out field ~name:"v"
+  | _ -> list_sep " " (gen_encode_field ctx) out fields);
   Printf.fprintf out "()"
 
 (* TODO make sure the total length of the request includes the request length field
@@ -656,20 +710,11 @@ let gen_named_arg ctx out = function
   | Field_optional_mask _ ->
       ()
 
-let is_field_visible = function
-  | Field _ | Field_file_descriptor _ | Field_optional _ | Field_list _
-  | Field_list_simple _ | Field_variant _ ->
-      true
-  | Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _
-  | Field_optional_mask _ ->
-      false
-
-let visible_fields fields =
-  fields |> List.filter is_field_visible |> List.length
-
 let gen_fields ctx out fields =
-  if visible_fields fields = 0 then output_string out "unit"
-  else Printf.fprintf out "{ %a}" (list (gen_field ctx)) fields
+  match visible_fields fields with
+  | [] -> output_string out "unit"
+  | [ field ] -> (gen_field_type_of_field ctx) out field
+  | _ -> Printf.fprintf out "{ %a}" (list (gen_field ctx)) fields
 
 let gen_event_struct_field ctx out ident =
   Printf.fprintf out "%s of %a" (Ident.caml ident.id_name) (gen_ident ctx)
@@ -829,7 +874,7 @@ let gen_declaration ctx out = function
       Printf.fprintf out "%a;;" (gen_encode_arg_fields ctx opcode) fields;
       reply
       |> Option.iter (function
-           | fields when visible_fields fields = 0 ->
+           | fields when visible_fields fields = [] ->
                Printf.fprintf out
                  "\n\
                   let %s length buf ~at : (%s * int) option = ignore length; \
