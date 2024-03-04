@@ -52,12 +52,9 @@ let main (conn : Connection.connection) =
   let queued_events = ref [] in
 
   let reqs ?(size = 120) es =
-    let buf = Bytes.make size '\x00' in
-    let len =
-      ListLabels.fold_left es ~init:0 ~f:(fun at encode ->
-          encode buf ~at |> Option.get)
-    in
-    let buf = Bytes.sub buf 0 len in
+    let buf = Buffer.create size in
+    List.iter (fun encode -> encode (Codec.Encode_buffer.of_buffer buf)) es;
+    let buf = Buffer.to_bytes buf in
     let* _ = Connection.write conn buf in
     let* () = Connection.check_for_error conn in
     let rec loop () =
@@ -86,22 +83,22 @@ let main (conn : Connection.connection) =
   let* () =
     reqs
       [
-        (fun buf ~at ->
+        (fun buf ->
           Xproto.encode_create_window ~depth:root.root_depth ~wid
             ~parent:root.root ~x:0 ~y:0 ~width:!width ~height:!height
             ~border_width:0 ~class_:`Input_output ~visual:root.root_visual
             ~event_mask:(Some [ `Exposure; `Structure_notify ])
-            ~background_pixel:root.white_pixel buf ~at);
-        (fun buf ~at ->
+            ~background_pixel:root.white_pixel buf);
+        (fun buf ->
           Xproto.encode_change_window_attributes ~window:root.root
-            ~event_mask:(Some [ `Pointer_motion ]) buf ~at);
-        (fun buf ~at ->
+            ~event_mask:(Some [ `Pointer_motion ]) buf);
+        (fun buf ->
           Xproto.encode_create_gc ~cid:white ~drawable:root.root
-            ~foreground:root.white_pixel ~graphics_exposures:0 ~at buf);
-        (fun buf ~at ->
+            ~foreground:root.white_pixel ~graphics_exposures:0 buf);
+        (fun buf ->
           Xproto.encode_create_gc ~cid:black ~drawable:root.root
-            ~foreground:root.black_pixel ~graphics_exposures:0 ~at buf);
-        (fun buf ~at -> Xproto.encode_map_window ~window:wid buf ~at);
+            ~foreground:root.black_pixel ~graphics_exposures:0 buf);
+        (fun buf -> Xproto.encode_map_window ~window:wid buf);
       ]
   in
 
@@ -124,15 +121,15 @@ let main (conn : Connection.connection) =
     let* () =
       reqs
         [
-          (fun buf ~at ->
-            Xproto.encode_poly_fill_arc ~drawable:wid ~gc:black ~at buf
+          (fun buf ->
+            Xproto.encode_poly_fill_arc ~drawable:wid ~gc:black buf
               ~arcs:
                 [
                   circle ~x:0 ~y:0 ~width:w ~height:h;
                   circle ~x:w ~y:0 ~width:w ~height:h;
                 ]);
-          (fun buf ~at ->
-            Xproto.encode_poly_fill_arc ~drawable:wid ~gc:white ~at buf
+          (fun buf ->
+            Xproto.encode_poly_fill_arc ~drawable:wid ~gc:white buf
               ~arcs:
                 (let x = Float.to_int unit_x in
                  let y = Float.to_int unit_y in
@@ -142,8 +139,8 @@ let main (conn : Connection.connection) =
                      ~width:(w - (x * 2))
                      ~height:(h - (y * 2));
                  ]));
-          (fun buf ~at ->
-            Xproto.encode_poly_fill_arc ~drawable:wid ~gc:black ~at buf
+          (fun buf ->
+            Xproto.encode_poly_fill_arc ~drawable:wid ~gc:black buf
               ~arcs:[ left; right ]);
         ]
     in

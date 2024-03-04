@@ -110,12 +110,15 @@ let open_display ~hostname ?display ?(screen = 0) () =
   in
   let socket = Lwt_unix.socket domain Unix.SOCK_STREAM 0 in
   let* () = Lwt_unix.connect socket address in
+  (*
   let len =
     12 + pad (String.length xauth_name) + pad (String.length xauth_data)
   in
   let handshake = Bytes.make len '\x00' in
-  let _ =
-    Xproto.encode_setup_request handshake ~at:0
+  *)
+  let handshake = Codec.Encode_buffer.of_buffer (Buffer.create 24) in
+  let () =
+    Xproto.encode_setup_request handshake
       {
         byte_order = 0x6C;
         protocol_major_version = 11;
@@ -123,9 +126,13 @@ let open_display ~hostname ?display ?(screen = 0) () =
         authorization_protocol_name = xauth_name;
         authorization_protocol_data = xauth_data;
       }
-    |> Option.get
   in
-  let* _ = Lwt_unix.write socket handshake 0 len in
+  let* _ =
+    Lwt_unix.write socket
+      (Buffer.to_bytes handshake.buffer)
+      0
+      (Codec.Encode_buffer.current_offset handshake)
+  in
   let* resp = read_handshake_response socket in
   match resp with
   | Success display_info ->
@@ -153,8 +160,8 @@ let write conn ?(offset = 0) ?length buf =
 
 (** Send after a request that does not have a reply to check whether it succeeded. *)
 let check_for_error conn =
-  let buf = Bytes.make 4 '\x00' in
-  let _ = Xproto.encode_get_input_focus buf ~at:0 |> Option.get in
-  let* _ = write conn buf in
+  let buf = Codec.Encode_buffer.of_buffer (Buffer.create 4) in
+  let _ = Xproto.encode_get_input_focus buf in
+  let* _ = write conn (Buffer.to_bytes buf.buffer) in
   (* TODO read response *)
   Lwt.return_unit

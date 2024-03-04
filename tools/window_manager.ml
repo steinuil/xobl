@@ -36,23 +36,21 @@ let main (conn : Connection.connection) =
 *)
   let root = List.hd conn.display_info.roots in
 
-  let buf = Bytes.make 120 '\x00' in
-  let len =
-    Xproto.encode_change_window_attributes ~window:root.root
-      ~event_mask:(Some [ `Substructure_redirect ]) buf ~at:0
-    |> Option.get
-  in
-  let buf = Bytes.sub buf 0 len in
+  let buf = Codec.Encode_buffer.of_buffer (Buffer.create 120) in
+  Xproto.encode_change_window_attributes ~window:root.root
+    ~event_mask:(Some [ `Substructure_redirect ]) buf;
+  let buf = Buffer.to_bytes buf.buffer in
   let* () =
-    Lwt_io.printf "ChangeWindowAttributes(len=%d): %s\n" len
+    Lwt_io.printf "ChangeWindowAttributes(len=%d): %s\n" (Bytes.length buf)
       (Xobl.Util.hex_string_of_bytes buf)
   in
   let* _ = Connection.write conn buf in
 
-  let buf = Bytes.make 4 '\x00' in
-  let len = Xproto.encode_get_input_focus buf ~at:0 |> Option.get in
+  let buf = Codec.Encode_buffer.of_buffer (Buffer.create 4) in
+  Xproto.encode_get_input_focus buf;
+  let buf = Buffer.to_bytes buf.buffer in
   let* () =
-    Lwt_io.printf "MapWindow(len=%d): %s\n" len
+    Lwt_io.printf "MapWindow(len=%d): %s\n" (Bytes.length buf)
       (Xobl.Util.hex_string_of_bytes buf)
   in
   let* _ = Connection.write conn buf in

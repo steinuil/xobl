@@ -79,60 +79,47 @@ let decode_alt_mask decode to_int64 of_int64 buf ~at =
       | Some e -> Some (F e, at)
       | None -> Some (V n, at))
 
-let encode f buf v ~at ~size =
-  if Bytes.length buf < at + size then None
-  else (
-    f buf at v;
-    Some (at + size))
+module Encode_buffer = struct
+  type t = { buffer : Buffer.t; offset : int }
 
-let encode_char buf v ~at = encode Bytes.set buf v ~at ~size:1
-let encode_uint8 buf v ~at = encode Bytes.set_uint8 buf v ~at ~size:1
-let encode_int8 buf v ~at = encode Bytes.set_int8 buf v ~at ~size:1
-let encode_bool buf v ~at = encode_uint8 buf (if v then 1 else 0) ~at
-let encode_uint16 buf v ~at = encode Bytes.set_uint16_le buf v ~at ~size:2
-let encode_int16 buf v ~at = encode Bytes.set_int16_le buf v ~at ~size:2
+  let of_buffer buffer =
+    let offset = Buffer.length buffer in
+    { buffer; offset }
 
-let encode_int32 buf v ~at =
-  encode Bytes.set_int32_le buf (Int32.of_int v) ~at ~size:4
+  (* Current offset relative to the buffer initial offset. *)
+  let current_offset buf = Buffer.length buf.buffer - buf.offset
+end
 
-let encode_int64 buf v ~at = encode Bytes.set_int64_le buf v ~at ~size:8
-let encode_float buf v ~at = encode_int64 buf (Int64.bits_of_float v) ~at
-
-let encode_file_descr buf (v : Unix.file_descr) ~at =
-  encode_int16 buf (Obj.magic v) ~at
-
+let encode f (buf : Encode_buffer.t) v = f buf.buffer v
+let encode_char buf v = encode Buffer.add_char buf v
+let encode_uint8 buf v = encode Buffer.add_uint8 buf v
+let encode_int8 buf v = encode Buffer.add_uint8 buf v
+let encode_bool buf v = encode_uint8 buf (if v then 1 else 0)
+let encode_uint16 buf v = encode Buffer.add_uint16_le buf v
+let encode_int16 buf v = encode Buffer.add_int16_le buf v
+let encode_int32 buf v = encode Buffer.add_int32_le buf (Int32.of_int v)
+let encode_int64 buf v = encode Buffer.add_int64_le buf v
+let encode_float buf v = encode_int64 buf (Int64.bits_of_float v)
+let encode_file_descr buf (v : Unix.file_descr) = encode_int16 buf (Obj.magic v)
 let encode_xid = encode_int32
+let encode_list encode_item buf ls = List.iter (encode_item buf) ls
+let encode_string buf str = encode Buffer.add_string buf str
 
-let encode_list encode_item buf ls ~at =
-  let rec loop at = function
-    | [] -> Some at
-    | item :: rest -> (
-        match encode_item buf item ~at with
-        | Some at -> loop at rest
-        | None -> None)
-  in
-  loop at ls
-
-let encode_string buf str ~at =
-  let len = String.length str in
-  Bytes.blit_string str 0 buf at len;
-  Some (at + len)
-
-let encode_enum encode of_int to_int buf v ~at =
+let encode_enum encode of_int to_int buf v =
   let v = to_int v in
-  encode buf (of_int v) ~at
+  encode buf (of_int v)
 
-let encode_mask encode of_int to_int buf v ~at =
+let encode_mask encode of_int to_int buf v =
   let v = to_int v in
-  encode buf (of_int v) ~at
+  encode buf (of_int v)
 
-let encode_alt_enum encode of_int to_int buf v ~at =
+let encode_alt_enum encode of_int to_int buf v =
   match v with
-  | E v -> encode_enum encode of_int to_int buf v ~at
-  | Custom v -> encode buf v ~at
+  | E v -> encode_enum encode of_int to_int buf v
+  | Custom v -> encode buf v
 
 (* TODO should we use an Int64 here? *)
-let encode_optional_mask encode buf fields ~at =
+let encode_optional_mask encode buf fields =
   let rec loop mask = function
     | [] -> mask
     | (exists, pos) :: rest ->
@@ -140,4 +127,20 @@ let encode_optional_mask encode buf fields ~at =
         loop mask rest
   in
   let mask = loop 0 fields in
-  encode buf mask ~at
+  encode buf mask
+
+let encode_pad buf len = encode Buffer.add_bytes buf (Bytes.create len)
+
+let encode_align buf align =
+  let len = Encode_buffer.current_offset buf mod align in
+  encode_pad buf len
+
+(* TODO Bytes can't grow but in Buffer you can't access arbitrary elements.
+   we need to use a data structure that can do both to avoid the copying. *)
+let encode_request_length buf =
+  let len = Encode_buffer.current_offset buf in
+  let bytes = Bytes.create len in
+  Buffer.blit buf.buffer buf.offset bytes 0 len;
+  Bytes.set_int16_le bytes 2 (len / 4);
+  Buffer.truncate buf.buffer buf.offset;
+  Buffer.add_bytes buf.buffer bytes
