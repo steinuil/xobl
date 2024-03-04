@@ -83,22 +83,18 @@ let main (conn : Connection.connection) =
   let* () =
     reqs
       [
-        (fun buf ->
-          Xproto.encode_create_window ~depth:root.root_depth ~wid
-            ~parent:root.root ~x:0 ~y:0 ~width:!width ~height:!height
-            ~border_width:0 ~class_:`Input_output ~visual:root.root_visual
-            ~event_mask:(Some [ `Exposure; `Structure_notify ])
-            ~background_pixel:root.white_pixel buf);
-        (fun buf ->
-          Xproto.encode_change_window_attributes ~window:root.root
-            ~event_mask:(Some [ `Pointer_motion ]) buf);
-        (fun buf ->
-          Xproto.encode_create_gc ~cid:white ~drawable:root.root
-            ~foreground:root.white_pixel ~graphics_exposures:0 buf);
-        (fun buf ->
-          Xproto.encode_create_gc ~cid:black ~drawable:root.root
-            ~foreground:root.black_pixel ~graphics_exposures:0 buf);
-        (fun buf -> Xproto.encode_map_window ~window:wid buf);
+        Xproto.encode_create_window ~depth:root.root_depth ~wid
+          ~parent:root.root ~x:0 ~y:0 ~width:!width ~height:!height
+          ~border_width:0 ~class_:`Input_output ~visual:root.root_visual
+          ~event_mask:(Some [ `Exposure; `Structure_notify ])
+          ~background_pixel:root.white_pixel;
+        Xproto.encode_change_window_attributes ~window:root.root
+          ~event_mask:(Some [ `Pointer_motion ]);
+        Xproto.encode_create_gc ~cid:white ~drawable:root.root
+          ~foreground:root.white_pixel ~graphics_exposures:0;
+        Xproto.encode_create_gc ~cid:black ~drawable:root.root
+          ~foreground:root.black_pixel ~graphics_exposures:0;
+        Xproto.encode_map_window ~window:wid;
       ]
   in
 
@@ -121,27 +117,22 @@ let main (conn : Connection.connection) =
     let* () =
       reqs
         [
-          (fun buf ->
-            Xproto.encode_poly_fill_arc ~drawable:wid ~gc:black buf
-              ~arcs:
-                [
-                  circle ~x:0 ~y:0 ~width:w ~height:h;
-                  circle ~x:w ~y:0 ~width:w ~height:h;
-                ]);
-          (fun buf ->
-            Xproto.encode_poly_fill_arc ~drawable:wid ~gc:white buf
-              ~arcs:
-                (let x = Float.to_int unit_x in
-                 let y = Float.to_int unit_y in
-                 [
-                   circle ~x ~y ~width:(w - (x * 2)) ~height:(h - (y * 2));
-                   circle ~x:(w + x) ~y
-                     ~width:(w - (x * 2))
-                     ~height:(h - (y * 2));
-                 ]));
-          (fun buf ->
-            Xproto.encode_poly_fill_arc ~drawable:wid ~gc:black buf
-              ~arcs:[ left; right ]);
+          Xproto.encode_poly_fill_arc ~drawable:wid ~gc:black
+            ~arcs:
+              [
+                circle ~x:0 ~y:0 ~width:w ~height:h;
+                circle ~x:w ~y:0 ~width:w ~height:h;
+              ];
+          Xproto.encode_poly_fill_arc ~drawable:wid ~gc:white
+            ~arcs:
+              (let x = Float.to_int unit_x in
+               let y = Float.to_int unit_y in
+               [
+                 circle ~x ~y ~width:(w - (x * 2)) ~height:(h - (y * 2));
+                 circle ~x:(w + x) ~y ~width:(w - (x * 2)) ~height:(h - (y * 2));
+               ]);
+          Xproto.encode_poly_fill_arc ~drawable:wid ~gc:black
+            ~arcs:[ left; right ];
         ]
     in
 
