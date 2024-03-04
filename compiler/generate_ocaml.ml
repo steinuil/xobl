@@ -859,6 +859,9 @@ let gen_declaration ctx out = function
         events
 
 let gen_xcb xcbs out xcb =
+  (match xcb with
+  | Core _ -> ()
+  | Extension { name; _ } -> Printf.fprintf out "module %s = struct\n" name);
   output_string out "[@@@warning \"-27\"]\n";
   output_string out "[@@@warning \"-11\"]\n";
   output_string out "open Codec\n";
@@ -871,6 +874,7 @@ let gen_xcb xcbs out xcb =
       (list_sep "\n" (gen_declaration ctx)) out decls
   | Extension { declarations; name = _; file_name; _ } ->
       let ctx = Ctx.{ current_module = file_name; xcbs } in
-      (list_sep "\n" (gen_declaration ctx)) out declarations
+      (list_sep "\n" (gen_declaration ctx)) out declarations;
+      output_string out "\nend\n"
 
 let gen out xcbs = List.iter (gen_xcb xcbs out) xcbs
