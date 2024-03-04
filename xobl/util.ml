@@ -18,6 +18,23 @@ let bool_of_int b = if b then 1 else 0
 let sum_of_expr get_field =
   List.fold_left (fun acc elem -> acc + get_field elem) 0
 
+let mask_of_int of_bit mask =
+  let rec iter mask pos acc =
+    if mask = 0L then Some acc
+    else if Int64.logand mask 1L <> 0L then
+      match of_bit pos with
+      | Some item -> iter Int64.(shift_right mask 1) (pos + 1) (item :: acc)
+      | None -> None
+    else iter Int64.(shift_right mask 1) (pos + 1) acc
+  in
+  iter mask 0 []
+
+let mask_value_of_int of_bit of_value mask =
+  match of_value mask with
+  | Some v -> Some (X11_types.V v)
+  | None -> (
+      match mask_of_int of_bit mask with Some f -> Some (F f) | None -> None)
+
 let int_of_mask to_bit mask =
   List.fold_left (fun mask v -> mask lor (1 lsl to_bit v)) 0 mask
 

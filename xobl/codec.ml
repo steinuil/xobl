@@ -65,23 +65,6 @@ let decode_string len buf ~at =
   let str = Bytes.sub_string buf at len in
   Some (str, at + len)
 
-let mask_of_int of_bit mask =
-  let rec iter mask pos acc =
-    if mask = 0L then Some acc
-    else if Int64.logand mask 1L <> 0L then
-      match of_bit pos with
-      | Some item -> iter Int64.(shift_right mask 1) (pos + 1) (item :: acc)
-      | None -> None
-    else iter Int64.(shift_right mask 1) (pos + 1) acc
-  in
-  iter mask 0 []
-
-let mask_value_of_int of_bit of_value mask =
-  match of_value mask with
-  | Some v -> Some (V v)
-  | None -> (
-      match mask_of_int of_bit mask with Some f -> Some (F f) | None -> None)
-
 let decode_mask decode to_int64 of_int64 buf ~at =
   match decode buf ~at with
   | None -> None
