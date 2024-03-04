@@ -17,3 +17,10 @@ let bool_of_int b = if b then 1 else 0
 
 let sum_of_expr get_field =
   List.fold_left (fun acc elem -> acc + get_field elem) 0
+
+let int_of_mask to_bit mask =
+  List.fold_left (fun mask v -> mask lor (1 lsl to_bit v)) 0 mask
+
+let int_of_mask_value to_mask to_enum = function
+  | X11_types.F f -> int_of_mask to_mask f
+  | V v -> to_enum v

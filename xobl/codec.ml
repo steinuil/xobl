@@ -6,8 +6,6 @@ let ( let* ) opt f =
   | Some o -> f o
   | None -> raise (Invalid_argument "option is none")
 
-
-
 let decode f buf ~at ~size =
   if Bytes.length buf < at + size - 1 then None else Some (f buf at, at + size)
 
@@ -144,13 +142,6 @@ let encode_enum encode of_int to_int buf v ~at =
 let encode_mask encode of_int to_int buf v ~at =
   let v = to_int v in
   encode buf (of_int v) ~at
-
-let int_of_mask to_bit mask =
-  List.fold_left (fun mask v -> mask lor (1 lsl to_bit v)) 0 mask
-
-let mask_value_to_int to_mask to_enum = function
-  | F f -> int_of_mask to_mask f
-  | V v -> to_enum v
 
 let encode_alt_enum encode of_int to_int buf v ~at =
   match v with

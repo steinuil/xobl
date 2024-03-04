@@ -763,7 +763,7 @@ let gen_declaration ctx out = function
         items;
       Printf.fprintf out
         "let %s (mask : %s) : int = let to_enum = function %a in let to_mask = \
-         function %a in mask_value_to_int to_mask to_enum mask;;"
+         function %a in int_of_mask_value to_mask to_enum mask;;"
         (Ident.snake name ~suffix:"int_of_mask")
         (Ident.snake name ~suffix:"mask")
         (list_sep " | " gen_encode_enum_item)
