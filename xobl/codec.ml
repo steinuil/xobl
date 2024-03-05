@@ -118,6 +118,11 @@ let encode_alt_enum encode of_int to_int buf v =
   | E v -> encode_enum encode of_int to_int buf v
   | Custom v -> encode buf v
 
+let encode_alt_mask encode of_int to_int buf v =
+  match v with
+  | F e -> encode_mask encode of_int to_int buf e
+  | V v -> encode buf v
+
 (* TODO should we use an Int64 here? *)
 let encode_optional_mask encode buf fields =
   let rec loop mask = function
@@ -144,3 +149,6 @@ let encode_request_length buf =
   Bytes.set_int16_le bytes 2 (len / 4);
   Buffer.truncate buf.buffer buf.offset;
   Buffer.add_bytes buf.buffer bytes
+
+(* TODO remove this *)
+let encode_event_for_send _buf _ev = failwith "not implemented: EventForSend"

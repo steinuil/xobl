@@ -15,7 +15,7 @@ let rec conv_expression = function
   | Unop (op, e) -> Hir.Unop (op, conv_expression e)
   | Field_ref f -> Hir.Field_ref f
   | Param_ref { param; type_ } ->
-      Hir.Param_ref { param; type_ = conv_type type_ }
+      Hir.Param_ref { param; type_ = Some (conv_type type_) }
   | Enum_ref { enum; item } -> Hir.Enum_ref { enum = conv_ident enum; item }
   | Pop_count e -> Hir.Pop_count (conv_expression e)
   | Sum_of { field; by_expr } ->
@@ -292,6 +292,33 @@ let rec conv_variant_field ~cond ~cases fields (curr_module, xcbs) =
           in
           let { fields; variant_types } =
             conv_fields cs_fields (curr_module, xcbs)
+          in
+          let field_names =
+            ListLabels.filter_map fields ~f:(function
+              | Hir.Field_list { name; _ }
+              | Hir.Field { name; _ }
+              | Hir.Field_expr { name; _ }
+              | Hir.Field_file_descriptor name
+              | Hir.Field_list_simple { name; _ }
+              | Hir.Field_list_length { name; _ }
+              | Hir.Field_variant { name; _ }
+              | Hir.Field_optional { name; _ } ->
+                  Some name
+              | Hir.Field_pad _ | Hir.Field_variant_tag _
+              | Hir.Field_optional_mask _ ->
+                  None)
+          in
+          let fields =
+            let fix_param_refs = function
+              | Hir.Field_ref f when not (List.mem f field_names) ->
+                  Hir.Param_ref { param = f; type_ = None }
+              | e -> e
+            in
+            ListLabels.map fields ~f:(function
+              | Hir.Field_list { name; type_; length = Some expr } ->
+                  Hir.Field_list
+                    { name; type_; length = Some (fix_param_refs expr) }
+              | f -> f)
           in
           (Hir.{ vi_name = item; vi_tag; vi_fields = fields }, variant_types)
       | _ -> failwith "unexpected")

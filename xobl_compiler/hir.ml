@@ -43,7 +43,7 @@ type expression =
   (* The field's type should probably be resolved so that when outputting
      expressions we know which conversion function to use when the type of the
      field is not compatible with that of the length, i.e. card32. *)
-  | Param_ref of { param : string; type_ : type_ }
+  | Param_ref of { param : string; type_ : type_ option }
   | Enum_ref of { enum : ident; item : string }
   | Pop_count of expression
   | Sum_of of { field : string; by_expr : expression option }

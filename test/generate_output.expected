@@ -1979,7 +1979,7 @@ module Xproto = struct
     | Data32 of { data32 : int list }
   [@@deriving sexp]
 
-  let decode_client_message_data_format_variant tag buf ~at :
+  let decode_client_message_data_format_variant tag buf ~at ~orig :
       (client_message_data_format_variant * int) option =
     match tag with
     | 8 ->
@@ -2035,7 +2035,7 @@ module Xproto = struct
     let* window, at = decode_window buf ~at in
     let* type_, at = decode_atom buf ~at in
     let* data, at =
-      decode_client_message_data_format_variant data_tag buf ~at
+      decode_client_message_data_format_variant data_tag buf ~at ~orig
     in
     ignore orig;
     Some ({ window; type_; data }, at)
@@ -14418,7 +14418,7 @@ module Randr = struct
     | Lease of { lc : lease_notify }
   [@@deriving sexp]
 
-  let decode_notify_variant tag buf ~at : (notify_variant * int) option =
+  let decode_notify_variant tag buf ~at ~orig : (notify_variant * int) option =
     match tag with
     | 0 ->
         let* cc, at = decode_crtc_change buf ~at in
@@ -14484,7 +14484,7 @@ module Randr = struct
     let at = at + 1 in
     let* u_tag, at = decode_uint8 buf ~at in
     let* _sequence_number, at = decode_uint16 buf ~at in
-    let* u, at = decode_notify_variant u_tag buf ~at in
+    let* u, at = decode_notify_variant u_tag buf ~at ~orig in
     ignore orig;
     Some (u, at)
 end
@@ -18265,7 +18265,7 @@ module Xinput = struct
       }
   [@@deriving sexp]
 
-  let decode_input_class_variant tag buf ~at :
+  let decode_input_class_variant tag buf ~at ~orig :
       (input_class_variant * int) option =
     match tag with
     | 0 ->
@@ -18315,7 +18315,7 @@ module Xinput = struct
     let orig = at in
     let* info_tag, at = decode_uint8 buf ~at in
     let* len, at = decode_uint8 buf ~at in
-    let* info, at = decode_input_class_variant info_tag buf ~at in
+    let* info, at = decode_input_class_variant info_tag buf ~at ~orig in
     ignore orig;
     Some ({ len; info }, at)
 
@@ -19228,7 +19228,7 @@ module Xinput = struct
     | Bell of { percent : int; pitch : int; duration : int }
   [@@deriving sexp]
 
-  let decode_feedback_class_variant tag buf ~at :
+  let decode_feedback_class_variant tag buf ~at ~orig :
       (feedback_class_variant * int) option =
     match tag with
     | 0 ->
@@ -19359,7 +19359,7 @@ module Xinput = struct
     let* data_tag, at = decode_uint8 buf ~at in
     let* feedback_id, at = decode_uint8 buf ~at in
     let* len, at = decode_uint16 buf ~at in
-    let* data, at = decode_feedback_class_variant data_tag buf ~at in
+    let* data, at = decode_feedback_class_variant data_tag buf ~at ~orig in
     ignore orig;
     Some ({ feedback_id; len; data }, at)
 
@@ -19629,7 +19629,7 @@ module Xinput = struct
     let* data_tag, at = decode_uint8 buf ~at in
     let* feedback_id, at = decode_uint8 buf ~at in
     let* len, at = decode_uint16 buf ~at in
-    let* data, at = decode_feedback_class_variant data_tag buf ~at in
+    let* data, at = decode_feedback_class_variant data_tag buf ~at ~orig in
     ignore orig;
     Some ({ feedback_id; len; data }, at)
 
@@ -20004,7 +20004,7 @@ module Xinput = struct
     let orig = at in
     let* data_tag, at = decode_uint8 buf ~at in
     let* len, at = decode_uint8 buf ~at in
-    let* data, at = decode_input_class_variant data_tag buf ~at in
+    let* data, at = decode_input_class_variant data_tag buf ~at ~orig in
     ignore orig;
     Some ({ len; data }, at)
 
@@ -20334,7 +20334,7 @@ module Xinput = struct
       }
   [@@deriving sexp]
 
-  let decode_device_control_variant tag buf ~at :
+  let decode_device_control_variant tag buf ~at ~orig :
       (device_control_variant * int) option =
     match tag with
     | 1 ->
@@ -20455,7 +20455,7 @@ module Xinput = struct
     let orig = at in
     let* data_tag, at = decode_uint16 buf ~at in
     let* len, at = decode_uint16 buf ~at in
-    let* data, at = decode_device_control_variant data_tag buf ~at in
+    let* data, at = decode_device_control_variant data_tag buf ~at ~orig in
     ignore orig;
     Some ({ len; data }, at)
 
@@ -20695,7 +20695,7 @@ module Xinput = struct
     let orig = at in
     let* data_tag, at = decode_uint16 buf ~at in
     let* len, at = decode_uint16 buf ~at in
-    let* data, at = decode_device_control_variant data_tag buf ~at in
+    let* data, at = decode_device_control_variant data_tag buf ~at ~orig in
     ignore orig;
     Some ({ len; data }, at)
 
@@ -20790,26 +20790,26 @@ module Xinput = struct
     | D32_bits of { data32 : int list }
   [@@deriving sexp]
 
-  let decode_property_format_variant tag buf ~at :
+  let decode_property_format_variant tag buf ~at ~orig :
       (property_format_variant * int) option =
     match tag with
     | 8 ->
         let* data8, at =
-          let length = num_items in
+          let length = failwith "param_ref not implemented: num_items" in
           decode_list decode_uint8 length buf ~at
         in
         let at = at + ((at - orig) mod 4) in
         Some (D8_bits { data8 }, at)
     | 16 ->
         let* data16, at =
-          let length = num_items in
+          let length = failwith "param_ref not implemented: num_items" in
           decode_list decode_uint16 length buf ~at
         in
         let at = at + ((at - orig) mod 4) in
         Some (D16_bits { data16 }, at)
     | 32 ->
         let* data32, at =
-          let length = num_items in
+          let length = failwith "param_ref not implemented: num_items" in
           decode_list decode_int32 length buf ~at
         in
         Some (D32_bits { data32 }, at)
@@ -20846,7 +20846,7 @@ module Xinput = struct
     encode_enum encode_uint8 identity Xproto.prop_mode_int_of_enum buf mode;
     encode_pad buf 1;
     encode_int32 buf num_items;
-    encode_property_format_variant buf v.items;
+    encode_property_format_variant buf items;
     (* write request length *)
     encode_request_length buf
 
@@ -20901,7 +20901,7 @@ module Xinput = struct
     let* items_tag, at = decode_uint8 buf ~at in
     let* device_id, at = decode_uint8 buf ~at in
     let at = at + 10 in
-    let* items, at = decode_property_format_variant items_tag buf ~at in
+    let* items, at = decode_property_format_variant items_tag buf ~at ~orig in
     ignore orig;
     Some ({ xi_reply_type; type_; bytes_after; num_items; device_id; items }, at)
 
@@ -21250,7 +21250,7 @@ module Xinput = struct
     | Detach_slave of { deviceid : device_enum alt_enum }
   [@@deriving sexp]
 
-  let decode_hierarchy_change_type_variant tag buf ~at :
+  let decode_hierarchy_change_type_variant tag buf ~at ~orig :
       (hierarchy_change_type_variant * int) option =
     match tag with
     | 1 ->
@@ -21343,7 +21343,9 @@ module Xinput = struct
     let orig = at in
     let* data_tag, at = decode_uint16 buf ~at in
     let* len, at = decode_uint16 buf ~at in
-    let* data, at = decode_hierarchy_change_type_variant data_tag buf ~at in
+    let* data, at =
+      decode_hierarchy_change_type_variant data_tag buf ~at ~orig
+    in
     ignore orig;
     Some ({ len; data }, at)
 
@@ -21524,8 +21526,9 @@ module Xinput = struct
   let encode_event_mask buf (v : event_mask) =
     encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
     encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length v.mask);
-    encode_list encode_mask encode_int32 identity xi_event_mask_int_of_mask buf
-      v.mask;
+    encode_list
+      (encode_mask encode_int32 identity xi_event_mask_int_of_mask)
+      buf v.mask;
     ()
 
   let encode_xi_select_events ~(window : Xproto.window)
@@ -21871,7 +21874,7 @@ module Xinput = struct
     | Touch of { mode : touch_mode_enum; num_touches : int }
   [@@deriving sexp]
 
-  let decode_device_class_type_variant tag buf ~at :
+  let decode_device_class_type_variant tag buf ~at ~orig :
       (device_class_type_variant * int) option =
     match tag with
     | 0 ->
@@ -21974,7 +21977,7 @@ module Xinput = struct
     let* data_tag, at = decode_uint16 buf ~at in
     let* len, at = decode_uint16 buf ~at in
     let* sourceid, at = decode_device_id buf ~at in
-    let* data, at = decode_device_class_type_variant data_tag buf ~at in
+    let* data, at = decode_device_class_type_variant data_tag buf ~at ~orig in
     ignore orig;
     Some ({ len; sourceid; data }, at)
 
@@ -22277,7 +22280,8 @@ module Xinput = struct
     Some ({ modifiers; status }, at)
 
   let encode_grab_modifier_info buf (v : grab_modifier_info) =
-    encode_int32 buf v.modifiers;
+    encode_alt_mask encode_int32 identity modifier_mask_int_of_mask buf
+      v.modifiers;
     encode_enum encode_uint8 identity Xproto.grab_status_int_of_enum buf
       v.status;
     encode_pad buf 3;
@@ -22388,7 +22392,7 @@ module Xinput = struct
     Xproto.encode_atom buf property;
     Xproto.encode_atom buf type_;
     encode_int32 buf num_items;
-    encode_property_format_variant buf v.items;
+    encode_property_format_variant buf items;
     (* write request length *)
     encode_request_length buf
 
@@ -22440,7 +22444,7 @@ module Xinput = struct
     let* num_items, at = decode_int32 buf ~at in
     let* items_tag, at = decode_uint8 buf ~at in
     let at = at + 11 in
-    let* items, at = decode_property_format_variant items_tag buf ~at in
+    let* items, at = decode_property_format_variant items_tag buf ~at ~orig in
     ignore orig;
     Some ({ type_; bytes_after; num_items; items }, at)
 

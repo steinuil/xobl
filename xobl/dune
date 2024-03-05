@@ -30,7 +30,7 @@
           ; xf86vidmode.ml
           xinerama.ml
           xfixes.ml
-          ; xinput.ml
+          xinput.ml
           xprint.ml
           xselinux.ml
           xtest.ml

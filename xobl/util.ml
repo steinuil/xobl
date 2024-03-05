@@ -13,7 +13,7 @@ let hex_string_of_bytes bytes =
 let identity x = x
 let char_to_int64 c = Char.code c |> Int64.of_int
 let bool_to_int64 b = Bool.to_int b |> Int64.of_int
-let bool_of_int b = if b then 1 else 0
+let bool_of_int b = b <> 0
 
 let sum_of_expr get_field =
   List.fold_left (fun acc elem -> acc + get_field elem) 0

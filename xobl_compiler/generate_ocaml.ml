@@ -1,6 +1,9 @@
 open Hir
 module Ident = Casing.OCaml
 
+let not_implemented =
+  Printf.ksprintf (fun str -> failwith ("not implemented: " ^ str))
+
 module Ctx : sig
   type t = { current_module : string; xcbs : xcb list }
 
@@ -186,8 +189,8 @@ let rec gen_expr ctx out = function
   | Param_ref { param; type_ = _ } ->
       Printf.fprintf out "failwith \"param_ref not implemented: %s\""
         (Ident.snake param)
-  | Enum_ref _ -> failwith "gen_expr enum_ref"
-  | Pop_count _ -> failwith "gen_expr pop_count"
+  | Enum_ref _ -> not_implemented "gen_expr enum_ref"
+  | Pop_count _ -> not_implemented "gen_expr pop_count"
   | List_element_ref -> (
       match ctx with
       | None ->
@@ -388,13 +391,19 @@ let gen_encode_field_type ctx out = function
         (Option.value ~default:"identity" (gen_of_int p))
         (gen_ident ctx)
         { enum with id_name = Ident.snake enum.id_name ~suffix:"int_of_enum" }
-  | { ft_type; ft_allowed = Some _ } -> gen_encode_type ctx out ft_type
+  | { ft_type; ft_allowed = Some (Allowed_alt_mask mask) } ->
+      let p = Ctx.resolve_prim ctx ft_type |> Option.get in
+      Printf.fprintf out "encode_alt_mask %a %s %a" (gen_encode_type ctx)
+        ft_type
+        (Option.value ~default:"identity" (gen_of_int p))
+        (gen_ident ctx)
+        { mask with id_name = Ident.snake mask.id_name ~suffix:"int_of_mask" }
 
 let gen_encode_list ctx out t =
   match Ctx.resolve_prim ctx t.ft_type with
   | Some (Char | Void) -> output_string out "encode_string"
   | Some _ | None ->
-      Printf.fprintf out "encode_list %a" (gen_encode_field_type ctx) t
+      Printf.fprintf out "encode_list (%a)" (gen_encode_field_type ctx) t
 
 let gen_decode_list ctx out t =
   match Ctx.resolve_prim ctx t.ft_type with
@@ -451,8 +460,8 @@ let gen_decode_field ctx _fields out = function
         (Ident.snake field_name ~suffix:"tag")
         (gen_decode_type ctx) type_
   | Field_variant { name; variant } ->
-      Printf.fprintf out "let* %s, at = %a %s buf ~at in" (Ident.snake name)
-        (gen_ident ctx)
+      Printf.fprintf out "let* %s, at = %a %s buf ~at ~orig in"
+        (Ident.snake name) (gen_ident ctx)
         {
           variant with
           id_name =
@@ -536,7 +545,7 @@ let gen_encode_arg_field ctx out = function
       Printf.fprintf out "%a buf %s;" (gen_encode_list ctx) type_
         (Ident.snake name)
   | Field_variant { name; variant } ->
-      Printf.fprintf out "%a buf v.%s;"
+      Printf.fprintf out "%a buf %s;"
         (gen_ident ~prefix:"encode" ~suffix:"variant" ctx)
         variant name
   | Field_variant_tag { field_name; variant; type_ } ->
@@ -856,8 +865,8 @@ let gen_declaration ctx out = function
         (list_sep " | " (gen_variant_item ctx))
         items;
       Printf.fprintf out
-        "let %s tag buf ~at : (%s * int) option = match tag with %a | _ -> \
-         None;;"
+        "let %s tag buf ~at ~orig : (%s * int) option = match tag with %a | _ \
+         -> None;;"
         (Ident.snake name ~prefix:"decode" ~suffix:"variant")
         (Ident.snake name ~suffix:"variant")
         (list_sep " | " (gen_decode_variant_item ctx))

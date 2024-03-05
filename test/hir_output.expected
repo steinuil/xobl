@@ -12672,7 +12672,8 @@
          (ft_allowed ()))))
       (Field_list (name axisvalues)
        (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-       (length ((Param_ref (param num_axes) (type_ (Type_primitive Card8)))))))))
+       (length
+        ((Param_ref (param num_axes) (type_ ((Type_primitive Card8))))))))))
    (Request (name GetDeviceMotionEvents) (opcode 10) (combine_adjacent true)
     (fields
      ((Field (name start)
@@ -13918,19 +13919,19 @@
        (vi_fields
         ((Field_list (name data8)
           (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-          (length ((Field_ref num_items))))
+          (length ((Param_ref (param num_items) (type_ ())))))
          (Field_pad (pad (Pad_align 4)) (serialize false)))))
       ((vi_name 16Bits) (vi_tag 16)
        (vi_fields
         ((Field_list (name data16)
           (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
-          (length ((Field_ref num_items))))
+          (length ((Param_ref (param num_items) (type_ ())))))
          (Field_pad (pad (Pad_align 4)) (serialize false)))))
       ((vi_name 32Bits) (vi_tag 32)
        (vi_fields
         ((Field_list (name data32)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Field_ref num_items))))))))))
+          (length ((Param_ref (param num_items) (type_ ())))))))))))
    (Request (name ChangeDeviceProperty) (opcode 37) (combine_adjacent true)
     (fields
      ((Field (name property)
