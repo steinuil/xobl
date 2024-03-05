@@ -490,7 +490,7 @@ let conv_declarations ctx declarations =
     | item -> item :: acc)
   |> List.rev
 
-let compile_hir xcbs = function
+let elaborated_parsetree_to_hir xcbs = function
   | Parsetree.Core declarations ->
       let declarations = conv_declarations ("xproto", xcbs) declarations in
       Hir.Core declarations

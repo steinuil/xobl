@@ -1,21 +1,18 @@
 open Xobl_compiler
 
-let parse_module m = Parser.parse_file m |> Result.get_ok
-let out_filename ~out_dir ~file_name = Filename.concat out_dir file_name ^ ".ml"
-
 let compile files out_dir =
-  let xcbs = List.map parse_module files |> Hir.of_parsetree |> Hir.sort in
-  xcbs
-  |> List.iter (fun xcb ->
-         match xcb with
-         | Hir.Core _ ->
-             let fname = out_filename ~out_dir ~file_name:"xproto" in
-             Out_channel.with_open_text fname (fun out ->
-                 Xobl_compiler__.Generate_ocaml.gen_xcb xcbs out xcb)
-         | Extension { file_name; _ } ->
-             let fname = out_filename ~out_dir ~file_name in
-             Out_channel.with_open_text fname (fun out ->
-                 Xobl_compiler__.Generate_ocaml.gen_xcb xcbs out xcb))
+  let xcbs = Xobl_compiler.compile_files_to_hir files in
+  List.iter
+    (fun xcb ->
+      let filename =
+        match xcb with
+        | Hir.Core _ -> "xproto"
+        | Extension { file_name; _ } -> file_name
+      in
+      let out_filename = Filename.concat out_dir filename ^ ".ml" in
+      Out_channel.with_open_text out_filename (fun out ->
+          Xobl_compiler.output_ocaml xcbs out xcb))
+    xcbs
 
 let () =
   match Sys.argv |> Array.to_list |> List.tl with

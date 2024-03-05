@@ -33,11 +33,20 @@ let modules =
     "xvmc";
   ]
 
-let parse_module m =
-  let fname = Printf.sprintf "../xml-xcb/%s.xml" m in
-  Xobl_compiler.Parser.parse_file fname |> Result.get_ok
-
 let () =
-  modules |> List.map parse_module |> Xobl_compiler.Hir.of_parsetree
-  |> Xobl_compiler.Hir.sort
-  |> Xobl_compiler__.Generate_ocaml.gen stdout
+  let xcbs =
+    modules
+    |> List.map (Printf.sprintf "../xml-xcb/%s.xml")
+    |> Xobl_compiler.compile_files_to_hir
+  in
+  List.iter
+    (fun m ->
+      let name =
+        match m with
+        | Xobl_compiler.Hir.Core _ -> "Xproto"
+        | Extension { file_name; _ } -> String.capitalize_ascii file_name
+      in
+      Printf.fprintf stdout "module %s = struct\n" name;
+      Xobl_compiler.output_ocaml xcbs stdout m;
+      Printf.fprintf stdout "\nend\n")
+    xcbs

@@ -33,12 +33,10 @@ let modules =
     "xvmc";
   ]
 
-let parse_module m =
-  let fname = Printf.sprintf "../xml-xcb/%s.xml" m in
-  Xobl_compiler.Parser.parse_file fname |> Result.get_ok
-
 let () =
-  modules |> List.map parse_module |> Xobl_compiler.Hir.of_parsetree
+  modules
+  |> List.map (Printf.sprintf "../xml-xcb/%s.xml")
+  |> Xobl_compiler.compile_files_to_hir
   |> List.iter (fun xcb ->
          Xobl_compiler.Hir.sexp_of_xcb xcb
          |> Sexplib.Sexp.to_string_hum |> print_endline)

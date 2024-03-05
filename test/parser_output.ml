@@ -35,7 +35,7 @@ let modules =
 
 let parse_module m =
   let fname = Printf.sprintf "../xml-xcb/%s.xml" m in
-  Xobl_compiler.Parser.parse_file fname |> Result.get_ok
+  Xobl_compiler.parse_file fname |> Result.get_ok
 
 let () =
   ListLabels.iter modules ~f:(fun m ->
