@@ -5,14 +5,16 @@ let get_socket_params ~display = function
   | Display_name.Unix_domain_socket path ->
       let* localhost = Lwt_unix.gethostname () in
       let auth =
-        let& xauth_path = Xauth.get_path () in
+        let& xauth_path = Xauth.path () in
         try
           Xauth.entries_from_file xauth_path
-          |> Xauth.get_best ~family:Xauth.Family.Local ~address:localhost
+          |> Xauth.select_best ~family:Xauth.Family.Local ~address:localhost
                ~display
         with Sys_error _ -> None
       in
-      let auth = Option.value ~default:("", "") auth in
+      let auth =
+        Option.value ~default:{ auth_name = ""; auth_data = "" } auth
+      in
       Lwt.return (Unix.PF_UNIX, Unix.ADDR_UNIX path, auth)
   | Display_name.Internet_domain (family, hostname, port) ->
       let family =
@@ -25,7 +27,7 @@ let get_socket_params ~display = function
       (* TODO: we should try to connect to all the results in order
          instead of just picking the first. *)
       let Unix.{ ai_family; ai_addr; _ } = List.hd addresses in
-      Lwt.return (ai_family, ai_addr, ("", ""))
+      Lwt.return (ai_family, ai_addr, { Xauth.auth_name = ""; auth_data = "" })
 
 type setup_response =
   | Success of Xproto.setup
@@ -75,8 +77,6 @@ let read_response_from sock =
           Lwt.return (Some (`Reply whole_buf))
     | _ (* event *) -> Lwt.return (Some (`Event buf))
 
-let pad n = (if n = 0 then 0 else ((n - 1) lsr 2) + 1) * 4
-
 module Xid_seed = struct
   type seed = { mutable last : int32; inc : int32; base : int32; max : int32 }
 
@@ -104,27 +104,26 @@ type connection = {
   screen : int;
 }
 
+(** Little endian *)
+let byte_order = 0x6C
+
+let protocol_version = (11, 0)
+
 let open_display ~hostname ?display ?(screen = 0) () =
-  let* domain, address, (xauth_name, xauth_data) =
+  let* domain, address, { auth_name; auth_data } =
     get_socket_params hostname ~display
   in
   let socket = Lwt_unix.socket domain Unix.SOCK_STREAM 0 in
   let* () = Lwt_unix.connect socket address in
-  (*
-  let len =
-    12 + pad (String.length xauth_name) + pad (String.length xauth_data)
-  in
-  let handshake = Bytes.make len '\x00' in
-  *)
   let handshake = Codec.Encode_buffer.of_buffer (Buffer.create 24) in
   let () =
     Xproto.encode_setup_request handshake
       {
-        byte_order = 0x6C;
-        protocol_major_version = 11;
-        protocol_minor_version = 0;
-        authorization_protocol_name = xauth_name;
-        authorization_protocol_data = xauth_data;
+        byte_order;
+        protocol_major_version = fst protocol_version;
+        protocol_minor_version = snd protocol_version;
+        authorization_protocol_name = auth_name;
+        authorization_protocol_data = auth_data;
       }
   in
   let* _ =

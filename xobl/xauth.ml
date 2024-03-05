@@ -13,7 +13,7 @@ let xauth_path_from_windows_home () =
   |> Option.map (fun username ->
          Filename.concat (Filename.concat "Users" username) ".Xauthority")
 
-let get_path () =
+let path () =
   match xauth_path_from_env () with
   | Some path -> Some path
   | None -> (
@@ -118,13 +118,9 @@ let%expect_test _ =
       (xau_type MIT-MAGIC-COOKIE-1)
       (xau_data "?\2465iW\231?\232\176%\017kcu\198\144"))) |}]
 
-let rec find_some ~f = function
-  | [] -> None
-  | head :: tail -> (
-      match f head with Some v -> Some v | None -> find_some ~f tail)
+type auth = { auth_name : string; auth_data : string }
 
-(** Find an authentication entry matching [family], [address] and [display]. *)
-let get_best ~family ~address ~display ?(types = [ "MIT-MAGIC-COOKIE-1" ])
+let select_best ~family ~address ~display ?(types = [ "MIT-MAGIC-COOKIE-1" ])
     entries =
   assert (List.length types > 0);
   let matches =
@@ -145,6 +141,8 @@ let get_best ~family ~address ~display ?(types = [ "MIT-MAGIC-COOKIE-1" ])
         && display = xau_dpynum && List.mem xau_type types)
       entries
   in
-  find_some types ~f:(fun typ ->
-      find_some matches ~f:(fun { xau_type; xau_data; _ } ->
-          if typ = xau_type then Some (xau_type, xau_data) else None))
+  ListLabels.find_map types ~f:(fun typ ->
+      ListLabels.find_map matches ~f:(fun { xau_type; xau_data; _ } ->
+          if typ = xau_type then
+            Some { auth_name = xau_type; auth_data = xau_data }
+          else None))
