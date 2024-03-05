@@ -149,6 +149,3 @@ let encode_request_length buf =
   Bytes.set_int16_le bytes 2 (len / 4);
   Buffer.truncate buf.buffer buf.offset;
   Buffer.add_bytes buf.buffer bytes
-
-(* TODO remove this *)
-let encode_event_for_send _buf _ev = failwith "not implemented: EventForSend"
