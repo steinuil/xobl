@@ -127,3 +127,5 @@ let parse name =
   let& hostname, display, screen = parse_name name in
   let& hostname = parse_hostname ~display hostname in
   Some { hostname; display; screen = Option.value ~default:0 screen }
+
+let from_env () = Option.bind (Sys.getenv_opt "DISPLAY") parse

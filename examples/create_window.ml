@@ -23,12 +23,9 @@ let rec read_loop (conn : Connection.t) =
   | None -> Lwt.return_unit
 
 let connect () =
-  let display =
-    Option.bind (Sys.getenv_opt "DISPLAY") Display_name.parse
-    |> Option.value ~default:Display_name.default
-  in
-  let Display_name.{ hostname; display; _ } = display in
-  Connection.open_display ~hostname ~display ()
+  Display_name.from_env ()
+  |> Option.value ~default:Display_name.default
+  |> Connection.open_display
 
 let main (conn : Connection.t) =
   let wid = Connection.Xid_seed.generate conn.xid_seed in

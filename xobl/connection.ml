@@ -109,9 +109,9 @@ let byte_order = 0x6C
 
 let protocol_version = (11, 0)
 
-let open_display ~hostname ?display ?(screen = 0) () =
+let open_display Display_name.{ hostname; display; screen } =
   let* domain, address, { auth_name; auth_data } =
-    get_socket_params hostname ~display
+    get_socket_params hostname ~display:(Some display)
   in
   let socket = Lwt_unix.socket domain Unix.SOCK_STREAM 0 in
   let* () = Lwt_unix.connect socket address in

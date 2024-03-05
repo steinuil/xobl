@@ -4,6 +4,7 @@ module Ident = Casing.OCaml
 let not_implemented =
   Printf.ksprintf (fun str -> failwith ("not implemented: " ^ str))
 
+(* TODO should move this to HIR and resolve the primitive type in a pass *)
 module Ctx : sig
   type t = { current_module : string; xcbs : xcb list }
 
