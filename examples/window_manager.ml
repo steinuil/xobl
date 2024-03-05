@@ -35,7 +35,7 @@ let main (conn : Connection.t) =
 
   let buf = Codec.Encode_buffer.of_buffer (Buffer.create 120) in
   Xproto.encode_change_window_attributes ~window:root.root
-    ~event_mask:(Some [ `Substructure_redirect ]) buf;
+    ~event_mask:[ `Substructure_redirect ] buf;
   let buf = Buffer.to_bytes buf.buffer in
   let* () =
     Lwt_io.printf "ChangeWindowAttributes(len=%d): %s\n" (Bytes.length buf)

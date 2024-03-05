@@ -847,20 +847,20 @@ let gen_declaration ctx out = function
         (list_sep " | " gen_encode_mask_item)
         items
   | Mask { name; items; additional_values = None_value } ->
-      Printf.fprintf out "type %s = [ %a ] list option [@@deriving sexp];;"
+      Printf.fprintf out "type %s = [ %a ] list [@@deriving sexp];;"
         (Ident.snake name ~suffix:"mask")
         (list_sep " | " mask_item) items;
       Printf.fprintf out
         "let %s mask : %s option =\n\
-         let of_mask = function %a | _ -> None in if mask = 0L then Some None \
-         else (mask_of_int of_mask mask |> Option.map (fun m -> Some m));;\n"
+         let of_mask = function %a | _ -> None in if mask = 0L then None else \
+         mask_of_int of_mask mask;;\n"
         (Ident.snake name ~suffix:"mask_of_int64")
         (Ident.snake name ~suffix:"mask")
         (list_sep " | " gen_decode_mask_item)
         items;
       Printf.fprintf out
         "let %s (mask : %s) : int = let to_mask = function %a in match mask \
-         with None -> 0 | Some mask -> int_of_mask to_mask mask;;"
+         with [] -> 0 | mask -> int_of_mask to_mask mask;;"
         (Ident.snake name ~suffix:"int_of_mask")
         (Ident.snake name ~suffix:"mask")
         (list_sep " | " gen_encode_mask_item)

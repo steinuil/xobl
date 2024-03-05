@@ -84,10 +84,10 @@ let main (conn : Connection.t) =
         Xproto.encode_create_window ~depth:root.root_depth ~wid
           ~parent:root.root ~x:0 ~y:0 ~width:!width ~height:!height
           ~border_width:0 ~class_:`Input_output ~visual:root.root_visual
-          ~event_mask:(Some [ `Exposure; `Structure_notify ])
+          ~event_mask:[ `Exposure; `Structure_notify ]
           ~background_pixel:root.white_pixel;
         Xproto.encode_change_window_attributes ~window:root.root
-          ~event_mask:(Some [ `Pointer_motion ]);
+          ~event_mask:[ `Pointer_motion ];
         Xproto.encode_create_gc ~cid:white ~drawable:root.root
           ~foreground:root.white_pixel ~graphics_exposures:0;
         Xproto.encode_create_gc ~cid:black ~drawable:root.root

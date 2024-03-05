@@ -337,7 +337,6 @@ module Xproto = struct
     | `Color_map_change
     | `Owner_grab_button ]
     list
-    option
   [@@deriving sexp]
 
   let event_mask_mask_of_int64 mask : event_mask option =
@@ -369,8 +368,7 @@ module Xproto = struct
       | 24 -> Some `Owner_grab_button
       | _ -> None
     in
-    if mask = 0L then Some None
-    else mask_of_int of_mask mask |> Option.map (fun m -> Some m)
+    if mask = 0L then None else mask_of_int of_mask mask
 
   let event_mask_int_of_mask (mask : event_mask) : int =
     let to_mask = function
@@ -15175,7 +15173,6 @@ module Present = struct
   type event_mask =
     [ `Configure_notify | `Complete_notify | `Idle_notify | `Redirect_notify ]
     list
-    option
   [@@deriving sexp]
 
   let event_mask_mask_of_int64 mask : event_mask option =
@@ -15186,8 +15183,7 @@ module Present = struct
       | 3 -> Some `Redirect_notify
       | _ -> None
     in
-    if mask = 0L then Some None
-    else mask_of_int of_mask mask |> Option.map (fun m -> Some m)
+    if mask = 0L then None else mask_of_int of_mask mask
 
   let event_mask_int_of_mask (mask : event_mask) : int =
     let to_mask = function
@@ -15198,7 +15194,7 @@ module Present = struct
     in
     match mask with None -> 0 | Some mask -> int_of_mask to_mask mask
 
-  type option_mask = [ `Async | `Copy | `Ust | `Suboptimal ] list option
+  type option_mask = [ `Async | `Copy | `Ust | `Suboptimal ] list
   [@@deriving sexp]
 
   let option_mask_of_int64 mask : option_mask option =
@@ -15209,8 +15205,7 @@ module Present = struct
       | 3 -> Some `Suboptimal
       | _ -> None
     in
-    if mask = 0L then Some None
-    else mask_of_int of_mask mask |> Option.map (fun m -> Some m)
+    if mask = 0L then None else mask_of_int of_mask mask
 
   let option_int_of_mask (mask : option_mask) : int =
     let to_mask = function
@@ -15221,8 +15216,7 @@ module Present = struct
     in
     match mask with None -> 0 | Some mask -> int_of_mask to_mask mask
 
-  type capability_mask = [ `Async | `Fence | `Ust ] list option
-  [@@deriving sexp]
+  type capability_mask = [ `Async | `Fence | `Ust ] list [@@deriving sexp]
 
   let capability_mask_of_int64 mask : capability_mask option =
     let of_mask = function
@@ -15231,8 +15225,7 @@ module Present = struct
       | 2 -> Some `Ust
       | _ -> None
     in
-    if mask = 0L then Some None
-    else mask_of_int of_mask mask |> Option.map (fun m -> Some m)
+    if mask = 0L then None else mask_of_int of_mask mask
 
   let capability_int_of_mask (mask : capability_mask) : int =
     let to_mask = function `Async -> 0 | `Fence -> 1 | `Ust -> 2 in
@@ -24363,7 +24356,7 @@ module Xprint = struct
     | `Finished -> 0
     | `Second_consumer -> 1
 
-  type ev_mask = [ `Print_mask | `Attribute_mask ] list option [@@deriving sexp]
+  type ev_mask = [ `Print_mask | `Attribute_mask ] list [@@deriving sexp]
 
   let ev_mask_mask_of_int64 mask : ev_mask option =
     let of_mask = function
@@ -24371,8 +24364,7 @@ module Xprint = struct
       | 1 -> Some `Attribute_mask
       | _ -> None
     in
-    if mask = 0L then Some None
-    else mask_of_int of_mask mask |> Option.map (fun m -> Some m)
+    if mask = 0L then None else mask_of_int of_mask mask
 
   let ev_mask_int_of_mask (mask : ev_mask) : int =
     let to_mask = function `Print_mask -> 0 | `Attribute_mask -> 1 in

@@ -39,7 +39,7 @@ let main (conn : Connection.t) =
     Xproto.encode_create_window ~depth:root.root_depth ~wid:(Int32.to_int wid)
       ~parent:root.root ~x:10 ~y:10 ~width:300 ~height:300 ~border_width:10
       ~class_:`Input_output ~visual:root.root_visual
-      ~event_mask:(Some [ `Enter_window ]) buf
+      ~event_mask:[ `Enter_window ] buf
   in
   let buf = Buffer.to_bytes buf.buffer in
   let* () =
