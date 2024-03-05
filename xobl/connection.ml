@@ -96,7 +96,7 @@ module Xid_seed = struct
       xid)
 end
 
-type connection = {
+type t = {
   socket : Lwt_unix.file_descr;
   display_info : Xproto.setup;
   xid_seed : Xid_seed.t;

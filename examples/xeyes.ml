@@ -48,7 +48,7 @@ let connect () =
   in
   Connection.open_display ~hostname ~display ~screen ()
 
-let main (conn : Connection.connection) =
+let main (conn : Connection.t) =
   let queued_events = ref [] in
 
   let reqs ?(size = 120) es =

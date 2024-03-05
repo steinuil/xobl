@@ -2,7 +2,7 @@ open Xobl
 
 let ( let* ) = Lwt.bind
 
-let rec read_loop (conn : Connection.connection) =
+let rec read_loop (conn : Connection.t) =
   let* buf = Connection.read conn in
   match buf with
   | Some (`Error buf) ->
@@ -30,7 +30,7 @@ let connect () =
   let Display_name.{ hostname; display; _ } = display in
   Connection.open_display ~hostname ~display ()
 
-let main (conn : Connection.connection) =
+let main (conn : Connection.t) =
   (*
   let wid = Connection.Xid_seed.generate conn.xid_seed in
 *)
