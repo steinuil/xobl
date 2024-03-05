@@ -1,6 +1,7 @@
 module Bigreq = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -30,6 +31,7 @@ end
 module Xproto = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -6010,6 +6012,7 @@ end
 module Render = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -7341,6 +7344,7 @@ end
 module Shape = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -7655,6 +7659,7 @@ end
 module Xfixes = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -8406,6 +8411,7 @@ end
 module Composite = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -8558,6 +8564,7 @@ end
 module Damage = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -8692,6 +8699,7 @@ end
 module Dpms = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -8857,6 +8865,7 @@ end
 module Dri2 = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -9399,6 +9408,7 @@ end
 module Dri3 = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -9429,7 +9439,7 @@ module Dri3 = struct
     ignore orig;
     Some ({ major_version; minor_version }, at)
 
-  type open_reply = { nfd : int; device_fd : Unix.file_descr } [@@deriving sexp]
+  type open_reply = { nfd : int; device_fd : file_descr } [@@deriving sexp]
 
   let encode_open ~(drawable : Xproto.drawable) ~(provider : int) buf =
     (* opcode *)
@@ -9453,8 +9463,8 @@ module Dri3 = struct
 
   let encode_pixmap_from_buffer ~(pixmap : Xproto.pixmap)
       ~(drawable : Xproto.drawable) ~(size : int) ~(width : int) ~(height : int)
-      ~(stride : int) ~(depth : int) ~(bpp : int) ~(pixmap_fd : Unix.file_descr)
-      buf =
+      ~(stride : int) ~(depth : int) ~(bpp : int) ~(pixmap_fd : file_descr) buf
+      =
     (* opcode *)
     encode_uint8 buf 2;
     Xproto.encode_pixmap buf pixmap;
@@ -9467,7 +9477,7 @@ module Dri3 = struct
     encode_uint16 buf stride;
     encode_uint8 buf depth;
     encode_uint8 buf bpp;
-    encode_file_descriptor buf pixmap_fd;
+    encode_file_descr buf pixmap_fd;
     (* write request length *)
     encode_request_length buf
 
@@ -9479,7 +9489,7 @@ module Dri3 = struct
     stride : int;
     depth : int;
     bpp : int;
-    pixmap_fd : Unix.file_descr;
+    pixmap_fd : file_descr;
   }
   [@@deriving sexp]
 
@@ -9511,7 +9521,7 @@ module Dri3 = struct
     Some ({ nfd; size; width; height; stride; depth; bpp; pixmap_fd }, at)
 
   let encode_fence_from_fd ~(drawable : Xproto.drawable) ~(fence : int)
-      ~(initially_triggered : bool) ~(fence_fd : Unix.file_descr) buf =
+      ~(initially_triggered : bool) ~(fence_fd : file_descr) buf =
     (* opcode *)
     encode_uint8 buf 4;
     Xproto.encode_drawable buf drawable;
@@ -9520,11 +9530,11 @@ module Dri3 = struct
     encode_int32 buf fence;
     encode_bool buf initially_triggered;
     encode_pad buf 3;
-    encode_file_descriptor buf fence_fd;
+    encode_file_descr buf fence_fd;
     (* write request length *)
     encode_request_length buf
 
-  type fd_from_fence_reply = { nfd : int; fence_fd : Unix.file_descr }
+  type fd_from_fence_reply = { nfd : int; fence_fd : file_descr }
   [@@deriving sexp]
 
   let encode_fd_from_fence ~(drawable : Xproto.drawable) ~(fence : int) buf =
@@ -9591,7 +9601,7 @@ module Dri3 = struct
       ~(window : Xproto.window) ~(width : int) ~(height : int) ~(stride0 : int)
       ~(offset0 : int) ~(stride1 : int) ~(offset1 : int) ~(stride2 : int)
       ~(offset2 : int) ~(stride3 : int) ~(offset3 : int) ~(depth : int)
-      ~(bpp : int) ~(modifier : int64) ~(buffers : Unix.file_descr list) buf =
+      ~(bpp : int) ~(modifier : int64) ~(buffers : file_descr list) buf =
     (* opcode *)
     encode_uint8 buf 7;
     Xproto.encode_pixmap buf pixmap;
@@ -9626,7 +9636,7 @@ module Dri3 = struct
     bpp : int;
     strides : int list;
     offsets : int list;
-    buffers : Unix.file_descr list;
+    buffers : file_descr list;
   }
   [@@deriving sexp]
 
@@ -9664,6 +9674,7 @@ end
 module Ge = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -9700,6 +9711,7 @@ end
 module Glx = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -12330,6 +12342,7 @@ end
 module Randr = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -14315,7 +14328,7 @@ module Randr = struct
     (* write request length *)
     encode_request_length buf
 
-  type create_lease_reply = { nfd : int; master_fd : Unix.file_descr }
+  type create_lease_reply = { nfd : int; master_fd : file_descr }
   [@@deriving sexp]
 
   let encode_create_lease ~(window : Xproto.window) ~(lid : lease)
@@ -14430,6 +14443,7 @@ end
 module Sync = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -15009,6 +15023,7 @@ end
 module Present = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -15403,6 +15418,7 @@ end
 module Record = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -15756,6 +15772,7 @@ end
 module Res = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -16054,6 +16071,7 @@ end
 module Screensaver = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -16343,6 +16361,7 @@ end
 module Shm = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -16515,20 +16534,20 @@ module Shm = struct
     (* write request length *)
     encode_request_length buf
 
-  let encode_attach_fd ~(shmseg : seg) ~(shm_fd : Unix.file_descr)
+  let encode_attach_fd ~(shmseg : seg) ~(shm_fd : file_descr)
       ~(read_only : bool) buf =
     (* opcode *)
     encode_uint8 buf 6;
     encode_seg buf shmseg;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_file_descriptor buf shm_fd;
+    encode_file_descr buf shm_fd;
     encode_bool buf read_only;
     encode_pad buf 3;
     (* write request length *)
     encode_request_length buf
 
-  type create_segment_reply = { nfd : int; shm_fd : Unix.file_descr }
+  type create_segment_reply = { nfd : int; shm_fd : file_descr }
   [@@deriving sexp]
 
   let encode_create_segment ~(shmseg : seg) ~(size : int) ~(read_only : bool)
@@ -16559,6 +16578,7 @@ end
 module Xc_misc = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -16643,6 +16663,7 @@ end
 module Xf86dri = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -17006,6 +17027,7 @@ end
 module Xf86vidmode = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -17747,6 +17769,7 @@ end
 module Xinerama = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -17917,6 +17940,7 @@ end
 module Xinput = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -23269,6 +23293,7 @@ end
 module Xprint = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -23890,6 +23915,7 @@ end
 module Xselinux = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -24389,6 +24415,7 @@ end
 module Xtest = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -24488,6 +24515,7 @@ end
 module Xv = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types
@@ -25438,6 +25466,7 @@ end
 module Xvmc = struct
   [@@@warning "-27"]
   [@@@warning "-11"]
+  [@@@warning "-33"]
 
   open Codec
   open X11_types

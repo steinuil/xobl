@@ -69,7 +69,7 @@ let gen_prim = function
   | Int32 -> "int"
   (* FIXME: Int32 and Card32 should be mapped to int32 to ensure compatibility with
      32-bit platforms. *)
-  | Fd -> "Unix.file_descr"
+  | Fd -> "file_descr"
   | Card8 -> "int"
   | Card16 -> "int"
   | Card32 -> "int"
@@ -303,7 +303,7 @@ let gen_list_length ctx out t =
 
 let gen_field_type_of_field ctx out = function
   | Field { type_; _ } -> Printf.fprintf out "%a" (gen_field_type ctx) type_
-  | Field_file_descriptor _ -> Printf.fprintf out "Unix.file_descr"
+  | Field_file_descriptor _ -> Printf.fprintf out "file_descr"
   | Field_optional { type_; _ } ->
       Printf.fprintf out "%a option" (gen_field_type ctx) type_
   | Field_list { type_; _ } | Field_list_simple { type_; _ } ->
@@ -320,7 +320,7 @@ let gen_field ctx out = function
       Printf.fprintf out "%s : %a; " (Ident.snake name) (gen_field_type ctx)
         type_
   | Field_file_descriptor name ->
-      Printf.fprintf out "%s : Unix.file_descr; " (Ident.snake name)
+      Printf.fprintf out "%s : file_descr; " (Ident.snake name)
   | Field_optional { name; type_; _ } ->
       Printf.fprintf out "%s : %a option; " (Ident.snake name)
         (gen_field_type ctx) type_
@@ -470,7 +470,7 @@ let gen_encode_field ctx out = function
         (gen_encode_field_type ctx)
         type_ (Ident.snake name)
   | Field_file_descriptor name ->
-      Printf.fprintf out "encode_file_descriptor buf v.%s;" (Ident.snake name)
+      Printf.fprintf out "encode_file_descr buf v.%s;" (Ident.snake name)
   | Field_pad { pad = Pad_bytes n; _ } ->
       Printf.fprintf out "encode_pad buf %d;" n
   | Field_pad { pad = Pad_align n; _ } ->
@@ -502,7 +502,7 @@ let gen_encode_arg_field ctx out = function
         (gen_encode_field_type ctx)
         type_ (Ident.snake name)
   | Field_file_descriptor name ->
-      Printf.fprintf out "encode_file_descriptor buf %s;" (Ident.snake name)
+      Printf.fprintf out "encode_file_descr buf %s;" (Ident.snake name)
   | Field_pad { pad = Pad_bytes n; _ } ->
       Printf.fprintf out "encode_pad buf %d;" n
   | Field_pad { pad = Pad_align n; _ } ->
@@ -541,7 +541,7 @@ let gen_encode_single_field ctx out ~name = function
         (gen_encode_field_type ctx)
         type_ (Ident.snake name)
   | Field_file_descriptor _ ->
-      Printf.fprintf out "encode_file_descriptor buf %s;" (Ident.snake name)
+      Printf.fprintf out "encode_file_descr buf %s;" (Ident.snake name)
   | Field_list { type_; _ } ->
       Printf.fprintf out "%a buf %s;" (gen_encode_list ctx) type_
         (Ident.snake name)
@@ -696,7 +696,7 @@ let gen_named_arg ctx out = function
       Printf.fprintf out "~(%s : %a) " (Ident.snake name) (gen_field_type ctx)
         type_
   | Field_file_descriptor name ->
-      Printf.fprintf out "~(%s : Unix.file_descr) " (Ident.snake name)
+      Printf.fprintf out "~(%s : file_descr) " (Ident.snake name)
   | Field_optional { name; type_; _ } ->
       Printf.fprintf out "?(%s : %a option) " (Ident.snake name)
         (gen_field_type ctx) type_
@@ -906,6 +906,7 @@ let gen_declaration ctx out = function
 let gen_xcb xcbs out xcb =
   output_string out "[@@@warning \"-27\"]\n";
   output_string out "[@@@warning \"-11\"]\n";
+  output_string out "[@@@warning \"-33\"]\n";
   output_string out "open Codec\n";
   output_string out "open X11_types\n";
   output_string out "open Util\n";
