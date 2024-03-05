@@ -87,7 +87,7 @@ type field =
       (** Contains the length of the associated simple list.
           Should be hidden in the public API. *)
   | Field_variant of { name : string; variant : ident }
-  | Field_variant_tag of { variant : string; type_ : type_ }
+  | Field_variant_tag of { field_name : string; variant : ident; type_ : type_ }
       (** The tag that discriminates between the branches of the associated
           variant. Should be hidden in the public API. *)
   | Field_optional of {

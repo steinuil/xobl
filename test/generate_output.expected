@@ -2002,6 +2002,10 @@ module Xproto = struct
         Some (Data32 { data32 }, at)
     | _ -> None
 
+  let client_message_data_format_int_of_variant
+      (v : client_message_data_format_variant) : int =
+    match v with Data8 _ -> 8 | Data16 _ -> 16 | Data32 _ -> 32
+
   type client_message_event = {
     window : window;
     type_ : atom;
@@ -14426,6 +14430,16 @@ module Randr = struct
         Some (Lease { lc }, at)
     | _ -> None
 
+  let notify_int_of_variant (v : notify_variant) : int =
+    match v with
+    | Crtc_change _ -> 0
+    | Output_change _ -> 1
+    | Output_property _ -> 2
+    | Provider_change _ -> 3
+    | Provider_property _ -> 4
+    | Resource_change _ -> 5
+    | Lease _ -> 6
+
   type notify_event = notify_variant [@@deriving sexp]
 
   let decode_notify_event buf ~at : (notify_event * int) option =
@@ -18237,6 +18251,9 @@ module Xinput = struct
         Some (Valuator { mode; motion_size; axes }, at)
     | _ -> None
 
+  let input_class_int_of_variant (v : input_class_variant) : int =
+    match v with Key _ -> 0 | Button _ -> 1 | Valuator _ -> 2
+
   type input_info = { len : int; info : input_class_variant } [@@deriving sexp]
 
   let decode_input_info buf ~at : (input_info * int) option =
@@ -18248,7 +18265,7 @@ module Xinput = struct
     Some ({ len; info }, at)
 
   let encode_input_info buf (v : input_info) =
-    (* field_variant_tag *)
+    encode_uint8 buf (input_class_int_of_variant v.info);
     encode_uint8 buf v.len;
     (* field_variant *) ()
 
@@ -19215,6 +19232,15 @@ module Xinput = struct
         Some (Bell { percent; pitch; duration }, at)
     | _ -> None
 
+  let feedback_class_int_of_variant (v : feedback_class_variant) : int =
+    match v with
+    | Keyboard _ -> 0
+    | Pointer _ -> 1
+    | String _ -> 2
+    | Integer _ -> 3
+    | Led _ -> 4
+    | Bell _ -> 5
+
   type feedback_state = {
     feedback_id : int;
     len : int;
@@ -19232,7 +19258,7 @@ module Xinput = struct
     Some ({ feedback_id; len; data }, at)
 
   let encode_feedback_state buf (v : feedback_state) =
-    (* field_variant_tag *)
+    encode_uint8 buf (feedback_class_int_of_variant v.data);
     encode_uint8 buf v.feedback_id;
     encode_uint16 buf v.len;
     (* field_variant *) ()
@@ -19501,7 +19527,7 @@ module Xinput = struct
     Some ({ feedback_id; len; data }, at)
 
   let encode_feedback_ctl buf (v : feedback_ctl) =
-    (* field_variant_tag *)
+    encode_uint8 buf (feedback_class_int_of_variant v.data);
     encode_uint8 buf v.feedback_id;
     encode_uint16 buf v.len;
     (* field_variant *) ()
@@ -19875,7 +19901,7 @@ module Xinput = struct
     Some ({ len; data }, at)
 
   let encode_input_state buf (v : input_state) =
-    (* field_variant_tag *)
+    encode_uint8 buf (input_class_int_of_variant v.data);
     encode_uint8 buf v.len;
     (* field_variant *) ()
 
@@ -20258,6 +20284,14 @@ module Xinput = struct
           (Abs_area { offset_x; offset_y; width; height; screen; following }, at)
     | _ -> None
 
+  let device_control_int_of_variant (v : device_control_variant) : int =
+    match v with
+    | Resolution _ -> 1
+    | Abs_calib _ -> 2
+    | Core _ -> 3
+    | Enable _ -> 4
+    | Abs_area _ -> 5
+
   type device_state = { len : int; data : device_control_variant }
   [@@deriving sexp]
 
@@ -20270,7 +20304,7 @@ module Xinput = struct
     Some ({ len; data }, at)
 
   let encode_device_state buf (v : device_state) =
-    (* field_variant_tag *)
+    encode_uint16 buf (device_control_int_of_variant v.data);
     encode_uint16 buf v.len;
     (* field_variant *) ()
 
@@ -20509,7 +20543,7 @@ module Xinput = struct
     Some ({ len; data }, at)
 
   let encode_device_ctl buf (v : device_ctl) =
-    (* field_variant_tag *)
+    encode_uint16 buf (device_control_int_of_variant v.data);
     encode_uint16 buf v.len;
     (* field_variant *) ()
 
@@ -20622,6 +20656,9 @@ module Xinput = struct
         in
         Some (D32_bits { data32 }, at)
     | _ -> None
+
+  let property_format_int_of_variant (v : property_format_variant) : int =
+    match v with D8_bits _ -> 8 | D16_bits _ -> 16 | D32_bits _ -> 32
 
   let encode_change_device_property ~(property : Xproto.atom)
       ~(type_ : Xproto.atom) ~(device_id : int) ~(mode : Xproto.prop_mode_enum)
@@ -21086,6 +21123,14 @@ module Xinput = struct
         Some (Detach_slave { deviceid }, at)
     | _ -> None
 
+  let hierarchy_change_type_int_of_variant (v : hierarchy_change_type_variant) :
+      int =
+    match v with
+    | Add_master _ -> 1
+    | Remove_master _ -> 2
+    | Attach_slave _ -> 3
+    | Detach_slave _ -> 4
+
   type hierarchy_change = { len : int; data : hierarchy_change_type_variant }
   [@@deriving sexp]
 
@@ -21098,7 +21143,7 @@ module Xinput = struct
     Some ({ len; data }, at)
 
   let encode_hierarchy_change buf (v : hierarchy_change) =
-    (* field_variant_tag *)
+    encode_uint16 buf (hierarchy_change_type_int_of_variant v.data);
     encode_uint16 buf v.len;
     (* field_variant *) ()
 
@@ -21669,6 +21714,14 @@ module Xinput = struct
         Some (Touch { mode; num_touches }, at)
     | _ -> None
 
+  let device_class_type_int_of_variant (v : device_class_type_variant) : int =
+    match v with
+    | Key _ -> 0
+    | Button _ -> 1
+    | Valuator _ -> 2
+    | Scroll _ -> 3
+    | Touch _ -> 8
+
   type device_class = {
     len : int;
     sourceid : device_id;
@@ -21686,7 +21739,7 @@ module Xinput = struct
     Some ({ len; sourceid; data }, at)
 
   let encode_device_class buf (v : device_class) =
-    (* field_variant_tag *)
+    encode_uint16 buf (device_class_type_int_of_variant v.data);
     encode_uint16 buf v.len;
     encode_device_id buf v.sourceid;
     (* field_variant *) ()

@@ -386,8 +386,13 @@ and conv_fields fields (curr_module, xcbs) =
       | Field { name; type_ = { ft_type; _ } }
         when List.mem_assoc name variants.switch_by_cond ->
           let field_name = List.assoc name variants.switch_by_cond in
+          let variant_name = List.assoc field_name variants.v_by_switch in
           Hir.Field_variant_tag
-            { variant = field_name; type_ = conv_type ft_type }
+            {
+              field_name;
+              variant = { id_module = curr_module; id_name = variant_name };
+              type_ = conv_type ft_type;
+            }
           |> mk_list
       (* Optional fields *)
       | Field_switch { sw_cond = Cond_bit_and _; sw_name; _ } ->

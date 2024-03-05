@@ -200,12 +200,14 @@ let gen_expr_type type_ ctx out expr =
       Printf.fprintf out "Char.chr (%a)" (gen_expr ctx) expr
   | _ -> gen_expr ctx out expr
 
-let gen_ident Ctx.{ current_module; _ } out { id_module; id_name } =
-  if current_module = id_module then output_string out (Ident.snake id_name)
+let gen_ident ?prefix ?suffix Ctx.{ current_module; _ } out
+    { id_module; id_name } =
+  if current_module = id_module then
+    output_string out (Ident.snake ?prefix ?suffix id_name)
   else
     Printf.fprintf out "%s.%s"
       (String.capitalize_ascii id_module)
-      (Ident.snake id_name)
+      (Ident.snake ?prefix ?suffix id_name)
 
 let gen_decode_ident Ctx.{ current_module; _ } out { id_module; id_name } =
   if current_module = id_module then
@@ -443,9 +445,9 @@ let gen_decode_field ctx _fields out = function
   | Field_list { name; type_ = _; length = None } ->
       Printf.ksprintf failwith "decoding list field with length = None: %s" name
   | Field_expr _ -> output_string out "(* field_expr *)"
-  | Field_variant_tag { variant; type_ } ->
+  | Field_variant_tag { field_name; variant = _; type_ } ->
       Printf.fprintf out "let* %s, at = %a buf ~at in"
-        (Ident.snake variant ~suffix:"tag")
+        (Ident.snake field_name ~suffix:"tag")
         (gen_decode_type ctx) type_
   | Field_variant { name; variant } ->
       Printf.fprintf out "let* %s, at = %a %s buf ~at in" (Ident.snake name)
@@ -493,7 +495,10 @@ let gen_encode_field ctx out = function
       Printf.fprintf out "%a buf v.%s;" (gen_encode_list ctx) type_
         (Ident.snake name)
   | Field_variant _ -> Printf.fprintf out "(* field_variant *)"
-  | Field_variant_tag _ -> Printf.fprintf out "(* field_variant_tag *)"
+  | Field_variant_tag { field_name; variant; type_ } ->
+      Printf.fprintf out "%a buf (%a v.%s);" (gen_encode_type ctx) type_
+        (gen_ident ~suffix:"int_of_variant" ctx)
+        variant field_name
   | Field_optional _ | Field_optional_mask _ ->
       invalid_arg "there are no optional fields in structs"
 
@@ -692,6 +697,9 @@ let gen_decode_variant_item ctx out { vi_name; vi_tag; vi_fields } =
     (list_sep "; " output_string)
     (List.filter_map name_of_field vi_fields)
 
+let gen_int_of_variant_item _ctx out { vi_name; vi_tag; _ } =
+  Printf.fprintf out "%s _ -> %Ld" (Ident.caml vi_name) vi_tag
+
 let gen_named_arg ctx out = function
   | Field { name; type_ } ->
       Printf.fprintf out "~(%s : %a) " (Ident.snake name) (gen_field_type ctx)
@@ -832,10 +840,16 @@ let gen_declaration ctx out = function
         (list_sep " | " (gen_variant_item ctx))
         items;
       Printf.fprintf out
-        "let %s tag buf ~at : (%s * int) option = match tag with %a | _ -> None"
+        "let %s tag buf ~at : (%s * int) option = match tag with %a | _ -> \
+         None;;"
         (Ident.snake name ~prefix:"decode" ~suffix:"variant")
         (Ident.snake name ~suffix:"variant")
         (list_sep " | " (gen_decode_variant_item ctx))
+        items;
+      Printf.fprintf out "let %s (v : %s) : int = match v with %a;;"
+        (Ident.snake name ~suffix:"int_of_variant")
+        (Ident.snake name ~suffix:"variant")
+        (list_sep " | " (gen_int_of_variant_item ctx))
         items
   | Event { name = "RedirectNotify" as name; fields; _ }
   | Event { name = "KeyPress" as name; fields; _ }
