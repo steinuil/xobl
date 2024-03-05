@@ -92,7 +92,7 @@ let%expect_test _ =
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
           (length ((Expr_value 5)))))))
       (Event (name ClientMessage) (number 33) (is_generic false)
-       (no_sequence_number false)
+       (is_serializable false) (no_sequence_number false)
        (fields
         ((Field (name format)
           (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -266,7 +266,7 @@ let%expect_test _ =
            ((ft_type (Type_ref ((id_module (randr)) (id_name LeaseNotify))))
             (ft_allowed ())))))))
       (Event (name Notify) (number 1) (is_generic false)
-       (no_sequence_number false)
+       (is_serializable false) (no_sequence_number false)
        (fields
         ((Field (name subCode)
           (type_

@@ -891,7 +891,7 @@ let gen_declaration ctx out = function
       Printf.fprintf out "type %s = %a [@@deriving sexp];;"
         (Ident.snake name ~suffix:"event")
         (gen_fields ctx) fields
-  | Event { name; fields; _ } ->
+  | Event { name; fields; is_serializable; _ } ->
       Printf.fprintf out "type %s = %a [@@deriving sexp];;"
         (Ident.snake name ~suffix:"event")
         (gen_fields ctx) fields;
@@ -899,7 +899,12 @@ let gen_declaration ctx out = function
         (Ident.snake name ~prefix:"decode" ~suffix:"event")
         (Ident.snake name ~suffix:"event")
         (gen_decode_event_fields ctx)
-        fields
+        fields;
+      if is_serializable then
+        Printf.fprintf out "let %s buf (v : %s) = %a;;\n"
+          (Ident.snake name ~prefix:"encode" ~suffix:"event")
+          (Ident.snake name ~suffix:"event")
+          (gen_encode_fields ctx) fields
   | Error { name; fields; _ } ->
       Printf.fprintf out "type %s = %a [@@deriving sexp];;"
         (Ident.snake name ~suffix:"error")

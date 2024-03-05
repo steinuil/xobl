@@ -15,8 +15,9 @@ let parsetree_to_hir xcbs =
     Pass1_resolve_idents.resolve xcbs
     |> List.map Pass2_remove_unions.unions_to_switch
     |> List.map Pass3_fixes.apply_fixes
+    |> Pass4_serializable_events.mark_eventstruct_events_as_serializable
   in
-  List.map (Pass4_parsetree_to_hir.elaborated_parsetree_to_hir xcbs) xcbs
+  List.map (Pass5_parsetree_to_hir.elaborated_parsetree_to_hir xcbs) xcbs
   |> Sort_modules.sort_hir
 
 let compile_files_to_hir files =

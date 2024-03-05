@@ -102,7 +102,16 @@ let mk_field (name, type_) = Field { name; type_ }
 let mk_union (name, members) = Union { name; members }
 
 let mk_event ((name, number, is_generic, no_sequence_number), (fields, doc)) =
-  Event { name; number; is_generic; no_sequence_number; fields; doc }
+  Event
+    {
+      name;
+      number;
+      is_generic;
+      is_serializable = false;
+      no_sequence_number;
+      fields;
+      doc;
+    }
 
 let mk_error ((name, number), fields) = Error { name; number; fields }
 

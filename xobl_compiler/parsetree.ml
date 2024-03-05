@@ -208,6 +208,7 @@ type declaration =
       name : string;
       number : int;
       is_generic : bool;
+      is_serializable : bool;
       no_sequence_number : bool;
       fields : field list;
       doc : doc option;

@@ -473,14 +473,23 @@ let conv_declaration (curr_module, xcbs) = function
       split_masks_from_enums name items |> mk_list
   | Import _ -> []
   | Union _ -> failwith "unions should already have been pruned"
-  | Event { name; number; is_generic; no_sequence_number; fields; doc = _ } ->
+  | Event
+      {
+        name;
+        number;
+        is_generic;
+        is_serializable;
+        no_sequence_number;
+        fields;
+        doc = _;
+      } ->
       let { fields; variant_types } = conv_fields fields (curr_module, xcbs) in
       Hir.Event
         {
           name;
           number;
           is_generic;
-          is_serializable = false;
+          is_serializable;
           no_sequence_number;
           fields;
         }
