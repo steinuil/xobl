@@ -20670,7 +20670,7 @@ module Xinput = struct
     encode_pad buf 2;
     Xproto.encode_atom buf type_;
     encode_uint8 buf device_id;
-    (* field_variant_tag *)
+    encode_uint8 buf (property_format_int_of_variant items);
     encode_enum encode_uint8 identity Xproto.prop_mode_int_of_enum buf mode;
     encode_pad buf 1;
     encode_int32 buf num_items;
@@ -22143,7 +22143,7 @@ module Xinput = struct
     (* reserve request length *)
     encode_pad buf 2;
     encode_enum encode_uint8 identity Xproto.prop_mode_int_of_enum buf mode;
-    (* field_variant_tag *)
+    encode_uint8 buf (property_format_int_of_variant items);
     Xproto.encode_atom buf property;
     Xproto.encode_atom buf type_;
     encode_int32 buf num_items;

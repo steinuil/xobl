@@ -532,7 +532,10 @@ let gen_encode_arg_field ctx out = function
       Printf.fprintf out "%a buf %s;" (gen_encode_list ctx) type_
         (Ident.snake name)
   | Field_variant _ -> Printf.fprintf out "(* field_variant *)"
-  | Field_variant_tag _ -> Printf.fprintf out "(* field_variant_tag *)"
+  | Field_variant_tag { field_name; variant; type_ } ->
+      Printf.fprintf out "%a buf (%a %s);" (gen_encode_type ctx) type_
+        (gen_ident ~suffix:"int_of_variant" ctx)
+        variant field_name
   | Field_optional { name; type_; _ } ->
       Printf.fprintf out "(match %s with None -> () | Some v -> "
         (Ident.snake name);
@@ -558,10 +561,9 @@ let gen_encode_single_field ctx out ~name = function
       Printf.fprintf out "(match %s with None -> () | Some v -> "
         (Ident.snake name);
       Printf.fprintf out "%a buf v);" (gen_encode_field_type ctx) type_
-  | Field_expr _ | Field_pad _ | Field_optional_mask _ | Field_list_length _ ->
-      failwith "a"
-  | Field_variant _ -> Printf.fprintf out "(* field_variant *)"
-  | Field_variant_tag _ -> Printf.fprintf out "(* field_variant_tag *)"
+  | Field_expr _ | Field_pad _ | Field_optional_mask _ | Field_list_length _
+  | Field_variant _ | Field_variant_tag _ ->
+      failwith "never exercised"
 
 let gen_size_of_field ctx out = function
   | Field { type_; _ } -> gen_size_of_field_type ctx out type_
