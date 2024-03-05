@@ -128,7 +128,12 @@ type declaration =
       items : (string * int) list;
       additional_values : mask_additional_value;
     }
-  | Event_copy of { name : string; event : ident; number : int }
+  | Event_copy of {
+      name : string;
+      event : ident;
+      number : int;
+      is_serializable : bool;
+    }
   | Error_copy of { name : string; error : ident; number : int }
   | Event of {
       name : string;

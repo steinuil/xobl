@@ -195,7 +195,12 @@ type declaration =
   | Xid of string
   | Xid_union of { name : string; types : ident list }
   | Typedef of { name : string; type_ : type_ }
-  | Event_copy of { name : string; event : ident; ev_number : int }
+  | Event_copy of {
+      name : string;
+      event : ident;
+      ev_number : int;
+      is_serializable : bool;
+    }
   | Error_copy of { name : string; error : ident; er_number : int }
   | Enum of {
       name : string;

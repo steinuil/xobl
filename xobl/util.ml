@@ -41,3 +41,11 @@ let int_of_mask to_bit mask =
 let int_of_mask_value to_mask to_enum = function
   | X11_types.F f -> int_of_mask to_mask f
   | V v -> to_enum v
+
+let pop_count n =
+  let rec iter pos acc =
+    if pos > 31 then acc
+    else if n land (1 lsl pos) <> 0 then iter (pos + 1) acc + 1
+    else iter (pos + 1) acc
+  in
+  iter 0 0

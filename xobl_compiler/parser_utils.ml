@@ -76,7 +76,10 @@ let mk_import import = Import import
 let mk_xid name = Xid name
 let mk_xid_union (name, types) = Xid_union { name; types }
 let mk_typedef name type_ = Typedef { name; type_ }
-let mk_event_copy name event ev_number = Event_copy { name; event; ev_number }
+
+let mk_event_copy name event ev_number =
+  Event_copy { name; event; ev_number; is_serializable = false }
+
 let mk_error_copy name error er_number = Error_copy { name; error; er_number }
 let mk_binop (op, (e1, e2)) = Binop (op, e1, e2)
 let mk_unop (op, expr) = Unop (op, expr)

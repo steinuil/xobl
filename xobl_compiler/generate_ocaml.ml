@@ -190,7 +190,7 @@ let rec gen_expr ctx out = function
       Printf.fprintf out "failwith \"param_ref not implemented: %s\""
         (Ident.snake param)
   | Enum_ref _ -> not_implemented "gen_expr enum_ref"
-  | Pop_count _ -> not_implemented "gen_expr pop_count"
+  | Pop_count e -> Printf.fprintf out "pop_count (%a)" (gen_expr ctx) e
   | List_element_ref -> (
       match ctx with
       | None ->
@@ -754,6 +754,11 @@ let gen_event_struct_field ctx out ident =
   Printf.fprintf out "%s of %a" (Ident.caml ident.id_name) (gen_ident ctx)
     { ident with id_name = Ident.snake ident.id_name ~suffix:"event" }
 
+let gen_encode_event_struct_field ctx out ident =
+  Printf.fprintf out "%s v -> %a buf v" (Ident.caml ident.id_name)
+    (gen_ident ~prefix:"encode" ~suffix:"event" ctx)
+    ident
+
 let mask_item out (name, _) = Printf.fprintf out "`%s" (Ident.caml name)
 
 let gen_declaration ctx out = function
@@ -881,13 +886,7 @@ let gen_declaration ctx out = function
         (Ident.snake name ~suffix:"variant")
         (list_sep " | " (gen_encode_variant_item ctx))
         items
-  | Event { name = "RedirectNotify" as name; fields; _ }
-  | Event { name = "KeyPress" as name; fields; _ }
-  | Event { name = "RawKeyPress" as name; fields; _ }
-  | Event { name = "ButtonPress" as name; fields; _ }
-  | Event { name = "RawButtonPress" as name; fields; _ }
-  | Event { name = "TouchBegin" as name; fields; _ }
-  | Event { name = "RawTouchBegin" as name; fields; _ } ->
+  | Event { name = "RedirectNotify" as name; fields; _ } ->
       Printf.fprintf out "type %s = %a [@@deriving sexp];;"
         (Ident.snake name ~suffix:"event")
         (gen_fields ctx) fields
@@ -938,11 +937,16 @@ let gen_declaration ctx out = function
                  (Ident.snake name ~suffix:"reply")
                  (gen_decode_reply_fields ctx)
                  fields)
-  | Event_copy { name; event; _ } ->
+  | Event_copy { name; event; is_serializable; _ } ->
       Printf.fprintf out "type %s = %a [@@deriving sexp];;"
         (Ident.snake name ~suffix:"event")
         (gen_ident ctx)
-        { event with id_name = Ident.snake event.id_name ~suffix:"event" }
+        { event with id_name = Ident.snake event.id_name ~suffix:"event" };
+      if is_serializable then
+        Printf.fprintf out "let %s = %a;;"
+          (Ident.snake name ~prefix:"encode" ~suffix:"event")
+          (gen_ident ~prefix:"encode" ~suffix:"event" ctx)
+          event
   | Error_copy { name; error; _ } ->
       Printf.fprintf out "type %s = %a [@@deriving sexp];;"
         (Ident.snake name ~suffix:"error")
@@ -951,6 +955,11 @@ let gen_declaration ctx out = function
   | Event_struct { name; events } ->
       Printf.fprintf out "type %s = %a [@@deriving sexp];;" (Ident.snake name)
         (list_sep " | " (gen_event_struct_field ctx))
+        events;
+      Printf.fprintf out "let %s buf (v: %s) = match v with %a;;"
+        (Ident.snake name ~prefix:"encode")
+        (Ident.snake name)
+        (list_sep " | " (gen_encode_event_struct_field ctx))
         events
 
 let gen_xcb xcbs out xcb =

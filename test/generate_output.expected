@@ -22632,9 +22632,20 @@ module Xinput = struct
     ()
 
   type device_key_release_event = device_key_press_event [@@deriving sexp]
+
+  let encode_device_key_release_event = encode_device_key_press_event
+
   type device_button_press_event = device_key_press_event [@@deriving sexp]
+
+  let encode_device_button_press_event = encode_device_key_press_event
+
   type device_button_release_event = device_key_press_event [@@deriving sexp]
+
+  let encode_device_button_release_event = encode_device_key_press_event
+
   type device_motion_notify_event = device_key_press_event [@@deriving sexp]
+
+  let encode_device_motion_notify_event = encode_device_key_press_event
 
   type device_focus_in_event = {
     detail : Xproto.notify_detail_enum;
@@ -22674,8 +22685,16 @@ module Xinput = struct
     ()
 
   type device_focus_out_event = device_focus_in_event [@@deriving sexp]
+
+  let encode_device_focus_out_event = encode_device_focus_in_event
+
   type proximity_in_event = device_key_press_event [@@deriving sexp]
+
+  let encode_proximity_in_event = encode_device_key_press_event
+
   type proximity_out_event = device_key_press_event [@@deriving sexp]
+
+  let encode_proximity_out_event = encode_device_key_press_event
 
   type classes_reported_mask =
     [ `Out_of_proximity
@@ -23100,6 +23119,9 @@ module Xinput = struct
   [@@deriving sexp]
 
   type key_release_event = key_press_event [@@deriving sexp]
+
+  let encode_key_release_event = encode_key_press_event
+
   type pointer_event_flags_mask = [ `Pointer_emulated ] list [@@deriving sexp]
 
   let pointer_event_flags_mask_of_int64 mask : pointer_event_flags_mask option =
@@ -23132,7 +23154,12 @@ module Xinput = struct
   [@@deriving sexp]
 
   type button_release_event = button_press_event [@@deriving sexp]
+
+  let encode_button_release_event = encode_button_press_event
+
   type motion_event = button_press_event [@@deriving sexp]
+
+  let encode_motion_event = encode_button_press_event
 
   type notify_mode_enum =
     [ `Normal
@@ -23298,8 +23325,16 @@ module Xinput = struct
     ()
 
   type leave_event = enter_event [@@deriving sexp]
+
+  let encode_leave_event = encode_enter_event
+
   type focus_in_event = enter_event [@@deriving sexp]
+
+  let encode_focus_in_event = encode_enter_event
+
   type focus_out_event = enter_event [@@deriving sexp]
+
+  let encode_focus_out_event = encode_enter_event
 
   type hierarchy_mask =
     [ `Master_added
@@ -23484,6 +23519,8 @@ module Xinput = struct
 
   type raw_key_release_event = raw_key_press_event [@@deriving sexp]
 
+  let encode_raw_key_release_event = encode_raw_key_press_event
+
   type raw_button_press_event = {
     deviceid : device_enum alt_enum;
     time : Xproto.time_enum alt_enum;
@@ -23497,6 +23534,9 @@ module Xinput = struct
   [@@deriving sexp]
 
   type raw_button_release_event = raw_button_press_event [@@deriving sexp]
+
+  let encode_raw_button_release_event = encode_raw_button_press_event
+
   type raw_motion_event = raw_button_press_event [@@deriving sexp]
 
   type touch_event_flags_mask =
@@ -23708,6 +23748,27 @@ module Xinput = struct
     | Device_presence_notify of device_presence_notify_event
     | Device_property_notify of device_property_notify_event
   [@@deriving sexp]
+
+  let encode_event_for_send buf (v : event_for_send) =
+    match v with
+    | Device_valuator v -> encode_device_valuator_event buf v
+    | Device_key_press v -> encode_device_key_press_event buf v
+    | Device_key_release v -> encode_device_key_release_event buf v
+    | Device_button_press v -> encode_device_button_press_event buf v
+    | Device_button_release v -> encode_device_button_release_event buf v
+    | Device_motion_notify v -> encode_device_motion_notify_event buf v
+    | Device_focus_in v -> encode_device_focus_in_event buf v
+    | Device_focus_out v -> encode_device_focus_out_event buf v
+    | Proximity_in v -> encode_proximity_in_event buf v
+    | Proximity_out v -> encode_proximity_out_event buf v
+    | Device_state_notify v -> encode_device_state_notify_event buf v
+    | Device_mapping_notify v -> encode_device_mapping_notify_event buf v
+    | Change_device_notify v -> encode_change_device_notify_event buf v
+    | Device_key_state_notify v -> encode_device_key_state_notify_event buf v
+    | Device_button_state_notify v ->
+        encode_device_button_state_notify_event buf v
+    | Device_presence_notify v -> encode_device_presence_notify_event buf v
+    | Device_property_notify v -> encode_device_property_notify_event buf v
 
   let encode_send_extension_event ~(destination : Xproto.window)
       ~(device_id : int) ~(propagate : bool) ~(events : event_for_send list)

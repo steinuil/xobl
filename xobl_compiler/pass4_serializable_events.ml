@@ -42,6 +42,10 @@ let mark_eventstruct_events_as_serializable xcbs =
                         fields;
                         doc;
                       }
+                | Event_copy { name; event; ev_number; is_serializable = _ }
+                  when ev_number >= min && ev_number <= max ->
+                    Event_copy
+                      { name; event; ev_number; is_serializable = true }
                 | d -> d)
             in
             Extension

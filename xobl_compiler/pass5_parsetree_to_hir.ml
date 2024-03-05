@@ -459,8 +459,9 @@ let conv_declaration (curr_module, xcbs) = function
   | Xid_union { name; types } ->
       Hir.Type_alias { name; type_ = Type_union (List.map conv_ident types) }
       |> mk_list
-  | Event_copy { name; event; ev_number = number } ->
-      Hir.Event_copy { name; event = conv_ident event; number } |> mk_list
+  | Event_copy { name; event; ev_number = number; is_serializable } ->
+      Hir.Event_copy { name; event = conv_ident event; number; is_serializable }
+      |> mk_list
   | Error_copy { name; error; er_number = number } ->
       Hir.Error_copy { name; error = conv_ident error; number } |> mk_list
   | Event_struct { name; allowed_events } ->

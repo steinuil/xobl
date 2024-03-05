@@ -160,8 +160,14 @@ let resolve_in_declaration ctx = function
       Xid_union { name; types = List.map (resolve_ident ctx `Type) types }
   | Typedef { name; type_ } ->
       Typedef { name; type_ = resolve_in_type ctx type_ }
-  | Event_copy { name; event; ev_number } ->
-      Event_copy { name; ev_number; event = resolve_ident ctx `Event event }
+  | Event_copy { name; event; ev_number; is_serializable } ->
+      Event_copy
+        {
+          name;
+          ev_number;
+          event = resolve_ident ctx `Event event;
+          is_serializable;
+        }
   | Error_copy { name; error; er_number } ->
       Error_copy { name; er_number; error = resolve_ident ctx `Error error }
   | Enum _ as d -> d
