@@ -15064,7 +15064,7 @@
        (length num_barriers))))
     (reply ()))
    (Event (name DeviceValuator) (number 0) (is_generic false)
-    (is_serializable false) (no_sequence_number false)
+    (is_serializable true) (no_sequence_number false)
     (fields
      ((Field (name device_id)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -15080,7 +15080,7 @@
    (Mask (name MoreEventsMask) (items ((MoreEvents 7)))
     (additional_values (Additional_values ())))
    (Event (name DeviceKeyPress) (number 1) (is_generic false)
-    (is_serializable false) (no_sequence_number false)
+    (is_serializable true) (no_sequence_number false)
     (fields
      ((Field (name detail)
        (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ()))))
@@ -15130,7 +15130,7 @@
    (Event_copy (name DeviceMotionNotify)
     (event ((id_module xinput) (id_name DeviceKeyPress))) (number 5))
    (Event (name DeviceFocusIn) (number 6) (is_generic false)
-    (is_serializable false) (no_sequence_number false)
+    (is_serializable true) (no_sequence_number false)
     (fields
      ((Field (name detail)
        (type_
@@ -15165,7 +15165,7 @@
       (ReportingButtons 1) (ReportingKeys 0)))
     (additional_values (Additional_values ())))
    (Event (name DeviceStateNotify) (number 10) (is_generic false)
-    (is_serializable false) (no_sequence_number false)
+    (is_serializable true) (no_sequence_number false)
     (fields
      ((Field (name device_id)
        (type_
@@ -15197,7 +15197,7 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
        (length ((Expr_value 3)))))))
    (Event (name DeviceMappingNotify) (number 11) (is_generic false)
-    (is_serializable false) (no_sequence_number false)
+    (is_serializable true) (no_sequence_number false)
     (fields
      ((Field (name device_id)
        (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ()))))
@@ -15219,7 +15219,7 @@
       (Field_pad (pad (Pad_bytes 20)) (serialize false)))))
    (Enum (name ChangeDevice) (items ((NewPointer 0) (NewKeyboard 1))))
    (Event (name ChangeDeviceNotify) (number 12) (is_generic false)
-    (is_serializable false) (no_sequence_number false)
+    (is_serializable true) (no_sequence_number false)
     (fields
      ((Field (name device_id)
        (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ()))))
@@ -15234,7 +15234,7 @@
           ((Allowed_enum ((id_module xinput) (id_name ChangeDevice))))))))
       (Field_pad (pad (Pad_bytes 23)) (serialize false)))))
    (Event (name DeviceKeyStateNotify) (number 13) (is_generic false)
-    (is_serializable false) (no_sequence_number false)
+    (is_serializable true) (no_sequence_number false)
     (fields
      ((Field (name device_id)
        (type_
@@ -15245,7 +15245,7 @@
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
        (length ((Expr_value 28)))))))
    (Event (name DeviceButtonStateNotify) (number 14) (is_generic false)
-    (is_serializable false) (no_sequence_number false)
+    (is_serializable true) (no_sequence_number false)
     (fields
      ((Field (name device_id)
        (type_
@@ -15260,7 +15260,7 @@
      ((Added 0) (Removed 1) (Enabled 2) (Disabled 3) (Unrecoverable 4)
       (ControlChanged 5))))
    (Event (name DevicePresenceNotify) (number 15) (is_generic false)
-    (is_serializable false) (no_sequence_number false)
+    (is_serializable true) (no_sequence_number false)
     (fields
      ((Field_pad (pad (Pad_bytes 1)) (serialize false))
       (Field (name time)
@@ -15278,7 +15278,7 @@
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
       (Field_pad (pad (Pad_bytes 20)) (serialize false)))))
    (Event (name DevicePropertyNotify) (number 16) (is_generic false)
-    (is_serializable false) (no_sequence_number false)
+    (is_serializable true) (no_sequence_number false)
     (fields
      ((Field (name state)
        (type_
@@ -15298,7 +15298,7 @@
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))))))
    (Enum (name ChangeReason) (items ((SlaveSwitch 1) (DeviceChange 2))))
    (Event (name DeviceChanged) (number 1) (is_generic true)
-    (is_serializable false) (no_sequence_number false)
+    (is_serializable true) (no_sequence_number false)
     (fields
      ((Field (name deviceid)
        (type_
@@ -15331,8 +15331,8 @@
        (length num_classes)))))
    (Mask (name KeyEventFlags) (items ((KeyRepeat 16)))
     (additional_values (Additional_values ())))
-   (Event (name KeyPress) (number 2) (is_generic true)
-    (is_serializable false) (no_sequence_number false)
+   (Event (name KeyPress) (number 2) (is_generic true) (is_serializable true)
+    (no_sequence_number false)
     (fields
      ((Field (name deviceid)
        (type_
@@ -15417,7 +15417,7 @@
    (Mask (name PointerEventFlags) (items ((PointerEmulated 16)))
     (additional_values (Additional_values ())))
    (Event (name ButtonPress) (number 4) (is_generic true)
-    (is_serializable false) (no_sequence_number false)
+    (is_serializable true) (no_sequence_number false)
     (fields
      ((Field (name deviceid)
        (type_
@@ -15509,7 +15509,7 @@
     (items
      ((Ancestor 0) (Virtual 1) (Inferior 2) (Nonlinear 3)
       (NonlinearVirtual 4) (Pointer 5) (PointerRoot 6) (None 7))))
-   (Event (name Enter) (number 7) (is_generic true) (is_serializable false)
+   (Event (name Enter) (number 7) (is_generic true) (is_serializable true)
     (no_sequence_number false)
     (fields
      ((Field (name deviceid)
@@ -15621,7 +15621,7 @@
          (ft_allowed
           ((Allowed_mask ((id_module xinput) (id_name HierarchyMask)))))))))))
    (Event (name Hierarchy) (number 11) (is_generic true)
-    (is_serializable false) (no_sequence_number false)
+    (is_serializable true) (no_sequence_number false)
     (fields
      ((Field (name deviceid)
        (type_
@@ -15649,7 +15649,7 @@
        (length num_infos)))))
    (Enum (name PropertyFlag) (items ((Deleted 0) (Created 1) (Modified 2))))
    (Event (name Property) (number 12) (is_generic true)
-    (is_serializable false) (no_sequence_number false)
+    (is_serializable true) (no_sequence_number false)
     (fields
      ((Field (name deviceid)
        (type_
@@ -15672,7 +15672,7 @@
           ((Allowed_enum ((id_module xinput) (id_name PropertyFlag))))))))
       (Field_pad (pad (Pad_bytes 11)) (serialize false)))))
    (Event (name RawKeyPress) (number 13) (is_generic true)
-    (is_serializable false) (no_sequence_number false)
+    (is_serializable true) (no_sequence_number false)
     (fields
      ((Field (name deviceid)
        (type_
@@ -15719,7 +15719,7 @@
    (Event_copy (name RawKeyRelease)
     (event ((id_module xinput) (id_name RawKeyPress))) (number 14))
    (Event (name RawButtonPress) (number 15) (is_generic true)
-    (is_serializable false) (no_sequence_number false)
+    (is_serializable true) (no_sequence_number false)
     (fields
      ((Field (name deviceid)
        (type_

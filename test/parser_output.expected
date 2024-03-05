@@ -200,7 +200,7 @@
         ((ft_type (Type_ref ((id_module ()) (id_name REGION))))
          (ft_allowed ()))))))
     (reply ()) (doc ()))
-   (Event (name Notify) (number 0) (is_generic false)
+   (Event (name Notify) (number 0) (is_generic false) (is_serializable false)
     (no_sequence_number false)
     (fields
      ((Field (name level)
@@ -639,7 +639,7 @@
        (doc ()))))
     (doc ()))
    (Event (name BufferSwapComplete) (number 0) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field_pad (pad (Pad_bytes 1)) (serialize false))
       (Field (name event_type)
@@ -663,7 +663,7 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))))
     (doc ()))
    (Event (name InvalidateBuffers) (number 1) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field_pad (pad (Pad_bytes 1)) (serialize false))
       (Field (name drawable)
@@ -958,7 +958,7 @@
    (Error_copy (name GLXBadProfileARB)
     (error ((id_module ()) (id_name Generic))) (er_number 13))
    (Event (name PbufferClobber) (number 0) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field_pad (pad (Pad_bytes 1)) (serialize false))
       (Field (name event_type)
@@ -986,7 +986,7 @@
       (Field_pad (pad (Pad_bytes 4)) (serialize false))))
     (doc ()))
    (Event (name BufferSwapComplete) (number 1) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field_pad (pad (Pad_bytes 1)) (serialize false))
       (Field (name event_type)
@@ -3177,7 +3177,7 @@
        (doc ()))))
     (doc ()))
    (Event (name Generic) (number 0) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name extension)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -3192,7 +3192,7 @@
          (ft_allowed ()))))))
     (doc ()))
    (Event (name ConfigureNotify) (number 0) (is_generic true)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field_pad (pad (Pad_bytes 2)) (serialize false))
       (Field (name event)
@@ -3223,7 +3223,7 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))))
     (doc ()))
    (Event (name CompleteNotify) (number 1) (is_generic true)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name kind)
        (type_
@@ -3251,7 +3251,7 @@
        (type_ ((ft_type (Type_primitive Card64)) (ft_allowed ()))))))
     (doc ()))
    (Event (name IdleNotify) (number 2) (is_generic true)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field_pad (pad (Pad_bytes 2)) (serialize false))
       (Field (name event)
@@ -3274,7 +3274,7 @@
          (ft_allowed ()))))))
     (doc ()))
    (Event (name RedirectNotify) (number 3) (is_generic true)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name update_window)
        (type_ ((ft_type (Type_primitive Bool)) (ft_allowed ()))))
@@ -4565,7 +4565,7 @@
        (doc ()))))
     (doc ()))
    (Event (name ScreenChangeNotify) (number 0) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name rotation)
        (type_
@@ -4914,7 +4914,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name LeaseNotify))))
          (ft_allowed ())))))))
-   (Event (name Notify) (number 1) (is_generic false)
+   (Event (name Notify) (number 1) (is_generic false) (is_serializable false)
     (no_sequence_number false)
     (fields
      ((Field (name subCode)
@@ -6746,7 +6746,7 @@
      ((Field (name suspend)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))))
     (reply ()) (doc ()))
-   (Event (name Notify) (number 0) (is_generic false)
+   (Event (name Notify) (number 0) (is_generic false) (is_serializable false)
     (no_sequence_number false)
     (fields
      ((Field (name state)
@@ -6787,7 +6787,7 @@
     (items
      ((Bounding (Item_value 0)) (Clip (Item_value 1)) (Input (Item_value 2))))
     (doc ()))
-   (Event (name Notify) (number 0) (is_generic false)
+   (Event (name Notify) (number 0) (is_generic false) (is_serializable false)
     (no_sequence_number false)
     (fields
      ((Field (name shape_kind)
@@ -7010,7 +7010,7 @@
  (declarations
   ((Import xproto) (Xid SEG)
    (Event (name Completion) (number 0) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field_pad (pad (Pad_bytes 1)) (serialize false))
       (Field (name drawable)
@@ -7608,7 +7608,7 @@
        (length ()))))
     (reply ()) (doc ()))
    (Event (name CounterNotify) (number 0) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name kind)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -7635,7 +7635,7 @@
       (Field_pad (pad (Pad_bytes 1)) (serialize false))))
     (doc ()))
    (Event (name AlarmNotify) (number 1) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name kind)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -8610,7 +8610,7 @@
       (SelectionClientClose (Item_bit 2))))
     (doc ()))
    (Event (name SelectionNotify) (number 0) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name subtype)
        (type_
@@ -8660,7 +8660,7 @@
    (Enum (name CursorNotifyMask) (items ((DisplayCursor (Item_bit 0))))
     (doc ()))
    (Event (name CursorNotify) (number 1) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name subtype)
        (type_
@@ -12357,7 +12357,7 @@
        (length ((Field_ref num_barriers))))))
     (reply ()) (doc ()))
    (Event (name DeviceValuator) (number 0) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name device_id)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -12373,7 +12373,7 @@
     (doc ()))
    (Enum (name MoreEventsMask) (items ((MoreEvents (Item_bit 7)))) (doc ()))
    (Event (name DeviceKeyPress) (number 1) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name detail)
        (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ()))))
@@ -12422,7 +12422,7 @@
    (Event_copy (name DeviceMotionNotify)
     (event ((id_module ()) (id_name DeviceKeyPress))) (ev_number 5))
    (Event (name DeviceFocusIn) (number 6) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name detail)
        (type_
@@ -12459,7 +12459,7 @@
       (ReportingKeys (Item_bit 0))))
     (doc ()))
    (Event (name DeviceStateNotify) (number 10) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name device_id)
        (type_
@@ -12492,7 +12492,7 @@
        (length ((Expr_value 3))))))
     (doc ()))
    (Event (name DeviceMappingNotify) (number 11) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name device_id)
        (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ()))))
@@ -12517,7 +12517,7 @@
     (items ((NewPointer (Item_value 0)) (NewKeyboard (Item_value 1))))
     (doc ()))
    (Event (name ChangeDeviceNotify) (number 12) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name device_id)
        (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ()))))
@@ -12533,7 +12533,7 @@
       (Field_pad (pad (Pad_bytes 23)) (serialize false))))
     (doc ()))
    (Event (name DeviceKeyStateNotify) (number 13) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name device_id)
        (type_
@@ -12545,7 +12545,7 @@
        (length ((Expr_value 28))))))
     (doc ()))
    (Event (name DeviceButtonStateNotify) (number 14) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name device_id)
        (type_
@@ -12563,7 +12563,7 @@
       (Unrecoverable (Item_value 4)) (ControlChanged (Item_value 5))))
     (doc ()))
    (Event (name DevicePresenceNotify) (number 15) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field_pad (pad (Pad_bytes 1)) (serialize false))
       (Field (name time)
@@ -12582,7 +12582,7 @@
       (Field_pad (pad (Pad_bytes 20)) (serialize false))))
     (doc ()))
    (Event (name DevicePropertyNotify) (number 16) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name state)
        (type_
@@ -12604,7 +12604,7 @@
     (items ((SlaveSwitch (Item_value 1)) (DeviceChange (Item_value 2))))
     (doc ()))
    (Event (name DeviceChanged) (number 1) (is_generic true)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name deviceid)
        (type_
@@ -12634,7 +12634,7 @@
     (doc ()))
    (Enum (name KeyEventFlags) (items ((KeyRepeat (Item_bit 16)))) (doc ()))
    (Event (name KeyPress) (number 2) (is_generic true)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name deviceid)
        (type_
@@ -12715,7 +12715,7 @@
    (Enum (name PointerEventFlags) (items ((PointerEmulated (Item_bit 16))))
     (doc ()))
    (Event (name ButtonPress) (number 4) (is_generic true)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name deviceid)
        (type_
@@ -12808,7 +12808,7 @@
       (NonlinearVirtual (Item_value 4)) (Pointer (Item_value 5))
       (PointerRoot (Item_value 6)) (None (Item_value 7))))
     (doc ()))
-   (Event (name Enter) (number 7) (is_generic true)
+   (Event (name Enter) (number 7) (is_generic true) (is_serializable false)
     (no_sequence_number false)
     (fields
      ((Field (name deviceid)
@@ -12915,7 +12915,7 @@
          (ft_allowed
           ((Allowed_mask ((id_module ()) (id_name HierarchyMask)))))))))))
    (Event (name Hierarchy) (number 11) (is_generic true)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name deviceid)
        (type_
@@ -12945,7 +12945,7 @@
       (Modified (Item_value 2))))
     (doc ()))
    (Event (name Property) (number 12) (is_generic true)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name deviceid)
        (type_
@@ -12967,7 +12967,7 @@
       (Field_pad (pad (Pad_bytes 11)) (serialize false))))
     (doc ()))
    (Event (name RawKeyPress) (number 13) (is_generic true)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name deviceid)
        (type_
@@ -13012,7 +13012,7 @@
    (Event_copy (name RawKeyRelease)
     (event ((id_module ()) (id_name RawKeyPress))) (ev_number 14))
    (Event (name RawButtonPress) (number 15) (is_generic true)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name deviceid)
        (type_
@@ -13063,7 +13063,7 @@
      ((TouchPendingEnd (Item_bit 16)) (TouchEmulatingPointer (Item_bit 17))))
     (doc ()))
    (Event (name TouchBegin) (number 18) (is_generic true)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name deviceid)
        (type_
@@ -13145,7 +13145,7 @@
     (ev_number 20))
    (Enum (name TouchOwnershipFlags) (items ((None (Item_value 0)))) (doc ()))
    (Event (name TouchOwnership) (number 21) (is_generic true)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name deviceid)
        (type_
@@ -13182,7 +13182,7 @@
       (Field_pad (pad (Pad_bytes 8)) (serialize false))))
     (doc ()))
    (Event (name RawTouchBegin) (number 22) (is_generic true)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name deviceid)
        (type_
@@ -13232,7 +13232,7 @@
     (items ((PointerReleased (Item_bit 0)) (DeviceIsGrabbed (Item_bit 1))))
     (doc ()))
    (Event (name BarrierHit) (number 25) (is_generic true)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name deviceid)
        (type_
@@ -16864,7 +16864,7 @@
        (doc ()))))
     (doc ()))
    (Event (name NewKeyboardNotify) (number 0) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name xkbType)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -16903,7 +16903,7 @@
       (Field_pad (pad (Pad_bytes 14)) (serialize false))))
     (doc ()))
    (Event (name MapNotify) (number 1) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name xkbType)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -16974,7 +16974,7 @@
       (Field_pad (pad (Pad_bytes 2)) (serialize false))))
     (doc ()))
    (Event (name StateNotify) (number 2) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name xkbType)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -17052,7 +17052,7 @@
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))))
     (doc ()))
    (Event (name ControlsNotify) (number 3) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name xkbType)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -17090,7 +17090,7 @@
       (Field_pad (pad (Pad_bytes 4)) (serialize false))))
     (doc ()))
    (Event (name IndicatorStateNotify) (number 4) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name xkbType)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -17108,7 +17108,7 @@
       (Field_pad (pad (Pad_bytes 12)) (serialize false))))
     (doc ()))
    (Event (name IndicatorMapNotify) (number 5) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name xkbType)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -17126,7 +17126,7 @@
       (Field_pad (pad (Pad_bytes 12)) (serialize false))))
     (doc ()))
    (Event (name NamesNotify) (number 6) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name xkbType)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -17173,7 +17173,7 @@
       (Field_pad (pad (Pad_bytes 4)) (serialize false))))
     (doc ()))
    (Event (name CompatMapNotify) (number 7) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name xkbType)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -17196,7 +17196,7 @@
       (Field_pad (pad (Pad_bytes 16)) (serialize false))))
     (doc ()))
    (Event (name BellNotify) (number 8) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name xkbType)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -17232,7 +17232,7 @@
       (Field_pad (pad (Pad_bytes 7)) (serialize false))))
     (doc ()))
    (Event (name ActionMessage) (number 9) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name xkbType)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -17266,7 +17266,7 @@
       (Field_pad (pad (Pad_bytes 10)) (serialize false))))
     (doc ()))
    (Event (name AccessXNotify) (number 10) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name xkbType)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -17291,7 +17291,7 @@
       (Field_pad (pad (Pad_bytes 16)) (serialize false))))
     (doc ()))
    (Event (name ExtensionDeviceNotify) (number 11) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name xkbType)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -17711,7 +17711,7 @@
           (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))))
        (doc ()))))
     (doc ()))
-   (Event (name Notify) (number 0) (is_generic false)
+   (Event (name Notify) (number 0) (is_generic false) (is_serializable false)
     (no_sequence_number false)
     (fields
      ((Field (name detail)
@@ -17724,7 +17724,7 @@
        (type_ ((ft_type (Type_primitive Bool)) (ft_allowed ()))))))
     (doc ()))
    (Event (name AttributNotify) (number 1) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name detail)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -18033,7 +18033,7 @@
    (doc ()))
   (Enum (name Window) (items ((None (Item_value 0)))) (doc ()))
   (Event (name KeyPress) (number 2) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field (name detail)
       (type_
@@ -18079,7 +18079,7 @@
      (5 (Item_bit 12)) (Any (Item_bit 15))))
    (doc ()))
   (Event (name ButtonPress) (number 4) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field (name detail)
       (type_
@@ -18122,7 +18122,7 @@
   (Enum (name Motion) (items ((Normal (Item_value 0)) (Hint (Item_value 1))))
    (doc ()))
   (Event (name MotionNotify) (number 6) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field (name detail)
       (type_
@@ -18173,7 +18173,7 @@
      (WhileGrabbed (Item_value 3))))
    (doc ()))
   (Event (name EnterNotify) (number 7) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field (name detail)
       (type_
@@ -18216,7 +18216,7 @@
    (doc (Doc)))
   (Event_copy (name LeaveNotify)
    (event ((id_module ()) (id_name EnterNotify))) (ev_number 8))
-  (Event (name FocusIn) (number 9) (is_generic false)
+  (Event (name FocusIn) (number 9) (is_generic false) (is_serializable false)
    (no_sequence_number false)
    (fields
     ((Field (name detail)
@@ -18236,13 +18236,13 @@
   (Event_copy (name FocusOut) (event ((id_module ()) (id_name FocusIn)))
    (ev_number 10))
   (Event (name KeymapNotify) (number 11) (is_generic false)
-   (no_sequence_number true)
+   (is_serializable false) (no_sequence_number true)
    (fields
     ((Field_list (name keys)
       (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
       (length ((Expr_value 31))))))
    (doc ()))
-  (Event (name Expose) (number 12) (is_generic false)
+  (Event (name Expose) (number 12) (is_generic false) (is_serializable false)
    (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
@@ -18263,7 +18263,7 @@
      (Field_pad (pad (Pad_bytes 2)) (serialize false))))
    (doc (Doc)))
   (Event (name GraphicsExposure) (number 13) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
      (Field (name drawable)
@@ -18287,7 +18287,7 @@
      (Field_pad (pad (Pad_bytes 3)) (serialize false))))
    (doc ()))
   (Event (name NoExposure) (number 14) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
      (Field (name drawable)
@@ -18306,7 +18306,7 @@
      (FullyObscured (Item_value 2))))
    (doc ()))
   (Event (name VisibilityNotify) (number 15) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
      (Field (name window)
@@ -18320,7 +18320,7 @@
      (Field_pad (pad (Pad_bytes 3)) (serialize false))))
    (doc ()))
   (Event (name CreateNotify) (number 16) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
      (Field (name parent)
@@ -18346,7 +18346,7 @@
      (Field_pad (pad (Pad_bytes 1)) (serialize false))))
    (doc ()))
   (Event (name DestroyNotify) (number 17) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
      (Field (name event)
@@ -18359,7 +18359,7 @@
         (ft_allowed ()))))))
    (doc (Doc)))
   (Event (name UnmapNotify) (number 18) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
      (Field (name event)
@@ -18375,7 +18375,7 @@
      (Field_pad (pad (Pad_bytes 3)) (serialize false))))
    (doc (Doc)))
   (Event (name MapNotify) (number 19) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
      (Field (name event)
@@ -18391,7 +18391,7 @@
      (Field_pad (pad (Pad_bytes 3)) (serialize false))))
    (doc (Doc)))
   (Event (name MapRequest) (number 20) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
      (Field (name parent)
@@ -18404,7 +18404,7 @@
         (ft_allowed ()))))))
    (doc (Doc)))
   (Event (name ReparentNotify) (number 21) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
      (Field (name event)
@@ -18428,7 +18428,7 @@
      (Field_pad (pad (Pad_bytes 3)) (serialize false))))
    (doc ()))
   (Event (name ConfigureNotify) (number 22) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
      (Field (name event)
@@ -18458,7 +18458,7 @@
      (Field_pad (pad (Pad_bytes 1)) (serialize false))))
    (doc (Doc)))
   (Event (name ConfigureRequest) (number 23) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field (name stack_mode)
       (type_
@@ -18492,7 +18492,7 @@
         (ft_allowed ((Allowed_mask ((id_module ()) (id_name ConfigWindow))))))))))
    (doc ()))
   (Event (name GravityNotify) (number 24) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
      (Field (name event)
@@ -18509,7 +18509,7 @@
       (type_ ((ft_type (Type_primitive Int16)) (ft_allowed ()))))))
    (doc ()))
   (Event (name ResizeRequest) (number 25) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
      (Field (name window)
@@ -18524,7 +18524,7 @@
   (Enum (name Place)
    (items ((OnTop (Item_value 0)) (OnBottom (Item_value 1)))) (doc (Doc)))
   (Event (name CirculateNotify) (number 26) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
      (Field (name event)
@@ -18547,7 +18547,7 @@
   (Enum (name Property)
    (items ((NewValue (Item_value 0)) (Delete (Item_value 1)))) (doc ()))
   (Event (name PropertyNotify) (number 28) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
      (Field (name window)
@@ -18568,7 +18568,7 @@
      (Field_pad (pad (Pad_bytes 3)) (serialize false))))
    (doc (Doc)))
   (Event (name SelectionClear) (number 29) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
      (Field (name time)
@@ -18623,7 +18623,7 @@
      (WM_TRANSIENT_FOR (Item_value 68))))
    (doc ()))
   (Event (name SelectionRequest) (number 30) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
      (Field (name time)
@@ -18650,7 +18650,7 @@
         (ft_allowed ((Allowed_alt_enum ((id_module ()) (id_name Atom))))))))))
    (doc ()))
   (Event (name SelectionNotify) (number 31) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
      (Field (name time)
@@ -18677,7 +18677,7 @@
    (doc (Doc)))
   (Enum (name Colormap) (items ((None (Item_value 0)))) (doc ()))
   (Event (name ColormapNotify) (number 32) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
      (Field (name window)
@@ -18709,7 +18709,7 @@
       (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
       (length ((Expr_value 5)))))))
   (Event (name ClientMessage) (number 33) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field (name format)
       (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
@@ -18731,7 +18731,7 @@
      (Pointer (Item_value 2))))
    (doc ()))
   (Event (name MappingNotify) (number 34) (is_generic false)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
      (Field (name request)
@@ -18747,7 +18747,7 @@
      (Field_pad (pad (Pad_bytes 1)) (serialize false))))
    (doc (Doc)))
   (Event (name GeGeneric) (number 35) (is_generic true)
-   (no_sequence_number false)
+   (is_serializable false) (no_sequence_number false)
    (fields ((Field_pad (pad (Pad_bytes 22)) (serialize false)))) (doc (Doc)))
   (Error (name Request) (number 1)
    (fields
@@ -22717,7 +22717,7 @@
    (Error (name BadEncoding) (number 1) (fields ()))
    (Error (name BadControl) (number 2) (fields ()))
    (Event (name VideoNotify) (number 0) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field (name reason)
        (type_
@@ -22738,7 +22738,7 @@
          (ft_allowed ()))))))
     (doc ()))
    (Event (name PortNotify) (number 1) (is_generic false)
-    (no_sequence_number false)
+    (is_serializable false) (no_sequence_number false)
     (fields
      ((Field_pad (pad (Pad_bytes 1)) (serialize false))
       (Field (name time)

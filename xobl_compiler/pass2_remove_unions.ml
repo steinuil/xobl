@@ -121,7 +121,7 @@ let%expect_test _ =
       ((data8 (Item_value 8)) (data16 (Item_value 16)) (data32 (Item_value 32))))
      (doc ()))
     (Event (name ClientMessage) (number 33) (is_generic false)
-     (no_sequence_number false)
+     (is_serializable false) (no_sequence_number false)
      (fields
       ((Field (name format)
         (type_
@@ -284,7 +284,8 @@ let%expect_test _ =
   |> List.iter (SexpExt.print_hum ~conv:sexp_of_declaration);
   [%expect
     {|
-    (Event (name Notify) (number 1) (is_generic false) (no_sequence_number false)
+    (Event (name Notify) (number 1) (is_generic false) (is_serializable false)
+     (no_sequence_number false)
      (fields
       ((Field (name subCode)
         (type_
