@@ -184,7 +184,8 @@ let rec gen_expr ctx out = function
         by_expr (Ident.snake field)
   (* FIXME hoist param_ref as a function argument *)
   | Param_ref { param; type_ = _ } ->
-      Printf.fprintf out "(* param_ref *) %s" (Ident.snake param)
+      Printf.fprintf out "failwith \"param_ref not implemented: %s\""
+        (Ident.snake param)
   | Enum_ref _ -> failwith "gen_expr enum_ref"
   | Pop_count _ -> failwith "gen_expr pop_count"
   | List_element_ref -> (
@@ -494,7 +495,10 @@ let gen_encode_field ctx out = function
   | Field_list_simple { name; type_; _ } ->
       Printf.fprintf out "%a buf v.%s;" (gen_encode_list ctx) type_
         (Ident.snake name)
-  | Field_variant _ -> Printf.fprintf out "(* field_variant *)"
+  | Field_variant { name; variant } ->
+      Printf.fprintf out "%a buf v.%s;"
+        (gen_ident ~prefix:"encode" ~suffix:"variant" ctx)
+        variant name
   | Field_variant_tag { field_name; variant; type_ } ->
       Printf.fprintf out "%a buf (%a v.%s);" (gen_encode_type ctx) type_
         (gen_ident ~suffix:"int_of_variant" ctx)
@@ -531,7 +535,10 @@ let gen_encode_arg_field ctx out = function
   | Field_list_simple { name; type_; _ } ->
       Printf.fprintf out "%a buf %s;" (gen_encode_list ctx) type_
         (Ident.snake name)
-  | Field_variant _ -> Printf.fprintf out "(* field_variant *)"
+  | Field_variant { name; variant } ->
+      Printf.fprintf out "%a buf v.%s;"
+        (gen_ident ~prefix:"encode" ~suffix:"variant" ctx)
+        variant name
   | Field_variant_tag { field_name; variant; type_ } ->
       Printf.fprintf out "%a buf (%a %s);" (gen_encode_type ctx) type_
         (gen_ident ~suffix:"int_of_variant" ctx)
@@ -702,6 +709,13 @@ let gen_decode_variant_item ctx out { vi_name; vi_tag; vi_fields } =
 let gen_int_of_variant_item _ctx out { vi_name; vi_tag; _ } =
   Printf.fprintf out "%s _ -> %Ld" (Ident.caml vi_name) vi_tag
 
+let gen_encode_variant_item ctx out { vi_name; vi_fields; _ } =
+  Printf.fprintf out "%s {%a} -> %a ()" (Ident.caml vi_name)
+    (list_sep "; " output_string)
+    (List.filter_map name_of_field vi_fields)
+    (list (gen_encode_arg_field ctx))
+    vi_fields
+
 let gen_named_arg ctx out = function
   | Field { name; type_ } ->
       Printf.fprintf out "~(%s : %a) " (Ident.snake name) (gen_field_type ctx)
@@ -852,6 +866,11 @@ let gen_declaration ctx out = function
         (Ident.snake name ~suffix:"int_of_variant")
         (Ident.snake name ~suffix:"variant")
         (list_sep " | " (gen_int_of_variant_item ctx))
+        items;
+      Printf.fprintf out "let %s buf (v : %s) = match v with %a;;"
+        (Ident.snake name ~prefix:"encode" ~suffix:"variant")
+        (Ident.snake name ~suffix:"variant")
+        (list_sep " | " (gen_encode_variant_item ctx))
         items
   | Event { name = "RedirectNotify" as name; fields; _ }
   | Event { name = "KeyPress" as name; fields; _ }

@@ -2006,6 +2006,19 @@ module Xproto = struct
       (v : client_message_data_format_variant) : int =
     match v with Data8 _ -> 8 | Data16 _ -> 16 | Data32 _ -> 32
 
+  let encode_client_message_data_format_variant buf
+      (v : client_message_data_format_variant) =
+    match v with
+    | Data8 { data8 } ->
+        encode_list encode_uint8 buf data8;
+        ()
+    | Data16 { data16 } ->
+        encode_list encode_uint16 buf data16;
+        ()
+    | Data32 { data32 } ->
+        encode_list encode_int32 buf data32;
+        ()
+
   type client_message_event = {
     window : window;
     type_ : atom;
@@ -14440,6 +14453,30 @@ module Randr = struct
     | Resource_change _ -> 5
     | Lease _ -> 6
 
+  let encode_notify_variant buf (v : notify_variant) =
+    match v with
+    | Crtc_change { cc } ->
+        encode_crtc_change buf cc;
+        ()
+    | Output_change { oc } ->
+        encode_output_change buf oc;
+        ()
+    | Output_property { op } ->
+        encode_output_property buf op;
+        ()
+    | Provider_change { pc } ->
+        encode_provider_change buf pc;
+        ()
+    | Provider_property { pp } ->
+        encode_provider_property buf pp;
+        ()
+    | Resource_change { rc } ->
+        encode_resource_change buf rc;
+        ()
+    | Lease { lc } ->
+        encode_lease_notify buf lc;
+        ()
+
   type notify_event = notify_variant [@@deriving sexp]
 
   let decode_notify_event buf ~at : (notify_event * int) option =
@@ -18254,6 +18291,24 @@ module Xinput = struct
   let input_class_int_of_variant (v : input_class_variant) : int =
     match v with Key _ -> 0 | Button _ -> 1 | Valuator _ -> 2
 
+  let encode_input_class_variant buf (v : input_class_variant) =
+    match v with
+    | Key { min_keycode; max_keycode; num_keys } ->
+        encode_key_code buf min_keycode;
+        encode_key_code buf max_keycode;
+        encode_uint16 buf num_keys;
+        encode_pad buf 2;
+        ()
+    | Button { num_buttons } ->
+        encode_uint16 buf num_buttons;
+        ()
+    | Valuator { mode; motion_size; axes } ->
+        encode_uint8 buf ((* invalid_argument *) List.length axes);
+        encode_enum encode_uint8 identity valuator_mode_int_of_enum buf mode;
+        encode_int32 buf motion_size;
+        encode_list encode_axis_info buf axes;
+        ()
+
   type input_info = { len : int; info : input_class_variant } [@@deriving sexp]
 
   let decode_input_info buf ~at : (input_info * int) option =
@@ -18267,7 +18322,8 @@ module Xinput = struct
   let encode_input_info buf (v : input_info) =
     encode_uint8 buf (input_class_int_of_variant v.info);
     encode_uint8 buf v.len;
-    (* field_variant *) ()
+    encode_input_class_variant buf v.info;
+    ()
 
   type device_name = string [@@deriving sexp]
 
@@ -18535,7 +18591,7 @@ module Xinput = struct
     let orig = at in
     let* time, at = Xproto.decode_timestamp buf ~at in
     let* axisvalues, at =
-      let length = (* param_ref *) num_axes in
+      let length = failwith "param_ref not implemented: num_axes" in
       decode_list decode_int32 length buf ~at
     in
     ignore orig;
@@ -19241,6 +19297,56 @@ module Xinput = struct
     | Led _ -> 4
     | Bell _ -> 5
 
+  let encode_feedback_class_variant buf (v : feedback_class_variant) =
+    match v with
+    | Keyboard
+        {
+          pitch;
+          duration;
+          led_mask;
+          led_values;
+          global_auto_repeat;
+          click;
+          percent;
+          auto_repeats;
+        } ->
+        encode_uint16 buf pitch;
+        encode_uint16 buf duration;
+        encode_int32 buf led_mask;
+        encode_int32 buf led_values;
+        encode_bool buf global_auto_repeat;
+        encode_uint8 buf click;
+        encode_uint8 buf percent;
+        encode_pad buf 1;
+        encode_list encode_uint8 buf auto_repeats;
+        ()
+    | Pointer { accel_num; accel_denom; threshold } ->
+        encode_pad buf 2;
+        encode_uint16 buf accel_num;
+        encode_uint16 buf accel_denom;
+        encode_uint16 buf threshold;
+        ()
+    | String { max_symbols; keysyms } ->
+        encode_uint16 buf max_symbols;
+        encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length keysyms);
+        encode_list Xproto.encode_keysym buf keysyms;
+        ()
+    | Integer { resolution; min_value; max_value } ->
+        encode_int32 buf resolution;
+        encode_int32 buf min_value;
+        encode_int32 buf max_value;
+        ()
+    | Led { led_mask; led_values } ->
+        encode_int32 buf led_mask;
+        encode_int32 buf led_values;
+        ()
+    | Bell { percent; pitch; duration } ->
+        encode_uint8 buf percent;
+        encode_pad buf 3;
+        encode_uint16 buf pitch;
+        encode_uint16 buf duration;
+        ()
+
   type feedback_state = {
     feedback_id : int;
     len : int;
@@ -19261,7 +19367,8 @@ module Xinput = struct
     encode_uint8 buf (feedback_class_int_of_variant v.data);
     encode_uint8 buf v.feedback_id;
     encode_uint16 buf v.len;
-    (* field_variant *) ()
+    encode_feedback_class_variant buf v.data;
+    ()
 
   type get_feedback_control_reply = {
     xi_reply_type : int;
@@ -19530,7 +19637,8 @@ module Xinput = struct
     encode_uint8 buf (feedback_class_int_of_variant v.data);
     encode_uint8 buf v.feedback_id;
     encode_uint16 buf v.len;
-    (* field_variant *) ()
+    encode_feedback_class_variant buf v.data;
+    ()
 
   type change_feedback_control_mask =
     [ `Key_click_percent
@@ -19903,7 +20011,8 @@ module Xinput = struct
   let encode_input_state buf (v : input_state) =
     encode_uint8 buf (input_class_int_of_variant v.data);
     encode_uint8 buf v.len;
-    (* field_variant *) ()
+    encode_input_class_variant buf v.data;
+    ()
 
   type query_device_state_reply = {
     xi_reply_type : int;
@@ -20292,6 +20401,53 @@ module Xinput = struct
     | Enable _ -> 4
     | Abs_area _ -> 5
 
+  let encode_device_control_variant buf (v : device_control_variant) =
+    match v with
+    | Resolution { resolution_values; resolution_min; resolution_max } ->
+        encode_int32 buf
+          ((* primitive Parsetree.Card32 *) List.length resolution_values);
+        encode_list encode_int32 buf resolution_values;
+        encode_list encode_int32 buf resolution_min;
+        encode_list encode_int32 buf resolution_max;
+        ()
+    | Abs_calib
+        {
+          min_x;
+          max_x;
+          min_y;
+          max_y;
+          flip_x;
+          flip_y;
+          rotation;
+          button_threshold;
+        } ->
+        encode_int32 buf min_x;
+        encode_int32 buf max_x;
+        encode_int32 buf min_y;
+        encode_int32 buf max_y;
+        encode_int32 buf flip_x;
+        encode_int32 buf flip_y;
+        encode_int32 buf rotation;
+        encode_int32 buf button_threshold;
+        ()
+    | Core { status; iscore } ->
+        encode_uint8 buf status;
+        encode_uint8 buf iscore;
+        encode_pad buf 2;
+        ()
+    | Enable { enable } ->
+        encode_uint8 buf enable;
+        encode_pad buf 3;
+        ()
+    | Abs_area { offset_x; offset_y; width; height; screen; following } ->
+        encode_int32 buf offset_x;
+        encode_int32 buf offset_y;
+        encode_int32 buf width;
+        encode_int32 buf height;
+        encode_int32 buf screen;
+        encode_int32 buf following;
+        ()
+
   type device_state = { len : int; data : device_control_variant }
   [@@deriving sexp]
 
@@ -20306,7 +20462,8 @@ module Xinput = struct
   let encode_device_state buf (v : device_state) =
     encode_uint16 buf (device_control_int_of_variant v.data);
     encode_uint16 buf v.len;
-    (* field_variant *) ()
+    encode_device_control_variant buf v.data;
+    ()
 
   type get_device_control_reply = {
     xi_reply_type : int;
@@ -20545,7 +20702,8 @@ module Xinput = struct
   let encode_device_ctl buf (v : device_ctl) =
     encode_uint16 buf (device_control_int_of_variant v.data);
     encode_uint16 buf v.len;
-    (* field_variant *) ()
+    encode_device_control_variant buf v.data;
+    ()
 
   type change_device_control_reply = {
     xi_reply_type : int;
@@ -20660,6 +20818,20 @@ module Xinput = struct
   let property_format_int_of_variant (v : property_format_variant) : int =
     match v with D8_bits _ -> 8 | D16_bits _ -> 16 | D32_bits _ -> 32
 
+  let encode_property_format_variant buf (v : property_format_variant) =
+    match v with
+    | D8_bits { data8 } ->
+        encode_list encode_uint8 buf data8;
+        encode_align buf 4;
+        ()
+    | D16_bits { data16 } ->
+        encode_list encode_uint16 buf data16;
+        encode_align buf 4;
+        ()
+    | D32_bits { data32 } ->
+        encode_list encode_int32 buf data32;
+        ()
+
   let encode_change_device_property ~(property : Xproto.atom)
       ~(type_ : Xproto.atom) ~(device_id : int) ~(mode : Xproto.prop_mode_enum)
       ~(num_items : int) ~(items : property_format_variant) buf =
@@ -20674,7 +20846,7 @@ module Xinput = struct
     encode_enum encode_uint8 identity Xproto.prop_mode_int_of_enum buf mode;
     encode_pad buf 1;
     encode_int32 buf num_items;
-    (* field_variant *)
+    encode_property_format_variant buf v.items;
     (* write request length *)
     encode_request_length buf
 
@@ -21131,6 +21303,39 @@ module Xinput = struct
     | Attach_slave _ -> 3
     | Detach_slave _ -> 4
 
+  let encode_hierarchy_change_type_variant buf
+      (v : hierarchy_change_type_variant) =
+    match v with
+    | Add_master { send_core; enable; name } ->
+        encode_uint16 buf (String.length name);
+        encode_bool buf send_core;
+        encode_bool buf enable;
+        encode_string buf name;
+        encode_align buf 4;
+        ()
+    | Remove_master { deviceid; return_mode; return_pointer; return_keyboard }
+      ->
+        encode_alt_enum encode_device_id identity device_int_of_enum buf
+          deviceid;
+        encode_enum encode_uint8 identity change_mode_int_of_enum buf
+          return_mode;
+        encode_pad buf 1;
+        encode_alt_enum encode_device_id identity device_int_of_enum buf
+          return_pointer;
+        encode_alt_enum encode_device_id identity device_int_of_enum buf
+          return_keyboard;
+        ()
+    | Attach_slave { deviceid; master } ->
+        encode_alt_enum encode_device_id identity device_int_of_enum buf
+          deviceid;
+        encode_alt_enum encode_device_id identity device_int_of_enum buf master;
+        ()
+    | Detach_slave { deviceid } ->
+        encode_alt_enum encode_device_id identity device_int_of_enum buf
+          deviceid;
+        encode_pad buf 2;
+        ()
+
   type hierarchy_change = { len : int; data : hierarchy_change_type_variant }
   [@@deriving sexp]
 
@@ -21145,7 +21350,8 @@ module Xinput = struct
   let encode_hierarchy_change buf (v : hierarchy_change) =
     encode_uint16 buf (hierarchy_change_type_int_of_variant v.data);
     encode_uint16 buf v.len;
-    (* field_variant *) ()
+    encode_hierarchy_change_type_variant buf v.data;
+    ()
 
   let encode_xi_change_hierarchy ~(changes : hierarchy_change list) buf =
     (* opcode *)
@@ -21722,6 +21928,40 @@ module Xinput = struct
     | Scroll _ -> 3
     | Touch _ -> 8
 
+  let encode_device_class_type_variant buf (v : device_class_type_variant) =
+    match v with
+    | Key { keys } ->
+        encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length keys);
+        encode_list encode_int32 buf keys;
+        ()
+    | Button { state; labels } ->
+        encode_uint16 buf ((* primitive Parsetree.Xid *) List.length labels);
+        encode_list encode_int32 buf state;
+        encode_list Xproto.encode_atom buf labels;
+        ()
+    | Valuator { number; label; min; max; value; resolution; mode } ->
+        encode_uint16 buf number;
+        Xproto.encode_atom buf label;
+        encode_fp3232 buf min;
+        encode_fp3232 buf max;
+        encode_fp3232 buf value;
+        encode_int32 buf resolution;
+        encode_enum encode_uint8 identity valuator_mode_int_of_enum buf mode;
+        encode_pad buf 3;
+        ()
+    | Scroll { number; scroll_type; flags; increment } ->
+        encode_uint16 buf number;
+        encode_enum encode_uint16 identity scroll_type_int_of_enum buf
+          scroll_type;
+        encode_pad buf 2;
+        encode_mask encode_int32 identity scroll_flags_int_of_mask buf flags;
+        encode_fp3232 buf increment;
+        ()
+    | Touch { mode; num_touches } ->
+        encode_enum encode_uint8 identity touch_mode_int_of_enum buf mode;
+        encode_uint8 buf num_touches;
+        ()
+
   type device_class = {
     len : int;
     sourceid : device_id;
@@ -21742,7 +21982,8 @@ module Xinput = struct
     encode_uint16 buf (device_class_type_int_of_variant v.data);
     encode_uint16 buf v.len;
     encode_device_id buf v.sourceid;
-    (* field_variant *) ()
+    encode_device_class_type_variant buf v.data;
+    ()
 
   type xi_device_info = {
     deviceid : device_enum alt_enum;
@@ -22147,7 +22388,7 @@ module Xinput = struct
     Xproto.encode_atom buf property;
     Xproto.encode_atom buf type_;
     encode_int32 buf num_items;
-    (* field_variant *)
+    encode_property_format_variant buf v.items;
     (* write request length *)
     encode_request_length buf
 
