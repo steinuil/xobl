@@ -305,7 +305,7 @@ module Xproto = struct
   let encode_depth buf (v : depth) =
     encode_uint8 buf v.depth;
     encode_pad buf 1;
-    encode_uint16 buf (identity ((* invalid_argument *) List.length v.visuals));
+    encode_uint16 buf ((* invalid_argument *) List.length v.visuals);
     encode_pad buf 4;
     encode_list encode_visualtype buf v.visuals;
     ()
@@ -505,8 +505,7 @@ module Xproto = struct
       v.backing_stores;
     encode_bool buf v.save_unders;
     encode_uint8 buf v.root_depth;
-    encode_uint8 buf
-      (identity ((* invalid_argument *) List.length v.allowed_depths));
+    encode_uint8 buf ((* invalid_argument *) List.length v.allowed_depths);
     encode_list encode_depth buf v.allowed_depths;
     ()
 
@@ -554,8 +553,8 @@ module Xproto = struct
     encode_pad buf 1;
     encode_uint16 buf v.protocol_major_version;
     encode_uint16 buf v.protocol_minor_version;
-    encode_uint16 buf (identity (String.length v.authorization_protocol_name));
-    encode_uint16 buf (identity (String.length v.authorization_protocol_data));
+    encode_uint16 buf (String.length v.authorization_protocol_name);
+    encode_uint16 buf (String.length v.authorization_protocol_data);
     encode_pad buf 2;
     encode_string buf v.authorization_protocol_name;
     encode_align buf 4;
@@ -594,7 +593,7 @@ module Xproto = struct
 
   let encode_setup_failed buf (v : setup_failed) =
     encode_uint8 buf v.status;
-    encode_uint8 buf (identity (String.length v.reason));
+    encode_uint8 buf (String.length v.reason);
     encode_uint16 buf v.protocol_major_version;
     encode_uint16 buf v.protocol_minor_version;
     encode_uint16 buf v.length;
@@ -616,7 +615,7 @@ module Xproto = struct
   let encode_setup_authenticate buf (v : setup_authenticate) =
     encode_uint8 buf v.status;
     encode_pad buf 5;
-    encode_uint16 buf (identity (String.length v.reason));
+    encode_uint16 buf (String.length v.reason);
     encode_string buf v.reason;
     ()
 
@@ -724,11 +723,10 @@ module Xproto = struct
     encode_int32 buf v.resource_id_base;
     encode_int32 buf v.resource_id_mask;
     encode_int32 buf v.motion_buffer_size;
-    encode_uint16 buf (identity (String.length v.vendor));
+    encode_uint16 buf (String.length v.vendor);
     encode_uint16 buf v.maximum_request_length;
-    encode_uint8 buf (identity ((* invalid_argument *) List.length v.roots));
-    encode_uint8 buf
-      (identity ((* invalid_argument *) List.length v.pixmap_formats));
+    encode_uint8 buf ((* invalid_argument *) List.length v.roots);
+    encode_uint8 buf ((* invalid_argument *) List.length v.pixmap_formats);
     encode_enum encode_uint8 identity image_order_int_of_enum buf
       v.image_byte_order;
     encode_enum encode_uint8 identity image_order_int_of_enum buf
@@ -2754,7 +2752,7 @@ module Xproto = struct
     encode_bool buf only_if_exists;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_uint16 buf (identity (String.length name));
+    encode_uint16 buf (String.length name);
     encode_pad buf 2;
     encode_string buf name;
     (* write request length *)
@@ -3520,7 +3518,7 @@ module Xproto = struct
     (* reserve request length *)
     encode_pad buf 2;
     encode_font buf fid;
-    encode_uint16 buf (identity (String.length name));
+    encode_uint16 buf (String.length name);
     encode_pad buf 2;
     encode_string buf name;
     (* write request length *)
@@ -3697,7 +3695,7 @@ module Xproto = struct
     (* reserve request length *)
     encode_pad buf 2;
     encode_uint16 buf max_names;
-    encode_uint16 buf (identity (String.length pattern));
+    encode_uint16 buf (String.length pattern);
     encode_string buf pattern;
     (* write request length *)
     encode_request_length buf
@@ -3739,7 +3737,7 @@ module Xproto = struct
     (* reserve request length *)
     encode_pad buf 2;
     encode_uint16 buf max_names;
-    encode_uint16 buf (identity (String.length pattern));
+    encode_uint16 buf (String.length pattern);
     encode_string buf pattern;
     (* write request length *)
     encode_request_length buf
@@ -3797,7 +3795,7 @@ module Xproto = struct
     encode_pad buf 1;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_uint16 buf (identity ((* invalid_argument *) List.length font));
+    encode_uint16 buf ((* invalid_argument *) List.length font);
     encode_pad buf 2;
     encode_list encode_str buf font;
     (* write request length *)
@@ -4339,7 +4337,7 @@ module Xproto = struct
     encode_pad buf 2;
     encode_gcontext buf gc;
     encode_uint16 buf dash_offset;
-    encode_uint16 buf (identity ((* Parsetree.Card8 *) List.length dashes));
+    encode_uint16 buf ((* primitive Parsetree.Card8 *) List.length dashes);
     encode_list encode_uint8 buf dashes;
     (* write request length *)
     encode_request_length buf
@@ -4873,7 +4871,7 @@ module Xproto = struct
     (* reserve request length *)
     encode_pad buf 2;
     encode_colormap buf cmap;
-    encode_uint16 buf (identity (String.length name));
+    encode_uint16 buf (String.length name);
     encode_pad buf 2;
     encode_string buf name;
     (* write request length *)
@@ -5056,7 +5054,7 @@ module Xproto = struct
     encode_pad buf 2;
     encode_colormap buf cmap;
     encode_int32 buf pixel;
-    encode_uint16 buf (identity (String.length name));
+    encode_uint16 buf (String.length name);
     encode_pad buf 2;
     encode_string buf name;
     (* write request length *)
@@ -5123,7 +5121,7 @@ module Xproto = struct
     (* reserve request length *)
     encode_pad buf 2;
     encode_colormap buf cmap;
-    encode_uint16 buf (identity (String.length name));
+    encode_uint16 buf (String.length name);
     encode_pad buf 2;
     encode_string buf name;
     (* write request length *)
@@ -5285,7 +5283,7 @@ module Xproto = struct
     encode_pad buf 1;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_uint16 buf (identity (String.length name));
+    encode_uint16 buf (String.length name);
     encode_pad buf 2;
     encode_string buf name;
     (* write request length *)
@@ -5705,7 +5703,7 @@ module Xproto = struct
     encode_pad buf 2;
     encode_enum encode_uint8 identity family_int_of_enum buf family;
     encode_pad buf 1;
-    encode_uint16 buf (identity ((* Parsetree.Byte *) List.length address));
+    encode_uint16 buf ((* primitive Parsetree.Byte *) List.length address);
     encode_list encode_char buf address;
     (* write request length *)
     encode_request_length buf
@@ -5728,7 +5726,7 @@ module Xproto = struct
   let encode_host buf (v : host) =
     encode_enum encode_uint8 identity family_int_of_enum buf v.family;
     encode_pad buf 1;
-    encode_uint16 buf (identity ((* Parsetree.Byte *) List.length v.address));
+    encode_uint16 buf ((* primitive Parsetree.Byte *) List.length v.address);
     encode_list encode_char buf v.address;
     encode_align buf 4;
     ()
@@ -5836,7 +5834,7 @@ module Xproto = struct
     (* reserve request length *)
     encode_pad buf 2;
     encode_window buf window;
-    encode_uint16 buf (identity ((* Parsetree.Xid *) List.length atoms));
+    encode_uint16 buf ((* primitive Parsetree.Xid *) List.length atoms);
     encode_int16 buf delta;
     encode_list encode_atom buf atoms;
     (* write request length *)
@@ -5886,7 +5884,7 @@ module Xproto = struct
   let encode_set_pointer_mapping ~(map : int list) buf =
     (* opcode *)
     encode_uint8 buf 116;
-    encode_uint8 buf (identity ((* Parsetree.Card8 *) List.length map));
+    encode_uint8 buf ((* primitive Parsetree.Card8 *) List.length map);
     (* reserve request length *)
     encode_pad buf 2;
     encode_list encode_uint8 buf map;
@@ -5958,7 +5956,7 @@ module Xproto = struct
   let encode_set_modifier_mapping ~(keycodes : keycode list) buf =
     (* opcode *)
     encode_uint8 buf 118;
-    encode_uint8 buf (identity ((* Parsetree.Card8 *) List.length keycodes));
+    encode_uint8 buf ((* primitive Parsetree.Card8 *) List.length keycodes);
     (* reserve request length *)
     encode_pad buf 2;
     encode_list encode_keycode buf keycodes;
@@ -6476,7 +6474,7 @@ module Render = struct
   let encode_pictdepth buf (v : pictdepth) =
     encode_uint8 buf v.depth;
     encode_pad buf 1;
-    encode_uint16 buf (identity ((* invalid_argument *) List.length v.visuals));
+    encode_uint16 buf ((* invalid_argument *) List.length v.visuals);
     encode_pad buf 4;
     encode_list encode_pictvisual buf v.visuals;
     ()
@@ -6494,7 +6492,7 @@ module Render = struct
     Some ({ fallback; depths }, at)
 
   let encode_pictscreen buf (v : pictscreen) =
-    encode_int32 buf (identity ((* invalid_argument *) List.length v.depths));
+    encode_int32 buf ((* invalid_argument *) List.length v.depths);
     encode_pictformat buf v.fallback;
     encode_list encode_pictdepth buf v.depths;
     ()
@@ -7007,7 +7005,7 @@ module Render = struct
     encode_glyphset buf glyphset;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_int32 buf (identity ((* Parsetree.Card32 *) List.length glyphids));
+    encode_int32 buf ((* primitive Parsetree.Card32 *) List.length glyphids);
     encode_list encode_int32 buf glyphids;
     encode_list encode_glyphinfo buf glyphs;
     encode_list encode_char buf data;
@@ -7206,7 +7204,7 @@ module Render = struct
     encode_picture buf picture;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_uint16 buf (identity (String.length filter));
+    encode_uint16 buf (String.length filter);
     encode_pad buf 2;
     encode_string buf filter;
     encode_align buf 4;
@@ -7301,7 +7299,7 @@ module Render = struct
     encode_pad buf 2;
     encode_pointfix buf p1;
     encode_pointfix buf p2;
-    encode_int32 buf (identity ((* Parsetree.Int32 *) List.length stops));
+    encode_int32 buf ((* primitive Parsetree.Int32 *) List.length stops);
     encode_list encode_fixed buf stops;
     encode_list encode_color buf colors;
     (* write request length *)
@@ -7319,7 +7317,7 @@ module Render = struct
     encode_pointfix buf outer;
     encode_fixed buf inner_radius;
     encode_fixed buf outer_radius;
-    encode_int32 buf (identity ((* Parsetree.Int32 *) List.length stops));
+    encode_int32 buf ((* primitive Parsetree.Int32 *) List.length stops);
     encode_list encode_fixed buf stops;
     encode_list encode_color buf colors;
     (* write request length *)
@@ -7334,7 +7332,7 @@ module Render = struct
     encode_pad buf 2;
     encode_pointfix buf center;
     encode_fixed buf angle;
-    encode_int32 buf (identity ((* Parsetree.Int32 *) List.length stops));
+    encode_int32 buf ((* primitive Parsetree.Int32 *) List.length stops);
     encode_list encode_fixed buf stops;
     encode_list encode_color buf colors;
     (* write request length *)
@@ -8188,7 +8186,7 @@ module Xfixes = struct
     Xproto.encode_cursor buf cursor;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_uint16 buf (identity (String.length name));
+    encode_uint16 buf (String.length name);
     encode_pad buf 2;
     encode_string buf name;
     (* write request length *)
@@ -8307,7 +8305,7 @@ module Xfixes = struct
     Xproto.encode_cursor buf src;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_uint16 buf (identity (String.length name));
+    encode_uint16 buf (String.length name);
     encode_pad buf 2;
     encode_string buf name;
     (* write request length *)
@@ -8392,7 +8390,7 @@ module Xfixes = struct
     encode_mask encode_int32 identity barrier_directions_int_of_mask buf
       directions;
     encode_pad buf 2;
-    encode_uint16 buf (identity ((* Parsetree.Card16 *) List.length devices));
+    encode_uint16 buf ((* primitive Parsetree.Card16 *) List.length devices);
     encode_list encode_uint16 buf devices;
     (* write request length *)
     encode_request_length buf
@@ -9109,7 +9107,7 @@ module Dri2 = struct
     Xproto.encode_drawable buf drawable;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_int32 buf (identity ((* Parsetree.Card32 *) List.length attachments));
+    encode_int32 buf ((* primitive Parsetree.Card32 *) List.length attachments);
     encode_list encode_int32 buf attachments;
     (* write request length *)
     encode_request_length buf
@@ -9164,7 +9162,7 @@ module Dri2 = struct
     Xproto.encode_drawable buf drawable;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_int32 buf (identity ((* invalid_argument *) List.length attachments));
+    encode_int32 buf ((* invalid_argument *) List.length attachments);
     encode_list encode_attach_format buf attachments;
     (* write request length *)
     encode_request_length buf
@@ -9608,7 +9606,7 @@ module Dri3 = struct
     (* reserve request length *)
     encode_pad buf 2;
     Xproto.encode_window buf window;
-    encode_uint8 buf (identity ((* Parsetree.Fd *) List.length buffers));
+    encode_uint8 buf ((* primitive Parsetree.Fd *) List.length buffers);
     encode_pad buf 3;
     encode_uint16 buf width;
     encode_uint16 buf height;
@@ -9910,7 +9908,7 @@ module Glx = struct
     encode_pad buf 2;
     encode_uint16 buf request_num;
     encode_uint16 buf request_total;
-    encode_int32 buf (identity ((* Parsetree.Byte *) List.length data));
+    encode_int32 buf ((* primitive Parsetree.Byte *) List.length data);
     encode_list encode_char buf data;
     (* write request length *)
     encode_request_length buf
@@ -10315,7 +10313,7 @@ module Glx = struct
     (* reserve request length *)
     encode_pad buf 2;
     encode_int32 buf minor_version;
-    encode_int32 buf (identity (String.length string));
+    encode_int32 buf (String.length string);
     encode_string buf string;
     (* write request length *)
     encode_request_length buf
@@ -10364,7 +10362,7 @@ module Glx = struct
     encode_fbconfig buf fbconfig;
     Xproto.encode_pixmap buf pixmap;
     encode_pixmap buf glx_pixmap;
-    encode_int32 buf (identity ((* Parsetree.Card32 *) List.length attribs));
+    encode_int32 buf ((* primitive Parsetree.Card32 *) List.length attribs);
     encode_list encode_int32 buf attribs;
     (* write request length *)
     encode_request_length buf
@@ -10457,7 +10455,7 @@ module Glx = struct
     encode_pad buf 2;
     encode_fbconfig buf fbconfig;
     encode_pbuffer buf pbuffer;
-    encode_int32 buf (identity ((* Parsetree.Card32 *) List.length attribs));
+    encode_int32 buf ((* primitive Parsetree.Card32 *) List.length attribs);
     encode_list encode_int32 buf attribs;
     (* write request length *)
     encode_request_length buf
@@ -10504,7 +10502,7 @@ module Glx = struct
     encode_drawable buf drawable;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_int32 buf (identity ((* Parsetree.Card32 *) List.length attribs));
+    encode_int32 buf ((* primitive Parsetree.Card32 *) List.length attribs);
     encode_list encode_int32 buf attribs;
     (* write request length *)
     encode_request_length buf
@@ -10520,7 +10518,7 @@ module Glx = struct
     encode_fbconfig buf fbconfig;
     Xproto.encode_window buf window;
     encode_window buf glx_window;
-    encode_int32 buf (identity ((* Parsetree.Card32 *) List.length attribs));
+    encode_int32 buf ((* primitive Parsetree.Card32 *) List.length attribs);
     encode_list encode_int32 buf attribs;
     (* write request length *)
     encode_request_length buf
@@ -10544,9 +10542,9 @@ module Glx = struct
     (* reserve request length *)
     encode_pad buf 2;
     encode_int32 buf minor_version;
-    encode_int32 buf (identity ((* Parsetree.Card32 *) List.length gl_versions));
-    encode_int32 buf (identity (String.length gl_extension_string));
-    encode_int32 buf (identity (String.length glx_extension_string));
+    encode_int32 buf ((* primitive Parsetree.Card32 *) List.length gl_versions);
+    encode_int32 buf (String.length gl_extension_string);
+    encode_int32 buf (String.length glx_extension_string);
     encode_list encode_int32 buf gl_versions;
     encode_string buf gl_extension_string;
     encode_string buf glx_extension_string;
@@ -10566,7 +10564,7 @@ module Glx = struct
     encode_context buf share_list;
     encode_bool buf is_direct;
     encode_pad buf 3;
-    encode_int32 buf (identity ((* Parsetree.Card32 *) List.length attribs));
+    encode_int32 buf ((* primitive Parsetree.Card32 *) List.length attribs);
     encode_list encode_int32 buf attribs;
     (* write request length *)
     encode_request_length buf
@@ -10580,9 +10578,9 @@ module Glx = struct
     (* reserve request length *)
     encode_pad buf 2;
     encode_int32 buf minor_version;
-    encode_int32 buf (identity ((* Parsetree.Card32 *) List.length gl_versions));
-    encode_int32 buf (identity (String.length gl_extension_string));
-    encode_int32 buf (identity (String.length glx_extension_string));
+    encode_int32 buf ((* primitive Parsetree.Card32 *) List.length gl_versions);
+    encode_int32 buf (String.length gl_extension_string);
+    encode_int32 buf (String.length glx_extension_string);
     encode_list encode_int32 buf gl_versions;
     encode_string buf gl_extension_string;
     encode_string buf glx_extension_string;
@@ -11657,7 +11655,7 @@ module Glx = struct
     encode_context_tag buf context_tag;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_int32 buf (identity ((* Parsetree.Card32 *) List.length textures));
+    encode_int32 buf ((* primitive Parsetree.Card32 *) List.length textures);
     encode_list encode_int32 buf textures;
     (* write request length *)
     encode_request_length buf
@@ -11684,7 +11682,7 @@ module Glx = struct
     encode_context_tag buf context_tag;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_int32 buf (identity ((* Parsetree.Card32 *) List.length textures));
+    encode_int32 buf ((* primitive Parsetree.Card32 *) List.length textures);
     encode_list encode_int32 buf textures;
     (* write request length *)
     encode_request_length buf
@@ -12195,7 +12193,7 @@ module Glx = struct
     encode_context_tag buf context_tag;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_int32 buf (identity ((* Parsetree.Card32 *) List.length ids));
+    encode_int32 buf ((* primitive Parsetree.Card32 *) List.length ids);
     encode_list encode_int32 buf ids;
     (* write request length *)
     encode_request_length buf
@@ -13337,7 +13335,7 @@ module Randr = struct
     encode_crtc buf crtc;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_uint16 buf (identity ((* Parsetree.Card16 *) List.length red));
+    encode_uint16 buf ((* primitive Parsetree.Card16 *) List.length red);
     encode_pad buf 2;
     encode_list encode_uint16 buf red;
     encode_list encode_uint16 buf green;
@@ -13419,7 +13417,7 @@ module Randr = struct
     (* reserve request length *)
     encode_pad buf 2;
     Render.encode_transform buf transform;
-    encode_uint16 buf (identity (String.length filter_name));
+    encode_uint16 buf (String.length filter_name);
     encode_pad buf 2;
     encode_string buf filter_name;
     encode_align buf 4;
@@ -14264,7 +14262,7 @@ module Randr = struct
     Xproto.encode_atom buf v.name;
     encode_bool buf v.primary;
     encode_bool buf v.automatic;
-    encode_uint16 buf (identity ((* Parsetree.Xid *) List.length v.outputs));
+    encode_uint16 buf ((* primitive Parsetree.Xid *) List.length v.outputs);
     encode_int16 buf v.x;
     encode_int16 buf v.y;
     encode_uint16 buf v.width;
@@ -14339,8 +14337,8 @@ module Randr = struct
     (* reserve request length *)
     encode_pad buf 2;
     encode_lease buf lid;
-    encode_uint16 buf (identity ((* Parsetree.Xid *) List.length crtcs));
-    encode_uint16 buf (identity ((* Parsetree.Xid *) List.length outputs));
+    encode_uint16 buf ((* primitive Parsetree.Xid *) List.length crtcs);
+    encode_uint16 buf ((* primitive Parsetree.Xid *) List.length outputs);
     encode_list encode_crtc buf crtcs;
     encode_list encode_output buf outputs;
     (* write request length *)
@@ -14573,7 +14571,7 @@ module Sync = struct
   let encode_systemcounter buf (v : systemcounter) =
     encode_counter buf v.counter;
     encode_int64 buf v.resolution;
-    encode_uint16 buf (identity (String.length v.name));
+    encode_uint16 buf (String.length v.name);
     encode_string buf v.name;
     encode_align buf 4;
     ()
@@ -15584,7 +15582,7 @@ module Record = struct
 
   let encode_client_info buf (v : client_info) =
     encode_client_spec buf v.client_resource;
-    encode_int32 buf (identity ((* invalid_argument *) List.length v.ranges));
+    encode_int32 buf ((* invalid_argument *) List.length v.ranges);
     encode_list encode_range buf v.ranges;
     ()
 
@@ -15624,9 +15622,8 @@ module Record = struct
     encode_pad buf 2;
     encode_element_header buf element_header;
     encode_pad buf 3;
-    encode_int32 buf
-      (identity ((* Parsetree.Card32 *) List.length client_specs));
-    encode_int32 buf (identity ((* invalid_argument *) List.length ranges));
+    encode_int32 buf ((* primitive Parsetree.Card32 *) List.length client_specs);
+    encode_int32 buf ((* invalid_argument *) List.length ranges);
     encode_list encode_client_spec buf client_specs;
     encode_list encode_range buf ranges;
     (* write request length *)
@@ -15642,9 +15639,8 @@ module Record = struct
     encode_pad buf 2;
     encode_element_header buf element_header;
     encode_pad buf 3;
-    encode_int32 buf
-      (identity ((* Parsetree.Card32 *) List.length client_specs));
-    encode_int32 buf (identity ((* invalid_argument *) List.length ranges));
+    encode_int32 buf ((* primitive Parsetree.Card32 *) List.length client_specs);
+    encode_int32 buf ((* invalid_argument *) List.length ranges);
     encode_list encode_client_spec buf client_specs;
     encode_list encode_range buf ranges;
     (* write request length *)
@@ -15657,8 +15653,7 @@ module Record = struct
     encode_context buf context;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_int32 buf
-      (identity ((* Parsetree.Card32 *) List.length client_specs));
+    encode_int32 buf ((* primitive Parsetree.Card32 *) List.length client_specs);
     encode_list encode_client_spec buf client_specs;
     (* write request length *)
     encode_request_length buf
@@ -15853,7 +15848,7 @@ module Res = struct
 
   let encode_client_id_value buf (v : client_id_value) =
     encode_client_id_spec buf v.spec;
-    encode_int32 buf (identity ((* Parsetree.Card32 *) List.length v.value));
+    encode_int32 buf ((* primitive Parsetree.Card32 *) List.length v.value);
     encode_list encode_int32 buf v.value;
     ()
 
@@ -15914,8 +15909,7 @@ module Res = struct
 
   let encode_resource_size_value buf (v : resource_size_value) =
     encode_resource_size_spec buf v.size;
-    encode_int32 buf
-      (identity ((* invalid_argument *) List.length v.cross_references));
+    encode_int32 buf ((* invalid_argument *) List.length v.cross_references);
     encode_list encode_resource_size_spec buf v.cross_references;
     ()
 
@@ -16020,7 +16014,7 @@ module Res = struct
   let encode_query_client_ids ~(specs : client_id_spec list) buf =
     (* opcode *)
     encode_uint8 buf 4;
-    encode_int32 buf (identity ((* invalid_argument *) List.length specs));
+    encode_int32 buf ((* invalid_argument *) List.length specs);
     (* reserve request length *)
     encode_pad buf 2;
     encode_list encode_client_id_spec buf specs;
@@ -16049,7 +16043,7 @@ module Res = struct
     encode_int32 buf client;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_int32 buf (identity ((* invalid_argument *) List.length specs));
+    encode_int32 buf ((* invalid_argument *) List.length specs);
     encode_list encode_resource_id_spec buf specs;
     (* write request length *)
     encode_request_length buf
@@ -17298,7 +17292,7 @@ module Xf86vidmode = struct
     encode_pad buf 2;
     encode_mask encode_int32 identity mode_flag_int_of_mask buf flags;
     encode_pad buf 12;
-    encode_int32 buf (identity ((* Parsetree.Card8 *) List.length private_));
+    encode_int32 buf ((* primitive Parsetree.Card8 *) List.length private_);
     encode_list encode_uint8 buf private_;
     (* write request length *)
     encode_request_length buf
@@ -17419,7 +17413,7 @@ module Xf86vidmode = struct
     encode_pad buf 2;
     encode_mask encode_int32 identity mode_flag_int_of_mask buf flags;
     encode_pad buf 12;
-    encode_int32 buf (identity ((* Parsetree.Card8 *) List.length private_));
+    encode_int32 buf ((* primitive Parsetree.Card8 *) List.length private_);
     encode_dotclock buf after_dotclock;
     encode_uint16 buf after_hdisplay;
     encode_uint16 buf after_hsyncstart;
@@ -17459,7 +17453,7 @@ module Xf86vidmode = struct
     encode_pad buf 2;
     encode_mask encode_int32 identity mode_flag_int_of_mask buf flags;
     encode_pad buf 12;
-    encode_int32 buf (identity ((* Parsetree.Card8 *) List.length private_));
+    encode_int32 buf ((* primitive Parsetree.Card8 *) List.length private_);
     encode_list encode_uint8 buf private_;
     (* write request length *)
     encode_request_length buf
@@ -17488,7 +17482,7 @@ module Xf86vidmode = struct
     encode_pad buf 2;
     encode_mask encode_int32 identity mode_flag_int_of_mask buf flags;
     encode_pad buf 12;
-    encode_int32 buf (identity ((* Parsetree.Card8 *) List.length private_));
+    encode_int32 buf ((* primitive Parsetree.Card8 *) List.length private_);
     encode_list encode_uint8 buf private_;
     (* write request length *)
     encode_request_length buf
@@ -17526,7 +17520,7 @@ module Xf86vidmode = struct
     encode_pad buf 2;
     encode_mask encode_int32 identity mode_flag_int_of_mask buf flags;
     encode_pad buf 12;
-    encode_int32 buf (identity ((* Parsetree.Card8 *) List.length private_));
+    encode_int32 buf ((* primitive Parsetree.Card8 *) List.length private_);
     encode_list encode_uint8 buf private_;
     (* write request length *)
     encode_request_length buf
@@ -17992,7 +17986,7 @@ module Xinput = struct
   let encode_get_extension_version ~(name : string) buf =
     (* opcode *)
     encode_uint8 buf 1;
-    encode_uint16 buf (identity (String.length name));
+    encode_uint16 buf (String.length name);
     (* reserve request length *)
     encode_pad buf 2;
     encode_pad buf 2;
@@ -18204,7 +18198,7 @@ module Xinput = struct
   let encode_valuator_info buf (v : valuator_info) =
     encode_enum encode_uint8 identity input_class_int_of_enum buf v.class_id;
     encode_uint8 buf v.len;
-    encode_uint8 buf (identity ((* invalid_argument *) List.length v.axes));
+    encode_uint8 buf ((* invalid_argument *) List.length v.axes);
     encode_enum encode_uint8 identity valuator_mode_int_of_enum buf v.mode;
     encode_int32 buf v.motion_size;
     encode_list encode_axis_info buf v.axes;
@@ -18416,7 +18410,7 @@ module Xinput = struct
     Xproto.encode_window buf window;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_uint16 buf (identity ((* Parsetree.Card32 *) List.length classes));
+    encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length classes);
     encode_pad buf 2;
     encode_list encode_event_class buf classes;
     (* write request length *)
@@ -18481,7 +18475,7 @@ module Xinput = struct
     Xproto.encode_window buf window;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_uint16 buf (identity ((* Parsetree.Card32 *) List.length classes));
+    encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length classes);
     encode_enum encode_uint8 identity propagate_mode_int_of_enum buf mode;
     encode_pad buf 1;
     encode_list encode_event_class buf classes;
@@ -18524,7 +18518,7 @@ module Xinput = struct
     let orig = at in
     let* time, at = Xproto.decode_timestamp buf ~at in
     let* axisvalues, at =
-      let length = num_axes in
+      let length = (* param_ref *) num_axes in
       decode_list decode_int32 length buf ~at
     in
     ignore orig;
@@ -18653,7 +18647,7 @@ module Xinput = struct
     encode_pad buf 2;
     encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
       time;
-    encode_uint16 buf (identity ((* Parsetree.Card32 *) List.length classes));
+    encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length classes);
     encode_enum encode_uint8 identity Xproto.grab_mode_int_of_enum buf
       this_device_mode;
     encode_enum encode_uint8 identity Xproto.grab_mode_int_of_enum buf
@@ -18715,7 +18709,7 @@ module Xinput = struct
     Xproto.encode_window buf grab_window;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_uint16 buf (identity ((* Parsetree.Card32 *) List.length classes));
+    encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length classes);
     encode_mask encode_uint16 identity Xproto.mod_mask_int_of_mask buf modifiers;
     encode_alt_enum encode_uint8 identity modifier_device_int_of_enum buf
       modifier_device;
@@ -18762,7 +18756,7 @@ module Xinput = struct
     encode_uint8 buf grabbed_device;
     encode_alt_enum encode_uint8 identity modifier_device_int_of_enum buf
       modifier_device;
-    encode_uint16 buf (identity ((* Parsetree.Card32 *) List.length classes));
+    encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length classes);
     encode_mask encode_uint16 identity Xproto.mod_mask_int_of_mask buf modifiers;
     encode_enum encode_uint8 identity Xproto.grab_mode_int_of_enum buf
       this_device_mode;
@@ -19076,7 +19070,7 @@ module Xinput = struct
     encode_uint8 buf v.feedback_id;
     encode_uint16 buf v.len;
     encode_uint16 buf v.max_symbols;
-    encode_uint16 buf (identity ((* Parsetree.Card32 *) List.length v.keysyms));
+    encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length v.keysyms);
     encode_list Xproto.encode_keysym buf v.keysyms;
     ()
 
@@ -19423,7 +19417,7 @@ module Xinput = struct
     encode_uint8 buf v.feedback_id;
     encode_uint16 buf v.len;
     encode_pad buf 2;
-    encode_uint16 buf (identity ((* Parsetree.Card32 *) List.length v.keysyms));
+    encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length v.keysyms);
     encode_list Xproto.encode_keysym buf v.keysyms;
     ()
 
@@ -19675,7 +19669,7 @@ module Xinput = struct
     encode_uint8 buf device_id;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_uint8 buf (identity ((* Parsetree.Card8 *) List.length keymaps));
+    encode_uint8 buf ((* primitive Parsetree.Card8 *) List.length keymaps);
     encode_pad buf 2;
     encode_list encode_uint8 buf keymaps;
     (* write request length *)
@@ -19735,7 +19729,7 @@ module Xinput = struct
     encode_uint8 buf device_id;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_uint8 buf (identity ((* Parsetree.Card8 *) List.length map));
+    encode_uint8 buf ((* primitive Parsetree.Card8 *) List.length map);
     encode_pad buf 2;
     encode_list encode_uint8 buf map;
     (* write request length *)
@@ -19864,7 +19858,7 @@ module Xinput = struct
   let encode_valuator_state buf (v : valuator_state) =
     encode_enum encode_uint8 identity input_class_int_of_enum buf v.class_id;
     encode_uint8 buf v.len;
-    encode_uint8 buf (identity ((* Parsetree.Int32 *) List.length v.valuators));
+    encode_uint8 buf ((* primitive Parsetree.Int32 *) List.length v.valuators);
     encode_mask encode_uint8 identity valuator_state_mode_mask_int_of_mask buf
       v.mode;
     encode_list encode_int32 buf v.valuators;
@@ -19941,7 +19935,7 @@ module Xinput = struct
     (* reserve request length *)
     encode_pad buf 2;
     encode_uint8 buf first_valuator;
-    encode_uint8 buf (identity ((* Parsetree.Int32 *) List.length valuators));
+    encode_uint8 buf ((* primitive Parsetree.Int32 *) List.length valuators);
     encode_pad buf 1;
     encode_list encode_int32 buf valuators;
     (* write request length *)
@@ -20015,7 +20009,7 @@ module Xinput = struct
       v.control_id;
     encode_uint16 buf v.len;
     encode_int32 buf
-      (identity ((* Parsetree.Card32 *) List.length v.resolution_values));
+      ((* primitive Parsetree.Card32 *) List.length v.resolution_values);
     encode_list encode_int32 buf v.resolution_values;
     encode_list encode_int32 buf v.resolution_min;
     encode_list encode_int32 buf v.resolution_max;
@@ -20345,7 +20339,7 @@ module Xinput = struct
     encode_uint16 buf v.len;
     encode_uint8 buf v.first_valuator;
     encode_uint8 buf
-      (identity ((* Parsetree.Card32 *) List.length v.resolution_values));
+      ((* primitive Parsetree.Card32 *) List.length v.resolution_values);
     encode_pad buf 2;
     encode_list encode_int32 buf v.resolution_values;
     ()
@@ -20916,7 +20910,7 @@ module Xinput = struct
     encode_enum encode_uint16 identity hierarchy_change_type_int_of_enum buf
       v.type_;
     encode_uint16 buf v.len;
-    encode_uint16 buf (identity (String.length v.name));
+    encode_uint16 buf (String.length v.name);
     encode_bool buf v.send_core;
     encode_bool buf v.enable;
     encode_string buf v.name;
@@ -21111,7 +21105,7 @@ module Xinput = struct
   let encode_xi_change_hierarchy ~(changes : hierarchy_change list) buf =
     (* opcode *)
     encode_uint8 buf 43;
-    encode_uint8 buf (identity ((* invalid_argument *) List.length changes));
+    encode_uint8 buf ((* invalid_argument *) List.length changes);
     (* reserve request length *)
     encode_pad buf 2;
     encode_pad buf 3;
@@ -21278,7 +21272,7 @@ module Xinput = struct
 
   let encode_event_mask buf (v : event_mask) =
     encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
-    encode_uint16 buf (identity ((* Parsetree.Card32 *) List.length v.mask));
+    encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length v.mask);
     encode_list encode_mask encode_int32 identity xi_event_mask_int_of_mask buf
       v.mask;
     ()
@@ -21290,7 +21284,7 @@ module Xinput = struct
     Xproto.encode_window buf window;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_uint16 buf (identity ((* invalid_argument *) List.length masks));
+    encode_uint16 buf ((* invalid_argument *) List.length masks);
     encode_pad buf 2;
     encode_list encode_event_mask buf masks;
     (* write request length *)
@@ -21438,7 +21432,7 @@ module Xinput = struct
     encode_enum encode_uint16 identity device_class_type_int_of_enum buf v.type_;
     encode_uint16 buf v.len;
     encode_device_id buf v.sourceid;
-    encode_uint16 buf (identity ((* Parsetree.Xid *) List.length v.labels));
+    encode_uint16 buf ((* primitive Parsetree.Xid *) List.length v.labels);
     encode_list encode_int32 buf v.state;
     encode_list Xproto.encode_atom buf v.labels;
     ()
@@ -21468,7 +21462,7 @@ module Xinput = struct
     encode_enum encode_uint16 identity device_class_type_int_of_enum buf v.type_;
     encode_uint16 buf v.len;
     encode_device_id buf v.sourceid;
-    encode_uint16 buf (identity ((* Parsetree.Card32 *) List.length v.keys));
+    encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length v.keys);
     encode_list encode_int32 buf v.keys;
     ()
 
@@ -21735,8 +21729,8 @@ module Xinput = struct
     encode_enum encode_uint16 identity device_type_int_of_enum buf v.type_;
     encode_alt_enum encode_device_id identity device_int_of_enum buf
       v.attachment;
-    encode_uint16 buf (identity ((* invalid_argument *) List.length v.classes));
-    encode_uint16 buf (identity (String.length v.name));
+    encode_uint16 buf ((* invalid_argument *) List.length v.classes);
+    encode_uint16 buf (String.length v.name);
     encode_bool buf v.enabled;
     encode_pad buf 1;
     encode_string buf v.name;
@@ -21841,7 +21835,7 @@ module Xinput = struct
       paired_device_mode;
     encode_enum encode_bool bool_of_int grab_owner_int_of_enum buf owner_events;
     encode_pad buf 1;
-    encode_uint16 buf (identity ((* Parsetree.Card32 *) List.length mask));
+    encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length mask);
     encode_list encode_int32 buf mask;
     (* write request length *)
     encode_request_length buf
@@ -22014,8 +22008,8 @@ module Xinput = struct
     Xproto.encode_cursor buf cursor;
     encode_int32 buf detail;
     encode_alt_enum encode_device_id identity device_int_of_enum buf deviceid;
-    encode_uint16 buf (identity ((* Parsetree.Card32 *) List.length modifiers));
-    encode_uint16 buf (identity ((* Parsetree.Card32 *) List.length mask));
+    encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length modifiers);
+    encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length mask);
     encode_enum encode_uint8 identity grab_type_int_of_enum buf grab_type;
     encode_enum encode_uint8 identity grab_mode22_int_of_enum buf grab_mode;
     encode_enum encode_uint8 identity Xproto.grab_mode_int_of_enum buf
@@ -22052,7 +22046,7 @@ module Xinput = struct
     encode_pad buf 2;
     encode_int32 buf detail;
     encode_alt_enum encode_device_id identity device_int_of_enum buf deviceid;
-    encode_uint16 buf (identity ((* Parsetree.Card32 *) List.length modifiers));
+    encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length modifiers);
     encode_enum encode_uint8 identity grab_type_int_of_enum buf grab_type;
     encode_pad buf 3;
     encode_list encode_int32 buf modifiers;
@@ -22210,7 +22204,7 @@ module Xinput = struct
       ~(barriers : barrier_release_pointer_info list) buf =
     (* opcode *)
     encode_uint8 buf 61;
-    encode_int32 buf (identity ((* invalid_argument *) List.length barriers));
+    encode_int32 buf ((* invalid_argument *) List.length barriers);
     (* reserve request length *)
     encode_pad buf 2;
     encode_list encode_barrier_release_pointer_info buf barriers;
@@ -23275,8 +23269,8 @@ module Xinput = struct
     encode_pad buf 2;
     encode_uint8 buf device_id;
     encode_bool buf propagate;
-    encode_uint16 buf (identity ((* Parsetree.Card32 *) List.length classes));
-    encode_uint8 buf (identity ((* invalid_argument *) List.length events));
+    encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length classes);
+    encode_uint8 buf ((* invalid_argument *) List.length events);
     encode_pad buf 3;
     encode_list encode_event_for_send buf events;
     encode_list encode_event_class buf classes;
@@ -23321,10 +23315,10 @@ module Xprint = struct
     Some ({ name; description }, at)
 
   let encode_printer buf (v : printer) =
-    encode_int32 buf (identity (String.length v.name));
+    encode_int32 buf (String.length v.name);
     encode_string buf v.name;
     encode_align buf 4;
-    encode_int32 buf (identity (String.length v.description));
+    encode_int32 buf (String.length v.description);
     encode_string buf v.description;
     encode_align buf 4;
     ()
@@ -23449,10 +23443,10 @@ module Xprint = struct
       buf =
     (* opcode *)
     encode_uint8 buf 1;
-    encode_int32 buf (identity (String.length printer_name));
+    encode_int32 buf (String.length printer_name);
     (* reserve request length *)
     encode_pad buf 2;
-    encode_int32 buf (identity (String.length locale));
+    encode_int32 buf (String.length locale);
     encode_string buf printer_name;
     encode_string buf locale;
     (* write request length *)
@@ -23486,8 +23480,8 @@ module Xprint = struct
     encode_int32 buf context_id;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_int32 buf (identity (String.length printer_name));
-    encode_int32 buf (identity (String.length locale));
+    encode_int32 buf (String.length printer_name);
+    encode_int32 buf (String.length locale);
     encode_string buf printer_name;
     encode_string buf locale;
     (* write request length *)
@@ -23600,9 +23594,9 @@ module Xprint = struct
     Xproto.encode_drawable buf drawable;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_int32 buf (identity ((* Parsetree.Byte *) List.length data));
-    encode_uint16 buf (identity (String.length doc_format));
-    encode_uint16 buf (identity (String.length options));
+    encode_int32 buf ((* primitive Parsetree.Byte *) List.length data);
+    encode_uint16 buf (String.length doc_format);
+    encode_uint16 buf (String.length options);
     encode_list encode_char buf data;
     encode_string buf doc_format;
     encode_string buf options;
@@ -23731,7 +23725,7 @@ module Xprint = struct
     encode_pcontext buf context;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_int32 buf (identity (String.length name));
+    encode_int32 buf (String.length name);
     encode_uint8 buf pool;
     encode_pad buf 3;
     encode_string buf name;
@@ -23949,7 +23943,7 @@ module Xselinux = struct
   let encode_set_device_create_context ~(context : string) buf =
     (* opcode *)
     encode_uint8 buf 1;
-    encode_int32 buf (identity (String.length context));
+    encode_int32 buf (String.length context);
     (* reserve request length *)
     encode_pad buf 2;
     encode_string buf context;
@@ -23985,7 +23979,7 @@ module Xselinux = struct
     encode_int32 buf device;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_int32 buf (identity (String.length context));
+    encode_int32 buf (String.length context);
     encode_string buf context;
     (* write request length *)
     encode_request_length buf
@@ -24018,7 +24012,7 @@ module Xselinux = struct
   let encode_set_window_create_context ~(context : string) buf =
     (* opcode *)
     encode_uint8 buf 5;
-    encode_int32 buf (identity (String.length context));
+    encode_int32 buf (String.length context);
     (* reserve request length *)
     encode_pad buf 2;
     encode_string buf context;
@@ -24096,8 +24090,8 @@ module Xselinux = struct
 
   let encode_list_item buf (v : list_item) =
     Xproto.encode_atom buf v.name;
-    encode_int32 buf (identity (String.length v.object_context));
-    encode_int32 buf (identity (String.length v.data_context));
+    encode_int32 buf (String.length v.object_context);
+    encode_int32 buf (String.length v.data_context);
     encode_string buf v.object_context;
     encode_align buf 4;
     encode_string buf v.data_context;
@@ -24107,7 +24101,7 @@ module Xselinux = struct
   let encode_set_property_create_context ~(context : string) buf =
     (* opcode *)
     encode_uint8 buf 8;
-    encode_int32 buf (identity (String.length context));
+    encode_int32 buf (String.length context);
     (* reserve request length *)
     encode_pad buf 2;
     encode_string buf context;
@@ -24140,7 +24134,7 @@ module Xselinux = struct
   let encode_set_property_use_context ~(context : string) buf =
     (* opcode *)
     encode_uint8 buf 10;
-    encode_int32 buf (identity (String.length context));
+    encode_int32 buf (String.length context);
     (* reserve request length *)
     encode_pad buf 2;
     encode_string buf context;
@@ -24250,7 +24244,7 @@ module Xselinux = struct
   let encode_set_selection_create_context ~(context : string) buf =
     (* opcode *)
     encode_uint8 buf 15;
-    encode_int32 buf (identity (String.length context));
+    encode_int32 buf (String.length context);
     (* reserve request length *)
     encode_pad buf 2;
     encode_string buf context;
@@ -24283,7 +24277,7 @@ module Xselinux = struct
   let encode_set_selection_use_context ~(context : string) buf =
     (* opcode *)
     encode_uint8 buf 17;
-    encode_int32 buf (identity (String.length context));
+    encode_int32 buf (String.length context);
     (* reserve request length *)
     encode_pad buf 2;
     encode_string buf context;
@@ -24728,9 +24722,9 @@ module Xv = struct
 
   let encode_adaptor_info buf (v : adaptor_info) =
     encode_port buf v.base_id;
-    encode_uint16 buf (identity (String.length v.name));
+    encode_uint16 buf (String.length v.name);
     encode_uint16 buf v.num_ports;
-    encode_uint16 buf (identity ((* invalid_argument *) List.length v.formats));
+    encode_uint16 buf ((* invalid_argument *) List.length v.formats);
     encode_mask encode_uint8 identity type_int_of_mask buf v.type_;
     encode_pad buf 1;
     encode_string buf v.name;
@@ -24763,7 +24757,7 @@ module Xv = struct
 
   let encode_encoding_info buf (v : encoding_info) =
     encode_encoding buf v.encoding;
-    encode_uint16 buf (identity (String.length v.name));
+    encode_uint16 buf (String.length v.name);
     encode_uint16 buf v.width;
     encode_uint16 buf v.height;
     encode_pad buf 2;
@@ -24801,8 +24795,8 @@ module Xv = struct
     encode_int32 buf v.id;
     encode_uint16 buf v.width;
     encode_uint16 buf v.height;
-    encode_int32 buf (identity ((* Parsetree.Card8 *) List.length v.data));
-    encode_int32 buf (identity ((* Parsetree.Card32 *) List.length v.pitches));
+    encode_int32 buf ((* primitive Parsetree.Card8 *) List.length v.data);
+    encode_int32 buf ((* primitive Parsetree.Card32 *) List.length v.pitches);
     encode_list encode_int32 buf v.pitches;
     encode_list encode_int32 buf v.offsets;
     encode_list encode_uint8 buf v.data;
@@ -24834,7 +24828,7 @@ module Xv = struct
     encode_mask encode_int32 identity attribute_flag_int_of_mask buf v.flags;
     encode_int32 buf v.min;
     encode_int32 buf v.max;
-    encode_int32 buf (identity (String.length v.name));
+    encode_int32 buf (String.length v.name);
     encode_string buf v.name;
     encode_align buf 4;
     ()

@@ -182,8 +182,9 @@ let rec gen_expr ctx out = function
       Printf.fprintf out "sum_of_expr (fun list_element_ref -> %a) %s"
         (gen_expr (Some "list_element_ref"))
         by_expr (Ident.snake field)
-  (* Param refs just don't work this way. *)
-  | Param_ref { param; type_ = _ } -> output_string out (Ident.snake param)
+  (* FIXME hoist param_ref as a function argument *)
+  | Param_ref { param; type_ = _ } ->
+      Printf.fprintf out "(* param_ref *) %s" (Ident.snake param)
   | Enum_ref _ -> failwith "gen_expr enum_ref"
   | Pop_count _ -> failwith "gen_expr pop_count"
   | List_element_ref -> (
@@ -282,7 +283,6 @@ let gen_field_type ctx out = function
   | { ft_type = _; ft_allowed = Some (Allowed_alt_enum enum) } ->
       Printf.fprintf out "%a alt_enum" (gen_ident ctx)
         { enum with id_name = Ident.snake enum.id_name ~suffix:"enum" }
-      (* (gen_type ctx) ft_type *)
   | { ft_type; ft_allowed = Some (Allowed_alt_mask mask) } ->
       Printf.fprintf out "(%a, %a) mask" (gen_ident ctx)
         { mask with id_name = Ident.snake mask.id_name ~suffix:"mask" }
@@ -296,9 +296,10 @@ let gen_list_type ctx out t =
 let gen_list_length ctx out t =
   match Ctx.resolve_prim ctx t with
   | Some Char | Some Void -> output_string out "String.length"
+  (* TODO why is this marked as invalid_argument? *)
   | None -> output_string out "(* invalid_argument *) List.length"
   | Some t ->
-      Printf.fprintf out "(* %s *) " (show_prim t);
+      Printf.fprintf out "(* primitive %s *) " (show_prim t);
       output_string out "List.length"
 
 let gen_field_type_of_field ctx out = function
@@ -482,7 +483,7 @@ let gen_encode_field ctx out = function
   | Field_list_length { type_; list; list_type; _ } ->
       (* Can be wrong *)
       Printf.fprintf out "%a buf (%s (%a v.%s));" (gen_encode_type ctx) type_
-        (Option.value ~default:"identity"
+        (Option.value ~default:""
            (gen_of_int (Ctx.resolve_prim ctx type_ |> Option.get)))
         (gen_list_length ctx) list_type (Ident.snake list)
   | Field_list { name; type_; _ } ->
@@ -516,7 +517,7 @@ let gen_encode_arg_field ctx out = function
   | Field_list_length { type_; list; list_type; _ } ->
       (* Can be wrong TODO how?? *)
       Printf.fprintf out "%a buf (%s (%a %s));" (gen_encode_type ctx) type_
-        (Option.value ~default:"identity"
+        (Option.value ~default:""
            (gen_of_int (Ctx.resolve_prim ctx type_ |> Option.get)))
         (gen_list_length ctx) list_type (Ident.snake list)
   | Field_list { name; type_; _ } ->
