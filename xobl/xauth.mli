@@ -1,4 +1,4 @@
-val path : unit -> string option
+val path_from_env : unit -> string option
 (** Get the path of the .Xauthority file from (in order of precedence):
     - $XAUTHORITY
     - $HOME/.Xauthority

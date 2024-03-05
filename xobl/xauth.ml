@@ -13,7 +13,7 @@ let xauth_path_from_windows_home () =
   |> Option.map (fun username ->
          Filename.concat (Filename.concat "Users" username) ".Xauthority")
 
-let path () =
+let path_from_env () =
   match xauth_path_from_env () with
   | Some path -> Some path
   | None -> (

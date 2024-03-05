@@ -5,7 +5,7 @@ let get_socket_params ~display = function
   | Display_name.Unix_domain_socket path ->
       let* localhost = Lwt_unix.gethostname () in
       let auth =
-        let& xauth_path = Xauth.path () in
+        let& xauth_path = Xauth.path_from_env () in
         try
           Xauth.entries_from_file xauth_path
           |> Xauth.select_best ~family:Xauth.Family.Local ~address:localhost
