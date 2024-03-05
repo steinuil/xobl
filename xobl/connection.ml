@@ -78,7 +78,7 @@ let read_response_from sock =
     | _ (* event *) -> Lwt.return (Some (`Event buf))
 
 module Xid_seed = struct
-  type seed = { mutable last : int32; inc : int32; base : int32; max : int32 }
+  type t = { mutable last : int32; inc : int32; base : int32; max : int32 }
 
   let make ~base ~mask =
     let inc = Int32.(logand mask (neg mask)) in
@@ -99,7 +99,7 @@ end
 type connection = {
   socket : Lwt_unix.file_descr;
   display_info : Xproto.setup;
-  xid_seed : Xid_seed.seed;
+  xid_seed : Xid_seed.t;
   mutable sequence_number : int;
   screen : int;
 }
