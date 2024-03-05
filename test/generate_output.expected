@@ -854,6 +854,43 @@ module Xproto = struct
   }
   [@@deriving sexp]
 
+  let decode_key_press_event buf ~at : (key_press_event * int) option =
+    let orig = at in
+    let at = at + 1 in
+    let* detail, at = decode_keycode buf ~at in
+    let* _sequence_number, at = decode_uint16 buf ~at in
+    let* time, at = decode_timestamp buf ~at in
+    let* root, at = decode_window buf ~at in
+    let* event, at = decode_window buf ~at in
+    let* child, at =
+      decode_alt_enum decode_window identity window_enum_of_int buf ~at
+    in
+    let* root_x, at = decode_int16 buf ~at in
+    let* root_y, at = decode_int16 buf ~at in
+    let* event_x, at = decode_int16 buf ~at in
+    let* event_y, at = decode_int16 buf ~at in
+    let* state, at =
+      decode_mask decode_uint16 Int64.of_int key_but_mask_mask_of_int64 buf ~at
+    in
+    let* same_screen, at = decode_bool buf ~at in
+    let at = at + 1 in
+    ignore orig;
+    Some
+      ( {
+          detail;
+          time;
+          root;
+          event;
+          child;
+          root_x;
+          root_y;
+          event_x;
+          event_y;
+          state;
+          same_screen;
+        },
+        at )
+
   type key_release_event = key_press_event [@@deriving sexp]
 
   type button_mask = [ `D1 | `D2 | `D3 | `D4 | `D5 | `Any ] list
@@ -896,6 +933,43 @@ module Xproto = struct
     same_screen : bool;
   }
   [@@deriving sexp]
+
+  let decode_button_press_event buf ~at : (button_press_event * int) option =
+    let orig = at in
+    let at = at + 1 in
+    let* detail, at = decode_button buf ~at in
+    let* _sequence_number, at = decode_uint16 buf ~at in
+    let* time, at = decode_timestamp buf ~at in
+    let* root, at = decode_window buf ~at in
+    let* event, at = decode_window buf ~at in
+    let* child, at =
+      decode_alt_enum decode_window identity window_enum_of_int buf ~at
+    in
+    let* root_x, at = decode_int16 buf ~at in
+    let* root_y, at = decode_int16 buf ~at in
+    let* event_x, at = decode_int16 buf ~at in
+    let* event_y, at = decode_int16 buf ~at in
+    let* state, at =
+      decode_mask decode_uint16 Int64.of_int key_but_mask_mask_of_int64 buf ~at
+    in
+    let* same_screen, at = decode_bool buf ~at in
+    let at = at + 1 in
+    ignore orig;
+    Some
+      ( {
+          detail;
+          time;
+          root;
+          event;
+          child;
+          root_x;
+          root_y;
+          event_x;
+          event_y;
+          state;
+          same_screen;
+        },
+        at )
 
   type button_release_event = button_press_event [@@deriving sexp]
   type motion_enum = [ `Normal | `Hint ] [@@deriving sexp]
@@ -23118,6 +23192,98 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
+  let decode_key_press_event buf ~at : (key_press_event * int) option =
+    let orig = at in
+    let at = at + 1 in
+    let* deviceid, at =
+      decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+    in
+    let* _sequence_number, at = decode_uint16 buf ~at in
+    let* time, at =
+      decode_alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int
+        buf ~at
+    in
+    let* detail, at = decode_int32 buf ~at in
+    let* root, at = Xproto.decode_window buf ~at in
+    let* event, at = Xproto.decode_window buf ~at in
+    let* child, at = Xproto.decode_window buf ~at in
+    let* root_x, at = decode_fp1616 buf ~at in
+    let* root_y, at = decode_fp1616 buf ~at in
+    let* event_x, at = decode_fp1616 buf ~at in
+    let* event_y, at = decode_fp1616 buf ~at in
+    let* buttons_len, at = decode_uint16 buf ~at in
+    let buttons_len = buttons_len in
+    let* valuators_len, at = decode_uint16 buf ~at in
+    let valuators_len = valuators_len in
+    let* sourceid, at =
+      decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+    in
+    let at = at + 2 in
+    let* flags, at =
+      decode_mask decode_int32 Int64.of_int key_event_flags_mask_of_int64 buf
+        ~at
+    in
+    let* mods, at = decode_modifier_info buf ~at in
+    let* group, at = decode_group_info buf ~at in
+    let* button_mask, at = decode_list decode_int32 buttons_len buf ~at in
+    let* valuator_mask, at = decode_list decode_int32 valuators_len buf ~at in
+    let* axisvalues, at =
+      let length =
+        sum_of_expr
+          (fun list_element_ref -> pop_count list_element_ref)
+          valuator_mask
+      in
+      decode_list decode_fp3232 length buf ~at
+    in
+    ignore orig;
+    Some
+      ( {
+          deviceid;
+          time;
+          detail;
+          root;
+          event;
+          child;
+          root_x;
+          root_y;
+          event_x;
+          event_y;
+          sourceid;
+          flags;
+          mods;
+          group;
+          button_mask;
+          valuator_mask;
+          axisvalues;
+        },
+        at )
+
+  let encode_key_press_event buf (v : key_press_event) =
+    encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
+    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
+      v.time;
+    encode_int32 buf v.detail;
+    Xproto.encode_window buf v.root;
+    Xproto.encode_window buf v.event;
+    Xproto.encode_window buf v.child;
+    encode_fp1616 buf v.root_x;
+    encode_fp1616 buf v.root_y;
+    encode_fp1616 buf v.event_x;
+    encode_fp1616 buf v.event_y;
+    encode_uint16 buf
+      ((* primitive Parsetree.Card32 *) List.length v.button_mask);
+    encode_uint16 buf
+      ((* primitive Parsetree.Card32 *) List.length v.valuator_mask);
+    encode_alt_enum encode_device_id identity device_int_of_enum buf v.sourceid;
+    encode_pad buf 2;
+    encode_mask encode_int32 identity key_event_flags_int_of_mask buf v.flags;
+    encode_modifier_info buf v.mods;
+    encode_group_info buf v.group;
+    encode_list encode_int32 buf v.button_mask;
+    encode_list encode_int32 buf v.valuator_mask;
+    encode_list encode_fp3232 buf v.axisvalues;
+    ()
+
   type key_release_event = key_press_event [@@deriving sexp]
 
   let encode_key_release_event = encode_key_press_event
@@ -23152,6 +23318,99 @@ module Xinput = struct
     axisvalues : fp3232 list;
   }
   [@@deriving sexp]
+
+  let decode_button_press_event buf ~at : (button_press_event * int) option =
+    let orig = at in
+    let at = at + 1 in
+    let* deviceid, at =
+      decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+    in
+    let* _sequence_number, at = decode_uint16 buf ~at in
+    let* time, at =
+      decode_alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int
+        buf ~at
+    in
+    let* detail, at = decode_int32 buf ~at in
+    let* root, at = Xproto.decode_window buf ~at in
+    let* event, at = Xproto.decode_window buf ~at in
+    let* child, at = Xproto.decode_window buf ~at in
+    let* root_x, at = decode_fp1616 buf ~at in
+    let* root_y, at = decode_fp1616 buf ~at in
+    let* event_x, at = decode_fp1616 buf ~at in
+    let* event_y, at = decode_fp1616 buf ~at in
+    let* buttons_len, at = decode_uint16 buf ~at in
+    let buttons_len = buttons_len in
+    let* valuators_len, at = decode_uint16 buf ~at in
+    let valuators_len = valuators_len in
+    let* sourceid, at =
+      decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+    in
+    let at = at + 2 in
+    let* flags, at =
+      decode_mask decode_int32 Int64.of_int pointer_event_flags_mask_of_int64
+        buf ~at
+    in
+    let* mods, at = decode_modifier_info buf ~at in
+    let* group, at = decode_group_info buf ~at in
+    let* button_mask, at = decode_list decode_int32 buttons_len buf ~at in
+    let* valuator_mask, at = decode_list decode_int32 valuators_len buf ~at in
+    let* axisvalues, at =
+      let length =
+        sum_of_expr
+          (fun list_element_ref -> pop_count list_element_ref)
+          valuator_mask
+      in
+      decode_list decode_fp3232 length buf ~at
+    in
+    ignore orig;
+    Some
+      ( {
+          deviceid;
+          time;
+          detail;
+          root;
+          event;
+          child;
+          root_x;
+          root_y;
+          event_x;
+          event_y;
+          sourceid;
+          flags;
+          mods;
+          group;
+          button_mask;
+          valuator_mask;
+          axisvalues;
+        },
+        at )
+
+  let encode_button_press_event buf (v : button_press_event) =
+    encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
+    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
+      v.time;
+    encode_int32 buf v.detail;
+    Xproto.encode_window buf v.root;
+    Xproto.encode_window buf v.event;
+    Xproto.encode_window buf v.child;
+    encode_fp1616 buf v.root_x;
+    encode_fp1616 buf v.root_y;
+    encode_fp1616 buf v.event_x;
+    encode_fp1616 buf v.event_y;
+    encode_uint16 buf
+      ((* primitive Parsetree.Card32 *) List.length v.button_mask);
+    encode_uint16 buf
+      ((* primitive Parsetree.Card32 *) List.length v.valuator_mask);
+    encode_alt_enum encode_device_id identity device_int_of_enum buf v.sourceid;
+    encode_pad buf 2;
+    encode_mask encode_int32 identity pointer_event_flags_int_of_mask buf
+      v.flags;
+    encode_modifier_info buf v.mods;
+    encode_group_info buf v.group;
+    encode_list encode_int32 buf v.button_mask;
+    encode_list encode_int32 buf v.valuator_mask;
+    encode_list encode_fp3232 buf v.axisvalues;
+    ()
 
   type button_release_event = button_press_event [@@deriving sexp]
 
@@ -23517,6 +23776,72 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
+  let decode_raw_key_press_event buf ~at : (raw_key_press_event * int) option =
+    let orig = at in
+    let at = at + 1 in
+    let* deviceid, at =
+      decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+    in
+    let* _sequence_number, at = decode_uint16 buf ~at in
+    let* time, at =
+      decode_alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int
+        buf ~at
+    in
+    let* detail, at = decode_int32 buf ~at in
+    let* sourceid, at = decode_device_id buf ~at in
+    let* valuators_len, at = decode_uint16 buf ~at in
+    let valuators_len = valuators_len in
+    let* flags, at =
+      decode_mask decode_int32 Int64.of_int key_event_flags_mask_of_int64 buf
+        ~at
+    in
+    let at = at + 4 in
+    let* valuator_mask, at = decode_list decode_int32 valuators_len buf ~at in
+    let* axisvalues, at =
+      let length =
+        sum_of_expr
+          (fun list_element_ref -> pop_count list_element_ref)
+          valuator_mask
+      in
+      decode_list decode_fp3232 length buf ~at
+    in
+    let* axisvalues_raw, at =
+      let length =
+        sum_of_expr
+          (fun list_element_ref -> pop_count list_element_ref)
+          valuator_mask
+      in
+      decode_list decode_fp3232 length buf ~at
+    in
+    ignore orig;
+    Some
+      ( {
+          deviceid;
+          time;
+          detail;
+          sourceid;
+          flags;
+          valuator_mask;
+          axisvalues;
+          axisvalues_raw;
+        },
+        at )
+
+  let encode_raw_key_press_event buf (v : raw_key_press_event) =
+    encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
+    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
+      v.time;
+    encode_int32 buf v.detail;
+    encode_device_id buf v.sourceid;
+    encode_uint16 buf
+      ((* primitive Parsetree.Card32 *) List.length v.valuator_mask);
+    encode_mask encode_int32 identity key_event_flags_int_of_mask buf v.flags;
+    encode_pad buf 4;
+    encode_list encode_int32 buf v.valuator_mask;
+    encode_list encode_fp3232 buf v.axisvalues;
+    encode_list encode_fp3232 buf v.axisvalues_raw;
+    ()
+
   type raw_key_release_event = raw_key_press_event [@@deriving sexp]
 
   let encode_raw_key_release_event = encode_raw_key_press_event
@@ -23532,6 +23857,74 @@ module Xinput = struct
     axisvalues_raw : fp3232 list;
   }
   [@@deriving sexp]
+
+  let decode_raw_button_press_event buf ~at :
+      (raw_button_press_event * int) option =
+    let orig = at in
+    let at = at + 1 in
+    let* deviceid, at =
+      decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+    in
+    let* _sequence_number, at = decode_uint16 buf ~at in
+    let* time, at =
+      decode_alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int
+        buf ~at
+    in
+    let* detail, at = decode_int32 buf ~at in
+    let* sourceid, at = decode_device_id buf ~at in
+    let* valuators_len, at = decode_uint16 buf ~at in
+    let valuators_len = valuators_len in
+    let* flags, at =
+      decode_mask decode_int32 Int64.of_int pointer_event_flags_mask_of_int64
+        buf ~at
+    in
+    let at = at + 4 in
+    let* valuator_mask, at = decode_list decode_int32 valuators_len buf ~at in
+    let* axisvalues, at =
+      let length =
+        sum_of_expr
+          (fun list_element_ref -> pop_count list_element_ref)
+          valuator_mask
+      in
+      decode_list decode_fp3232 length buf ~at
+    in
+    let* axisvalues_raw, at =
+      let length =
+        sum_of_expr
+          (fun list_element_ref -> pop_count list_element_ref)
+          valuator_mask
+      in
+      decode_list decode_fp3232 length buf ~at
+    in
+    ignore orig;
+    Some
+      ( {
+          deviceid;
+          time;
+          detail;
+          sourceid;
+          flags;
+          valuator_mask;
+          axisvalues;
+          axisvalues_raw;
+        },
+        at )
+
+  let encode_raw_button_press_event buf (v : raw_button_press_event) =
+    encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
+    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
+      v.time;
+    encode_int32 buf v.detail;
+    encode_device_id buf v.sourceid;
+    encode_uint16 buf
+      ((* primitive Parsetree.Card32 *) List.length v.valuator_mask);
+    encode_mask encode_int32 identity pointer_event_flags_int_of_mask buf
+      v.flags;
+    encode_pad buf 4;
+    encode_list encode_int32 buf v.valuator_mask;
+    encode_list encode_fp3232 buf v.axisvalues;
+    encode_list encode_fp3232 buf v.axisvalues_raw;
+    ()
 
   type raw_button_release_event = raw_button_press_event [@@deriving sexp]
 
@@ -23578,6 +23971,72 @@ module Xinput = struct
     axisvalues : fp3232 list;
   }
   [@@deriving sexp]
+
+  let decode_touch_begin_event buf ~at : (touch_begin_event * int) option =
+    let orig = at in
+    let at = at + 1 in
+    let* deviceid, at =
+      decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+    in
+    let* _sequence_number, at = decode_uint16 buf ~at in
+    let* time, at =
+      decode_alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int
+        buf ~at
+    in
+    let* detail, at = decode_int32 buf ~at in
+    let* root, at = Xproto.decode_window buf ~at in
+    let* event, at = Xproto.decode_window buf ~at in
+    let* child, at = Xproto.decode_window buf ~at in
+    let* root_x, at = decode_fp1616 buf ~at in
+    let* root_y, at = decode_fp1616 buf ~at in
+    let* event_x, at = decode_fp1616 buf ~at in
+    let* event_y, at = decode_fp1616 buf ~at in
+    let* buttons_len, at = decode_uint16 buf ~at in
+    let buttons_len = buttons_len in
+    let* valuators_len, at = decode_uint16 buf ~at in
+    let valuators_len = valuators_len in
+    let* sourceid, at =
+      decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+    in
+    let at = at + 2 in
+    let* flags, at =
+      decode_mask decode_int32 Int64.of_int touch_event_flags_mask_of_int64 buf
+        ~at
+    in
+    let* mods, at = decode_modifier_info buf ~at in
+    let* group, at = decode_group_info buf ~at in
+    let* button_mask, at = decode_list decode_int32 buttons_len buf ~at in
+    let* valuator_mask, at = decode_list decode_int32 valuators_len buf ~at in
+    let* axisvalues, at =
+      let length =
+        sum_of_expr
+          (fun list_element_ref -> pop_count list_element_ref)
+          valuator_mask
+      in
+      decode_list decode_fp3232 length buf ~at
+    in
+    ignore orig;
+    Some
+      ( {
+          deviceid;
+          time;
+          detail;
+          root;
+          event;
+          child;
+          root_x;
+          root_y;
+          event_x;
+          event_y;
+          sourceid;
+          flags;
+          mods;
+          group;
+          button_mask;
+          valuator_mask;
+          axisvalues;
+        },
+        at )
 
   type touch_update_event = touch_begin_event [@@deriving sexp]
   type touch_end_event = touch_begin_event [@@deriving sexp]
@@ -23645,6 +24104,58 @@ module Xinput = struct
     axisvalues_raw : fp3232 list;
   }
   [@@deriving sexp]
+
+  let decode_raw_touch_begin_event buf ~at :
+      (raw_touch_begin_event * int) option =
+    let orig = at in
+    let at = at + 1 in
+    let* deviceid, at =
+      decode_alt_enum decode_device_id identity device_enum_of_int buf ~at
+    in
+    let* _sequence_number, at = decode_uint16 buf ~at in
+    let* time, at =
+      decode_alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int
+        buf ~at
+    in
+    let* detail, at = decode_int32 buf ~at in
+    let* sourceid, at = decode_device_id buf ~at in
+    let* valuators_len, at = decode_uint16 buf ~at in
+    let valuators_len = valuators_len in
+    let* flags, at =
+      decode_mask decode_int32 Int64.of_int touch_event_flags_mask_of_int64 buf
+        ~at
+    in
+    let at = at + 4 in
+    let* valuator_mask, at = decode_list decode_int32 valuators_len buf ~at in
+    let* axisvalues, at =
+      let length =
+        sum_of_expr
+          (fun list_element_ref -> pop_count list_element_ref)
+          valuator_mask
+      in
+      decode_list decode_fp3232 length buf ~at
+    in
+    let* axisvalues_raw, at =
+      let length =
+        sum_of_expr
+          (fun list_element_ref -> pop_count list_element_ref)
+          valuator_mask
+      in
+      decode_list decode_fp3232 length buf ~at
+    in
+    ignore orig;
+    Some
+      ( {
+          deviceid;
+          time;
+          detail;
+          sourceid;
+          flags;
+          valuator_mask;
+          axisvalues;
+          axisvalues_raw;
+        },
+        at )
 
   type raw_touch_update_event = raw_touch_begin_event [@@deriving sexp]
   type raw_touch_end_event = raw_touch_begin_event [@@deriving sexp]
