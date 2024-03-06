@@ -160,8 +160,27 @@ type keysym_def = {
 }
 [@@deriving to_yojson]
 
+let keysym_def_list_to_yojson keysyms : Yojson.Safe.t =
+  `List (List.map ~f:keysym_def_to_yojson keysyms)
+
 let keysym_def ~status ~is_deprecated
-    Parser.{ name; keysym; unicode_char; comment; _ } =
+    Parser.{ name; keysym; unicode_char; comment; alias_for; _ } =
+  let status =
+    match status with
+    | Canonical ->
+        if Option.is_some alias_for then
+          Printf.ksprintf failwith "Canonical keysym was an alias: %s" name
+        else Canonical
+    | Alias alias -> (
+        (* If this is already an alias, keep the original comment *)
+        match alias_for with
+        | Some alias_for when String.(alias_for.name = alias.name) ->
+            Alias alias_for
+        | Some alias_for ->
+            Printf.ksprintf failwith "Alias name has changed: %s -> %s"
+              alias_for.name alias.name
+        | None -> Alias alias)
+  in
   { name; keysym; unicode_char; comment; status; is_deprecated }
 
 let resolve_single_keysym by_code k =
@@ -187,11 +206,9 @@ let resolve_single_keysym by_code k =
         if String.(non_deprecated.name = k.name) then
           keysym_def k ~status:Canonical ~is_deprecated:false
         else
-          let alias =
-            Option.value k.alias_for
-              ~default:{ name = non_deprecated.name; info = None }
-          in
-          keysym_def k ~status:(Alias alias) ~is_deprecated:true
+          keysym_def k
+            ~status:(Alias { name = non_deprecated.name; info = None })
+            ~is_deprecated:true
       else if have_alias_for = List.length aliases - 1 then
         (* If all other aliases are explicitly marked as alias,
            the only one not marked as alias is canonical. *)
@@ -215,10 +232,8 @@ let resolve_single_keysym by_code k =
         if String.(first.name = k.name) then
           keysym_def k ~status:Canonical ~is_deprecated:k.is_deprecated
         else
-          let alias =
-            Option.value k.alias_for ~default:{ name = first.name; info = None }
-          in
-          keysym_def k ~status:(Alias alias)
+          keysym_def k
+            ~status:(Alias { name = first.name; info = None })
             ~is_deprecated:(not k.explicitly_non_deprecated)
 
 let resolve_all_keysyms keysyms =
@@ -227,8 +242,30 @@ let resolve_all_keysyms keysyms =
       Hashtbl.add_list by_code keysym.Parser.keysym keysym);
   List.map keysyms ~f:(resolve_single_keysym by_code)
 
+let output_ocaml_keysym_of_string out keysyms =
+  output_string out "let keysym_of_string_map = Hashtbl.of_seq (List.to_seq [\n";
+  List.iter keysyms ~f:(fun { name; keysym; _ } ->
+      Printf.fprintf out "(%S, %#x);\n" name keysym);
+  output_string out "]);;\n"
+
+let output_ocaml_keysym_to_string out keysyms =
+  output_string out "let keysym_to_string_map = Hashtbl.of_seq (List.to_seq [\n";
+  List.iter keysyms ~f:(function
+    | { name; keysym; status = Canonical; _ } ->
+        Printf.fprintf out "(%#x, %S);\n" keysym name
+    | _ -> ());
+  output_string out "]);;\n"
+
 let () =
-  let keysyms = In_channel.with_open_text Sys.argv.(1) Parser.parse_lines in
+  let command = Sys.argv.(1) in
+  let keysymdef_h = Sys.argv.(2) in
+  let keysyms = In_channel.with_open_text keysymdef_h Parser.parse_lines in
   let keysyms = resolve_all_keysyms keysyms in
-  List.iter keysyms ~f:(fun keysym ->
-      keysym_def_to_yojson keysym |> Yojson.Safe.to_string |> print_endline)
+  match command with
+  | "json" ->
+      keysym_def_list_to_yojson keysyms
+      |> Yojson.Safe.to_string |> print_endline
+  | "ocaml" ->
+      output_ocaml_keysym_of_string stdout keysyms;
+      output_ocaml_keysym_to_string stdout keysyms
+  | _ -> Printf.ksprintf failwith "invalid command: %s" command
