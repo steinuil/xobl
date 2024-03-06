@@ -7,66 +7,66 @@
   (pps ppx_inline_test ppx_sexp_conv ppx_expect)))
 
 (rule
- (targets xproto.ml
-          bigreq.ml
-          composite.ml
-          damage.ml
-          dpms.ml
-          dri2.ml
-          dri3.ml
-          ge.ml
-          glx.ml
-          present.ml
-          randr.ml
-          record.ml
-          render.ml
-          res.ml
-          screensaver.ml
-          shape.ml
-          shm.ml
-          sync.ml
-          xc_misc.ml
-          xf86dri.ml
-          ; xf86vidmode.ml
-          xinerama.ml
-          xfixes.ml
-          xinput.ml
-          xprint.ml
-          xselinux.ml
-          xtest.ml
-          xv.ml
-          xvmc.ml
-)
- (deps ../xml-xcb/xproto.xml
-       ../xml-xcb/bigreq.xml
-       ../xml-xcb/composite.xml
-       ../xml-xcb/damage.xml
-       ../xml-xcb/dpms.xml
-       ../xml-xcb/dri2.xml
-       ../xml-xcb/dri3.xml
-       ../xml-xcb/ge.xml
-       ../xml-xcb/glx.xml
-       ../xml-xcb/present.xml
-       ../xml-xcb/randr.xml
-       ../xml-xcb/record.xml
-       ../xml-xcb/render.xml
-       ../xml-xcb/res.xml
-       ../xml-xcb/screensaver.xml
-       ../xml-xcb/shape.xml
-       ../xml-xcb/shm.xml
-       ../xml-xcb/sync.xml
-       ../xml-xcb/xc_misc.xml
-       ../xml-xcb/xf86dri.xml
-       ../xml-xcb/xf86vidmode.xml
-       ../xml-xcb/xinerama.xml
-       ../xml-xcb/xfixes.xml
-       ../xml-xcb/xinput.xml
-       ../xml-xcb/xprint.xml
-       ../xml-xcb/xselinux.xml
-       ../xml-xcb/xtest.xml
-       ../xml-xcb/xv.xml
-       ../xml-xcb/xvmc.xml
-       )
+ (targets
+  xproto.ml
+  bigreq.ml
+  composite.ml
+  damage.ml
+  dpms.ml
+  dri2.ml
+  dri3.ml
+  ge.ml
+  glx.ml
+  present.ml
+  randr.ml
+  record.ml
+  render.ml
+  res.ml
+  screensaver.ml
+  shape.ml
+  shm.ml
+  sync.ml
+  xc_misc.ml
+  xf86dri.ml
+  ; xf86vidmode.ml
+  xinerama.ml
+  xfixes.ml
+  xinput.ml
+  xprint.ml
+  xselinux.ml
+  xtest.ml
+  xv.ml
+  xvmc.ml)
+ (deps
+  ../xml-xcb/xproto.xml
+  ../xml-xcb/bigreq.xml
+  ../xml-xcb/composite.xml
+  ../xml-xcb/damage.xml
+  ../xml-xcb/dpms.xml
+  ../xml-xcb/dri2.xml
+  ../xml-xcb/dri3.xml
+  ../xml-xcb/ge.xml
+  ../xml-xcb/glx.xml
+  ../xml-xcb/present.xml
+  ../xml-xcb/randr.xml
+  ../xml-xcb/record.xml
+  ../xml-xcb/render.xml
+  ../xml-xcb/res.xml
+  ../xml-xcb/screensaver.xml
+  ../xml-xcb/shape.xml
+  ../xml-xcb/shm.xml
+  ../xml-xcb/sync.xml
+  ../xml-xcb/xc_misc.xml
+  ../xml-xcb/xf86dri.xml
+  ../xml-xcb/xf86vidmode.xml
+  ../xml-xcb/xinerama.xml
+  ../xml-xcb/xfixes.xml
+  ../xml-xcb/xinput.xml
+  ../xml-xcb/xprint.xml
+  ../xml-xcb/xselinux.xml
+  ../xml-xcb/xtest.xml
+  ../xml-xcb/xv.xml
+  ../xml-xcb/xvmc.xml)
  (action
   (chdir
    %{workspace_root}

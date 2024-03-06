@@ -15,4 +15,3 @@
  (modules xeyes)
  (public_name xeyes)
  (libraries xobl lwt.unix))
-
