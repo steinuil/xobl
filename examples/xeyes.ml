@@ -61,7 +61,7 @@ let main (conn : Connection.t) =
       | Some (`Reply _) -> Lwt.return_unit
       | Some (`Event _buf) ->
           (* TODO maybe we should debounce events based on their type *)
-          (* queued_events := !queued_events @ [ buf ]; *)
+          queued_events := !queued_events @ [ buf ];
           loop ()
       | _ -> failwith "a"
     in
@@ -84,7 +84,7 @@ let main (conn : Connection.t) =
         Xproto.encode_create_window ~depth:root.root_depth ~wid
           ~parent:root.root ~x:0 ~y:0 ~width:!width ~height:!height
           ~border_width:0 ~class_:`Input_output ~visual:root.root_visual
-          ~event_mask:[ `Exposure; `Structure_notify ]
+          ~event_mask:[ `Exposure; `Structure_notify; `Key_press ]
           ~background_pixel:root.white_pixel;
         Xproto.encode_change_window_attributes ~window:root.root
           ~event_mask:[ `Pointer_motion ];
@@ -142,7 +142,21 @@ let main (conn : Connection.t) =
 
   let handle_event buf =
     match Char.code (Bytes.get buf 0) land lnot 0x80 with
+    | 0x02 ->
+        let ev, _ = Xproto.decode_key_press_event buf ~at:0 |> Option.get in
+        let* () =
+          Lwt_io.printf "KeyPress: %s\n"
+            (Sexplib.Sexp.to_string_hum (Xproto.sexp_of_key_press_event ev))
+        in
+        Lwt.return_unit
     | 0x0C ->
+        let ev, _ = Xproto.decode_expose_event buf ~at:0 |> Option.get in
+        let* () =
+          Lwt_io.printf "Expose: %s\n"
+            (Sexplib.Sexp.to_string_hum (Xproto.sexp_of_expose_event ev))
+        in
+        width := ev.width;
+        height := ev.height;
         let unit_x = Float.of_int !width /. 20. in
         let unit_y = Float.of_int !height /. 10. in
 
@@ -150,6 +164,10 @@ let main (conn : Connection.t) =
         Lwt.return_unit
     | 0x06 ->
         let ev, _ = Xproto.decode_motion_notify_event buf ~at:0 |> Option.get in
+        let* () =
+          Lwt_io.printf "MotionNotify: %s\n"
+            (Sexplib.Sexp.to_string_hum (Xproto.sexp_of_motion_notify_event ev))
+        in
         let x = ev.event_x in
         let y = ev.event_y in
 
@@ -163,6 +181,11 @@ let main (conn : Connection.t) =
         let ev, _ =
           Xproto.decode_configure_notify_event buf ~at:0 |> Option.get
         in
+        let* () =
+          Lwt_io.printf "ConfigureNotify: %s\n"
+            (Sexplib.Sexp.to_string_hum
+               (Xproto.sexp_of_configure_notify_event ev))
+        in
         let x = ev.x in
         let y = ev.y in
         let w = ev.width in
@@ -170,6 +193,13 @@ let main (conn : Connection.t) =
         width := w;
         height := h;
         win_pos := { x; y };
+        Lwt.return_unit
+    | 0x13 ->
+        let ev, _ = Xproto.decode_map_notify_event buf ~at:0 |> Option.get in
+        let* () =
+          Lwt_io.printf "MapNotify: %s\n"
+            (Sexplib.Sexp.to_string_hum (Xproto.sexp_of_map_notify_event ev))
+        in
         Lwt.return_unit
     | _ ->
         let* () =
@@ -183,6 +213,7 @@ let main (conn : Connection.t) =
     | buf :: rest ->
         queued_events := rest;
         let* () = handle_event buf in
+        let* () = Lwt.pause () in
         loop ()
     | [] -> (
         let* resp = Connection.read conn in
