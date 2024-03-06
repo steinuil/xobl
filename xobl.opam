@@ -15,6 +15,9 @@ depends: [
   "lwt"
   "sexplib"
   "ppx_sexp_conv"
+  "containers"
+  "yojson"
+  "ppx_deriving_yojson"
   "odoc" {with-doc}
 ]
 build: [

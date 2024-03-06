@@ -15,4 +15,13 @@
  (name xobl)
  (synopsis "X11 OCaml Bindings Library")
  (description "Pure OCaml implementation of the X11 protocol")
- (depends xmlm ppx_inline_test ppx_expect ppx_deriving lwt sexplib ppx_sexp_conv))
+ (depends xmlm
+          ppx_inline_test
+          ppx_expect
+          ppx_deriving
+          lwt
+          sexplib
+          ppx_sexp_conv
+          containers
+          yojson
+          ppx_deriving_yojson))

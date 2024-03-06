@@ -3,3 +3,11 @@
  (modules xobl_compile)
  (public_name xobl-compile)
  (libraries xobl_compiler))
+
+ (executable
+  (name compile_keysyms)
+  (modules compile_keysyms)
+  (public_name compile-keysyms)
+  (libraries containers yojson)
+  (preprocess
+   (pps ppx_deriving_yojson)))
