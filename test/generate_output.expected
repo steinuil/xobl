@@ -230,9 +230,7 @@ module Xproto = struct
     | 3 -> Some `Pseudo_color
     | 4 -> Some `True_color
     | 5 -> Some `Direct_color
-    | n ->
-        Printf.printf "unknown visual_class_enum: %d\n" n;
-        None
+    | n -> None
 
   let visual_class_int_of_enum : visual_class_enum -> int = function
     | `Static_gray -> 0
@@ -398,7 +396,7 @@ module Xproto = struct
       | `Color_map_change -> 23
       | `Owner_grab_button -> 24
     in
-    match mask with None -> 0 | Some mask -> int_of_mask to_mask mask
+    match mask with [] -> 0 | mask -> int_of_mask to_mask mask
 
   type backing_store_enum = [ `Not_useful | `When_mapped | `Always ]
   [@@deriving sexp]
@@ -408,9 +406,7 @@ module Xproto = struct
     | 0 -> Some `Not_useful
     | 1 -> Some `When_mapped
     | 2 -> Some `Always
-    | n ->
-        Printf.printf "unknown backing_store_enum: %d\n" n;
-        None
+    | n -> None
 
   let backing_store_int_of_enum : backing_store_enum -> int = function
     | `Not_useful -> 0
@@ -622,9 +618,7 @@ module Xproto = struct
   let image_order_enum_of_int : int -> [> image_order_enum ] option = function
     | 0 -> Some `Lsb_first
     | 1 -> Some `Msb_first
-    | n ->
-        Printf.printf "unknown image_order_enum: %d\n" n;
-        None
+    | n -> None
 
   let image_order_int_of_enum : image_order_enum -> int = function
     | `Lsb_first -> 0
@@ -831,9 +825,7 @@ module Xproto = struct
 
   let window_enum_of_int : int -> [> window_enum ] option = function
     | 0 -> Some `None
-    | n ->
-        Printf.printf "unknown window_enum: %d\n" n;
-        None
+    | n -> None
 
   let window_int_of_enum : window_enum -> int = function `None -> 0
 
@@ -975,9 +967,7 @@ module Xproto = struct
   let motion_enum_of_int : int -> [> motion_enum ] option = function
     | 0 -> Some `Normal
     | 1 -> Some `Hint
-    | n ->
-        Printf.printf "unknown motion_enum: %d\n" n;
-        None
+    | n -> None
 
   let motion_int_of_enum : motion_enum -> int = function
     | `Normal -> 0
@@ -1058,9 +1048,7 @@ module Xproto = struct
     | 5 -> Some `Pointer
     | 6 -> Some `Pointer_root
     | 7 -> Some `None
-    | n ->
-        Printf.printf "unknown notify_detail_enum: %d\n" n;
-        None
+    | n -> None
 
   let notify_detail_int_of_enum : notify_detail_enum -> int = function
     | `Ancestor -> 0
@@ -1080,9 +1068,7 @@ module Xproto = struct
     | 1 -> Some `Grab
     | 2 -> Some `Ungrab
     | 3 -> Some `While_grabbed
-    | n ->
-        Printf.printf "unknown notify_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let notify_mode_int_of_enum : notify_mode_enum -> int = function
     | `Normal -> 0
@@ -1268,9 +1254,7 @@ module Xproto = struct
     | 0 -> Some `Unobscured
     | 1 -> Some `Partially_obscured
     | 2 -> Some `Fully_obscured
-    | n ->
-        Printf.printf "unknown visibility_enum: %d\n" n;
-        None
+    | n -> None
 
   let visibility_int_of_enum : visibility_enum -> int = function
     | `Unobscured -> 0
@@ -1471,9 +1455,7 @@ module Xproto = struct
     | 2 -> Some `Top_if
     | 3 -> Some `Bottom_if
     | 4 -> Some `Opposite
-    | n ->
-        Printf.printf "unknown stack_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let stack_mode_int_of_enum : stack_mode_enum -> int = function
     | `Above -> 0
@@ -1603,9 +1585,7 @@ module Xproto = struct
   let place_enum_of_int : int -> [> place_enum ] option = function
     | 0 -> Some `On_top
     | 1 -> Some `On_bottom
-    | n ->
-        Printf.printf "unknown place_enum: %d\n" n;
-        None
+    | n -> None
 
   let place_int_of_enum : place_enum -> int = function
     | `On_top -> 0
@@ -1640,9 +1620,7 @@ module Xproto = struct
   let property_enum_of_int : int -> [> property_enum ] option = function
     | 0 -> Some `New_value
     | 1 -> Some `Delete
-    | n ->
-        Printf.printf "unknown property_enum: %d\n" n;
-        None
+    | n -> None
 
   let property_int_of_enum : property_enum -> int = function
     | `New_value -> 0
@@ -1695,9 +1673,7 @@ module Xproto = struct
 
   let time_enum_of_int : int -> [> time_enum ] option = function
     | 0 -> Some `Current_time
-    | n ->
-        Printf.printf "unknown time_enum: %d\n" n;
-        None
+    | n -> None
 
   let time_int_of_enum : time_enum -> int = function `Current_time -> 0
 
@@ -1845,9 +1821,7 @@ module Xproto = struct
     | 66 -> Some `Cap_height
     | 67 -> Some `Wm_class
     | 68 -> Some `Wm_transient_for
-    | n ->
-        Printf.printf "unknown atom_enum: %d\n" n;
-        None
+    | n -> None
 
   let atom_int_of_enum : atom_enum -> int = function
     | `None -> 0
@@ -1983,9 +1957,7 @@ module Xproto = struct
     function
     | 0 -> Some `Uninstalled
     | 1 -> Some `Installed
-    | n ->
-        Printf.printf "unknown colormap_state_enum: %d\n" n;
-        None
+    | n -> None
 
   let colormap_state_int_of_enum : colormap_state_enum -> int = function
     | `Uninstalled -> 0
@@ -1995,9 +1967,7 @@ module Xproto = struct
 
   let colormap_enum_of_int : int -> [> colormap_enum ] option = function
     | 0 -> Some `None
-    | n ->
-        Printf.printf "unknown colormap_enum: %d\n" n;
-        None
+    | n -> None
 
   let colormap_int_of_enum : colormap_enum -> int = function `None -> 0
 
@@ -2035,9 +2005,7 @@ module Xproto = struct
     | 8 -> Some `Data8
     | 16 -> Some `Data16
     | 32 -> Some `Data32
-    | n ->
-        Printf.printf "unknown client_message_data_format_enum: %d\n" n;
-        None
+    | n -> None
 
   let client_message_data_format_int_of_enum :
       client_message_data_format_enum -> int = function
@@ -2118,9 +2086,7 @@ module Xproto = struct
     | 0 -> Some `Modifier
     | 1 -> Some `Keyboard
     | 2 -> Some `Pointer
-    | n ->
-        Printf.printf "unknown mapping_enum: %d\n" n;
-        None
+    | n -> None
 
   let mapping_int_of_enum : mapping_enum -> int = function
     | `Modifier -> 0
@@ -2192,9 +2158,7 @@ module Xproto = struct
     | 0 -> Some `Copy_from_parent
     | 1 -> Some `Input_output
     | 2 -> Some `Input_only
-    | n ->
-        Printf.printf "unknown window_class_enum: %d\n" n;
-        None
+    | n -> None
 
   let window_class_int_of_enum : window_class_enum -> int = function
     | `Copy_from_parent -> 0
@@ -2266,9 +2230,7 @@ module Xproto = struct
   let back_pixmap_enum_of_int : int -> [> back_pixmap_enum ] option = function
     | 0 -> Some `None
     | 1 -> Some `Parent_relative
-    | n ->
-        Printf.printf "unknown back_pixmap_enum: %d\n" n;
-        None
+    | n -> None
 
   let back_pixmap_int_of_enum : back_pixmap_enum -> int = function
     | `None -> 0
@@ -2302,9 +2264,7 @@ module Xproto = struct
     | 8 -> Some `South
     | 9 -> Some `South_east
     | 10 -> Some `Static
-    | n ->
-        Printf.printf "unknown gravity_enum: %d\n" n;
-        None
+    | n -> None
 
   let gravity_int_of_enum : gravity_enum -> int = function
     | `Bit_forget -> 0
@@ -2324,9 +2284,7 @@ module Xproto = struct
 
   let pixmap_enum_of_int : int -> [> pixmap_enum ] option = function
     | 0 -> Some `None
-    | n ->
-        Printf.printf "unknown pixmap_enum: %d\n" n;
-        None
+    | n -> None
 
   let pixmap_int_of_enum : pixmap_enum -> int = function `None -> 0
 
@@ -2334,9 +2292,7 @@ module Xproto = struct
 
   let cursor_enum_of_int : int -> [> cursor_enum ] option = function
     | 0 -> Some `None
-    | n ->
-        Printf.printf "unknown cursor_enum: %d\n" n;
-        None
+    | n -> None
 
   let cursor_int_of_enum : cursor_enum -> int = function `None -> 0
 
@@ -2509,9 +2465,7 @@ module Xproto = struct
     | 0 -> Some `Unmapped
     | 1 -> Some `Unviewable
     | 2 -> Some `Viewable
-    | n ->
-        Printf.printf "unknown map_state_enum: %d\n" n;
-        None
+    | n -> None
 
   let map_state_int_of_enum : map_state_enum -> int = function
     | `Unmapped -> 0
@@ -2632,9 +2586,7 @@ module Xproto = struct
   let set_mode_enum_of_int : int -> [> set_mode_enum ] option = function
     | 0 -> Some `Insert
     | 1 -> Some `Delete
-    | n ->
-        Printf.printf "unknown set_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let set_mode_int_of_enum : set_mode_enum -> int = function
     | `Insert -> 0
@@ -2744,9 +2696,7 @@ module Xproto = struct
   let circulate_enum_of_int : int -> [> circulate_enum ] option = function
     | 0 -> Some `Raise_lowest
     | 1 -> Some `Lower_highest
-    | n ->
-        Printf.printf "unknown circulate_enum: %d\n" n;
-        None
+    | n -> None
 
   let circulate_int_of_enum : circulate_enum -> int = function
     | `Raise_lowest -> 0
@@ -2890,9 +2840,7 @@ module Xproto = struct
     | 0 -> Some `Replace
     | 1 -> Some `Prepend
     | 2 -> Some `Append
-    | n ->
-        Printf.printf "unknown prop_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let prop_mode_int_of_enum : prop_mode_enum -> int = function
     | `Replace -> 0
@@ -2933,9 +2881,7 @@ module Xproto = struct
   let get_property_type_enum_of_int : int -> [> get_property_type_enum ] option
       = function
     | 0 -> Some `Any
-    | n ->
-        Printf.printf "unknown get_property_type_enum: %d\n" n;
-        None
+    | n -> None
 
   let get_property_type_int_of_enum : get_property_type_enum -> int = function
     | `Any -> 0
@@ -3067,9 +3013,7 @@ module Xproto = struct
     function
     | 0 -> Some `Pointer_window
     | 1 -> Some `Item_focus
-    | n ->
-        Printf.printf "unknown send_event_dest_enum: %d\n" n;
-        None
+    | n -> None
 
   let send_event_dest_int_of_enum : send_event_dest_enum -> int = function
     | `Pointer_window -> 0
@@ -3095,9 +3039,7 @@ module Xproto = struct
   let grab_mode_enum_of_int : int -> [> grab_mode_enum ] option = function
     | 0 -> Some `Sync
     | 1 -> Some `Async
-    | n ->
-        Printf.printf "unknown grab_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let grab_mode_int_of_enum : grab_mode_enum -> int = function
     | `Sync -> 0
@@ -3113,9 +3055,7 @@ module Xproto = struct
     | 2 -> Some `Invalid_time
     | 3 -> Some `Not_viewable
     | 4 -> Some `Frozen
-    | n ->
-        Printf.printf "unknown grab_status_enum: %d\n" n;
-        None
+    | n -> None
 
   let grab_status_int_of_enum : grab_status_enum -> int = function
     | `Success -> 0
@@ -3176,9 +3116,7 @@ module Xproto = struct
     | 3 -> Some `D3
     | 4 -> Some `D4
     | 5 -> Some `D5
-    | n ->
-        Printf.printf "unknown button_index_enum: %d\n" n;
-        None
+    | n -> None
 
   let button_index_int_of_enum : button_index_enum -> int = function
     | `Any -> 0
@@ -3280,9 +3218,7 @@ module Xproto = struct
 
   let grab_enum_of_int : int -> [> grab_enum ] option = function
     | 0 -> Some `Any
-    | n ->
-        Printf.printf "unknown grab_enum: %d\n" n;
-        None
+    | n -> None
 
   let grab_int_of_enum : grab_enum -> int = function `Any -> 0
 
@@ -3336,9 +3272,7 @@ module Xproto = struct
     | 5 -> Some `Replay_keyboard
     | 6 -> Some `Async_both
     | 7 -> Some `Sync_both
-    | n ->
-        Printf.printf "unknown allow_enum: %d\n" n;
-        None
+    | n -> None
 
   let allow_int_of_enum : allow_enum -> int = function
     | `Async_pointer -> 0
@@ -3527,9 +3461,7 @@ module Xproto = struct
     | 1 -> Some `Pointer_root
     | 2 -> Some `Parent
     | 3 -> Some `Follow_keyboard
-    | n ->
-        Printf.printf "unknown input_focus_enum: %d\n" n;
-        None
+    | n -> None
 
   let input_focus_int_of_enum : input_focus_enum -> int = function
     | `None -> 0
@@ -3628,9 +3560,7 @@ module Xproto = struct
   let font_draw_enum_of_int : int -> [> font_draw_enum ] option = function
     | 0 -> Some `Left_to_right
     | 1 -> Some `Right_to_left
-    | n ->
-        Printf.printf "unknown font_draw_enum: %d\n" n;
-        None
+    | n -> None
 
   let font_draw_int_of_enum : font_draw_enum -> int = function
     | `Left_to_right -> 0
@@ -4057,9 +3987,7 @@ module Xproto = struct
     | 13 -> Some `Or_inverted
     | 14 -> Some `Nand
     | 15 -> Some `Set
-    | n ->
-        Printf.printf "unknown gx_enum: %d\n" n;
-        None
+    | n -> None
 
   let gx_int_of_enum : gx_enum -> int = function
     | `Clear -> 0
@@ -4086,9 +4014,7 @@ module Xproto = struct
     | 0 -> Some `Solid
     | 1 -> Some `On_off_dash
     | 2 -> Some `Double_dash
-    | n ->
-        Printf.printf "unknown line_style_enum: %d\n" n;
-        None
+    | n -> None
 
   let line_style_int_of_enum : line_style_enum -> int = function
     | `Solid -> 0
@@ -4103,9 +4029,7 @@ module Xproto = struct
     | 1 -> Some `Butt
     | 2 -> Some `Round
     | 3 -> Some `Projecting
-    | n ->
-        Printf.printf "unknown cap_style_enum: %d\n" n;
-        None
+    | n -> None
 
   let cap_style_int_of_enum : cap_style_enum -> int = function
     | `Not_last -> 0
@@ -4119,9 +4043,7 @@ module Xproto = struct
     | 0 -> Some `Miter
     | 1 -> Some `Round
     | 2 -> Some `Bevel
-    | n ->
-        Printf.printf "unknown join_style_enum: %d\n" n;
-        None
+    | n -> None
 
   let join_style_int_of_enum : join_style_enum -> int = function
     | `Miter -> 0
@@ -4136,9 +4058,7 @@ module Xproto = struct
     | 1 -> Some `Tiled
     | 2 -> Some `Stippled
     | 3 -> Some `Opaque_stippled
-    | n ->
-        Printf.printf "unknown fill_style_enum: %d\n" n;
-        None
+    | n -> None
 
   let fill_style_int_of_enum : fill_style_enum -> int = function
     | `Solid -> 0
@@ -4151,9 +4071,7 @@ module Xproto = struct
   let fill_rule_enum_of_int : int -> [> fill_rule_enum ] option = function
     | 0 -> Some `Even_odd
     | 1 -> Some `Winding
-    | n ->
-        Printf.printf "unknown fill_rule_enum: %d\n" n;
-        None
+    | n -> None
 
   let fill_rule_int_of_enum : fill_rule_enum -> int = function
     | `Even_odd -> 0
@@ -4166,9 +4084,7 @@ module Xproto = struct
     function
     | 0 -> Some `Clip_by_children
     | 1 -> Some `Include_inferiors
-    | n ->
-        Printf.printf "unknown subwindow_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let subwindow_mode_int_of_enum : subwindow_mode_enum -> int = function
     | `Clip_by_children -> 0
@@ -4179,9 +4095,7 @@ module Xproto = struct
   let arc_mode_enum_of_int : int -> [> arc_mode_enum ] option = function
     | 0 -> Some `Chord
     | 1 -> Some `Pie_slice
-    | n ->
-        Printf.printf "unknown arc_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let arc_mode_int_of_enum : arc_mode_enum -> int = function
     | `Chord -> 0
@@ -4191,9 +4105,7 @@ module Xproto = struct
 
   let font_enum_of_int : int -> [> font_enum ] option = function
     | 0 -> Some `None
-    | n ->
-        Printf.printf "unknown font_enum: %d\n" n;
-        None
+    | n -> None
 
   let font_int_of_enum : font_enum -> int = function `None -> 0
 
@@ -4440,9 +4352,7 @@ module Xproto = struct
     | 1 -> Some `Y_sorted
     | 2 -> Some `Yx_sorted
     | 3 -> Some `Yx_banded
-    | n ->
-        Printf.printf "unknown clip_ordering_enum: %d\n" n;
-        None
+    | n -> None
 
   let clip_ordering_int_of_enum : clip_ordering_enum -> int = function
     | `Unsorted -> 0
@@ -4536,9 +4446,7 @@ module Xproto = struct
   let coord_mode_enum_of_int : int -> [> coord_mode_enum ] option = function
     | 0 -> Some `Origin
     | 1 -> Some `Previous
-    | n ->
-        Printf.printf "unknown coord_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let coord_mode_int_of_enum : coord_mode_enum -> int = function
     | `Origin -> 0
@@ -4633,9 +4541,7 @@ module Xproto = struct
     | 0 -> Some `Complex
     | 1 -> Some `Nonconvex
     | 2 -> Some `Convex
-    | n ->
-        Printf.printf "unknown poly_shape_enum: %d\n" n;
-        None
+    | n -> None
 
   let poly_shape_int_of_enum : poly_shape_enum -> int = function
     | `Complex -> 0
@@ -4692,9 +4598,7 @@ module Xproto = struct
     | 0 -> Some `Xy_bitmap
     | 1 -> Some `Xy_pixmap
     | 2 -> Some `Z_pixmap
-    | n ->
-        Printf.printf "unknown image_format_enum: %d\n" n;
-        None
+    | n -> None
 
   let image_format_int_of_enum : image_format_enum -> int = function
     | `Xy_bitmap -> 0
@@ -4822,9 +4726,7 @@ module Xproto = struct
     function
     | 0 -> Some `None
     | 1 -> Some `All
-    | n ->
-        Printf.printf "unknown colormap_alloc_enum: %d\n" n;
-        None
+    | n -> None
 
   let colormap_alloc_int_of_enum : colormap_alloc_enum -> int = function
     | `None -> 0
@@ -5323,9 +5225,7 @@ module Xproto = struct
     | 0 -> Some `Largest_cursor
     | 1 -> Some `Fastest_tile
     | 2 -> Some `Fastest_stipple
-    | n ->
-        Printf.printf "unknown query_shape_of_enum: %d\n" n;
-        None
+    | n -> None
 
   let query_shape_of_int_of_enum : query_shape_of_enum -> int = function
     | `Largest_cursor -> 0
@@ -5504,9 +5404,7 @@ module Xproto = struct
   let led_mode_enum_of_int : int -> [> led_mode_enum ] option = function
     | 0 -> Some `Off
     | 1 -> Some `On
-    | n ->
-        Printf.printf "unknown led_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let led_mode_int_of_enum : led_mode_enum -> int = function
     | `Off -> 0
@@ -5519,9 +5417,7 @@ module Xproto = struct
     | 0 -> Some `Off
     | 1 -> Some `On
     | 2 -> Some `Default
-    | n ->
-        Printf.printf "unknown auto_repeat_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let auto_repeat_mode_int_of_enum : auto_repeat_mode_enum -> int = function
     | `Off -> 0
@@ -5676,9 +5572,7 @@ module Xproto = struct
     | 0 -> Some `Not_preferred
     | 1 -> Some `Preferred
     | 2 -> Some `Default
-    | n ->
-        Printf.printf "unknown blanking_enum: %d\n" n;
-        None
+    | n -> None
 
   let blanking_int_of_enum : blanking_enum -> int = function
     | `Not_preferred -> 0
@@ -5691,9 +5585,7 @@ module Xproto = struct
     | 0 -> Some `Not_allowed
     | 1 -> Some `Allowed
     | 2 -> Some `Default
-    | n ->
-        Printf.printf "unknown exposures_enum: %d\n" n;
-        None
+    | n -> None
 
   let exposures_int_of_enum : exposures_enum -> int = function
     | `Not_allowed -> 0
@@ -5754,9 +5646,7 @@ module Xproto = struct
   let host_mode_enum_of_int : int -> [> host_mode_enum ] option = function
     | 0 -> Some `Insert
     | 1 -> Some `Delete
-    | n ->
-        Printf.printf "unknown host_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let host_mode_int_of_enum : host_mode_enum -> int = function
     | `Insert -> 0
@@ -5772,9 +5662,7 @@ module Xproto = struct
     | 2 -> Some `Chaos
     | 5 -> Some `Server_interpreted
     | 6 -> Some `Internet6
-    | n ->
-        Printf.printf "unknown family_enum: %d\n" n;
-        None
+    | n -> None
 
   let family_int_of_enum : family_enum -> int = function
     | `Internet -> 0
@@ -5826,9 +5714,7 @@ module Xproto = struct
     function
     | 0 -> Some `Disable
     | 1 -> Some `Enable
-    | n ->
-        Printf.printf "unknown access_control_enum: %d\n" n;
-        None
+    | n -> None
 
   let access_control_int_of_enum : access_control_enum -> int = function
     | `Disable -> 0
@@ -5876,9 +5762,7 @@ module Xproto = struct
     | 0 -> Some `Destroy_all
     | 1 -> Some `Retain_permanent
     | 2 -> Some `Retain_temporary
-    | n ->
-        Printf.printf "unknown close_down_enum: %d\n" n;
-        None
+    | n -> None
 
   let close_down_int_of_enum : close_down_enum -> int = function
     | `Destroy_all -> 0
@@ -5899,9 +5783,7 @@ module Xproto = struct
 
   let kill_enum_of_int : int -> [> kill_enum ] option = function
     | 0 -> Some `All_temporary
-    | n ->
-        Printf.printf "unknown kill_enum: %d\n" n;
-        None
+    | n -> None
 
   let kill_int_of_enum : kill_enum -> int = function `All_temporary -> 0
 
@@ -5934,9 +5816,7 @@ module Xproto = struct
   let screen_saver_enum_of_int : int -> [> screen_saver_enum ] option = function
     | 0 -> Some `Reset
     | 1 -> Some `Active
-    | n ->
-        Printf.printf "unknown screen_saver_enum: %d\n" n;
-        None
+    | n -> None
 
   let screen_saver_int_of_enum : screen_saver_enum -> int = function
     | `Reset -> 0
@@ -5959,9 +5839,7 @@ module Xproto = struct
     | 0 -> Some `Success
     | 1 -> Some `Busy
     | 2 -> Some `Failure
-    | n ->
-        Printf.printf "unknown mapping_status_enum: %d\n" n;
-        None
+    | n -> None
 
   let mapping_status_int_of_enum : mapping_status_enum -> int = function
     | `Success -> 0
@@ -6026,9 +5904,7 @@ module Xproto = struct
     | 5 -> Some `D3
     | 6 -> Some `D4
     | 7 -> Some `D5
-    | n ->
-        Printf.printf "unknown map_index_enum: %d\n" n;
-        None
+    | n -> None
 
   let map_index_int_of_enum : map_index_enum -> int = function
     | `Shift -> 0
@@ -6111,9 +5987,7 @@ module Render = struct
   let pict_type_enum_of_int : int -> [> pict_type_enum ] option = function
     | 0 -> Some `Indexed
     | 1 -> Some `Direct
-    | n ->
-        Printf.printf "unknown pict_type_enum: %d\n" n;
-        None
+    | n -> None
 
   let pict_type_int_of_enum : pict_type_enum -> int = function
     | `Indexed -> 0
@@ -6123,9 +5997,7 @@ module Render = struct
 
   let picture_enum_of_int : int -> [> picture_enum ] option = function
     | 0 -> Some `None
-    | n ->
-        Printf.printf "unknown picture_enum: %d\n" n;
-        None
+    | n -> None
 
   let picture_int_of_enum : picture_enum -> int = function `None -> 0
 
@@ -6239,9 +6111,7 @@ module Render = struct
     | 60 -> Some `Hsl_saturation
     | 61 -> Some `Hsl_color
     | 62 -> Some `Hsl_luminosity
-    | n ->
-        Printf.printf "unknown pict_op_enum: %d\n" n;
-        None
+    | n -> None
 
   let pict_op_int_of_enum : pict_op_enum -> int = function
     | `Clear -> 0
@@ -6303,9 +6173,7 @@ module Render = struct
   let poly_edge_enum_of_int : int -> [> poly_edge_enum ] option = function
     | 0 -> Some `Sharp
     | 1 -> Some `Smooth
-    | n ->
-        Printf.printf "unknown poly_edge_enum: %d\n" n;
-        None
+    | n -> None
 
   let poly_edge_int_of_enum : poly_edge_enum -> int = function
     | `Sharp -> 0
@@ -6316,9 +6184,7 @@ module Render = struct
   let poly_mode_enum_of_int : int -> [> poly_mode_enum ] option = function
     | 0 -> Some `Precise
     | 1 -> Some `Imprecise
-    | n ->
-        Printf.printf "unknown poly_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let poly_mode_int_of_enum : poly_mode_enum -> int = function
     | `Precise -> 0
@@ -6394,9 +6260,7 @@ module Render = struct
     | 3 -> Some `Vertical_rgb
     | 4 -> Some `Vertical_bgr
     | 5 -> Some `None
-    | n ->
-        Printf.printf "unknown sub_pixel_enum: %d\n" n;
-        None
+    | n -> None
 
   let sub_pixel_int_of_enum : sub_pixel_enum -> int = function
     | `Unknown -> 0
@@ -6413,9 +6277,7 @@ module Render = struct
     | 1 -> Some `Normal
     | 2 -> Some `Pad
     | 3 -> Some `Reflect
-    | n ->
-        Printf.printf "unknown repeat_enum: %d\n" n;
-        None
+    | n -> None
 
   let repeat_int_of_enum : repeat_enum -> int = function
     | `None -> 0
@@ -7457,9 +7319,7 @@ module Shape = struct
     | 2 -> Some `Intersect
     | 3 -> Some `Subtract
     | 4 -> Some `Invert
-    | n ->
-        Printf.printf "unknown so_enum: %d\n" n;
-        None
+    | n -> None
 
   let so_int_of_enum : so_enum -> int = function
     | `Set -> 0
@@ -7474,9 +7334,7 @@ module Shape = struct
     | 0 -> Some `Bounding
     | 1 -> Some `Clip
     | 2 -> Some `Input
-    | n ->
-        Printf.printf "unknown sk_enum: %d\n" n;
-        None
+    | n -> None
 
   let sk_int_of_enum : sk_enum -> int = function
     | `Bounding -> 0
@@ -7785,9 +7643,7 @@ module Xfixes = struct
     function
     | 0 -> Some `Insert
     | 1 -> Some `Delete
-    | n ->
-        Printf.printf "unknown save_set_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let save_set_mode_int_of_enum : save_set_mode_enum -> int = function
     | `Insert -> 0
@@ -7799,9 +7655,7 @@ module Xfixes = struct
     function
     | 0 -> Some `Nearest
     | 1 -> Some `Root
-    | n ->
-        Printf.printf "unknown save_set_target_enum: %d\n" n;
-        None
+    | n -> None
 
   let save_set_target_int_of_enum : save_set_target_enum -> int = function
     | `Nearest -> 0
@@ -7813,9 +7667,7 @@ module Xfixes = struct
     function
     | 0 -> Some `Map
     | 1 -> Some `Unmap
-    | n ->
-        Printf.printf "unknown save_set_mapping_enum: %d\n" n;
-        None
+    | n -> None
 
   let save_set_mapping_int_of_enum : save_set_mapping_enum -> int = function
     | `Map -> 0
@@ -7847,9 +7699,7 @@ module Xfixes = struct
     | 0 -> Some `Set_selection_owner
     | 1 -> Some `Selection_window_destroy
     | 2 -> Some `Selection_client_close
-    | n ->
-        Printf.printf "unknown selection_event_enum: %d\n" n;
-        None
+    | n -> None
 
   let selection_event_int_of_enum : selection_event_enum -> int = function
     | `Set_selection_owner -> 0
@@ -7926,9 +7776,7 @@ module Xfixes = struct
   let cursor_notify_enum_of_int : int -> [> cursor_notify_enum ] option =
     function
     | 0 -> Some `Display_cursor
-    | n ->
-        Printf.printf "unknown cursor_notify_enum: %d\n" n;
-        None
+    | n -> None
 
   let cursor_notify_int_of_enum : cursor_notify_enum -> int = function
     | `Display_cursor -> 0
@@ -8033,9 +7881,7 @@ module Xfixes = struct
 
   let region_enum_of_int : int -> [> region_enum ] option = function
     | 0 -> Some `None
-    | n ->
-        Printf.printf "unknown region_enum: %d\n" n;
-        None
+    | n -> None
 
   let region_int_of_enum : region_enum -> int = function `None -> 0
 
@@ -8510,9 +8356,7 @@ module Composite = struct
   let redirect_enum_of_int : int -> [> redirect_enum ] option = function
     | 0 -> Some `Automatic
     | 1 -> Some `Manual
-    | n ->
-        Printf.printf "unknown redirect_enum: %d\n" n;
-        None
+    | n -> None
 
   let redirect_int_of_enum : redirect_enum -> int = function
     | `Automatic -> 0
@@ -8672,9 +8516,7 @@ module Damage = struct
     | 1 -> Some `Delta_rectangles
     | 2 -> Some `Bounding_box
     | 3 -> Some `Non_empty
-    | n ->
-        Printf.printf "unknown report_level_enum: %d\n" n;
-        None
+    | n -> None
 
   let report_level_int_of_enum : report_level_enum -> int = function
     | `Raw_rectangles -> 0
@@ -8904,9 +8746,7 @@ module Dpms = struct
     | 1 -> Some `Standby
     | 2 -> Some `Suspend
     | 3 -> Some `Off
-    | n ->
-        Printf.printf "unknown dpms_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let dpms_mode_int_of_enum : dpms_mode_enum -> int = function
     | `On -> 0
@@ -8985,9 +8825,7 @@ module Dri2 = struct
     | 8 -> Some `Buffer_fake_front_right
     | 9 -> Some `Buffer_depth_stencil
     | 10 -> Some `Buffer_hiz
-    | n ->
-        Printf.printf "unknown attachment_enum: %d\n" n;
-        None
+    | n -> None
 
   let attachment_int_of_enum : attachment_enum -> int = function
     | `Buffer_front_left -> 0
@@ -9007,9 +8845,7 @@ module Dri2 = struct
   let driver_type_enum_of_int : int -> [> driver_type_enum ] option = function
     | 0 -> Some `Dri
     | 1 -> Some `Vdpau
-    | n ->
-        Printf.printf "unknown driver_type_enum: %d\n" n;
-        None
+    | n -> None
 
   let driver_type_int_of_enum : driver_type_enum -> int = function
     | `Dri -> 0
@@ -9022,9 +8858,7 @@ module Dri2 = struct
     | 1 -> Some `Exchange_complete
     | 2 -> Some `Blit_complete
     | 3 -> Some `Flip_complete
-    | n ->
-        Printf.printf "unknown event_type_enum: %d\n" n;
-        None
+    | n -> None
 
   let event_type_int_of_enum : event_type_enum -> int = function
     | `Exchange_complete -> 1
@@ -9957,9 +9791,7 @@ module Glx = struct
   let pbcet_enum_of_int : int -> [> pbcet_enum ] option = function
     | 32791 -> Some `Damaged
     | 32792 -> Some `Saved
-    | n ->
-        Printf.printf "unknown pbcet_enum: %d\n" n;
-        None
+    | n -> None
 
   let pbcet_int_of_enum : pbcet_enum -> int = function
     | `Damaged -> 32791
@@ -9970,9 +9802,7 @@ module Glx = struct
   let pbcdt_enum_of_int : int -> [> pbcdt_enum ] option = function
     | 32793 -> Some `Window
     | 32794 -> Some `Pbuffer
-    | n ->
-        Printf.printf "unknown pbcdt_enum: %d\n" n;
-        None
+    | n -> None
 
   let pbcdt_int_of_enum : pbcdt_enum -> int = function
     | `Window -> 32793
@@ -10787,9 +10617,7 @@ module Glx = struct
     | 7168 -> Some `Gl_render
     | 7169 -> Some `Gl_feedback
     | 7170 -> Some `Gl_select
-    | n ->
-        Printf.printf "unknown rm_enum: %d\n" n;
-        None
+    | n -> None
 
   let rm_int_of_enum : rm_enum -> int = function
     | `Gl_render -> 7168
@@ -12566,9 +12394,7 @@ module Randr = struct
     | 1 -> Some `Invalid_config_time
     | 2 -> Some `Invalid_time
     | 3 -> Some `Failed
-    | n ->
-        Printf.printf "unknown set_config_enum: %d\n" n;
-        None
+    | n -> None
 
   let set_config_int_of_enum : set_config_enum -> int = function
     | `Success -> 0
@@ -12959,9 +12785,7 @@ module Randr = struct
     | 0 -> Some `Connected
     | 1 -> Some `Disconnected
     | 2 -> Some `Unknown
-    | n ->
-        Printf.printf "unknown connection_enum: %d\n" n;
-        None
+    | n -> None
 
   let connection_int_of_enum : connection_enum -> int = function
     | `Connected -> 0
@@ -14086,9 +13910,7 @@ module Randr = struct
     | 4 -> Some `Provider_property
     | 5 -> Some `Resource_change
     | 6 -> Some `Lease
-    | n ->
-        Printf.printf "unknown notify_enum: %d\n" n;
-        None
+    | n -> None
 
   let notify_int_of_enum : notify_enum -> int = function
     | `Crtc_change -> 0
@@ -14582,9 +14404,7 @@ module Sync = struct
     | 0 -> Some `Active
     | 1 -> Some `Inactive
     | 2 -> Some `Destroyed
-    | n ->
-        Printf.printf "unknown alarmstate_enum: %d\n" n;
-        None
+    | n -> None
 
   let alarmstate_int_of_enum : alarmstate_enum -> int = function
     | `Active -> 0
@@ -14613,9 +14433,7 @@ module Sync = struct
     | 1 -> Some `Negative_transition
     | 2 -> Some `Positive_comparison
     | 3 -> Some `Negative_comparison
-    | n ->
-        Printf.printf "unknown testtype_enum: %d\n" n;
-        None
+    | n -> None
 
   let testtype_int_of_enum : testtype_enum -> int = function
     | `Positive_transition -> 0
@@ -14628,9 +14446,7 @@ module Sync = struct
   let valuetype_enum_of_int : int -> [> valuetype_enum ] option = function
     | 0 -> Some `Absolute
     | 1 -> Some `Relative
-    | n ->
-        Printf.printf "unknown valuetype_enum: %d\n" n;
-        None
+    | n -> None
 
   let valuetype_int_of_enum : valuetype_enum -> int = function
     | `Absolute -> 0
@@ -15160,9 +14976,7 @@ module Present = struct
     | 1 -> Some `Complete_notify
     | 2 -> Some `Idle_notify
     | 3 -> Some `Redirect_notify
-    | n ->
-        Printf.printf "unknown event_enum: %d\n" n;
-        None
+    | n -> None
 
   let event_int_of_enum : event_enum -> int = function
     | `Configure_notify -> 0
@@ -15192,7 +15006,7 @@ module Present = struct
       | `Idle_notify -> 2
       | `Redirect_notify -> 3
     in
-    match mask with None -> 0 | Some mask -> int_of_mask to_mask mask
+    match mask with [] -> 0 | mask -> int_of_mask to_mask mask
 
   type option_mask = [ `Async | `Copy | `Ust | `Suboptimal ] list
   [@@deriving sexp]
@@ -15214,7 +15028,7 @@ module Present = struct
       | `Ust -> 2
       | `Suboptimal -> 3
     in
-    match mask with None -> 0 | Some mask -> int_of_mask to_mask mask
+    match mask with [] -> 0 | mask -> int_of_mask to_mask mask
 
   type capability_mask = [ `Async | `Fence | `Ust ] list [@@deriving sexp]
 
@@ -15229,7 +15043,7 @@ module Present = struct
 
   let capability_int_of_mask (mask : capability_mask) : int =
     let to_mask = function `Async -> 0 | `Fence -> 1 | `Ust -> 2 in
-    match mask with None -> 0 | Some mask -> int_of_mask to_mask mask
+    match mask with [] -> 0 | mask -> int_of_mask to_mask mask
 
   type complete_kind_enum = [ `Pixmap | `Notify_msc ] [@@deriving sexp]
 
@@ -15237,9 +15051,7 @@ module Present = struct
     function
     | 0 -> Some `Pixmap
     | 1 -> Some `Notify_msc
-    | n ->
-        Printf.printf "unknown complete_kind_enum: %d\n" n;
-        None
+    | n -> None
 
   let complete_kind_int_of_enum : complete_kind_enum -> int = function
     | `Pixmap -> 0
@@ -15254,9 +15066,7 @@ module Present = struct
     | 1 -> Some `Flip
     | 2 -> Some `Skip
     | 3 -> Some `Suboptimal_copy
-    | n ->
-        Printf.printf "unknown complete_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let complete_mode_int_of_enum : complete_mode_enum -> int = function
     | `Copy -> 0
@@ -15677,9 +15487,7 @@ module Record = struct
     | 1 -> Some `Current_clients
     | 2 -> Some `Future_clients
     | 3 -> Some `All_clients
-    | n ->
-        Printf.printf "unknown cs_enum: %d\n" n;
-        None
+    | n -> None
 
   let cs_int_of_enum : cs_enum -> int = function
     | `Current_clients -> 1
@@ -16196,9 +16004,7 @@ module Screensaver = struct
     | 0 -> Some `Blanked
     | 1 -> Some `Internal
     | 2 -> Some `External
-    | n ->
-        Printf.printf "unknown kind_enum: %d\n" n;
-        None
+    | n -> None
 
   let kind_int_of_enum : kind_enum -> int = function
     | `Blanked -> 0
@@ -16226,9 +16032,7 @@ module Screensaver = struct
     | 1 -> Some `On
     | 2 -> Some `Cycle
     | 3 -> Some `Disabled
-    | n ->
-        Printf.printf "unknown state_enum: %d\n" n;
-        None
+    | n -> None
 
   let state_int_of_enum : state_enum -> int = function
     | `Off -> 0
@@ -18139,9 +17943,7 @@ module Xinput = struct
     | 2 -> Some `Is_x_extension_device
     | 3 -> Some `Is_x_extension_keyboard
     | 4 -> Some `Is_x_extension_pointer
-    | n ->
-        Printf.printf "unknown device_use_enum: %d\n" n;
-        None
+    | n -> None
 
   let device_use_int_of_enum : device_use_enum -> int = function
     | `Is_x_pointer -> 0
@@ -18162,9 +17964,7 @@ module Xinput = struct
     | 4 -> Some `Proximity
     | 5 -> Some `Focus
     | 6 -> Some `Other
-    | n ->
-        Printf.printf "unknown input_class_enum: %d\n" n;
-        None
+    | n -> None
 
   let input_class_int_of_enum : input_class_enum -> int = function
     | `Key -> 0
@@ -18181,9 +17981,7 @@ module Xinput = struct
     function
     | 0 -> Some `Relative
     | 1 -> Some `Absolute
-    | n ->
-        Printf.printf "unknown valuator_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let valuator_mode_int_of_enum : valuator_mode_enum -> int = function
     | `Relative -> 0
@@ -18600,9 +18398,7 @@ module Xinput = struct
     function
     | 0 -> Some `Add_to_list
     | 1 -> Some `Delete_from_list
-    | n ->
-        Printf.printf "unknown propagate_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let propagate_mode_int_of_enum : propagate_mode_enum -> int = function
     | `Add_to_list -> 0
@@ -18830,9 +18626,7 @@ module Xinput = struct
   let modifier_device_enum_of_int : int -> [> modifier_device_enum ] option =
     function
     | 255 -> Some `Use_x_keyboard
-    | n ->
-        Printf.printf "unknown modifier_device_enum: %d\n" n;
-        None
+    | n -> None
 
   let modifier_device_int_of_enum : modifier_device_enum -> int = function
     | `Use_x_keyboard -> 255
@@ -18944,9 +18738,7 @@ module Xinput = struct
     | 3 -> Some `Async_other_devices
     | 4 -> Some `Async_all
     | 5 -> Some `Sync_all
-    | n ->
-        Printf.printf "unknown device_input_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let device_input_mode_int_of_enum : device_input_mode_enum -> int = function
     | `Async_this_device -> 0
@@ -19036,9 +18828,7 @@ module Xinput = struct
     | 3 -> Some `Integer
     | 4 -> Some `Led
     | 5 -> Some `Bell
-    | n ->
-        Printf.printf "unknown feedback_class_enum: %d\n" n;
-        None
+    | n -> None
 
   let feedback_class_int_of_enum : feedback_class_enum -> int = function
     | `Keyboard -> 0
@@ -20167,9 +19957,7 @@ module Xinput = struct
     | 3 -> Some `Core
     | 4 -> Some `Enable
     | 5 -> Some `Abs_area
-    | n ->
-        Printf.printf "unknown device_control_enum: %d\n" n;
-        None
+    | n -> None
 
   let device_control_int_of_enum : device_control_enum -> int = function
     | `Resolution -> 1
@@ -20842,9 +20630,7 @@ module Xinput = struct
     | 8 -> Some `D8_bits
     | 16 -> Some `D16_bits
     | 32 -> Some `D32_bits
-    | n ->
-        Printf.printf "unknown property_format_enum: %d\n" n;
-        None
+    | n -> None
 
   let property_format_int_of_enum : property_format_enum -> int = function
     | `D8_bits -> 8
@@ -20977,9 +20763,7 @@ module Xinput = struct
   let device_enum_of_int : int -> [> device_enum ] option = function
     | 0 -> Some `All
     | 1 -> Some `All_master
-    | n ->
-        Printf.printf "unknown device_enum: %d\n" n;
-        None
+    | n -> None
 
   let device_int_of_enum : device_enum -> int = function
     | `All -> 0
@@ -21133,9 +20917,7 @@ module Xinput = struct
     | 2 -> Some `Remove_master
     | 3 -> Some `Attach_slave
     | 4 -> Some `Detach_slave
-    | n ->
-        Printf.printf "unknown hierarchy_change_type_enum: %d\n" n;
-        None
+    | n -> None
 
   let hierarchy_change_type_int_of_enum : hierarchy_change_type_enum -> int =
     function
@@ -21149,9 +20931,7 @@ module Xinput = struct
   let change_mode_enum_of_int : int -> [> change_mode_enum ] option = function
     | 1 -> Some `Attach
     | 2 -> Some `Float
-    | n ->
-        Printf.printf "unknown change_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let change_mode_int_of_enum : change_mode_enum -> int = function
     | `Attach -> 1
@@ -21647,9 +21427,7 @@ module Xinput = struct
     | 2 -> Some `Valuator
     | 3 -> Some `Scroll
     | 8 -> Some `Touch
-    | n ->
-        Printf.printf "unknown device_class_type_enum: %d\n" n;
-        None
+    | n -> None
 
   let device_class_type_int_of_enum : device_class_type_enum -> int = function
     | `Key -> 0
@@ -21672,9 +21450,7 @@ module Xinput = struct
     | 3 -> Some `Slave_pointer
     | 4 -> Some `Slave_keyboard
     | 5 -> Some `Floating_slave
-    | n ->
-        Printf.printf "unknown device_type_enum: %d\n" n;
-        None
+    | n -> None
 
   let device_type_int_of_enum : device_type_enum -> int = function
     | `Master_pointer -> 1
@@ -21702,9 +21478,7 @@ module Xinput = struct
   let scroll_type_enum_of_int : int -> [> scroll_type_enum ] option = function
     | 1 -> Some `Vertical
     | 2 -> Some `Horizontal
-    | n ->
-        Printf.printf "unknown scroll_type_enum: %d\n" n;
-        None
+    | n -> None
 
   let scroll_type_int_of_enum : scroll_type_enum -> int = function
     | `Vertical -> 1
@@ -21715,9 +21489,7 @@ module Xinput = struct
   let touch_mode_enum_of_int : int -> [> touch_mode_enum ] option = function
     | 1 -> Some `Direct
     | 2 -> Some `Dependent
-    | n ->
-        Printf.printf "unknown touch_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let touch_mode_int_of_enum : touch_mode_enum -> int = function
     | `Direct -> 1
@@ -22170,9 +21942,7 @@ module Xinput = struct
   let grab_owner_enum_of_int : int -> [> grab_owner_enum ] option = function
     | 0 -> Some `No_owner
     | 1 -> Some `Owner
-    | n ->
-        Printf.printf "unknown grab_owner_enum: %d\n" n;
-        None
+    | n -> None
 
   let grab_owner_int_of_enum : grab_owner_enum -> int = function
     | `No_owner -> 0
@@ -22250,9 +22020,7 @@ module Xinput = struct
     | 5 -> Some `Sync_pair
     | 6 -> Some `Accept_touch
     | 7 -> Some `Reject_touch
-    | n ->
-        Printf.printf "unknown event_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let event_mode_int_of_enum : event_mode_enum -> int = function
     | `Async_device -> 0
@@ -22287,9 +22055,7 @@ module Xinput = struct
     | 0 -> Some `Sync
     | 1 -> Some `Async
     | 2 -> Some `Touch
-    | n ->
-        Printf.printf "unknown grab_mode22_enum: %d\n" n;
-        None
+    | n -> None
 
   let grab_mode22_int_of_enum : grab_mode22_enum -> int = function
     | `Sync -> 0
@@ -22306,9 +22072,7 @@ module Xinput = struct
     | 2 -> Some `Enter
     | 3 -> Some `Focus_in
     | 4 -> Some `Touch_begin
-    | n ->
-        Printf.printf "unknown grab_type_enum: %d\n" n;
-        None
+    | n -> None
 
   let grab_type_int_of_enum : grab_type_enum -> int = function
     | `Button -> 0
@@ -22906,9 +22670,7 @@ module Xinput = struct
     function
     | 0 -> Some `New_pointer
     | 1 -> Some `New_keyboard
-    | n ->
-        Printf.printf "unknown change_device_enum: %d\n" n;
-        None
+    | n -> None
 
   let change_device_int_of_enum : change_device_enum -> int = function
     | `New_pointer -> 0
@@ -23017,9 +22779,7 @@ module Xinput = struct
     | 3 -> Some `Disabled
     | 4 -> Some `Unrecoverable
     | 5 -> Some `Control_changed
-    | n ->
-        Printf.printf "unknown device_change_enum: %d\n" n;
-        None
+    | n -> None
 
   let device_change_int_of_enum : device_change_enum -> int = function
     | `Added -> 0
@@ -23101,9 +22861,7 @@ module Xinput = struct
     function
     | 1 -> Some `Slave_switch
     | 2 -> Some `Device_change
-    | n ->
-        Printf.printf "unknown change_reason_enum: %d\n" n;
-        None
+    | n -> None
 
   let change_reason_int_of_enum : change_reason_enum -> int = function
     | `Slave_switch -> 1
@@ -23429,9 +23187,7 @@ module Xinput = struct
     | 3 -> Some `While_grabbed
     | 4 -> Some `Passive_grab
     | 5 -> Some `Passive_ungrab
-    | n ->
-        Printf.printf "unknown notify_mode_enum: %d\n" n;
-        None
+    | n -> None
 
   let notify_mode_int_of_enum : notify_mode_enum -> int = function
     | `Normal -> 0
@@ -23462,9 +23218,7 @@ module Xinput = struct
     | 5 -> Some `Pointer
     | 6 -> Some `Pointer_root
     | 7 -> Some `None
-    | n ->
-        Printf.printf "unknown notify_detail_enum: %d\n" n;
-        None
+    | n -> None
 
   let notify_detail_int_of_enum : notify_detail_enum -> int = function
     | `Ancestor -> 0
@@ -23712,9 +23466,7 @@ module Xinput = struct
     | 0 -> Some `Deleted
     | 1 -> Some `Created
     | 2 -> Some `Modified
-    | n ->
-        Printf.printf "unknown property_flag_enum: %d\n" n;
-        None
+    | n -> None
 
   let property_flag_int_of_enum : property_flag_enum -> int = function
     | `Deleted -> 0
@@ -24038,9 +23790,7 @@ module Xinput = struct
   let touch_ownership_flags_enum_of_int :
       int -> [> touch_ownership_flags_enum ] option = function
     | 0 -> Some `None
-    | n ->
-        Printf.printf "unknown touch_ownership_flags_enum: %d\n" n;
-        None
+    | n -> None
 
   let touch_ownership_flags_int_of_enum : touch_ownership_flags_enum -> int =
     function
@@ -24348,9 +24098,7 @@ module Xprint = struct
   let get_doc_enum_of_int : int -> [> get_doc_enum ] option = function
     | 0 -> Some `Finished
     | 1 -> Some `Second_consumer
-    | n ->
-        Printf.printf "unknown get_doc_enum: %d\n" n;
-        None
+    | n -> None
 
   let get_doc_int_of_enum : get_doc_enum -> int = function
     | `Finished -> 0
@@ -24368,7 +24116,7 @@ module Xprint = struct
 
   let ev_mask_int_of_mask (mask : ev_mask) : int =
     let to_mask = function `Print_mask -> 0 | `Attribute_mask -> 1 in
-    match mask with None -> 0 | Some mask -> int_of_mask to_mask mask
+    match mask with [] -> 0 | mask -> int_of_mask to_mask mask
 
   type detail_enum =
     [ `Start_job_notify
@@ -24386,9 +24134,7 @@ module Xprint = struct
     | 4 -> Some `End_doc_notify
     | 5 -> Some `Start_page_notify
     | 6 -> Some `End_page_notify
-    | n ->
-        Printf.printf "unknown detail_enum: %d\n" n;
-        None
+    | n -> None
 
   let detail_int_of_enum : detail_enum -> int = function
     | `Start_job_notify -> 1
@@ -24416,9 +24162,7 @@ module Xprint = struct
     | 5 -> Some `Server_attr
     | 6 -> Some `Medium_attr
     | 7 -> Some `Spooler_attr
-    | n ->
-        Printf.printf "unknown attr_enum: %d\n" n;
-        None
+    | n -> None
 
   let attr_int_of_enum : attr_enum -> int = function
     | `Job_attr -> 1
@@ -25459,9 +25203,7 @@ module Xtest = struct
   let cursor_enum_of_int : int -> [> cursor_enum ] option = function
     | 0 -> Some `None
     | 1 -> Some `Current
-    | n ->
-        Printf.printf "unknown cursor_enum: %d\n" n;
-        None
+    | n -> None
 
   let cursor_int_of_enum : cursor_enum -> int = function
     | `None -> 0
@@ -25572,9 +25314,7 @@ module Xv = struct
       int -> [> image_format_info_type_enum ] option = function
     | 0 -> Some `Rgb
     | 1 -> Some `Yuv
-    | n ->
-        Printf.printf "unknown image_format_info_type_enum: %d\n" n;
-        None
+    | n -> None
 
   let image_format_info_type_int_of_enum : image_format_info_type_enum -> int =
     function
@@ -25587,9 +25327,7 @@ module Xv = struct
       int -> [> image_format_info_format_enum ] option = function
     | 0 -> Some `Packed
     | 1 -> Some `Planar
-    | n ->
-        Printf.printf "unknown image_format_info_format_enum: %d\n" n;
-        None
+    | n -> None
 
   let image_format_info_format_int_of_enum :
       image_format_info_format_enum -> int = function
@@ -25621,9 +25359,7 @@ module Xv = struct
     | 2 -> Some `Busy
     | 3 -> Some `Preempted
     | 4 -> Some `Hard_error
-    | n ->
-        Printf.printf "unknown video_notify_reason_enum: %d\n" n;
-        None
+    | n -> None
 
   let video_notify_reason_int_of_enum : video_notify_reason_enum -> int =
     function
@@ -25640,9 +25376,7 @@ module Xv = struct
     function
     | 0 -> Some `Top_to_bottom
     | 1 -> Some `Bottom_to_top
-    | n ->
-        Printf.printf "unknown scanline_order_enum: %d\n" n;
-        None
+    | n -> None
 
   let scanline_order_int_of_enum : scanline_order_enum -> int = function
     | `Top_to_bottom -> 0
@@ -25665,9 +25399,7 @@ module Xv = struct
     | 3 -> Some `Invalid_time
     | 4 -> Some `Bad_reply
     | 5 -> Some `Bad_alloc
-    | n ->
-        Printf.printf "unknown grab_port_status_enum: %d\n" n;
-        None
+    | n -> None
 
   let grab_port_status_int_of_enum : grab_port_status_enum -> int = function
     | `Success -> 0

@@ -793,13 +793,11 @@ let gen_declaration ctx out = function
         (list_sep " | " gen_enum_item)
         items;
       Printf.fprintf out
-        "let %s : int -> [> %s ] option = function %a | n -> Printf.printf \
-         \"unknown %s: %%d\\n\" n; None;;\n"
+        "let %s : int -> [> %s ] option = function %a | n -> None;;\n"
         (Ident.snake name ~suffix:"enum_of_int")
         (Ident.snake name ~suffix:"enum")
         (list_sep " | " gen_decode_enum_item)
-        items
-        (Ident.snake name ~suffix:"enum");
+        items;
       Printf.fprintf out "let %s : %s -> int = function %a;;"
         (Ident.snake name ~suffix:"int_of_enum")
         (Ident.snake name ~suffix:"enum")
