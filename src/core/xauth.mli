@@ -16,10 +16,11 @@ type entry = {
   xau_data : string;
 }
 
-val entries_from_string : string -> entry list
-val entries_from_file : string -> entry list
+val parse : string -> entry list
 
 type auth = { auth_name : string; auth_data : string }
+
+val default_auth : auth
 
 val select_best :
   family:Family.t ->

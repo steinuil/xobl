@@ -97,17 +97,13 @@ let rec read_all_entries stream acc =
   if cursor_is_empty stream then List.rev acc else read_all_entries stream acc
 
 let read_all_entries stream = read_all_entries stream []
-let entries_from_string data = read_all_entries { data; pos = 0 }
-
-let entries_from_file path =
-  let data = In_channel.with_open_bin path In_channel.input_all in
-  read_all_entries { data; pos = 0 }
+let parse data = read_all_entries { data; pos = 0 }
 
 let%expect_test _ =
   let data =
     "\x01\x00\x00\tsick-hack\x00\x00\x00\x12MIT-MAGIC-COOKIE-1\x00\x10?\xF65iW\xE7?\xE8\xB0%\x11kcu\xC6\x90\xFF\xFF\x00\tsick-hack\x00\x00\x00\x12MIT-MAGIC-COOKIE-1\x00\x10?\xF65iW\xE7?\xE8\xB0%\x11kcu\xC6\x90"
   in
-  let auth = entries_from_string data in
+  let auth = parse data in
   print_string @@ Sexplib.Sexp.to_string_hum @@ sexp_of_list sexp_of_entry auth;
   [%expect
     {|
@@ -119,6 +115,8 @@ let%expect_test _ =
       (xau_data "?\2465iW\231?\232\176%\017kcu\198\144"))) |}]
 
 type auth = { auth_name : string; auth_data : string }
+
+let default_auth = { auth_name = ""; auth_data = "" }
 
 let select_best ~family ~address ~display ?(types = [ "MIT-MAGIC-COOKIE-1" ])
     entries =

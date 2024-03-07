@@ -10,14 +10,13 @@ let get_socket_params ~display = function
       let auth =
         let& xauth_path = Xauth.path_from_env () in
         try
-          Xauth.entries_from_file xauth_path
+          In_channel.with_open_text xauth_path In_channel.input_all
+          |> Xauth.parse
           |> Xauth.select_best ~family:Xauth.Family.Local ~address:localhost
                ~display
         with Sys_error _ -> None
       in
-      let auth =
-        Option.value ~default:{ auth_name = ""; auth_data = "" } auth
-      in
+      let auth = Option.value ~default:Xauth.default_auth auth in
       Lwt.return (Unix.PF_UNIX, Unix.ADDR_UNIX path, auth)
   | Display_name.Internet_domain (family, hostname, port) ->
       let family =
