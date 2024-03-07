@@ -2,7 +2,7 @@
  (name xobl_compile)
  (modules xobl_compile)
  (public_name xobl-compile)
- (libraries xobl_compiler))
+ (libraries xobl.compiler))
 
  (executable
   (name compile_keysyms)
