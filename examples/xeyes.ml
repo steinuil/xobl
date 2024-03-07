@@ -1,4 +1,5 @@
 open Xobl
+open X11_protocol
 
 let ( let* ) = Lwt.bind
 
@@ -202,9 +203,7 @@ let main (conn : Connection.t) =
         in
         Lwt.return_unit
     | _ ->
-        let* () =
-          Lwt_io.printf "Event: %s\n" (Xobl.Util.hex_string_of_bytes buf)
-        in
+        let* () = Lwt_io.printf "Event: %s\n" (Util.hex_string_of_bytes buf) in
         Lwt.return_unit
   in
 
@@ -223,12 +222,12 @@ let main (conn : Connection.t) =
             loop ()
         | Some (`Error buf) ->
             let* _ =
-              Lwt_io.printf "Error: %s\n" (Xobl.Util.hex_string_of_bytes buf)
+              Lwt_io.printf "Error: %s\n" (Util.hex_string_of_bytes buf)
             in
             loop ()
         | Some (`Reply buf) ->
             let* _ =
-              Lwt_io.printf "Reply: %s\n" (Xobl.Util.hex_string_of_bytes buf)
+              Lwt_io.printf "Reply: %s\n" (Util.hex_string_of_bytes buf)
             in
             loop ()
         | None -> Lwt.return_unit)

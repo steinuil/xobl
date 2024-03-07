@@ -1,0 +1,70 @@
+(library
+ (name x11_protocol)
+ (public_name xobl.protocol)
+ (libraries sexplib)
+ (preprocess
+  (pps ppx_sexp_conv)))
+
+(rule
+ (targets
+  xproto.ml
+  bigreq.ml
+  composite.ml
+  damage.ml
+  dpms.ml
+  dri2.ml
+  dri3.ml
+  ge.ml
+  glx.ml
+  present.ml
+  randr.ml
+  record.ml
+  render.ml
+  res.ml
+  screensaver.ml
+  shape.ml
+  shm.ml
+  sync.ml
+  xc_misc.ml
+  xf86dri.ml
+  ; xf86vidmode.ml
+  xinerama.ml
+  xfixes.ml
+  xinput.ml
+  xprint.ml
+  xselinux.ml
+  xtest.ml
+  xv.ml
+  xvmc.ml)
+ (deps
+  %{project_root}/xml-xcb/xproto.xml
+  %{project_root}/xml-xcb/bigreq.xml
+  %{project_root}/xml-xcb/composite.xml
+  %{project_root}/xml-xcb/damage.xml
+  %{project_root}/xml-xcb/dpms.xml
+  %{project_root}/xml-xcb/dri2.xml
+  %{project_root}/xml-xcb/dri3.xml
+  %{project_root}/xml-xcb/ge.xml
+  %{project_root}/xml-xcb/glx.xml
+  %{project_root}/xml-xcb/present.xml
+  %{project_root}/xml-xcb/randr.xml
+  %{project_root}/xml-xcb/record.xml
+  %{project_root}/xml-xcb/render.xml
+  %{project_root}/xml-xcb/res.xml
+  %{project_root}/xml-xcb/screensaver.xml
+  %{project_root}/xml-xcb/shape.xml
+  %{project_root}/xml-xcb/shm.xml
+  %{project_root}/xml-xcb/sync.xml
+  %{project_root}/xml-xcb/xc_misc.xml
+  %{project_root}/xml-xcb/xf86dri.xml
+  %{project_root}/xml-xcb/xf86vidmode.xml
+  %{project_root}/xml-xcb/xinerama.xml
+  %{project_root}/xml-xcb/xfixes.xml
+  %{project_root}/xml-xcb/xinput.xml
+  %{project_root}/xml-xcb/xprint.xml
+  %{project_root}/xml-xcb/xselinux.xml
+  %{project_root}/xml-xcb/xtest.xml
+  %{project_root}/xml-xcb/xv.xml
+  %{project_root}/xml-xcb/xvmc.xml)
+ (action
+  (run %{bin:xobl-compile} --out-dir . %{deps})))

@@ -31,7 +31,7 @@ let decode_float buf ~at =
 
 let decode_file_descr buf ~at =
   decode Bytes.get_int16_le buf ~at ~size:2
-  |> Option.map (fun (n, at) -> ((Obj.magic n : Unix.file_descr), at))
+  |> Option.map (fun (n, at) -> ((Obj.magic n : file_descr), at))
 
 let decode_xid = decode_int32
 
@@ -100,7 +100,7 @@ let encode_int16 buf v = encode Buffer.add_int16_le buf v
 let encode_int32 buf v = encode Buffer.add_int32_le buf (Int32.of_int v)
 let encode_int64 buf v = encode Buffer.add_int64_le buf v
 let encode_float buf v = encode_int64 buf (Int64.bits_of_float v)
-let encode_file_descr buf (v : Unix.file_descr) = encode_int16 buf (Obj.magic v)
+let encode_file_descr buf (v : file_descr) = encode_int16 buf (Obj.magic v)
 let encode_xid = encode_int32
 let encode_list encode_item buf ls = List.iter (encode_item buf) ls
 let encode_string buf str = encode Buffer.add_string buf str
