@@ -1,3 +1,4 @@
+(*
 open Hir
 
 let find_module xcbs n =
@@ -51,6 +52,7 @@ and of_fields xcbs _parents fields =
        | Field_pad { pad = Pad_bytes n; _ } -> n
        | Field_pad { pad = Pad_align _; _ } -> failwith "a"
        | _ -> failwith "a")
+*)
 
 (* this approach doesn't work, because the size of some structs can only be
    known at runtime *)

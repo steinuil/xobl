@@ -1,25 +1,65 @@
 open Ext
 
+type ctx = {
+  current_module : string;  (** [file_name] of the current module *)
+  xcbs : Parsetree.xcb list;
+}
+
 (* Dumb conversions. *)
 
 let conv_ident Parsetree.{ id_module; id_name } =
   Hir.{ id_module = Option.get id_module; id_name }
 
-let conv_type = function
-  | Parsetree.Type_primitive prim -> Hir.Type_primitive prim
-  | Type_ref id -> Hir.Type_ref (conv_ident id)
+let find_module_by_name module_name xcbs =
+  ListLabels.find_map xcbs ~f:(function
+    | Parsetree.Core decls when module_name = "xproto" -> Some decls
+    | Parsetree.Extension { file_name; declarations; _ }
+      when file_name = module_name ->
+        Some declarations
+    | _ -> None)
 
-let rec conv_expression = function
+let find_prim n = function
+  | Parsetree.Xid name when name = n -> Some (`Prim Hir.Xid)
+  | Xid_union { name; _ } when name = n -> Some (`Prim Hir.Xid)
+  | Typedef { name; type_ = Type_primitive prim } when name = n ->
+      Some (`Prim prim)
+  | Typedef { name; type_ = Type_ref ident } when name = n -> Some (`Ref ident)
+  | _ -> None
+
+let ( let& ) = Option.bind
+
+let rec resolve_name_as_prim { current_module; xcbs } name =
+  let& decls = find_module_by_name current_module xcbs in
+  match List.find_map (find_prim name) decls with
+  | Some (`Prim p) -> Some p
+  | Some (`Ref { id_module; id_name }) ->
+      resolve_name_as_prim
+        { current_module = Option.get id_module; xcbs }
+        id_name
+  | None -> None
+
+let resolve_primitive_type xcbs { Parsetree.id_name; id_module } =
+  resolve_name_as_prim
+    { current_module = id_module |> Option.get; xcbs }
+    id_name
+
+let conv_type ctx = function
+  | Parsetree.Type_primitive prim -> Hir.Type_primitive prim
+  | Type_ref id ->
+      let prim = resolve_primitive_type ctx id in
+      Hir.Type_ref (conv_ident id, prim)
+
+let rec conv_expression ctx = function
   | Parsetree.Binop (op, e1, e2) ->
-      Hir.Binop (op, conv_expression e1, conv_expression e2)
-  | Unop (op, e) -> Hir.Unop (op, conv_expression e)
+      Hir.Binop (op, conv_expression ctx e1, conv_expression ctx e2)
+  | Unop (op, e) -> Hir.Unop (op, conv_expression ctx e)
   | Field_ref f -> Hir.Field_ref f
   | Param_ref { param; type_ } ->
-      Hir.Param_ref { param; type_ = Some (conv_type type_) }
+      Hir.Param_ref { param; type_ = Some (conv_type ctx type_) }
   | Enum_ref { enum; item } -> Hir.Enum_ref { enum = conv_ident enum; item }
-  | Pop_count e -> Hir.Pop_count (conv_expression e)
+  | Pop_count e -> Hir.Pop_count (conv_expression ctx e)
   | Sum_of { field; by_expr } ->
-      Hir.Sum_of { field; by_expr = Option.map conv_expression by_expr }
+      Hir.Sum_of { field; by_expr = Option.map (conv_expression ctx) by_expr }
   | List_element_ref -> Hir.List_element_ref
   | Expr_value n -> Hir.Expr_value n
   | Expr_bit b -> Hir.Expr_bit b
@@ -30,10 +70,10 @@ let conv_field_allowed = function
   | Allowed_alt_enum id -> Hir.Allowed_alt_enum (conv_ident id)
   | Allowed_alt_mask id -> Hir.Allowed_alt_mask (conv_ident id)
 
-let conv_field_type Parsetree.{ ft_type; ft_allowed } =
+let conv_field_type ctx Parsetree.{ ft_type; ft_allowed } =
   Hir.
     {
-      ft_type = conv_type ft_type;
+      ft_type = conv_type ctx ft_type;
       ft_allowed = Option.map conv_field_allowed ft_allowed;
     }
 
@@ -227,16 +267,11 @@ let conv_optional_fields ~cond ~cases fields xcbs =
             | name, Parsetree.Item_bit b when name = item -> Some b
             | _ -> None)
         in
-        let type_ = conv_field_type type_ in
+        let type_ = conv_field_type xcbs type_ in
         (name, cond, bit, type_)
         (*
            Hir.Field_optional { name; mask = cond; bit; type_ } *)
     | _ -> failwith "unexpected")
-
-type ctx = {
-  current_module : string;  (** [file_name] of the current module *)
-  xcbs : Parsetree.xcb list;
-}
 
 type variant = { name : string; items : Hir.variant_item list }
 
@@ -385,7 +420,7 @@ and conv_fields fields (curr_module, xcbs) =
         when List.mem_assoc name lists.length_by_list ->
           let length_field = List.assoc name lists.length_by_list in
           Hir.Field_list_simple
-            { name; type_ = conv_field_type type_; length = length_field }
+            { name; type_ = conv_field_type xcbs type_; length = length_field }
           |> mk_list
       (* List length *)
       | Field { name; type_ = { ft_type; _ } }
@@ -394,10 +429,10 @@ and conv_fields fields (curr_module, xcbs) =
           Hir.Field_list_length
             {
               name;
-              type_ = conv_type ft_type;
+              type_ = conv_type xcbs ft_type;
               expr = l.inverted_expr;
               list = l.list_name;
-              list_type = conv_type l.type_;
+              list_type = conv_type xcbs l.type_;
             }
           |> mk_list
       (* Variant field *)
@@ -418,7 +453,7 @@ and conv_fields fields (curr_module, xcbs) =
             {
               field_name;
               variant = { id_module = curr_module; id_name = variant_name };
-              type_ = conv_type ft_type;
+              type_ = conv_type xcbs ft_type;
             }
           |> mk_list
       (* Optional fields *)
@@ -428,14 +463,19 @@ and conv_fields fields (curr_module, xcbs) =
       | Field { name; type_ = { ft_type; _ } }
         when List.mem_assoc name optionals.by_condition ->
           let fields = List.assoc name optionals.by_condition in
-          Hir.Field_optional_mask { name; type_ = conv_type ft_type; fields }
+          Hir.Field_optional_mask
+            { name; type_ = conv_type xcbs ft_type; fields }
           |> mk_list
       (* Other fields *)
       | Field { name; type_ } ->
-          Hir.Field { name; type_ = conv_field_type type_ } |> mk_list
+          Hir.Field { name; type_ = conv_field_type xcbs type_ } |> mk_list
       | Field_expr { name; type_; expr } ->
           Hir.Field_expr
-            { name; type_ = conv_field_type type_; expr = conv_expression expr }
+            {
+              name;
+              type_ = conv_field_type xcbs type_;
+              expr = conv_expression xcbs expr;
+            }
           |> mk_list
       | Field_file_descriptor f -> Hir.Field_file_descriptor f |> mk_list
       | Field_pad { pad; serialize } ->
@@ -444,8 +484,8 @@ and conv_fields fields (curr_module, xcbs) =
           Hir.Field_list
             {
               name;
-              type_ = conv_field_type type_;
-              length = Option.map conv_expression length;
+              type_ = conv_field_type xcbs type_;
+              length = Option.map (conv_expression xcbs) length;
             }
           |> mk_list)
   in
@@ -455,7 +495,7 @@ let conv_declaration (curr_module, xcbs) = function
   | Parsetree.Xid name ->
       Hir.(Type_alias { name; type_ = Type_primitive Xid }) |> mk_list
   | Typedef { name; type_ } ->
-      Hir.Type_alias { name; type_ = conv_type type_ } |> mk_list
+      Hir.Type_alias { name; type_ = conv_type xcbs type_ } |> mk_list
   | Xid_union { name; types } ->
       Hir.Type_alias { name; type_ = Type_union (List.map conv_ident types) }
       |> mk_list

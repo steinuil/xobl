@@ -34,19 +34,15 @@ let modules =
   ]
 
 let () =
-  let xcbs =
-    modules
-    |> List.map (Printf.sprintf "../xml-xcb/%s.xml")
-    |> Xobl_compiler.compile_files_to_hir
-  in
-  List.iter
-    (fun m ->
-      let name =
-        match m with
-        | Xobl_compiler.Hir.Core _ -> "Xproto"
-        | Extension { file_name; _ } -> String.capitalize_ascii file_name
-      in
-      Printf.fprintf stdout "module %s = struct\n" name;
-      Xobl_compiler.output_ocaml xcbs stdout m;
-      Printf.fprintf stdout "\nend\n")
-    xcbs
+  modules
+  |> List.map (Printf.sprintf "../xml-xcb/%s.xml")
+  |> Xobl_compiler.compile_files_to_hir
+  |> List.iter (fun m ->
+         let name =
+           match m with
+           | Xobl_compiler.Hir.Core _ -> "Xproto"
+           | Extension { file_name; _ } -> String.capitalize_ascii file_name
+         in
+         Printf.fprintf stdout "module %s = struct\n" name;
+         Xobl_compiler.output_ocaml stdout m;
+         Printf.fprintf stdout "\nend\n")

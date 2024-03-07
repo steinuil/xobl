@@ -32,7 +32,7 @@ type prim = Parsetree.prim =
 
 type type_ =
   | Type_primitive of prim
-  | Type_ref of ident
+  | Type_ref of ident * prim option
   | Type_union of ident list
 [@@deriving show, sexp]
 
