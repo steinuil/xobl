@@ -2,6 +2,7 @@ let ( let& ) = Option.bind
 let ( let* ) = Lwt.bind
 
 open X11_protocol
+open X11
 
 let get_socket_params ~display = function
   | Display_name.Unix_domain_socket path ->

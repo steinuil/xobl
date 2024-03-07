@@ -1,4 +1,5 @@
 open Xobl
+open X11
 open X11_protocol
 
 let ( let* ) = Lwt.bind
