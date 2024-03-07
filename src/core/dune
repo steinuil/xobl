@@ -1,6 +1,6 @@
 (library
- (name x11)
- (public_name xobl.core)
- (libraries sexplib x11_protocol)
+ (name xobl)
+ (public_name xobl)
+ (libraries sexplib xobl.protocol)
  (preprocess
   (pps ppx_sexp_conv ppx_inline_test ppx_expect)))

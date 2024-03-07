@@ -1,5 +1,5 @@
 (library
- (name x11_protocol)
+ (name xobl_protocol)
  (public_name xobl.protocol)
  (libraries sexplib)
  (preprocess

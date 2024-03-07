@@ -2,7 +2,7 @@
  (modes byte)
  (names parser_output hir_output)
  (modules parser_output hir_output)
- (libraries xobl_compiler lwt lwt.unix sexplib)
+ (libraries xobl.compiler)
  (deps
   (glob_files ../xml-xcb/*.xml)))
 
@@ -24,4 +24,4 @@
 (executable
  (name generate_output)
  (modules generate_output)
- (libraries xobl_compiler))
+ (libraries xobl.compiler))
