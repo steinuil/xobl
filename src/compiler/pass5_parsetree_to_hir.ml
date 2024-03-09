@@ -333,7 +333,6 @@ let rec conv_variant_field ~cond ~cases fields (curr_module, xcbs) =
               | Hir.Field_list { name; _ }
               | Hir.Field { name; _ }
               | Hir.Field_expr { name; _ }
-              | Hir.Field_file_descriptor name
               | Hir.Field_list_simple { name; _ }
               | Hir.Field_list_length { name; _ }
               | Hir.Field_variant { name; _ }
@@ -477,7 +476,10 @@ and conv_fields fields (curr_module, xcbs) =
               expr = conv_expression xcbs expr;
             }
           |> mk_list
-      | Field_file_descriptor f -> Hir.Field_file_descriptor f |> mk_list
+      | Field_file_descriptor name ->
+          Hir.Field
+            { name; type_ = { ft_type = Type_primitive Fd; ft_allowed = None } }
+          |> mk_list
       | Field_pad { pad; serialize } ->
           Hir.Field_pad { pad; serialize } |> mk_list
       | Field_list { name; type_; length } ->

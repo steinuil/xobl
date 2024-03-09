@@ -6283,7 +6283,8 @@
     (reply
      (((Field (name nfd)
         (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
-       (Field_file_descriptor device_fd)
+       (Field (name device_fd)
+        (type_ ((ft_type (Type_primitive Fd)) (ft_allowed ()))))
        (Field_pad (pad (Pad_bytes 24)) (serialize false))))))
    (Request (name PixmapFromBuffer) (opcode 2) (combine_adjacent true)
     (fields
@@ -6307,7 +6308,8 @@
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
       (Field (name bpp)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
-      (Field_file_descriptor pixmap_fd)))
+      (Field (name pixmap_fd)
+       (type_ ((ft_type (Type_primitive Fd)) (ft_allowed ()))))))
     (reply ()))
    (Request (name BufferFromPixmap) (opcode 3) (combine_adjacent true)
     (fields
@@ -6330,7 +6332,8 @@
         (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
        (Field (name bpp)
         (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
-       (Field_file_descriptor pixmap_fd)
+       (Field (name pixmap_fd)
+        (type_ ((ft_type (Type_primitive Fd)) (ft_allowed ()))))
        (Field_pad (pad (Pad_bytes 12)) (serialize false))))))
    (Request (name FenceFromFD) (opcode 4) (combine_adjacent true)
     (fields
@@ -6343,7 +6346,8 @@
       (Field (name initially_triggered)
        (type_ ((ft_type (Type_primitive Bool)) (ft_allowed ()))))
       (Field_pad (pad (Pad_bytes 3)) (serialize false))
-      (Field_file_descriptor fence_fd)))
+      (Field (name fence_fd)
+       (type_ ((ft_type (Type_primitive Fd)) (ft_allowed ()))))))
     (reply ()))
    (Request (name FDFromFence) (opcode 5) (combine_adjacent true)
     (fields
@@ -6356,7 +6360,8 @@
     (reply
      (((Field (name nfd)
         (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
-       (Field_file_descriptor fence_fd)
+       (Field (name fence_fd)
+        (type_ ((ft_type (Type_primitive Fd)) (ft_allowed ()))))
        (Field_pad (pad (Pad_bytes 24)) (serialize false))))))
    (Request (name GetSupportedModifiers) (opcode 6) (combine_adjacent true)
     (fields
@@ -10008,7 +10013,8 @@
     (reply
      (((Field (name nfd)
         (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
-       (Field_file_descriptor master_fd)
+       (Field (name master_fd)
+        (type_ ((ft_type (Type_primitive Fd)) (ft_allowed ()))))
        (Field_pad (pad (Pad_bytes 24)) (serialize false))))))
    (Request (name FreeLease) (opcode 46) (combine_adjacent true)
     (fields
@@ -11552,7 +11558,8 @@
        (type_
         ((ft_type (Type_ref ((id_module shm) (id_name SEG)) (Xid)))
          (ft_allowed ()))))
-      (Field_file_descriptor shm_fd)
+      (Field (name shm_fd)
+       (type_ ((ft_type (Type_primitive Fd)) (ft_allowed ()))))
       (Field (name read_only)
        (type_ ((ft_type (Type_primitive Bool)) (ft_allowed ()))))
       (Field_pad (pad (Pad_bytes 3)) (serialize false))))
@@ -11571,7 +11578,8 @@
     (reply
      (((Field (name nfd)
         (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
-       (Field_file_descriptor shm_fd)
+       (Field (name shm_fd)
+        (type_ ((ft_type (Type_primitive Fd)) (ft_allowed ()))))
        (Field_pad (pad (Pad_bytes 24)) (serialize false)))))))))
 (Extension (name XCMisc) (file_name xc_misc) (query_name XC-MISC)
  (multiword true) (version (1 1)) (imports ())

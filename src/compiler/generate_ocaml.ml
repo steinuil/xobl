@@ -268,7 +268,6 @@ let gen_list_length out t =
 
 let gen_field_type_of_field ctx out = function
   | Field { type_; _ } -> Printf.fprintf out "%a" (gen_field_type ctx) type_
-  | Field_file_descriptor _ -> Printf.fprintf out "file_descr"
   | Field_optional { type_; _ } ->
       Printf.fprintf out "%a option" (gen_field_type ctx) type_
   | Field_list { type_; _ } | Field_list_simple { type_; _ } ->
@@ -284,8 +283,6 @@ let gen_field ctx out = function
   | Field { name; type_ } ->
       Printf.fprintf out "%s : %a; " (Ident.snake name) (gen_field_type ctx)
         type_
-  | Field_file_descriptor name ->
-      Printf.fprintf out "%s : file_descr; " (Ident.snake name)
   | Field_optional { name; type_; _ } ->
       Printf.fprintf out "%s : %a option; " (Ident.snake name)
         (gen_field_type ctx) type_
@@ -377,9 +374,6 @@ let gen_decode_field ctx _fields out = function
       Printf.fprintf out "let* %s, at = %a buf ~at in" (Ident.snake name)
         (gen_decode_field_type ctx)
         type_
-  | Field_file_descriptor name ->
-      Printf.fprintf out "let* %s, at = decode_file_descr buf ~at in"
-        (Ident.snake name)
   | Field_pad { pad = Pad_bytes n; _ } ->
       Printf.fprintf out "let at = at + %d in" n
   | Field_pad { pad = Pad_align n; _ } ->
@@ -440,8 +434,6 @@ let gen_encode_field ctx out = function
       Printf.fprintf out "%a buf v.%s;"
         (gen_encode_field_type ctx)
         type_ (Ident.snake name)
-  | Field_file_descriptor name ->
-      Printf.fprintf out "encode_file_descr buf v.%s;" (Ident.snake name)
   | Field_pad { pad = Pad_bytes n; _ } ->
       Printf.fprintf out "encode_pad buf %d;" n
   | Field_pad { pad = Pad_align n; _ } ->
@@ -478,8 +470,6 @@ let gen_encode_arg_field ctx out = function
       Printf.fprintf out "%a buf %s;"
         (gen_encode_field_type ctx)
         type_ (Ident.snake name)
-  | Field_file_descriptor name ->
-      Printf.fprintf out "encode_file_descr buf %s;" (Ident.snake name)
   | Field_pad { pad = Pad_bytes n; _ } ->
       Printf.fprintf out "encode_pad buf %d;" n
   | Field_pad { pad = Pad_align n; _ } ->
@@ -523,8 +513,6 @@ let gen_encode_single_field ctx out ~name = function
       Printf.fprintf out "%a buf %s;"
         (gen_encode_field_type ctx)
         type_ (Ident.snake name)
-  | Field_file_descriptor _ ->
-      Printf.fprintf out "encode_file_descr buf %s;" (Ident.snake name)
   | Field_list { type_; _ } ->
       Printf.fprintf out "%a buf %s;" (gen_encode_list ctx) type_
         (Ident.snake name)
@@ -541,7 +529,6 @@ let gen_encode_single_field ctx out ~name = function
 
 let gen_size_of_field ctx out = function
   | Field { type_; _ } -> gen_size_of_field_type ctx out type_
-  | Field_file_descriptor _ -> output_string out "2"
   | Field_pad { pad = Pad_bytes n; _ } -> output_string out (Int.to_string n)
   | Field_list_length { type_; _ } -> gen_size_of_type ctx out type_
   | Field_optional_mask { type_; _ } -> gen_size_of_type ctx out type_
@@ -569,7 +556,6 @@ let gen_size_of_field ctx out = function
 
 let name_of_field = function
   | Field { name; _ }
-  | Field_file_descriptor name
   | Field_optional { name; _ }
   | Field_list { name; _ }
   | Field_list_simple { name; _ }
@@ -611,8 +597,8 @@ let gen_decode_event_fields ctx out fields =
         (names_of_fields |> List.map Ident.snake |> String.concat "; ")
 
 let is_field_visible = function
-  | Field _ | Field_file_descriptor _ | Field_optional _ | Field_list _
-  | Field_list_simple _ | Field_variant _ ->
+  | Field _ | Field_optional _ | Field_list _ | Field_list_simple _
+  | Field_variant _ ->
       true
   | Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _
   | Field_optional_mask _ ->
@@ -687,8 +673,6 @@ let gen_named_arg ctx out = function
   | Field { name; type_ } ->
       Printf.fprintf out "~(%s : %a) " (Ident.snake name) (gen_field_type ctx)
         type_
-  | Field_file_descriptor name ->
-      Printf.fprintf out "~(%s : file_descr) " (Ident.snake name)
   | Field_optional { name; type_; _ } ->
       Printf.fprintf out "?(%s : %a option) " (Ident.snake name)
         (gen_field_type ctx) type_

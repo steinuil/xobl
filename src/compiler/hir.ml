@@ -68,7 +68,6 @@ type field_type = { ft_type : type_; ft_allowed : field_allowed option }
 type field =
   | Field of { name : string; type_ : field_type }
   | Field_expr of { name : string; type_ : field_type; expr : expression }
-  | Field_file_descriptor of string
   | Field_pad of { pad : pad; serialize : bool }
   | Field_list of {
       name : string;
@@ -117,12 +116,14 @@ type mask_additional_value =
   | Additional_values of (string * int64) list
 [@@deriving show, sexp]
 
+type enum_item = string * int64 [@@deriving show, sexp]
+
 type declaration =
   | Type_alias of { name : string; type_ : type_ }
   | Struct of { name : string; fields : field list }
   | Event_struct of { name : string; events : ident list }
   | Variant of { name : string; items : variant_item list }
-  | Enum of { name : string; items : (string * int64) list }
+  | Enum of { name : string; items : enum_item list }
   | Mask of {
       name : string;
       items : (string * int) list;
