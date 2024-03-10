@@ -32,7 +32,8 @@ let main (conn : Connection.t) =
 *)
   let buf = Codec.Encode_buffer.of_buffer (Buffer.create 120) in
   let () =
-    Xproto.encode_create_window ~depth:root.root_depth ~wid:(Int32.to_int wid)
+    Xproto.encode_create_window ~depth:root.root_depth
+      ~wid:(Int32.to_int wid |> X11_types.Xid.of_int)
       ~parent:root.root ~x:10 ~y:10 ~width:300 ~height:300 ~border_width:10
       ~class_:`Input_output ~visual:root.root_visual
       ~event_mask:[ `Enter_window ] buf
@@ -45,7 +46,9 @@ let main (conn : Connection.t) =
   let* _ = Connection.write conn buf in
 
   let buf = Codec.Encode_buffer.of_buffer (Buffer.create 120) in
-  Xproto.encode_map_window ~window:(Int32.to_int wid) buf;
+  Xproto.encode_map_window
+    ~window:(Int32.to_int wid |> X11_types.Xid.of_int)
+    buf;
   let buf = Buffer.to_bytes buf.buffer in
   let* () =
     Lwt_io.printf "MapWindow(len=%d): %s\n" (Bytes.length buf)

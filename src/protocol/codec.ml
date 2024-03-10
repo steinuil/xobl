@@ -33,7 +33,8 @@ let decode_file_descr buf ~at =
   decode Bytes.get_int16_le buf ~at ~size:2
   |> Option.map (fun (n, at) -> ((Obj.magic n : file_descr), at))
 
-let decode_xid = decode_int32
+let decode_xid buf ~at =
+  decode_int32 buf ~at |> Option.map (fun (n, at) -> (Xid.of_int n, at))
 
 let decode_enum decode to_int of_int buf ~at =
   match decode buf ~at with
@@ -101,11 +102,19 @@ let encode_int32 buf v = encode Buffer.add_int32_le buf (Int32.of_int v)
 let encode_int64 buf v = encode Buffer.add_int64_le buf v
 let encode_float buf v = encode_int64 buf (Int64.bits_of_float v)
 let encode_file_descr buf (v : file_descr) = encode_int16 buf (Obj.magic v)
-let encode_xid = encode_int32
+let encode_xid buf v = encode_int32 buf (Xid.to_int v)
 let encode_list encode_item buf ls = List.iter (encode_item buf) ls
 let encode_string buf str = encode Buffer.add_string buf str
 
-let encode_enum encode of_int to_int buf v =
+let encode_enum :
+    type t a.
+    (Encode_buffer.t -> t -> unit) ->
+    (int -> t) ->
+    (a -> int) ->
+    Encode_buffer.t ->
+    a ->
+    unit =
+ fun encode of_int to_int buf v ->
   let v = to_int v in
   encode buf (of_int v)
 
@@ -113,10 +122,10 @@ let encode_mask encode of_int to_int buf v =
   let v = to_int v in
   encode buf (of_int v)
 
-let encode_alt_enum encode of_int to_int buf v =
+let encode_alt_enum encode_v encode_custom of_int to_int buf v =
   match v with
-  | E v -> encode_enum encode of_int to_int buf v
-  | Custom v -> encode buf v
+  | E x -> encode_enum encode_v of_int to_int buf x
+  | Custom v -> encode_custom buf v
 
 let encode_alt_mask encode of_int to_int buf v =
   match v with

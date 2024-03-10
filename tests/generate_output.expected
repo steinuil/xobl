@@ -52,47 +52,47 @@ module Xproto = struct
     encode_uint8 buf v.byte2;
     ()
 
-  type window = xid [@@deriving sexp]
+  type window = Xid.t [@@deriving sexp]
 
   let decode_window = decode_xid
   let encode_window = encode_xid
 
-  type pixmap = xid [@@deriving sexp]
+  type pixmap = Xid.t [@@deriving sexp]
 
   let decode_pixmap = decode_xid
   let encode_pixmap = encode_xid
 
-  type cursor = xid [@@deriving sexp]
+  type cursor = Xid.t [@@deriving sexp]
 
   let decode_cursor = decode_xid
   let encode_cursor = encode_xid
 
-  type font = xid [@@deriving sexp]
+  type font = Xid.t [@@deriving sexp]
 
   let decode_font = decode_xid
   let encode_font = encode_xid
 
-  type gcontext = xid [@@deriving sexp]
+  type gcontext = Xid.t [@@deriving sexp]
 
   let decode_gcontext = decode_xid
   let encode_gcontext = encode_xid
 
-  type colormap = xid [@@deriving sexp]
+  type colormap = Xid.t [@@deriving sexp]
 
   let decode_colormap = decode_xid
   let encode_colormap = encode_xid
 
-  type atom = xid [@@deriving sexp]
+  type atom = Xid.t [@@deriving sexp]
 
   let decode_atom = decode_xid
   let encode_atom = encode_xid
 
-  type drawable = xid [@@deriving sexp]
+  type drawable = Xid.t [@@deriving sexp]
 
   let decode_drawable = decode_xid
   let encode_drawable = encode_xid
 
-  type fontable = xid [@@deriving sexp]
+  type fontable = Xid.t [@@deriving sexp]
 
   let decode_fontable = decode_xid
   let encode_fontable = encode_xid
@@ -853,7 +853,7 @@ module Xproto = struct
     let* root, at = decode_window buf ~at in
     let* event, at = decode_window buf ~at in
     let* child, at =
-      decode_alt_enum decode_window identity window_enum_of_int buf ~at
+      decode_alt_enum decode_window Xid.to_int window_enum_of_int buf ~at
     in
     let* root_x, at = decode_int16 buf ~at in
     let* root_y, at = decode_int16 buf ~at in
@@ -933,7 +933,7 @@ module Xproto = struct
     let* root, at = decode_window buf ~at in
     let* event, at = decode_window buf ~at in
     let* child, at =
-      decode_alt_enum decode_window identity window_enum_of_int buf ~at
+      decode_alt_enum decode_window Xid.to_int window_enum_of_int buf ~at
     in
     let* root_x, at = decode_int16 buf ~at in
     let* root_y, at = decode_int16 buf ~at in
@@ -999,7 +999,7 @@ module Xproto = struct
     let* root, at = decode_window buf ~at in
     let* event, at = decode_window buf ~at in
     let* child, at =
-      decode_alt_enum decode_window identity window_enum_of_int buf ~at
+      decode_alt_enum decode_window Xid.to_int window_enum_of_int buf ~at
     in
     let* root_x, at = decode_int16 buf ~at in
     let* root_y, at = decode_int16 buf ~at in
@@ -1103,7 +1103,7 @@ module Xproto = struct
     let* root, at = decode_window buf ~at in
     let* event, at = decode_window buf ~at in
     let* child, at =
-      decode_alt_enum decode_window identity window_enum_of_int buf ~at
+      decode_alt_enum decode_window Xid.to_int window_enum_of_int buf ~at
     in
     let* root_x, at = decode_int16 buf ~at in
     let* root_y, at = decode_int16 buf ~at in
@@ -1422,7 +1422,7 @@ module Xproto = struct
     let* event, at = decode_window buf ~at in
     let* window, at = decode_window buf ~at in
     let* above_sibling, at =
-      decode_alt_enum decode_window identity window_enum_of_int buf ~at
+      decode_alt_enum decode_window Xid.to_int window_enum_of_int buf ~at
     in
     let* x, at = decode_int16 buf ~at in
     let* y, at = decode_int16 buf ~at in
@@ -1518,7 +1518,7 @@ module Xproto = struct
     let* parent, at = decode_window buf ~at in
     let* window, at = decode_window buf ~at in
     let* sibling, at =
-      decode_alt_enum decode_window identity window_enum_of_int buf ~at
+      decode_alt_enum decode_window Xid.to_int window_enum_of_int buf ~at
     in
     let* x, at = decode_int16 buf ~at in
     let* y, at = decode_int16 buf ~at in
@@ -1919,7 +1919,7 @@ module Xproto = struct
     let* selection, at = decode_atom buf ~at in
     let* target, at = decode_atom buf ~at in
     let* property, at =
-      decode_alt_enum decode_atom identity atom_enum_of_int buf ~at
+      decode_alt_enum decode_atom Xid.to_int atom_enum_of_int buf ~at
     in
     ignore orig;
     Some ({ time; owner; requestor; selection; target; property }, at)
@@ -1946,7 +1946,7 @@ module Xproto = struct
     let* selection, at = decode_atom buf ~at in
     let* target, at = decode_atom buf ~at in
     let* property, at =
-      decode_alt_enum decode_atom identity atom_enum_of_int buf ~at
+      decode_alt_enum decode_atom Xid.to_int atom_enum_of_int buf ~at
     in
     ignore orig;
     Some ({ time; requestor; selection; target; property }, at)
@@ -1987,7 +1987,7 @@ module Xproto = struct
     let* _sequence_number, at = decode_uint16 buf ~at in
     let* window, at = decode_window buf ~at in
     let* colormap, at =
-      decode_alt_enum decode_colormap identity colormap_enum_of_int buf ~at
+      decode_alt_enum decode_colormap Xid.to_int colormap_enum_of_int buf ~at
     in
     let* new_, at = decode_bool buf ~at in
     let* state, at =
@@ -2346,11 +2346,14 @@ module Xproto = struct
     (match background_pixmap with
     | None -> ()
     | Some v ->
-        encode_alt_enum encode_pixmap identity back_pixmap_int_of_enum buf v);
+        encode_alt_enum encode_pixmap encode_int32 Xid.of_int
+          back_pixmap_int_of_enum buf v);
     (match background_pixel with None -> () | Some v -> encode_int32 buf v);
     (match border_pixmap with
     | None -> ()
-    | Some v -> encode_alt_enum encode_pixmap identity pixmap_int_of_enum buf v);
+    | Some v ->
+        encode_alt_enum encode_pixmap encode_int32 Xid.of_int pixmap_int_of_enum
+          buf v);
     (match border_pixel with None -> () | Some v -> encode_int32 buf v);
     (match bit_gravity with
     | None -> ()
@@ -2375,10 +2378,13 @@ module Xproto = struct
     (match colormap with
     | None -> ()
     | Some v ->
-        encode_alt_enum encode_colormap identity colormap_int_of_enum buf v);
+        encode_alt_enum encode_colormap encode_int32 Xid.of_int
+          colormap_int_of_enum buf v);
     (match cursor with
     | None -> ()
-    | Some v -> encode_alt_enum encode_cursor identity cursor_int_of_enum buf v);
+    | Some v ->
+        encode_alt_enum encode_cursor encode_int32 Xid.of_int cursor_int_of_enum
+          buf v);
     (* write request length *)
     encode_request_length buf
 
@@ -2422,11 +2428,14 @@ module Xproto = struct
     (match background_pixmap with
     | None -> ()
     | Some v ->
-        encode_alt_enum encode_pixmap identity back_pixmap_int_of_enum buf v);
+        encode_alt_enum encode_pixmap encode_int32 Xid.of_int
+          back_pixmap_int_of_enum buf v);
     (match background_pixel with None -> () | Some v -> encode_int32 buf v);
     (match border_pixmap with
     | None -> ()
-    | Some v -> encode_alt_enum encode_pixmap identity pixmap_int_of_enum buf v);
+    | Some v ->
+        encode_alt_enum encode_pixmap encode_int32 Xid.of_int pixmap_int_of_enum
+          buf v);
     (match border_pixel with None -> () | Some v -> encode_int32 buf v);
     (match bit_gravity with
     | None -> ()
@@ -2451,10 +2460,13 @@ module Xproto = struct
     (match colormap with
     | None -> ()
     | Some v ->
-        encode_alt_enum encode_colormap identity colormap_int_of_enum buf v);
+        encode_alt_enum encode_colormap encode_int32 Xid.of_int
+          colormap_int_of_enum buf v);
     (match cursor with
     | None -> ()
-    | Some v -> encode_alt_enum encode_cursor identity cursor_int_of_enum buf v);
+    | Some v ->
+        encode_alt_enum encode_cursor encode_int32 Xid.of_int cursor_int_of_enum
+          buf v);
     (* write request length *)
     encode_request_length buf
 
@@ -2528,7 +2540,7 @@ module Xproto = struct
     in
     let* override_redirect, at = decode_bool buf ~at in
     let* colormap, at =
-      decode_alt_enum decode_colormap identity colormap_enum_of_int buf ~at
+      decode_alt_enum decode_colormap Xid.to_int colormap_enum_of_int buf ~at
     in
     let* all_event_masks, at =
       decode_mask decode_int32 Int64.of_int event_mask_mask_of_int64 buf ~at
@@ -2684,7 +2696,9 @@ module Xproto = struct
     (match border_width with None -> () | Some v -> encode_int32 buf v);
     (match sibling with
     | None -> ()
-    | Some v -> encode_alt_enum encode_window identity window_int_of_enum buf v);
+    | Some v ->
+        encode_alt_enum encode_window encode_int32 Xid.of_int window_int_of_enum
+          buf v);
     (match stack_mode with
     | None -> ()
     | Some v -> encode_enum encode_int32 identity stack_mode_int_of_enum buf v);
@@ -2774,7 +2788,7 @@ module Xproto = struct
     let at = at + 6 in
     let* root, at = decode_window buf ~at in
     let* parent, at =
-      decode_alt_enum decode_window identity window_enum_of_int buf ~at
+      decode_alt_enum decode_window Xid.to_int window_enum_of_int buf ~at
     in
     let* children_len, at = decode_uint16 buf ~at in
     let children_len = children_len in
@@ -2804,7 +2818,7 @@ module Xproto = struct
     let at = at + 1 in
     let at = at + 6 in
     let* atom, at =
-      decode_alt_enum decode_atom identity atom_enum_of_int buf ~at
+      decode_alt_enum decode_atom Xid.to_int atom_enum_of_int buf ~at
     in
     ignore orig;
     Some (atom, at)
@@ -2905,7 +2919,8 @@ module Xproto = struct
     encode_pad buf 2;
     encode_window buf window;
     encode_atom buf property;
-    encode_alt_enum encode_atom identity get_property_type_int_of_enum buf type_;
+    encode_alt_enum encode_atom encode_int32 Xid.of_int
+      get_property_type_int_of_enum buf type_;
     encode_int32 buf long_offset;
     encode_int32 buf long_length;
     (* write request length *)
@@ -2960,9 +2975,11 @@ module Xproto = struct
     encode_pad buf 1;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum encode_window identity window_int_of_enum buf owner;
+    encode_alt_enum encode_window encode_int32 Xid.of_int window_int_of_enum buf
+      owner;
     encode_atom buf selection;
-    encode_alt_enum encode_timestamp identity time_int_of_enum buf time;
+    encode_alt_enum encode_timestamp encode_int32 identity time_int_of_enum buf
+      time;
     (* write request length *)
     encode_request_length buf
 
@@ -2985,7 +3002,7 @@ module Xproto = struct
     let at = at + 1 in
     let at = at + 6 in
     let* owner, at =
-      decode_alt_enum decode_window identity window_enum_of_int buf ~at
+      decode_alt_enum decode_window Xid.to_int window_enum_of_int buf ~at
     in
     ignore orig;
     Some (owner, at)
@@ -3001,8 +3018,10 @@ module Xproto = struct
     encode_window buf requestor;
     encode_atom buf selection;
     encode_atom buf target;
-    encode_alt_enum encode_atom identity atom_int_of_enum buf property;
-    encode_alt_enum encode_timestamp identity time_int_of_enum buf time;
+    encode_alt_enum encode_atom encode_int32 Xid.of_int atom_int_of_enum buf
+      property;
+    encode_alt_enum encode_timestamp encode_int32 identity time_int_of_enum buf
+      time;
     (* write request length *)
     encode_request_length buf
 
@@ -3027,8 +3046,8 @@ module Xproto = struct
     encode_bool buf propagate;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum encode_window identity send_event_dest_int_of_enum buf
-      destination;
+    encode_alt_enum encode_window encode_int32 Xid.of_int
+      send_event_dest_int_of_enum buf destination;
     encode_mask encode_int32 identity event_mask_int_of_mask buf event_mask;
     encode_string buf event;
     (* write request length *)
@@ -3079,9 +3098,12 @@ module Xproto = struct
     encode_mask encode_uint16 identity event_mask_int_of_mask buf event_mask;
     encode_enum encode_char Char.chr grab_mode_int_of_enum buf pointer_mode;
     encode_enum encode_char Char.chr grab_mode_int_of_enum buf keyboard_mode;
-    encode_alt_enum encode_window identity window_int_of_enum buf confine_to;
-    encode_alt_enum encode_cursor identity cursor_int_of_enum buf cursor;
-    encode_alt_enum encode_timestamp identity time_int_of_enum buf time;
+    encode_alt_enum encode_window encode_int32 Xid.of_int window_int_of_enum buf
+      confine_to;
+    encode_alt_enum encode_cursor encode_int32 Xid.of_int cursor_int_of_enum buf
+      cursor;
+    encode_alt_enum encode_timestamp encode_int32 identity time_int_of_enum buf
+      time;
     (* write request length *)
     encode_request_length buf
 
@@ -3102,7 +3124,8 @@ module Xproto = struct
     encode_pad buf 1;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum encode_timestamp identity time_int_of_enum buf time;
+    encode_alt_enum encode_timestamp encode_int32 identity time_int_of_enum buf
+      time;
     (* write request length *)
     encode_request_length buf
 
@@ -3140,8 +3163,10 @@ module Xproto = struct
     encode_mask encode_uint16 identity event_mask_int_of_mask buf event_mask;
     encode_enum encode_uint8 identity grab_mode_int_of_enum buf pointer_mode;
     encode_enum encode_uint8 identity grab_mode_int_of_enum buf keyboard_mode;
-    encode_alt_enum encode_window identity window_int_of_enum buf confine_to;
-    encode_alt_enum encode_cursor identity cursor_int_of_enum buf cursor;
+    encode_alt_enum encode_window encode_int32 Xid.of_int window_int_of_enum buf
+      confine_to;
+    encode_alt_enum encode_cursor encode_int32 Xid.of_int cursor_int_of_enum buf
+      cursor;
     encode_enum encode_uint8 identity button_index_int_of_enum buf button;
     encode_pad buf 1;
     encode_mask encode_uint16 identity mod_mask_int_of_mask buf modifiers;
@@ -3168,8 +3193,10 @@ module Xproto = struct
     encode_pad buf 1;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum encode_cursor identity cursor_int_of_enum buf cursor;
-    encode_alt_enum encode_timestamp identity time_int_of_enum buf time;
+    encode_alt_enum encode_cursor encode_int32 Xid.of_int cursor_int_of_enum buf
+      cursor;
+    encode_alt_enum encode_timestamp encode_int32 identity time_int_of_enum buf
+      time;
     encode_mask encode_uint16 identity event_mask_int_of_mask buf event_mask;
     encode_pad buf 2;
     (* write request length *)
@@ -3186,7 +3213,8 @@ module Xproto = struct
     (* reserve request length *)
     encode_pad buf 2;
     encode_window buf grab_window;
-    encode_alt_enum encode_timestamp identity time_int_of_enum buf time;
+    encode_alt_enum encode_timestamp encode_int32 identity time_int_of_enum buf
+      time;
     encode_enum encode_char Char.chr grab_mode_int_of_enum buf pointer_mode;
     encode_enum encode_char Char.chr grab_mode_int_of_enum buf keyboard_mode;
     encode_pad buf 2;
@@ -3210,7 +3238,8 @@ module Xproto = struct
     encode_pad buf 1;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum encode_timestamp identity time_int_of_enum buf time;
+    encode_alt_enum encode_timestamp encode_int32 identity time_int_of_enum buf
+      time;
     (* write request length *)
     encode_request_length buf
 
@@ -3232,7 +3261,8 @@ module Xproto = struct
     encode_pad buf 2;
     encode_window buf grab_window;
     encode_mask encode_uint16 identity mod_mask_int_of_mask buf modifiers;
-    encode_alt_enum encode_keycode identity grab_int_of_enum buf key;
+    encode_alt_enum encode_keycode encode_uint8 identity grab_int_of_enum buf
+      key;
     encode_enum encode_uint8 identity grab_mode_int_of_enum buf pointer_mode;
     encode_enum encode_uint8 identity grab_mode_int_of_enum buf keyboard_mode;
     encode_pad buf 3;
@@ -3243,7 +3273,8 @@ module Xproto = struct
       ~(modifiers : mod_mask) buf =
     (* opcode *)
     encode_uint8 buf 34;
-    encode_alt_enum encode_keycode identity grab_int_of_enum buf key;
+    encode_alt_enum encode_keycode encode_uint8 identity grab_int_of_enum buf
+      key;
     (* reserve request length *)
     encode_pad buf 2;
     encode_window buf grab_window;
@@ -3291,7 +3322,8 @@ module Xproto = struct
     encode_enum encode_uint8 identity allow_int_of_enum buf mode;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum encode_timestamp identity time_int_of_enum buf time;
+    encode_alt_enum encode_timestamp encode_int32 identity time_int_of_enum buf
+      time;
     (* write request length *)
     encode_request_length buf
 
@@ -3341,7 +3373,7 @@ module Xproto = struct
     let at = at + 6 in
     let* root, at = decode_window buf ~at in
     let* child, at =
-      decode_alt_enum decode_window identity window_enum_of_int buf ~at
+      decode_alt_enum decode_window Xid.to_int window_enum_of_int buf ~at
     in
     let* root_x, at = decode_int16 buf ~at in
     let* root_y, at = decode_int16 buf ~at in
@@ -3380,8 +3412,10 @@ module Xproto = struct
     (* reserve request length *)
     encode_pad buf 2;
     encode_window buf window;
-    encode_alt_enum encode_timestamp identity time_int_of_enum buf start;
-    encode_alt_enum encode_timestamp identity time_int_of_enum buf stop;
+    encode_alt_enum encode_timestamp encode_int32 identity time_int_of_enum buf
+      start;
+    encode_alt_enum encode_timestamp encode_int32 identity time_int_of_enum buf
+      stop;
     (* write request length *)
     encode_request_length buf
 
@@ -3427,7 +3461,7 @@ module Xproto = struct
     let* same_screen, at = decode_bool buf ~at in
     let at = at + 6 in
     let* child, at =
-      decode_alt_enum decode_window identity window_enum_of_int buf ~at
+      decode_alt_enum decode_window Xid.to_int window_enum_of_int buf ~at
     in
     let* dst_x, at = decode_int16 buf ~at in
     let* dst_y, at = decode_int16 buf ~at in
@@ -3442,8 +3476,10 @@ module Xproto = struct
     encode_pad buf 1;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum encode_window identity window_int_of_enum buf src_window;
-    encode_alt_enum encode_window identity window_int_of_enum buf dst_window;
+    encode_alt_enum encode_window encode_int32 Xid.of_int window_int_of_enum buf
+      src_window;
+    encode_alt_enum encode_window encode_int32 Xid.of_int window_int_of_enum buf
+      dst_window;
     encode_int16 buf src_x;
     encode_int16 buf src_y;
     encode_uint16 buf src_width;
@@ -3476,8 +3512,10 @@ module Xproto = struct
     encode_enum encode_uint8 identity input_focus_int_of_enum buf revert_to;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum encode_window identity input_focus_int_of_enum buf focus;
-    encode_alt_enum encode_timestamp identity time_int_of_enum buf time;
+    encode_alt_enum encode_window encode_int32 Xid.of_int
+      input_focus_int_of_enum buf focus;
+    encode_alt_enum encode_timestamp encode_int32 identity time_int_of_enum buf
+      time;
     (* write request length *)
     encode_request_length buf
 
@@ -3504,7 +3542,7 @@ module Xproto = struct
     in
     let at = at + 6 in
     let* focus, at =
-      decode_alt_enum decode_window identity input_focus_enum_of_int buf ~at
+      decode_alt_enum decode_window Xid.to_int input_focus_enum_of_int buf ~at
     in
     ignore orig;
     Some ({ revert_to; focus }, at)
@@ -4182,10 +4220,14 @@ module Xproto = struct
     | Some v -> encode_enum encode_int32 identity fill_rule_int_of_enum buf v);
     (match tile with
     | None -> ()
-    | Some v -> encode_alt_enum encode_pixmap identity pixmap_int_of_enum buf v);
+    | Some v ->
+        encode_alt_enum encode_pixmap encode_int32 Xid.of_int pixmap_int_of_enum
+          buf v);
     (match stipple with
     | None -> ()
-    | Some v -> encode_alt_enum encode_pixmap identity pixmap_int_of_enum buf v);
+    | Some v ->
+        encode_alt_enum encode_pixmap encode_int32 Xid.of_int pixmap_int_of_enum
+          buf v);
     (match tile_stipple_x_origin with
     | None -> ()
     | Some v -> encode_int32 buf v);
@@ -4194,7 +4236,9 @@ module Xproto = struct
     | Some v -> encode_int32 buf v);
     (match font with
     | None -> ()
-    | Some v -> encode_alt_enum encode_font identity font_int_of_enum buf v);
+    | Some v ->
+        encode_alt_enum encode_font encode_int32 Xid.of_int font_int_of_enum buf
+          v);
     (match subwindow_mode with
     | None -> ()
     | Some v ->
@@ -4204,7 +4248,9 @@ module Xproto = struct
     (match clip_y_origin with None -> () | Some v -> encode_int32 buf v);
     (match clip_mask with
     | None -> ()
-    | Some v -> encode_alt_enum encode_pixmap identity pixmap_int_of_enum buf v);
+    | Some v ->
+        encode_alt_enum encode_pixmap encode_int32 Xid.of_int pixmap_int_of_enum
+          buf v);
     (match dash_offset with None -> () | Some v -> encode_int32 buf v);
     (match dashes with None -> () | Some v -> encode_int32 buf v);
     (match arc_mode with
@@ -4285,10 +4331,14 @@ module Xproto = struct
     | Some v -> encode_enum encode_int32 identity fill_rule_int_of_enum buf v);
     (match tile with
     | None -> ()
-    | Some v -> encode_alt_enum encode_pixmap identity pixmap_int_of_enum buf v);
+    | Some v ->
+        encode_alt_enum encode_pixmap encode_int32 Xid.of_int pixmap_int_of_enum
+          buf v);
     (match stipple with
     | None -> ()
-    | Some v -> encode_alt_enum encode_pixmap identity pixmap_int_of_enum buf v);
+    | Some v ->
+        encode_alt_enum encode_pixmap encode_int32 Xid.of_int pixmap_int_of_enum
+          buf v);
     (match tile_stipple_x_origin with
     | None -> ()
     | Some v -> encode_int32 buf v);
@@ -4297,7 +4347,9 @@ module Xproto = struct
     | Some v -> encode_int32 buf v);
     (match font with
     | None -> ()
-    | Some v -> encode_alt_enum encode_font identity font_int_of_enum buf v);
+    | Some v ->
+        encode_alt_enum encode_font encode_int32 Xid.of_int font_int_of_enum buf
+          v);
     (match subwindow_mode with
     | None -> ()
     | Some v ->
@@ -4307,7 +4359,9 @@ module Xproto = struct
     (match clip_y_origin with None -> () | Some v -> encode_int32 buf v);
     (match clip_mask with
     | None -> ()
-    | Some v -> encode_alt_enum encode_pixmap identity pixmap_int_of_enum buf v);
+    | Some v ->
+        encode_alt_enum encode_pixmap encode_int32 Xid.of_int pixmap_int_of_enum
+          buf v);
     (match dash_offset with None -> () | Some v -> encode_int32 buf v);
     (match dashes with None -> () | Some v -> encode_int32 buf v);
     (match arc_mode with
@@ -5153,7 +5207,8 @@ module Xproto = struct
     encode_pad buf 2;
     encode_cursor buf cid;
     encode_pixmap buf source;
-    encode_alt_enum encode_pixmap identity pixmap_int_of_enum buf mask;
+    encode_alt_enum encode_pixmap encode_int32 Xid.of_int pixmap_int_of_enum buf
+      mask;
     encode_uint16 buf fore_red;
     encode_uint16 buf fore_green;
     encode_uint16 buf fore_blue;
@@ -5176,7 +5231,8 @@ module Xproto = struct
     encode_pad buf 2;
     encode_cursor buf cid;
     encode_font buf source_font;
-    encode_alt_enum encode_font identity font_int_of_enum buf mask_font;
+    encode_alt_enum encode_font encode_int32 Xid.of_int font_int_of_enum buf
+      mask_font;
     encode_uint16 buf source_char;
     encode_uint16 buf mask_char;
     encode_uint16 buf fore_red;
@@ -5793,7 +5849,8 @@ module Xproto = struct
     encode_pad buf 1;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum encode_int32 identity kill_int_of_enum buf resource;
+    encode_alt_enum encode_int32 encode_int32 identity kill_int_of_enum buf
+      resource;
     (* write request length *)
     encode_request_length buf
 
@@ -6290,17 +6347,17 @@ module Render = struct
   let decode_glyph = decode_int32
   let encode_glyph = encode_int32
 
-  type glyphset = xid [@@deriving sexp]
+  type glyphset = Xid.t [@@deriving sexp]
 
   let decode_glyphset = decode_xid
   let encode_glyphset = encode_xid
 
-  type picture = xid [@@deriving sexp]
+  type picture = Xid.t [@@deriving sexp]
 
   let decode_picture = decode_xid
   let encode_picture = encode_xid
 
-  type pictformat = xid [@@deriving sexp]
+  type pictformat = Xid.t [@@deriving sexp]
 
   let decode_pictformat = decode_xid
   let encode_pictformat = encode_xid
@@ -6834,7 +6891,8 @@ module Render = struct
     encode_pad buf 2;
     encode_pad buf 3;
     encode_picture buf src;
-    encode_alt_enum encode_picture identity picture_int_of_enum buf mask;
+    encode_alt_enum encode_picture encode_int32 Xid.of_int picture_int_of_enum
+      buf mask;
     encode_picture buf dst;
     encode_int16 buf src_x;
     encode_int16 buf src_y;
@@ -7437,8 +7495,8 @@ module Shape = struct
     Xproto.encode_window buf destination_window;
     encode_int16 buf x_offset;
     encode_int16 buf y_offset;
-    encode_alt_enum Xproto.encode_pixmap identity Xproto.pixmap_int_of_enum buf
-      source_bitmap;
+    encode_alt_enum Xproto.encode_pixmap encode_int32 Xid.of_int
+      Xproto.pixmap_int_of_enum buf source_bitmap;
     (* write request length *)
     encode_request_length buf
 
@@ -7811,7 +7869,7 @@ module Xfixes = struct
     let* cursor_serial, at = decode_int32 buf ~at in
     let* timestamp, at = Xproto.decode_timestamp buf ~at in
     let* name, at =
-      decode_alt_enum Xproto.decode_atom identity Xproto.atom_enum_of_int buf
+      decode_alt_enum Xproto.decode_atom Xid.to_int Xproto.atom_enum_of_int buf
         ~at
     in
     let at = at + 12 in
@@ -7871,7 +7929,7 @@ module Xfixes = struct
     ignore orig;
     Some ({ x; y; width; height; xhot; yhot; cursor_serial; cursor_image }, at)
 
-  type region = xid [@@deriving sexp]
+  type region = Xid.t [@@deriving sexp]
 
   let decode_region = decode_xid
   let encode_region = encode_xid
@@ -8080,7 +8138,8 @@ module Xfixes = struct
     Xproto.encode_gcontext buf gc;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum encode_region identity region_int_of_enum buf region;
+    encode_alt_enum encode_region encode_int32 Xid.of_int region_int_of_enum buf
+      region;
     encode_int16 buf x_origin;
     encode_int16 buf y_origin;
     (* write request length *)
@@ -8098,7 +8157,8 @@ module Xfixes = struct
     encode_pad buf 3;
     encode_int16 buf x_offset;
     encode_int16 buf y_offset;
-    encode_alt_enum encode_region identity region_int_of_enum buf region;
+    encode_alt_enum encode_region encode_int32 Xid.of_int region_int_of_enum buf
+      region;
     (* write request length *)
     encode_request_length buf
 
@@ -8109,7 +8169,8 @@ module Xfixes = struct
     Render.encode_picture buf picture;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum encode_region identity region_int_of_enum buf region;
+    encode_alt_enum encode_region encode_int32 Xid.of_int region_int_of_enum buf
+      region;
     encode_int16 buf x_origin;
     encode_int16 buf y_origin;
     (* write request length *)
@@ -8150,7 +8211,7 @@ module Xfixes = struct
     let at = at + 1 in
     let at = at + 6 in
     let* atom, at =
-      decode_alt_enum Xproto.decode_atom identity Xproto.atom_enum_of_int buf
+      decode_alt_enum Xproto.decode_atom Xid.to_int Xproto.atom_enum_of_int buf
         ~at
     in
     let* nbytes, at = decode_uint16 buf ~at in
@@ -8196,7 +8257,7 @@ module Xfixes = struct
     let* yhot, at = decode_uint16 buf ~at in
     let* cursor_serial, at = decode_int32 buf ~at in
     let* cursor_atom, at =
-      decode_alt_enum Xproto.decode_atom identity Xproto.atom_enum_of_int buf
+      decode_alt_enum Xproto.decode_atom Xid.to_int Xproto.atom_enum_of_int buf
         ~at
     in
     let* nbytes, at = decode_uint16 buf ~at in
@@ -8281,7 +8342,7 @@ module Xfixes = struct
     (* write request length *)
     encode_request_length buf
 
-  type barrier = xid [@@deriving sexp]
+  type barrier = Xid.t [@@deriving sexp]
 
   let decode_barrier = decode_xid
   let encode_barrier = encode_xid
@@ -8502,7 +8563,7 @@ module Damage = struct
   open Util
   open Sexplib.Conv
 
-  type damage = xid [@@deriving sexp]
+  type damage = Xid.t [@@deriving sexp]
 
   let decode_damage = decode_xid
   let encode_damage = encode_xid
@@ -8582,10 +8643,10 @@ module Damage = struct
     encode_damage buf damage;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum Xfixes.encode_region identity Xfixes.region_int_of_enum buf
-      repair;
-    encode_alt_enum Xfixes.encode_region identity Xfixes.region_int_of_enum buf
-      parts;
+    encode_alt_enum Xfixes.encode_region encode_int32 Xid.of_int
+      Xfixes.region_int_of_enum buf repair;
+    encode_alt_enum Xfixes.encode_region encode_int32 Xid.of_int
+      Xfixes.region_int_of_enum buf parts;
     (* write request length *)
     encode_request_length buf
 
@@ -9639,32 +9700,32 @@ module Glx = struct
   open Util
   open Sexplib.Conv
 
-  type pixmap = xid [@@deriving sexp]
+  type pixmap = Xid.t [@@deriving sexp]
 
   let decode_pixmap = decode_xid
   let encode_pixmap = encode_xid
 
-  type context = xid [@@deriving sexp]
+  type context = Xid.t [@@deriving sexp]
 
   let decode_context = decode_xid
   let encode_context = encode_xid
 
-  type pbuffer = xid [@@deriving sexp]
+  type pbuffer = Xid.t [@@deriving sexp]
 
   let decode_pbuffer = decode_xid
   let encode_pbuffer = encode_xid
 
-  type window = xid [@@deriving sexp]
+  type window = Xid.t [@@deriving sexp]
 
   let decode_window = decode_xid
   let encode_window = encode_xid
 
-  type fbconfig = xid [@@deriving sexp]
+  type fbconfig = Xid.t [@@deriving sexp]
 
   let decode_fbconfig = decode_xid
   let encode_fbconfig = encode_xid
 
-  type drawable = xid [@@deriving sexp]
+  type drawable = Xid.t [@@deriving sexp]
 
   let decode_drawable = decode_xid
   let encode_drawable = encode_xid
@@ -12264,27 +12325,27 @@ module Randr = struct
   open Util
   open Sexplib.Conv
 
-  type mode = xid [@@deriving sexp]
+  type mode = Xid.t [@@deriving sexp]
 
   let decode_mode = decode_xid
   let encode_mode = encode_xid
 
-  type crtc = xid [@@deriving sexp]
+  type crtc = Xid.t [@@deriving sexp]
 
   let decode_crtc = decode_xid
   let encode_crtc = encode_xid
 
-  type output = xid [@@deriving sexp]
+  type output = Xid.t [@@deriving sexp]
 
   let decode_output = decode_xid
   let encode_output = encode_xid
 
-  type provider = xid [@@deriving sexp]
+  type provider = Xid.t [@@deriving sexp]
 
   let decode_provider = decode_xid
   let encode_provider = encode_xid
 
-  type lease = xid [@@deriving sexp]
+  type lease = Xid.t [@@deriving sexp]
 
   let decode_lease = decode_xid
   let encode_lease = encode_xid
@@ -12992,7 +13053,7 @@ module Randr = struct
     (* reserve request length *)
     encode_pad buf 2;
     Xproto.encode_atom buf property;
-    encode_alt_enum Xproto.encode_atom identity
+    encode_alt_enum Xproto.encode_atom encode_int32 Xid.of_int
       Xproto.get_property_type_int_of_enum buf type_;
     encode_int32 buf long_offset;
     encode_int32 buf long_length;
@@ -13009,7 +13070,7 @@ module Randr = struct
     let* format, at = decode_uint8 buf ~at in
     let at = at + 6 in
     let* type_, at =
-      decode_alt_enum Xproto.decode_atom identity Xproto.atom_enum_of_int buf
+      decode_alt_enum Xproto.decode_atom Xid.to_int Xproto.atom_enum_of_int buf
         ~at
     in
     let* bytes_after, at = decode_int32 buf ~at in
@@ -14393,7 +14454,7 @@ module Sync = struct
   open Util
   open Sexplib.Conv
 
-  type alarm = xid [@@deriving sexp]
+  type alarm = Xid.t [@@deriving sexp]
 
   let decode_alarm = decode_xid
   let encode_alarm = encode_xid
@@ -14411,12 +14472,12 @@ module Sync = struct
     | `Inactive -> 1
     | `Destroyed -> 2
 
-  type counter = xid [@@deriving sexp]
+  type counter = Xid.t [@@deriving sexp]
 
   let decode_counter = decode_xid
   let encode_counter = encode_xid
 
-  type fence = xid [@@deriving sexp]
+  type fence = Xid.t [@@deriving sexp]
 
   let decode_fence = decode_xid
   let encode_fence = encode_xid
@@ -15156,7 +15217,7 @@ module Present = struct
     (* write request length *)
     encode_request_length buf
 
-  type event = xid [@@deriving sexp]
+  type event = Xid.t [@@deriving sexp]
 
   let decode_event = decode_xid
   let encode_event = encode_xid
@@ -15351,7 +15412,7 @@ module Record = struct
   open Util
   open Sexplib.Conv
 
-  type context = xid [@@deriving sexp]
+  type context = Xid.t [@@deriving sexp]
 
   let decode_context = decode_xid
   let encode_context = encode_xid
@@ -16177,14 +16238,14 @@ module Screensaver = struct
     (match background_pixmap with
     | None -> ()
     | Some v ->
-        encode_alt_enum Xproto.encode_pixmap identity
+        encode_alt_enum Xproto.encode_pixmap encode_int32 Xid.of_int
           Xproto.back_pixmap_int_of_enum buf v);
     (match background_pixel with None -> () | Some v -> encode_int32 buf v);
     (match border_pixmap with
     | None -> ()
     | Some v ->
-        encode_alt_enum Xproto.encode_pixmap identity Xproto.pixmap_int_of_enum
-          buf v);
+        encode_alt_enum Xproto.encode_pixmap encode_int32 Xid.of_int
+          Xproto.pixmap_int_of_enum buf v);
     (match border_pixel with None -> () | Some v -> encode_int32 buf v);
     (match bit_gravity with
     | None -> ()
@@ -16215,13 +16276,13 @@ module Screensaver = struct
     (match colormap with
     | None -> ()
     | Some v ->
-        encode_alt_enum Xproto.encode_colormap identity
+        encode_alt_enum Xproto.encode_colormap encode_int32 Xid.of_int
           Xproto.colormap_int_of_enum buf v);
     (match cursor with
     | None -> ()
     | Some v ->
-        encode_alt_enum Xproto.encode_cursor identity Xproto.cursor_int_of_enum
-          buf v);
+        encode_alt_enum Xproto.encode_cursor encode_int32 Xid.of_int
+          Xproto.cursor_int_of_enum buf v);
     (* write request length *)
     encode_request_length buf
 
@@ -16284,7 +16345,7 @@ module Shm = struct
   open Util
   open Sexplib.Conv
 
-  type seg = xid [@@deriving sexp]
+  type seg = Xid.t [@@deriving sexp]
 
   let decode_seg = decode_xid
   let encode_seg = encode_xid
@@ -18480,8 +18541,8 @@ module Xinput = struct
     Xproto.encode_timestamp buf start;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      stop;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf stop;
     encode_uint8 buf device_id;
     encode_pad buf 3;
     (* write request length *)
@@ -18581,8 +18642,8 @@ module Xinput = struct
     Xproto.encode_window buf grab_window;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      time;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf time;
     encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length classes);
     encode_enum encode_uint8 identity Xproto.grab_mode_int_of_enum buf
       this_device_mode;
@@ -18612,8 +18673,8 @@ module Xinput = struct
       ~(device_id : int) buf =
     (* opcode *)
     encode_uint8 buf 14;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      time;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf time;
     (* reserve request length *)
     encode_pad buf 2;
     encode_uint8 buf device_id;
@@ -18645,10 +18706,11 @@ module Xinput = struct
     encode_pad buf 2;
     encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length classes);
     encode_mask encode_uint16 identity Xproto.mod_mask_int_of_mask buf modifiers;
-    encode_alt_enum encode_uint8 identity modifier_device_int_of_enum buf
-      modifier_device;
+    encode_alt_enum encode_uint8 encode_uint8 identity
+      modifier_device_int_of_enum buf modifier_device;
     encode_uint8 buf grabbed_device;
-    encode_alt_enum encode_uint8 identity Xproto.grab_int_of_enum buf key;
+    encode_alt_enum encode_uint8 encode_uint8 identity Xproto.grab_int_of_enum
+      buf key;
     encode_enum encode_uint8 identity Xproto.grab_mode_int_of_enum buf
       this_device_mode;
     encode_enum encode_uint8 identity Xproto.grab_mode_int_of_enum buf
@@ -18669,9 +18731,10 @@ module Xinput = struct
     (* reserve request length *)
     encode_pad buf 2;
     encode_mask encode_uint16 identity Xproto.mod_mask_int_of_mask buf modifiers;
-    encode_alt_enum encode_uint8 identity modifier_device_int_of_enum buf
-      modifier_device;
-    encode_alt_enum encode_uint8 identity Xproto.grab_int_of_enum buf key;
+    encode_alt_enum encode_uint8 encode_uint8 identity
+      modifier_device_int_of_enum buf modifier_device;
+    encode_alt_enum encode_uint8 encode_uint8 identity Xproto.grab_int_of_enum
+      buf key;
     encode_uint8 buf grabbed_device;
     (* write request length *)
     encode_request_length buf
@@ -18688,15 +18751,16 @@ module Xinput = struct
     (* reserve request length *)
     encode_pad buf 2;
     encode_uint8 buf grabbed_device;
-    encode_alt_enum encode_uint8 identity modifier_device_int_of_enum buf
-      modifier_device;
+    encode_alt_enum encode_uint8 encode_uint8 identity
+      modifier_device_int_of_enum buf modifier_device;
     encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length classes);
     encode_mask encode_uint16 identity Xproto.mod_mask_int_of_mask buf modifiers;
     encode_enum encode_uint8 identity Xproto.grab_mode_int_of_enum buf
       this_device_mode;
     encode_enum encode_uint8 identity Xproto.grab_mode_int_of_enum buf
       other_device_mode;
-    encode_alt_enum encode_uint8 identity Xproto.grab_int_of_enum buf button;
+    encode_alt_enum encode_uint8 encode_uint8 identity Xproto.grab_int_of_enum
+      buf button;
     encode_bool buf owner_events;
     encode_pad buf 2;
     encode_list encode_event_class buf classes;
@@ -18713,9 +18777,10 @@ module Xinput = struct
     (* reserve request length *)
     encode_pad buf 2;
     encode_mask encode_uint16 identity Xproto.mod_mask_int_of_mask buf modifiers;
-    encode_alt_enum encode_uint8 identity modifier_device_int_of_enum buf
-      modifier_device;
-    encode_alt_enum encode_uint8 identity Xproto.grab_int_of_enum buf button;
+    encode_alt_enum encode_uint8 encode_uint8 identity
+      modifier_device_int_of_enum buf modifier_device;
+    encode_alt_enum encode_uint8 encode_uint8 identity Xproto.grab_int_of_enum
+      buf button;
     encode_uint8 buf grabbed_device;
     encode_pad buf 3;
     (* write request length *)
@@ -18752,8 +18817,8 @@ module Xinput = struct
       ~(mode : device_input_mode_enum) ~(device_id : int) buf =
     (* opcode *)
     encode_uint8 buf 19;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      time;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf time;
     (* reserve request length *)
     encode_pad buf 2;
     encode_enum encode_uint8 identity device_input_mode_int_of_enum buf mode;
@@ -18787,7 +18852,7 @@ module Xinput = struct
     let* xi_reply_type, at = decode_uint8 buf ~at in
     let at = at + 6 in
     let* focus, at =
-      decode_alt_enum Xproto.decode_window identity
+      decode_alt_enum Xproto.decode_window Xid.to_int
         Xproto.input_focus_enum_of_int buf ~at
     in
     let* time, at = Xproto.decode_timestamp buf ~at in
@@ -18803,12 +18868,12 @@ module Xinput = struct
       ~(device_id : int) buf =
     (* opcode *)
     encode_uint8 buf 21;
-    encode_alt_enum Xproto.encode_window identity Xproto.input_focus_int_of_enum
-      buf focus;
+    encode_alt_enum Xproto.encode_window encode_int32 Xid.of_int
+      Xproto.input_focus_int_of_enum buf focus;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      time;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf time;
     encode_enum encode_uint8 identity Xproto.input_focus_int_of_enum buf
       revert_to;
     encode_uint8 buf device_id;
@@ -20833,7 +20898,8 @@ module Xinput = struct
     Xproto.encode_window buf window;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf deviceid;
     encode_pad buf 2;
     (* write request length *)
     encode_request_length buf
@@ -20889,7 +20955,8 @@ module Xinput = struct
     encode_uint16 buf src_height;
     encode_fp1616 buf dst_x;
     encode_fp1616 buf dst_y;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf deviceid;
     encode_pad buf 2;
     (* write request length *)
     encode_request_length buf
@@ -20902,7 +20969,8 @@ module Xinput = struct
     (* reserve request length *)
     encode_pad buf 2;
     Xproto.encode_cursor buf cursor;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf deviceid;
     encode_pad buf 2;
     (* write request length *)
     encode_request_length buf
@@ -21012,13 +21080,14 @@ module Xinput = struct
     encode_enum encode_uint16 identity hierarchy_change_type_int_of_enum buf
       v.type_;
     encode_uint16 buf v.len;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.deviceid;
     encode_enum encode_uint8 identity change_mode_int_of_enum buf v.return_mode;
     encode_pad buf 1;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf
-      v.return_pointer;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf
-      v.return_keyboard;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.return_pointer;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.return_keyboard;
     ()
 
   type attach_slave = {
@@ -21049,8 +21118,10 @@ module Xinput = struct
     encode_enum encode_uint16 identity hierarchy_change_type_int_of_enum buf
       v.type_;
     encode_uint16 buf v.len;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf v.master;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.master;
     ()
 
   type detach_slave = {
@@ -21078,7 +21149,8 @@ module Xinput = struct
     encode_enum encode_uint16 identity hierarchy_change_type_int_of_enum buf
       v.type_;
     encode_uint16 buf v.len;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.deviceid;
     encode_pad buf 2;
     ()
 
@@ -21162,24 +21234,25 @@ module Xinput = struct
         ()
     | Remove_master { deviceid; return_mode; return_pointer; return_keyboard }
       ->
-        encode_alt_enum encode_device_id identity device_int_of_enum buf
-          deviceid;
+        encode_alt_enum encode_device_id encode_uint16 identity
+          device_int_of_enum buf deviceid;
         encode_enum encode_uint8 identity change_mode_int_of_enum buf
           return_mode;
         encode_pad buf 1;
-        encode_alt_enum encode_device_id identity device_int_of_enum buf
-          return_pointer;
-        encode_alt_enum encode_device_id identity device_int_of_enum buf
-          return_keyboard;
+        encode_alt_enum encode_device_id encode_uint16 identity
+          device_int_of_enum buf return_pointer;
+        encode_alt_enum encode_device_id encode_uint16 identity
+          device_int_of_enum buf return_keyboard;
         ()
     | Attach_slave { deviceid; master } ->
-        encode_alt_enum encode_device_id identity device_int_of_enum buf
-          deviceid;
-        encode_alt_enum encode_device_id identity device_int_of_enum buf master;
+        encode_alt_enum encode_device_id encode_uint16 identity
+          device_int_of_enum buf deviceid;
+        encode_alt_enum encode_device_id encode_uint16 identity
+          device_int_of_enum buf master;
         ()
     | Detach_slave { deviceid } ->
-        encode_alt_enum encode_device_id identity device_int_of_enum buf
-          deviceid;
+        encode_alt_enum encode_device_id encode_uint16 identity
+          device_int_of_enum buf deviceid;
         encode_pad buf 2;
         ()
 
@@ -21220,7 +21293,8 @@ module Xinput = struct
     Xproto.encode_window buf window;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf deviceid;
     encode_pad buf 2;
     (* write request length *)
     encode_request_length buf
@@ -21371,7 +21445,8 @@ module Xinput = struct
     Some ({ deviceid; mask }, at)
 
   let encode_event_mask buf (v : event_mask) =
-    encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.deviceid;
     encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length v.mask);
     encode_list
       (encode_mask encode_int32 identity xi_event_mask_int_of_mask)
@@ -21861,10 +21936,11 @@ module Xinput = struct
     Some ({ deviceid; type_; attachment; enabled; name; classes }, at)
 
   let encode_xi_device_info buf (v : xi_device_info) =
-    encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.deviceid;
     encode_enum encode_uint16 identity device_type_int_of_enum buf v.type_;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf
-      v.attachment;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.attachment;
     encode_uint16 buf ((* invalid_argument *) List.length v.classes);
     encode_uint16 buf (String.length v.name);
     encode_bool buf v.enabled;
@@ -21879,7 +21955,8 @@ module Xinput = struct
   let encode_xi_query_device ~(deviceid : device_enum alt_enum) buf =
     (* opcode *)
     encode_uint8 buf 48;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf deviceid;
     (* reserve request length *)
     encode_pad buf 2;
     encode_pad buf 2;
@@ -21907,9 +21984,10 @@ module Xinput = struct
     Xproto.encode_window buf window;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      time;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf deviceid;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf time;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf deviceid;
     encode_pad buf 2;
     (* write request length *)
     encode_request_length buf
@@ -21919,7 +21997,8 @@ module Xinput = struct
   let encode_xi_get_focus ~(deviceid : device_enum alt_enum) buf =
     (* opcode *)
     encode_uint8 buf 50;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf deviceid;
     (* reserve request length *)
     encode_pad buf 2;
     encode_pad buf 2;
@@ -21960,10 +22039,11 @@ module Xinput = struct
     Xproto.encode_window buf window;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      time;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf time;
     Xproto.encode_cursor buf cursor;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf deviceid;
     encode_enum encode_uint8 identity Xproto.grab_mode_int_of_enum buf mode;
     encode_enum encode_uint8 identity Xproto.grab_mode_int_of_enum buf
       paired_device_mode;
@@ -21991,11 +22071,12 @@ module Xinput = struct
       ~(deviceid : device_enum alt_enum) buf =
     (* opcode *)
     encode_uint8 buf 52;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      time;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf time;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf deviceid;
     encode_pad buf 2;
     (* write request length *)
     encode_request_length buf
@@ -22037,11 +22118,12 @@ module Xinput = struct
       ~(touchid : int) ~(grab_window : Xproto.window) buf =
     (* opcode *)
     encode_uint8 buf 53;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      time;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf time;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf deviceid;
     encode_enum encode_uint8 identity event_mode_int_of_enum buf event_mode;
     encode_pad buf 1;
     encode_int32 buf touchid;
@@ -22129,14 +22211,15 @@ module Xinput = struct
       ~(modifiers : int list) buf =
     (* opcode *)
     encode_uint8 buf 54;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      time;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf time;
     (* reserve request length *)
     encode_pad buf 2;
     Xproto.encode_window buf grab_window;
     Xproto.encode_cursor buf cursor;
     encode_int32 buf detail;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf deviceid;
     encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length modifiers);
     encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length mask);
     encode_enum encode_uint8 identity grab_type_int_of_enum buf grab_type;
@@ -22174,7 +22257,8 @@ module Xinput = struct
     (* reserve request length *)
     encode_pad buf 2;
     encode_int32 buf detail;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf deviceid;
     encode_uint16 buf ((* primitive Parsetree.Card32 *) List.length modifiers);
     encode_enum encode_uint8 identity grab_type_int_of_enum buf grab_type;
     encode_pad buf 3;
@@ -22187,7 +22271,8 @@ module Xinput = struct
   let encode_xi_list_properties ~(deviceid : device_enum alt_enum) buf =
     (* opcode *)
     encode_uint8 buf 56;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf deviceid;
     (* reserve request length *)
     encode_pad buf 2;
     encode_pad buf 2;
@@ -22215,7 +22300,8 @@ module Xinput = struct
       ~(items : property_format_variant) buf =
     (* opcode *)
     encode_uint8 buf 57;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf deviceid;
     (* reserve request length *)
     encode_pad buf 2;
     encode_enum encode_uint8 identity Xproto.prop_mode_int_of_enum buf mode;
@@ -22231,7 +22317,8 @@ module Xinput = struct
       ~(property : Xproto.atom) buf =
     (* opcode *)
     encode_uint8 buf 58;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf deviceid;
     (* reserve request length *)
     encode_pad buf 2;
     encode_pad buf 2;
@@ -22252,7 +22339,8 @@ module Xinput = struct
       ~(len : int) buf =
     (* opcode *)
     encode_uint8 buf 59;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf deviceid;
     (* reserve request length *)
     encode_pad buf 2;
     encode_bool buf delete;
@@ -22410,7 +22498,7 @@ module Xinput = struct
     let* root, at = Xproto.decode_window buf ~at in
     let* event, at = Xproto.decode_window buf ~at in
     let* child, at =
-      decode_alt_enum Xproto.decode_window identity Xproto.window_enum_of_int
+      decode_alt_enum Xproto.decode_window Xid.to_int Xproto.window_enum_of_int
         buf ~at
     in
     let* root_x, at = decode_int16 buf ~at in
@@ -22449,8 +22537,8 @@ module Xinput = struct
     Xproto.encode_timestamp buf v.time;
     Xproto.encode_window buf v.root;
     Xproto.encode_window buf v.event;
-    encode_alt_enum Xproto.encode_window identity Xproto.window_int_of_enum buf
-      v.child;
+    encode_alt_enum Xproto.encode_window encode_int32 Xid.of_int
+      Xproto.window_int_of_enum buf v.child;
     encode_int16 buf v.root_x;
     encode_int16 buf v.root_y;
     encode_int16 buf v.event_x;
@@ -22902,11 +22990,13 @@ module Xinput = struct
     Some ({ deviceid; time; sourceid; reason; classes }, at)
 
   let encode_device_changed_event buf (v : device_changed_event) =
-    encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      v.time;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.deviceid;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf v.time;
     encode_uint16 buf ((* invalid_argument *) List.length v.classes);
-    encode_alt_enum encode_device_id identity device_int_of_enum buf v.sourceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.sourceid;
     encode_enum encode_uint8 identity change_reason_int_of_enum buf v.reason;
     encode_pad buf 11;
     encode_list encode_device_class buf v.classes;
@@ -23010,9 +23100,10 @@ module Xinput = struct
         at )
 
   let encode_key_press_event buf (v : key_press_event) =
-    encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      v.time;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.deviceid;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf v.time;
     encode_int32 buf v.detail;
     Xproto.encode_window buf v.root;
     Xproto.encode_window buf v.event;
@@ -23025,7 +23116,8 @@ module Xinput = struct
       ((* primitive Parsetree.Card32 *) List.length v.button_mask);
     encode_uint16 buf
       ((* primitive Parsetree.Card32 *) List.length v.valuator_mask);
-    encode_alt_enum encode_device_id identity device_int_of_enum buf v.sourceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.sourceid;
     encode_pad buf 2;
     encode_mask encode_int32 identity key_event_flags_int_of_mask buf v.flags;
     encode_modifier_info buf v.mods;
@@ -23137,9 +23229,10 @@ module Xinput = struct
         at )
 
   let encode_button_press_event buf (v : button_press_event) =
-    encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      v.time;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.deviceid;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf v.time;
     encode_int32 buf v.detail;
     Xproto.encode_window buf v.root;
     Xproto.encode_window buf v.event;
@@ -23152,7 +23245,8 @@ module Xinput = struct
       ((* primitive Parsetree.Card32 *) List.length v.button_mask);
     encode_uint16 buf
       ((* primitive Parsetree.Card32 *) List.length v.valuator_mask);
-    encode_alt_enum encode_device_id identity device_int_of_enum buf v.sourceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.sourceid;
     encode_pad buf 2;
     encode_mask encode_int32 identity pointer_event_flags_int_of_mask buf
       v.flags;
@@ -23309,10 +23403,12 @@ module Xinput = struct
         at )
 
   let encode_enter_event buf (v : enter_event) =
-    encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      v.time;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf v.sourceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.deviceid;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf v.time;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.sourceid;
     encode_enum encode_uint8 identity notify_mode_int_of_enum buf v.mode;
     encode_enum encode_uint8 identity notify_detail_int_of_enum buf v.detail;
     Xproto.encode_window buf v.root;
@@ -23410,9 +23506,10 @@ module Xinput = struct
     Some ({ deviceid; attachment; type_; enabled; flags }, at)
 
   let encode_hierarchy_info buf (v : hierarchy_info) =
-    encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
-    encode_alt_enum encode_device_id identity device_int_of_enum buf
-      v.attachment;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.deviceid;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.attachment;
     encode_enum encode_uint8 identity device_type_int_of_enum buf v.type_;
     encode_bool buf v.enabled;
     encode_pad buf 2;
@@ -23449,9 +23546,10 @@ module Xinput = struct
     Some ({ deviceid; time; flags; infos }, at)
 
   let encode_hierarchy_event buf (v : hierarchy_event) =
-    encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      v.time;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.deviceid;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf v.time;
     encode_mask encode_int32 identity hierarchy_mask_int_of_mask buf v.flags;
     encode_uint16 buf ((* invalid_argument *) List.length v.infos);
     encode_pad buf 10;
@@ -23501,9 +23599,10 @@ module Xinput = struct
     Some ({ deviceid; time; property; what }, at)
 
   let encode_property_event buf (v : property_event) =
-    encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      v.time;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.deviceid;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf v.time;
     Xproto.encode_atom buf v.property;
     encode_enum encode_uint8 identity property_flag_int_of_enum buf v.what;
     encode_pad buf 11;
@@ -23573,9 +23672,10 @@ module Xinput = struct
         at )
 
   let encode_raw_key_press_event buf (v : raw_key_press_event) =
-    encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      v.time;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.deviceid;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf v.time;
     encode_int32 buf v.detail;
     encode_device_id buf v.sourceid;
     encode_uint16 buf
@@ -23656,9 +23756,10 @@ module Xinput = struct
         at )
 
   let encode_raw_button_press_event buf (v : raw_button_press_event) =
-    encode_alt_enum encode_device_id identity device_int_of_enum buf v.deviceid;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      v.time;
+    encode_alt_enum encode_device_id encode_uint16 identity device_int_of_enum
+      buf v.deviceid;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf v.time;
     encode_int32 buf v.detail;
     encode_device_id buf v.sourceid;
     encode_uint16 buf
@@ -24088,7 +24189,7 @@ module Xprint = struct
     encode_align buf 4;
     ()
 
-  type pcontext = xid [@@deriving sexp]
+  type pcontext = Xid.t [@@deriving sexp]
 
   let decode_pcontext = decode_xid
   let encode_pcontext = encode_xid
@@ -25272,12 +25373,12 @@ module Xv = struct
   open Util
   open Sexplib.Conv
 
-  type port = xid [@@deriving sexp]
+  type port = Xid.t [@@deriving sexp]
 
   let decode_port = decode_xid
   let encode_port = encode_xid
 
-  type encoding = xid [@@deriving sexp]
+  type encoding = Xid.t [@@deriving sexp]
 
   let decode_encoding = decode_xid
   let encode_encoding = encode_xid
@@ -25836,8 +25937,8 @@ module Xv = struct
     encode_port buf port;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      time;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf time;
     (* write request length *)
     encode_request_length buf
 
@@ -25858,8 +25959,8 @@ module Xv = struct
     encode_port buf port;
     (* reserve request length *)
     encode_pad buf 2;
-    encode_alt_enum Xproto.encode_timestamp identity Xproto.time_int_of_enum buf
-      time;
+    encode_alt_enum Xproto.encode_timestamp encode_int32 identity
+      Xproto.time_int_of_enum buf time;
     (* write request length *)
     encode_request_length buf
 
@@ -26213,17 +26314,17 @@ module Xvmc = struct
   open Util
   open Sexplib.Conv
 
-  type context = xid [@@deriving sexp]
+  type context = Xid.t [@@deriving sexp]
 
   let decode_context = decode_xid
   let encode_context = encode_xid
 
-  type surface = xid [@@deriving sexp]
+  type surface = Xid.t [@@deriving sexp]
 
   let decode_surface = decode_xid
   let encode_surface = encode_xid
 
-  type subpicture = xid [@@deriving sexp]
+  type subpicture = Xid.t [@@deriving sexp]
 
   let decode_subpicture = decode_xid
   let encode_subpicture = encode_xid

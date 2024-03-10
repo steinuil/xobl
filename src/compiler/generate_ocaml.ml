@@ -38,12 +38,13 @@ let gen_prim = function
   | Card64 -> "int64"
   | Float -> "float"
   | Double -> "float"
-  | Xid -> "xid"
+  | Xid -> "Xid.t"
 
 let gen_to_int = function
   | Char | Byte -> Some "Char.code"
   | Bool -> Some "Bool.to_int"
-  | Int8 | Int16 | Card8 | Card16 | Xid -> None
+  | Int8 | Int16 | Card8 | Card16 -> None
+  | Xid -> Some "Xid.to_int"
   | Fd -> Some "Obj.magic"
   (* | Int32 | Card32 -> Some "Int32.to_int" *)
   | Int32 | Card32 -> None
@@ -53,7 +54,8 @@ let gen_to_int = function
 let gen_of_int = function
   | Char | Byte -> Some "Char.chr"
   | Bool -> Some "bool_of_int"
-  | Int8 | Int16 | Card8 | Card16 | Xid -> None
+  | Int8 | Int16 | Card8 | Card16 -> None
+  | Xid -> Some "Xid.of_int"
   | Fd -> Some "Obj.magic"
   | Int32 | Card32 -> None
   | Card64 -> Some "Int64.of_int"
@@ -62,11 +64,11 @@ let gen_of_int = function
 let gen_to_int64 = function
   | Char | Byte -> Some "char_to_int64"
   | Bool -> Some "bool_to_int64"
-  | Int8 | Int16 | Card8 | Card16 | Xid -> Some "Int64.of_int"
+  | Int8 | Int16 | Card8 | Card16 -> Some "Int64.of_int"
   | Fd -> Some "Obj.magic"
   | Int32 | Card32 -> Some "Int64.of_int"
   | Card64 -> None
-  | Void | Float | Double -> failwith "gen_to_int64"
+  | Void | Float | Double | Xid -> failwith "gen_to_int64"
 
 let gen_decode_prim = function
   | Void -> "decode_char"
@@ -198,7 +200,7 @@ let gen_size_of_ident current_module out { id_module; id_name } =
 let gen_type ctx out = function
   | Type_primitive prim -> output_string out @@ gen_prim prim
   | Type_ref (ident, _) -> gen_ident ctx out ident
-  | Type_union _ -> output_string out "xid"
+  | Type_union _ -> output_string out "Xid.t"
 
 let gen_decode_type ctx out = function
   | Type_primitive prim -> output_string out @@ gen_decode_prim prim
@@ -341,8 +343,9 @@ let gen_encode_field_type ctx out = function
         { mask with id_name = Ident.snake mask.id_name ~suffix:"int_of_mask" }
   | { ft_type; ft_allowed = Some (Allowed_alt_enum enum) } ->
       let p = primitive_of_type ft_type |> Option.get in
-      Printf.fprintf out "encode_alt_enum %a %s %a" (gen_encode_type ctx)
+      Printf.fprintf out "encode_alt_enum %a %s %s %a" (gen_encode_type ctx)
         ft_type
+        (match gen_encode_prim p with "encode_xid" -> "encode_int32" | s -> s)
         (Option.value ~default:"identity" (gen_of_int p))
         (gen_ident ctx)
         { enum with id_name = Ident.snake enum.id_name ~suffix:"int_of_enum" }

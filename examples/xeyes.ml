@@ -1,6 +1,7 @@
 open Xobl
 open Xobl_protocol
 open Xobl_lwt
+open X11_types
 
 let ( let* ) = Lwt.bind
 
@@ -72,10 +73,16 @@ let main (conn : Connection.t) =
 
   let root = Connection.screen conn in
 
-  let wid = Connection.Xid_seed.generate conn.xid_seed |> Int32.to_int in
+  let wid =
+    Connection.Xid_seed.generate conn.xid_seed |> Int32.to_int |> Xid.of_int
+  in
 
-  let white = Connection.Xid_seed.generate conn.xid_seed |> Int32.to_int in
-  let black = Connection.Xid_seed.generate conn.xid_seed |> Int32.to_int in
+  let white =
+    Connection.Xid_seed.generate conn.xid_seed |> Int32.to_int |> Xid.of_int
+  in
+  let black =
+    Connection.Xid_seed.generate conn.xid_seed |> Int32.to_int |> Xid.of_int
+  in
 
   let width = ref 300 in
   let height = ref 200 in
