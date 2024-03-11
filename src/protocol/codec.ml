@@ -145,7 +145,7 @@ let encode_optional_mask encode buf fields =
 let encode_pad buf len = encode Buffer.add_bytes buf (Bytes.create len)
 
 let encode_align buf align =
-  let len = Encode_buffer.current_offset buf mod align in
+  let len = (4 - (Encode_buffer.current_offset buf mod align)) mod 4 in
   encode_pad buf len
 
 let encode_string buf str = encode Buffer.add_string buf str
