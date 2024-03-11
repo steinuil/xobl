@@ -104,7 +104,6 @@ let encode_float buf v = encode_int64 buf (Int64.bits_of_float v)
 let encode_file_descr buf (v : file_descr) = encode_int16 buf (Obj.magic v)
 let encode_xid buf v = encode_int32 buf (Xid.to_int v)
 let encode_list encode_item buf ls = List.iter (encode_item buf) ls
-let encode_string buf str = encode Buffer.add_string buf str
 
 let encode_enum :
     type t a.
@@ -149,9 +148,13 @@ let encode_align buf align =
   let len = Encode_buffer.current_offset buf mod align in
   encode_pad buf len
 
+let encode_string buf str = encode Buffer.add_string buf str
+
 (* TODO Bytes can't grow but in Buffer you can't access arbitrary elements.
    we need to use a data structure that can do both to avoid the copying. *)
 let encode_request_length buf =
+  (* First we should pad *)
+  encode_align buf 4;
   let len = Encode_buffer.current_offset buf in
   let bytes = Bytes.create len in
   Buffer.blit buf.buffer buf.offset bytes 0 len;

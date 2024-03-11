@@ -72,7 +72,7 @@ let read_response_from sock =
         if additional_data_length < 1 then Lwt.return (Some (`Reply buf))
         else
           let whole_buf = Bytes.create (32 + (additional_data_length * 4)) in
-          Bytes.blit buf 0 whole_buf 0 8;
+          Bytes.blit buf 0 whole_buf 0 32;
           let* _ =
             Lwt_unix.read sock whole_buf 32 (additional_data_length * 4)
           in
