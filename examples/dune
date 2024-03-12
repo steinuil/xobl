@@ -15,3 +15,9 @@
  (modules xeyes)
  (public_name xeyes)
  (libraries xobl xobl.lwt lwt.unix))
+
+(executable
+ (name xprop_reactor)
+ (modules xprop_reactor)
+ (public_name xprop_reactor)
+ (libraries xobl xobl.lwt lwt.unix))
