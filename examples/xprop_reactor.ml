@@ -19,7 +19,7 @@ let req ?decode conn req =
   let req = encode req in
   Connection.write ?decode conn req
 
-let get_atom ~(conn : Connection.t) name ~only_if_exists =
+let get_atom (conn : Connection.t) ~name ~only_if_exists =
   let* resp =
     Xproto.encode_intern_atom ~name ~only_if_exists
     |> req ~decode:(Xproto.decode_intern_atom_reply 0) conn
@@ -48,14 +48,17 @@ let get_atom ~(conn : Connection.t) name ~only_if_exists =
 
 let rec read_loop conn =
   let* closed = Connection.read conn in
-  if closed then Lwt.return_unit else read_loop conn
+  if closed then Lwt.return_unit
+  else
+    let* () = Lwt.pause () in
+    read_loop conn
 
 let main () =
   let* conn = connect () in
   let* _ =
     Lwt.both
       (Lwt.catch
-         (fun () -> get_atom ~conn Sys.argv.(1) ~only_if_exists:false)
+         (fun () -> get_atom conn ~name:Sys.argv.(1) ~only_if_exists:false)
          (fun exn ->
            print_endline (Printexc.to_string exn);
            Lwt.return_unit))

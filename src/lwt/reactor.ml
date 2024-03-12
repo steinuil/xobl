@@ -57,8 +57,8 @@ module Cookie_map = struct
         match Hashtbl.find_opt t.table sequence_number with
         | Some mvar ->
             Hashtbl.remove t.table sequence_number;
-            Lwt.return (Some mvar)
-        | None -> Lwt.return None)
+            Lwt.return_some mvar
+        | None -> Lwt.return_none)
 end
 
 module Xid_seed = struct
