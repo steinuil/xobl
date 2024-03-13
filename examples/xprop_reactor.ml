@@ -5,11 +5,6 @@ open Xobl_lwt.Reactor
 let ( let* ) = Lwt.bind
 let ( >>= ) = Lwt.( >>= )
 
-let connect () =
-  Display_name.from_env ()
-  |> Option.value ~default:Display_name.default
-  |> Connection.open_display
-
 let encode f =
   let buf = Codec.Encode_buffer.of_buffer (Buffer.create 120) in
   f buf;
@@ -19,7 +14,7 @@ let req ?decode conn req =
   let req = encode req in
   Connection.write ?decode conn req
 
-let get_atom (conn : Connection.t) ~name ~only_if_exists =
+let get_root_property (conn : Connection.t) ~name ~only_if_exists =
   let* resp =
     Xproto.encode_intern_atom ~name ~only_if_exists
     |> req ~decode:(Xproto.decode_intern_atom_reply 0) conn
@@ -54,11 +49,16 @@ let rec read_loop conn =
     read_loop conn
 
 let main () =
-  let* conn = connect () in
+  let* conn =
+    Display_name.from_env ()
+    |> Option.value ~default:Display_name.default
+    |> Connection.open_display
+  in
   let* _ =
     Lwt.both
       (Lwt.catch
-         (fun () -> get_atom conn ~name:Sys.argv.(1) ~only_if_exists:false)
+         (fun () ->
+           get_root_property conn ~name:Sys.argv.(1) ~only_if_exists:false)
          (fun exn ->
            print_endline (Printexc.to_string exn);
            Lwt.return_unit))
