@@ -5,7 +5,7 @@ module Cookie = struct
 
   type 'a t = {
     sequence_number : int;
-    mvar : Bytes.t Lwt_mvar.t;
+    mvar : Bytes.t option Lwt_mvar.t;
     decode : 'a decoder option;
   }
 
@@ -18,15 +18,23 @@ module Cookie = struct
      Connection for this purpose. *)
   let wait cookie =
     let* buf = Lwt_mvar.take cookie.mvar in
-    match (Bytes.get buf 0, cookie.decode) with
-    | '\x01', Some decode ->
+    let first_byte = buf |> Option.map (fun b -> (Bytes.get b 0, b)) in
+    match (first_byte, cookie.decode) with
+    | Some ('\x01', buf), Some decode ->
         (* TODO return a more meaningful exception to the decode error *)
         let reply, _ = decode buf ~at:0 |> Option.get in
         Lwt.return (Ok reply)
-    | '\x01', None ->
+    | Some ('\x01', _), None ->
         (* TODO return a more meaningful exception *)
-        failwith "no reply expected"
-    | '\x00', _ ->
+        Printf.ksprintf failwith "no reply expected: %d" cookie.sequence_number
+    | None, None ->
+        (* TODO Bad Obj.magic, bad! Please remove.
+           The issue here is that a request that doesn't have a decode
+           function will have a return type of unit in its cookie,
+           and honestly I haven't found a way to encode that in the
+           type system correctly. *)
+        Lwt.return (Ok (Obj.magic ()))
+    | Some ('\x00', buf), _ ->
         (* TODO decode error here *)
         Lwt.return (Error buf)
     | _, _ ->
@@ -34,18 +42,212 @@ module Cookie = struct
         failwith "sent an event to an mvar"
 end
 
+module Ring_buffer = struct
+  type 'a t = {
+    mutable buf : 'a Array.t;
+    mutable start : int;
+    mutable length : int;
+    init : 'a;
+  }
+
+  let create initial_size init =
+    { buf = Array.make initial_size init; start = 0; length = 0; init }
+
+  let is_empty t = t.length = 0
+
+  let next_index t =
+    let len = Array.length t.buf in
+    (t.start + t.length) mod len
+
+  let%test _ =
+    let b = create 4 0 in
+    next_index b = 0
+
+  let%test _ =
+    let b = create 4 0 in
+    b.length <- 2;
+    next_index b = 2
+
+  let%test _ =
+    let b = create 4 0 in
+    b.length <- 4;
+    next_index b = 0
+
+  let%test _ =
+    let b = create 4 0 in
+    b.start <- 2;
+    b.length <- 2;
+    next_index b = 0
+
+  let current_index t =
+    let len = Array.length t.buf in
+    (t.start + t.length - 1) mod len
+
+  let%test _ =
+    let b = create 4 0 in
+    current_index b = -1
+
+  let%test _ =
+    let b = create 4 0 in
+    b.length <- 2;
+    current_index b = 1
+
+  let%test _ =
+    let b = create 4 0 in
+    b.length <- 4;
+    current_index b = 3
+
+  let%test _ =
+    let b = create 4 0 in
+    b.start <- 1;
+    b.length <- 4;
+    current_index b = 0
+
+  let%test _ =
+    let b = create 4 0 in
+    b.start <- 2;
+    b.length <- 4;
+    current_index b = 1
+
+  let realloc t new_size =
+    assert (new_size >= t.length);
+    let len = Array.length t.buf in
+    let new_buf = Array.make new_size t.init in
+    (if t.start + t.length <= len then
+       Array.blit t.buf t.start new_buf 0 t.length
+     else
+       let len_until_end = len - t.start in
+       Array.blit t.buf t.start new_buf 0 len_until_end;
+       Array.blit t.buf 0 new_buf len_until_end (len - len_until_end));
+    t.buf <- new_buf;
+    t.start <- 0
+
+  let%test _ =
+    let b = create 4 0 in
+    b.start <- 1;
+    b.length <- 3;
+    b.buf <- [| 0; 1; 2; 3 |];
+    realloc b 5;
+    b.buf = [| 1; 2; 3; 0; 0 |]
+
+  let%test _ =
+    let b = create 4 0 in
+    b.start <- 3;
+    b.length <- 2;
+    b.buf <- [| 2; 0; 0; 1 |];
+    realloc b 4;
+    b.buf = [| 1; 2; 0; 0 |]
+
+  let%test _ =
+    let b = create 4 0 in
+    b.start <- 2;
+    b.length <- 4;
+    b.buf <- [| 3; 4; 1; 2 |];
+    realloc b 5;
+    b.buf = [| 1; 2; 3; 4; 0 |]
+
+  let push_to_end t item =
+    let len = Array.length t.buf in
+    if len = t.length then realloc t (len * 2);
+    let i = next_index t in
+    t.buf.(i) <- item;
+    t.length <- t.length + 1
+
+  let%test "push_to_end adds items to the end of the ring buffer" =
+    let b = create 4 0 in
+    for n = 1 to 4 do
+      push_to_end b n
+    done;
+    b.buf = [| 1; 2; 3; 4 |]
+
+  let%test "push_to_end reallocs when the buffer is not big enough" =
+    let b = create 4 0 in
+    for n = 1 to 8 do
+      push_to_end b n
+    done;
+    b.buf = [| 1; 2; 3; 4; 5; 6; 7; 8 |]
+
+  let%test "push_to_end respects the start index" =
+    let b = create 4 0 in
+    b.start <- 2;
+    for n = 1 to 4 do
+      push_to_end b n
+    done;
+    b.buf = [| 3; 4; 1; 2 |]
+
+  let%test "push_to_end respects the start index and reallocates" =
+    let b = create 4 0 in
+    b.start <- 2;
+    for n = 1 to 8 do
+      push_to_end b n
+    done;
+    b.buf = [| 1; 2; 3; 4; 5; 6; 7; 8 |]
+
+  let pop_from_start t =
+    if t.length = 0 then invalid_arg "attempted to pop an empty ring buffer";
+    let item = t.buf.(t.start) in
+    let len = Array.length t.buf in
+    t.start <- (t.start + 1) mod len;
+    t.length <- t.length - 1;
+    item
+
+  let%test "pop_from_start returns the first item of the ring buffer" =
+    let b = create 4 0 in
+    push_to_end b 1;
+    push_to_end b 2;
+    pop_from_start b = 1
+
+  let%test "pop_from_start shifts the ring buffer" =
+    let b = create 4 0 in
+    push_to_end b 1;
+    push_to_end b 2;
+    pop_from_start b |> ignore;
+    realloc b 4;
+    b.buf = [| 2; 0; 0; 0 |]
+
+  let%test "pop_from_start respects array bounds" =
+    let b = create 4 0 in
+    b.start <- 3;
+    for n = 1 to 4 do
+      push_to_end b n
+    done;
+    pop_from_start b = 1 && pop_from_start b = 2
+end
+
 module Cookie_map = struct
-  type table = (int, Bytes.t Lwt_mvar.t) Hashtbl.t
-  type t = { table : table; lock : Lwt_mutex.t }
+  type table = (int, Bytes.t option Lwt_mvar.t) Hashtbl.t
+  type t = { seq_to_mvar : table; seqs : int Ring_buffer.t; lock : Lwt_mutex.t }
 
   let create ?(size = 100) () =
-    { table = Hashtbl.create size; lock = Lwt_mutex.create () }
+    {
+      seq_to_mvar = Hashtbl.create size;
+      seqs = Ring_buffer.create size 0;
+      lock = Lwt_mutex.create ();
+    }
 
   let add ~sequence_number ~mvar t =
     let sequence_number = sequence_number land 0xFF in
     Lwt_mutex.with_lock t.lock (fun () ->
-        Hashtbl.add t.table sequence_number mvar;
+        Hashtbl.add t.seq_to_mvar sequence_number mvar;
+        Ring_buffer.push_to_end t.seqs sequence_number;
         Lwt.return_unit)
+
+  (* Send None to all mvars associated to a seq lower than the current one.
+     This ensures that requests that are waiting on their cookie and don't
+     have a reply are getting handled. *)
+  let prune_earlier_requests current_seq t =
+    let rec loop () =
+      let seq = Ring_buffer.pop_from_start t.seqs in
+      if seq < current_seq then (
+        match Hashtbl.find_opt t.seq_to_mvar seq with
+        | None -> failwith "seq in seqs but not in seq_to_mvar"
+        | Some mvar ->
+            Hashtbl.remove t.seq_to_mvar seq;
+            let* () = Lwt_mvar.put mvar None in
+            loop ())
+      else Lwt.return_unit
+    in
+    loop ()
 
   (* TODO requests that don't have a reply should still be activated
      even if we don't receive anything. We must do that by taking all
@@ -54,9 +256,10 @@ module Cookie_map = struct
   let pop ~sequence_number t =
     let sequence_number = sequence_number land 0xFF in
     Lwt_mutex.with_lock t.lock (fun () ->
-        match Hashtbl.find_opt t.table sequence_number with
+        let* () = prune_earlier_requests sequence_number t in
+        match Hashtbl.find_opt t.seq_to_mvar sequence_number with
         | Some mvar ->
-            Hashtbl.remove t.table sequence_number;
+            Hashtbl.remove t.seq_to_mvar sequence_number;
             Lwt.return_some mvar
         | None -> Lwt.return_none)
 end
@@ -186,7 +389,7 @@ module Connection = struct
         let* mvar = Cookie_map.pop conn.cookie_map ~sequence_number in
         match mvar with
         | Some mvar ->
-            let* () = Lwt_mvar.put mvar buf in
+            let* () = Lwt_mvar.put mvar (Some buf) in
             Lwt.return_false
         | None ->
             (* TODO return a more meaningful exception *)

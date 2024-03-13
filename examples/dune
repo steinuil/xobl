@@ -5,6 +5,12 @@
  (libraries xobl xobl.lwt lwt.unix))
 
 (executable
+ (name create_window_reactor)
+ (modules create_window_reactor)
+ (public_name create-window-reactor)
+ (libraries xobl xobl.lwt lwt.unix))
+
+(executable
  (name window_manager)
  (modules window_manager)
  (public_name window-manager)
