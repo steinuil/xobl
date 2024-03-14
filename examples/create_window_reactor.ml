@@ -16,9 +16,9 @@ let req ?decode conn req =
   Connection.write ?decode conn req
 
 let create_window (conn : Connection.t) =
-  let screen = Connection.screen conn in
-
   let* window_id = Xid_seed.generate conn.xid_seed in
+
+  let screen = Connection.screen conn in
 
   let* create_window_cookie =
     Xproto.encode_create_window ~depth:screen.root_depth ~wid:window_id
@@ -28,6 +28,7 @@ let create_window (conn : Connection.t) =
     |> req conn
   in
 
+  (* let window_id = X11_types.Xid.Xid (-1) in *)
   let* map_window_cookie =
     Xproto.encode_map_window ~window:window_id |> req conn
   in
@@ -59,15 +60,18 @@ let main () =
     |> Option.value ~default:Display_name.default
     |> Connection.open_display
   in
-  let* () =
+  let cw =
     Lwt.catch
-      (fun () ->
-        let* _ = Lwt.both (create_window conn) (read_loop conn) in
-        Lwt.return_unit)
+      (fun () -> create_window conn)
       (fun exn ->
+        print_endline "error occurred";
         print_endline (Printexc.to_string exn);
         Lwt.return_unit)
   in
+  let* _ = Lwt.both cw (read_loop conn) in
   Lwt.return_unit
 
-let () = Lwt_main.run (main ())
+let () =
+  Logs.set_reporter (reporter Format.std_formatter);
+  Logs.set_level ~all:true (Some Logs.Debug);
+  Lwt_main.run (main ())

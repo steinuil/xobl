@@ -8,7 +8,7 @@
  (name create_window_reactor)
  (modules create_window_reactor)
  (public_name create-window-reactor)
- (libraries xobl xobl.lwt lwt.unix))
+ (libraries xobl xobl.lwt lwt.unix logs logs.fmt))
 
 (executable
  (name window_manager)

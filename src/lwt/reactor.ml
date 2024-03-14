@@ -1,3 +1,37 @@
+let src = Logs.Src.create "xobl.lwt.reactor"
+
+module Log = (val Logs.src_log src : Logs.LOG)
+
+let seq_tag : int Logs.Tag.def =
+  Logs.Tag.def "sequence_number" ~doc:"Sequence number of an X11 request"
+    Format.pp_print_int
+
+let seq_ seq = Logs.Tag.(empty |> add seq_tag seq)
+
+let reporter ppf =
+  let report (src : Logs.src) level ~over k msgf =
+    let k _ =
+      over ();
+      k ()
+    in
+    let with_seq h tags k ppf fmt =
+      let seq =
+        match tags with None -> None | Some tags -> Logs.Tag.find seq_tag tags
+      in
+      match seq with
+      | Some seq ->
+          Format.kfprintf k ppf
+            ("%a[%s][seq=%d] @[" ^^ fmt ^^ "@]@.")
+            Logs.pp_header (level, h) (Logs.Src.name src) seq
+      | None ->
+          Format.kfprintf k ppf
+            ("%a[%s] @[" ^^ fmt ^^ "@]@.")
+            Logs.pp_header (level, h) (Logs.Src.name src)
+    in
+    msgf @@ fun ?header ?tags fmt -> with_seq header tags k ppf fmt
+  in
+  { Logs.report }
+
 let ( let* ) = Lwt.bind
 
 module Cookie = struct
@@ -21,13 +55,20 @@ module Cookie = struct
     let first_byte = buf |> Option.map (fun b -> (Bytes.get b 0, b)) in
     match (first_byte, cookie.decode) with
     | Some ('\x01', buf), Some decode ->
+        Log.debug (fun m ->
+            m "cookie: received reply" ~tags:(seq_ cookie.sequence_number));
         (* TODO return a more meaningful exception to the decode error *)
         let reply, _ = decode buf ~at:0 |> Option.get in
         Lwt.return (Ok reply)
     | Some ('\x01', _), None ->
+        Log.err (fun m ->
+            m "cookie: received unexpected reply for a request with no decoder"
+              ~tags:(seq_ cookie.sequence_number));
         (* TODO return a more meaningful exception *)
         Printf.ksprintf failwith "no reply expected: %d" cookie.sequence_number
     | None, None ->
+        Log.debug (fun m ->
+            m "cookie: received empty reply" ~tags:(seq_ cookie.sequence_number));
         (* TODO Bad Obj.magic, bad! Please remove.
            The issue here is that a request that doesn't have a decode
            function will have a return type of unit in its cookie,
@@ -35,9 +76,14 @@ module Cookie = struct
            type system correctly. *)
         Lwt.return (Ok (Obj.magic ()))
     | Some ('\x00', buf), _ ->
+        Log.debug (fun m ->
+            m "cookie: received error" ~tags:(seq_ cookie.sequence_number));
         (* TODO decode error here *)
         Lwt.return (Error buf)
     | _, _ ->
+        Log.err (fun m ->
+            m "cookie: received unexpected event"
+              ~tags:(seq_ cookie.sequence_number));
         (* TODO return a more meaningful exception *)
         failwith "sent an event to an mvar"
 end
@@ -212,6 +258,10 @@ module Ring_buffer = struct
       push_to_end b n
     done;
     pop_from_start b = 1 && pop_from_start b = 2
+
+  let peek_from_start t =
+    if t.length = 0 then invalid_arg "attempted to peek an empty ring buffer";
+    t.buf.(t.start)
 end
 
 module Cookie_map = struct
@@ -239,13 +289,16 @@ module Cookie_map = struct
     let rec loop () =
       let seq = Ring_buffer.pop_from_start t.seqs in
       if seq < current_seq then (
+        Log.debug (fun m -> m "cookie_map: no reply received" ~tags:(seq_ seq));
         match Hashtbl.find_opt t.seq_to_mvar seq with
         | None -> failwith "seq in seqs but not in seq_to_mvar"
         | Some mvar ->
             Hashtbl.remove t.seq_to_mvar seq;
             let* () = Lwt_mvar.put mvar None in
             loop ())
-      else Lwt.return_unit
+      else (
+        Log.debug (fun m -> m "cookie_map: sending reply" ~tags:(seq_ seq));
+        Lwt.return_unit)
     in
     loop ()
 
@@ -395,6 +448,11 @@ module Connection = struct
             (* TODO return a more meaningful exception *)
             failwith "Unhandled sequence number")
     | Some (`Event buf) ->
+        let event_number = Bytes.get_uint8 buf 0 in
+        let sequence_number = Bytes.get_uint16_le buf 2 in
+        Log.debug (fun m ->
+            m "read: received event %d" event_number
+              ~tags:(seq_ sequence_number));
         conn.push_event_stream (Some buf);
         Lwt.return_false
 
