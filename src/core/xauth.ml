@@ -23,10 +23,25 @@ let path_from_env () =
       | None -> None)
 
 module Family = struct
-  type t = Local | Wild | Netname | Krb5_principal | Local_host
+  type t =
+    | Internet
+    | Decnet
+    | Chaos
+    | Server_interpreted
+    | Internet6
+    | Local
+    | Netname
+    | Krb5_principal
+    | Local_host
+    | Wild
   [@@deriving sexp]
 
   let of_int = function
+    | 0 -> Internet
+    | 1 -> Decnet
+    | 2 -> Chaos
+    | 5 -> Server_interpreted
+    | 6 -> Internet6
     | 256 -> Local
     | 254 -> Netname
     | 253 -> Krb5_principal
@@ -117,8 +132,9 @@ let%expect_test _ =
 type auth = { auth_name : string; auth_data : string }
 
 let default_auth = { auth_name = ""; auth_data = "" }
+let mit_magic_cookie_1 = "MIT-MAGIC-COOKIE-1"
 
-let select_best ~family ~address ~display ?(types = [ "MIT-MAGIC-COOKIE-1" ])
+let select_best ~family ~address ~display ?(types = [ mit_magic_cookie_1 ])
     entries =
   assert (List.length types > 0);
   let matches =

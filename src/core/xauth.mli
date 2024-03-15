@@ -5,7 +5,17 @@ val path_from_env : unit -> string option
     - /Users/$USERNAME/.Xauthority (when on Windows) *)
 
 module Family : sig
-  type t = Local | Wild | Netname | Krb5_principal | Local_host
+  type t =
+    | Internet
+    | Decnet
+    | Chaos
+    | Server_interpreted
+    | Internet6
+    | Local
+    | Netname
+    | Krb5_principal
+    | Local_host
+    | Wild
 end
 
 type entry = {
