@@ -20,6 +20,7 @@
           ppx_expect
           ppx_deriving
           lwt
+          eio
           sexplib
           ppx_sexp_conv
           logs
