@@ -22,6 +22,9 @@
           lwt
           sexplib
           ppx_sexp_conv
+          logs
+          fmt
           containers
           yojson
+          ppxlib
           ppx_deriving_yojson))
