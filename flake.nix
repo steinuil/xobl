@@ -9,7 +9,7 @@
     flake-utils,
     opam-nix,
     nixpkgs,
-  } @ inputs:
+  }:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
       on = opam-nix.lib.${system};
@@ -17,9 +17,9 @@
         builtins.mapAttrs (_: pkgs.lib.last)
         (on.listRepo (on.makeOpamRepo ./.));
       devPackagesQuery = {
-        # You can add "development" packages here. They will get added to the devShell automatically.
         ocaml-lsp-server = "*";
         ocamlformat = "*";
+        utop = "*";
       };
       query =
         devPackagesQuery
