@@ -47,7 +47,7 @@ module Family = struct
     | 253 -> Krb5_principal
     | 252 -> Local_host
     | 0xFFFF -> Wild
-    | _ -> failwith "Unknown family"
+    | f -> Printf.ksprintf invalid_arg "Unknown family: %#x" f
 end
 
 type entry = {
