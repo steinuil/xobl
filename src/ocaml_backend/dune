@@ -1,0 +1,6 @@
+(library
+ (name xobl_ocaml_backend)
+ (public_name xobl.ocaml_backend)
+ (libraries ppxlib xobl.compiler)
+ (preprocess
+  (pps ppxlib.metaquot ppx_inline_test)))
