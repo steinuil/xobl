@@ -25,3 +25,8 @@
  (name generate_output)
  (modules generate_output)
  (libraries xobl.compiler))
+
+(executable
+ (name generate_ocaml_ast)
+ (modules generate_ocaml_ast)
+ (libraries xobl.compiler xobl.ocaml_backend))
