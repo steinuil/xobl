@@ -86,3 +86,90 @@ module Cookie = struct
         (* TODO return a more meaningful exception *)
         failwith "sent an event to an mvar"
 end
+
+module Cookie_reactor = struct
+  type t = {
+    promises : Bytes.t option Eio.Promise.u Ring_buffer.t;
+    mutable seq : int;
+    mutable next_seq_to_process : int;
+    lock : Eio.Mutex.t;
+  }
+
+  let create ?(size = 100) () =
+    {
+      promises = Ring_buffer.create size (Obj.magic ());
+      seq = 1;
+      next_seq_to_process = 1;
+      lock = Eio.Mutex.create ();
+    }
+
+  let add ~promise t =
+    Eio.Mutex.use_rw ~protect:false t.lock (fun () ->
+        Ring_buffer.push_back t.promises promise;
+        let seq = t.seq in
+        t.seq <- t.seq + 1;
+        seq)
+
+  let respond ?buf t ~seq:seq_low =
+    let rec pop_earlier () =
+      let promise = Ring_buffer.pop_front t.promises in
+      if t.next_seq_to_process land 0xFFFF <> seq_low then (
+        Log.debug (fun m ->
+            m "cookie_map: no reply received" ~tags:(seq_ t.next_seq_to_process));
+        Eio.Promise.resolve promise None;
+        t.next_seq_to_process <- t.next_seq_to_process + 1;
+        pop_earlier ())
+      else (
+        Log.debug (fun m ->
+            m "cookie_map: sending reply" ~tags:(seq_ t.next_seq_to_process));
+        Eio.Promise.resolve promise buf;
+        t.next_seq_to_process <- t.next_seq_to_process + 1)
+    in
+    Eio.Mutex.use_rw ~protect:false t.lock pop_earlier
+end
+
+module Xid_seed = struct
+  type t = {
+    mutable last : int32;
+    lock : Eio.Mutex.t;
+    inc : int32;
+    base : int32;
+    max : int32;
+  }
+
+  let make ~base ~mask =
+    let inc = Int32.(logand mask (neg mask)) in
+    let max = Int32.(add (sub mask inc) 1l) in
+    { last = 0l; lock = Eio.Mutex.create (); inc; base; max }
+
+  let generate seed =
+    Eio.Mutex.use_rw seed.lock (fun () ->
+        if seed.last > 0l && seed.last >= seed.max then
+          (* TODO: use xmisc extension to look for unused xids when they run out
+             https://gitlab.freedesktop.org/xorg/lib/libxcb/-/blob/master/src/xcb_xid.c *)
+          failwith "No more available resource identifiers"
+        else (
+          seed.last <- Int32.add seed.last seed.inc;
+          let xid = Int32.logor seed.last seed.base in
+          Xobl_protocol.X11_types.Xid.of_int (Int32.to_int xid)))
+end
+
+module Connection = struct
+  type t = {
+    socket : Eio.Buf_write.t;
+    xid_seed : Xid_seed.t;
+    cookie_reactor : Cookie_reactor.t;
+    event_stream : Bytes.t Eio.Stream.t;
+    display_info : Xobl_protocol.Xproto.setup;
+    screen : int;
+  }
+
+  let screen conn = List.nth conn.display_info.roots conn.screen
+
+  let write ?decode conn buf =
+    let p, pu = Eio.Promise.create () in
+    let seq = Cookie_reactor.add conn.cookie_reactor ~promise:pu in
+    Eio.Buf_write.bytes conn.socket buf;
+    let cookie = Cookie.create ?decode seq p in
+    cookie
+end
