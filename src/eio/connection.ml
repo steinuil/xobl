@@ -172,4 +172,33 @@ module Connection = struct
     Eio.Buf_write.bytes conn.socket buf;
     let cookie = Cookie.create ?decode seq p in
     cookie
+
+  let ( let& ) = Option.bind
+
+  let get_socker_params env display =
+    let open Xobl in
+    function
+    | Display_name.Unix_domain_socket path ->
+        let localhost = Unix.gethostname () in
+        let auth =
+          let& xauth_path = Xauth.path_from_env () in
+          let xauth_path = Eio.Path.(Eio.Stdenv.fs env / xauth_path) in
+          try
+            Eio.Path.load xauth_path |> Xauth.parse
+            |> Xauth.select_best ~family:Xauth.Family.Local ~address:localhost
+                 ~display
+          with Eio.Io _ -> None
+        in
+        (`Unix path, auth)
+    | Display_name.Internet_domain (_family, hostname, _port) ->
+        (* TODO I think this is borked *)
+        let addresses =
+          Eio.Net.getaddrinfo_stream (Eio.Stdenv.net env) hostname
+        in
+        (List.hd addresses, None)
+
+  (*
+  let open_display Xobl.Display_name.{ hostname; display; screen } =
+    let 
+*)
 end
