@@ -487,9 +487,9 @@ module Decode = struct
     let result = e_result_fields_record ~loc fields in
     e_fields ~ctx ~loc fields result
 
-  let e_struct ~ctx ~loc name fields external_params =
+  let e_struct ?(external_params = []) ?suffix ~ctx ~loc name fields =
+    let type_ = t_id ?suffix ~loc name in
     let fields = e_struct_fields ~ctx ~loc fields in
-    let type_ = t_id ~loc name in
     match external_params with
     | [] -> [%expr fun buf : [%t type_] -> [%e fields]]
     | [ param ] ->
@@ -499,7 +499,7 @@ module Decode = struct
 
   let e_response ~suffix ~ctx ~loc name fields =
     let type_ = t_id ~suffix ~loc name in
-    let reply_length_field =
+    let length_field =
       Field_list_length
         {
           name = "length";
@@ -516,20 +516,44 @@ module Decode = struct
     | Field_pad { pad = Pad_bytes 1; serialize = false } :: rest ->
         (* Collapse padding if the first reply field is padding.
            See below for explanation. *)
-        let fields = pad 4 :: reply_length_field :: rest in
+        let fields = pad 4 :: length_field :: rest in
         let fields = e_struct_fields ~ctx ~loc fields in
         [%expr fun buf : [%t type_] -> [%e fields]]
     | first :: rest ->
-        (* Replies include:
-           - a 0x1 byte to indicate that this a reply
-           - a field whose length is a single byte
+        (* Replies and events include:
+           - a byte to indicate that this is a reply or an event
+           - a field (1 byte)
            - the sequence number (2 bytes)
            - the reply length (4 bytes)
-           Add some dummy fields. *)
-        let fields = pad 1 :: first :: pad 2 :: reply_length_field :: rest in
+           The first byte, the sequence number and the reply length are not
+           specified in the definitions so we put some dummy fields.
+           The reply length field is used in some replies so we specify it. *)
+        let fields = pad 1 :: first :: pad 2 :: length_field :: rest in
         let fields = e_struct_fields ~ctx ~loc fields in
         [%expr fun buf : [%t type_] -> [%e fields]]
-    | [] -> Printf.ksprintf unexpected "reply with no fields: %s" name
+    | [] -> Printf.ksprintf unexpected "%s with no fields: %s" suffix name
+
+  let e_error ~ctx ~loc name fields =
+    let type_ = t_id ~suffix:"error" ~loc name in
+    match fields with
+    | _ when visible_fields fields = [] ->
+        [%expr fun _ : [%t type_] -> Decode.pad 32]
+    | [] -> Printf.ksprintf unexpected "error with no fields: %s" name
+    | fields ->
+        (* Errors include:
+           - a 0x0 byte to indicate that this is an error
+           - the error code (1 byte)
+           - the sequence number (2 bytes)
+           - a field (4 bytes)
+           - minor opcode (2 bytes)
+           - major opcode (1 byte)
+           The first four bytes are not
+        *)
+        let fields =
+          Field_pad { pad = Pad_bytes 4; serialize = false } :: fields
+        in
+        let fields = e_struct_fields ~ctx ~loc fields in
+        [%expr fun buf : [%t type_] -> [%e fields]]
 
   let e_enum_of_int ~loc name items =
     let type_ = t_id ~suffix:"enum" ~loc name in
@@ -571,7 +595,7 @@ module Decode = struct
     | Type_alias { name; type_ } ->
         vb ~prefix:"decode" ~loc name (e_type ~ctx ~loc type_) :: []
     | Struct { name; fields; external_params } ->
-        let expr = e_struct ~ctx ~loc name fields external_params in
+        let expr = e_struct ~ctx ~loc name fields ~external_params in
         vb ~prefix:"decode" ~loc name expr :: []
     | Enum { name; items } ->
         let items = e_enum_of_int ~loc name items in
@@ -589,6 +613,9 @@ module Decode = struct
     | Event { name; fields; _ } ->
         let event = e_response ~suffix:"event" ~ctx ~loc name fields in
         vb ~prefix:"decode" ~suffix:"event" ~loc name event :: []
+    | Error { name; fields; _ } ->
+        let error = e_error ~ctx ~loc name fields in
+        vb ~prefix:"decode" ~suffix:"error" ~loc name error :: []
     | Request { reply = None; _ } -> []
     | Request { name; reply = Some reply; _ } ->
         let reply = e_response ~suffix:"reply" ~ctx ~loc name reply in

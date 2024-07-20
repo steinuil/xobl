@@ -1499,8 +1499,24 @@ module Xproto = struct
   }
   [@@deriving sexp]
 
+  let decode_request_error buf : request_error =
+    Decode.pad buf 4;
+    let bad_value = Decode.u32 buf in
+    let minor_opcode = Decode.u16 buf in
+    let major_opcode = Decode.u8 buf in
+    Decode.pad buf 1;
+    { bad_value; minor_opcode; major_opcode }
+
   type value_error = { bad_value : u32; minor_opcode : u16; major_opcode : u8 }
   [@@deriving sexp]
+
+  let decode_value_error buf : value_error =
+    Decode.pad buf 4;
+    let bad_value = Decode.u32 buf in
+    let minor_opcode = Decode.u16 buf in
+    let major_opcode = Decode.u8 buf in
+    Decode.pad buf 1;
+    { bad_value; minor_opcode; major_opcode }
 
   type window_error = value_error [@@deriving sexp]
 
@@ -3240,10 +3256,24 @@ module Render = struct
   let decode_fixed = Decode.i32
 
   type pict_format_error = unit [@@deriving sexp]
+
+  let decode_pict_format_error _ : pict_format_error = Decode.pad 32
+
   type picture_error = unit [@@deriving sexp]
+
+  let decode_picture_error _ : picture_error = Decode.pad 32
+
   type pict_op_error = unit [@@deriving sexp]
+
+  let decode_pict_op_error _ : pict_op_error = Decode.pad 32
+
   type glyph_set_error = unit [@@deriving sexp]
+
+  let decode_glyph_set_error _ : glyph_set_error = Decode.pad 32
+
   type glyph_error = unit [@@deriving sexp]
+
+  let decode_glyph_error _ : glyph_error = Decode.pad 32
 
   type directformat = {
     red_shift : u16;
@@ -3838,6 +3868,9 @@ module Xfixes = struct
   let decode_region = Decode.xid
 
   type bad_region_error = unit [@@deriving sexp]
+
+  let decode_bad_region_error _ : bad_region_error = Decode.pad 32
+
   type region_enum = [ `None ] [@@deriving sexp]
 
   let region_enum_of_int n : region_enum =
@@ -3982,6 +4015,8 @@ module Damage = struct
     | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type bad_damage_error = unit [@@deriving sexp]
+
+  let decode_bad_damage_error _ : bad_damage_error = Decode.pad 32
 
   type query_version_reply = { major_version : u32; minor_version : u32 }
   [@@deriving sexp]
@@ -4541,6 +4576,14 @@ module Glx = struct
     major_opcode : u8;
   }
   [@@deriving sexp]
+
+  let decode_generic_error buf : generic_error =
+    Decode.pad buf 4;
+    let bad_value = Decode.u32 buf in
+    let minor_opcode = Decode.u16 buf in
+    let major_opcode = Decode.u8 buf in
+    Decode.pad buf 21;
+    { bad_value; minor_opcode; major_opcode }
 
   type bad_context_error = generic_error [@@deriving sexp]
 
@@ -5550,9 +5593,20 @@ module Randr = struct
   let decode_lease = Decode.xid
 
   type bad_output_error = unit [@@deriving sexp]
+
+  let decode_bad_output_error _ : bad_output_error = Decode.pad 32
+
   type bad_crtc_error = unit [@@deriving sexp]
+
+  let decode_bad_crtc_error _ : bad_crtc_error = Decode.pad 32
+
   type bad_mode_error = unit [@@deriving sexp]
+
+  let decode_bad_mode_error _ : bad_mode_error = Decode.pad 32
+
   type bad_provider_error = unit [@@deriving sexp]
+
+  let decode_bad_provider_error _ : bad_provider_error = Decode.pad 32
 
   type rotation_mask =
     [ `Rotate_0
@@ -6761,8 +6815,22 @@ module Sync = struct
   }
   [@@deriving sexp]
 
+  let decode_counter_error buf : counter_error =
+    Decode.pad buf 4;
+    let bad_counter = Decode.u32 buf in
+    let minor_opcode = Decode.u16 buf in
+    let major_opcode = Decode.u8 buf in
+    { bad_counter; minor_opcode; major_opcode }
+
   type alarm_error = { bad_alarm : u32; minor_opcode : u16; major_opcode : u8 }
   [@@deriving sexp]
+
+  let decode_alarm_error buf : alarm_error =
+    Decode.pad buf 4;
+    let bad_alarm = Decode.u32 buf in
+    let minor_opcode = Decode.u16 buf in
+    let major_opcode = Decode.u8 buf in
+    { bad_alarm; minor_opcode; major_opcode }
 
   type initialize_reply = { major_version : u8; minor_version : u8 }
   [@@deriving sexp]
@@ -7192,6 +7260,11 @@ module Record = struct
     { client_resource; ranges }
 
   type bad_context_error = u32 [@@deriving sexp]
+
+  let decode_bad_context_error buf : bad_context_error =
+    Decode.pad buf 4;
+    let invalid_record = Decode.u32 buf in
+    invalid_record
 
   type query_version_reply = { major_version : u16; minor_version : u16 }
   [@@deriving sexp]
@@ -8060,12 +8133,33 @@ module Xf86vidmode = struct
     permissions
 
   type bad_clock_error = unit [@@deriving sexp]
+
+  let decode_bad_clock_error _ : bad_clock_error = Decode.pad 32
+
   type bad_h_timings_error = unit [@@deriving sexp]
+
+  let decode_bad_h_timings_error _ : bad_h_timings_error = Decode.pad 32
+
   type bad_v_timings_error = unit [@@deriving sexp]
+
+  let decode_bad_v_timings_error _ : bad_v_timings_error = Decode.pad 32
+
   type mode_unsuitable_error = unit [@@deriving sexp]
+
+  let decode_mode_unsuitable_error _ : mode_unsuitable_error = Decode.pad 32
+
   type extension_disabled_error = unit [@@deriving sexp]
+
+  let decode_extension_disabled_error _ : extension_disabled_error =
+    Decode.pad 32
+
   type client_not_local_error = unit [@@deriving sexp]
+
+  let decode_client_not_local_error _ : client_not_local_error = Decode.pad 32
+
   type zoom_locked_error = unit [@@deriving sexp]
+
+  let decode_zoom_locked_error _ : zoom_locked_error = Decode.pad 32
 end
 
 module Xinerama = struct
@@ -11832,10 +11926,24 @@ module Xinput = struct
   [@@deriving sexp]
 
   type device_error = unit [@@deriving sexp]
+
+  let decode_device_error _ : device_error = Decode.pad 32
+
   type event_error = unit [@@deriving sexp]
+
+  let decode_event_error _ : event_error = Decode.pad 32
+
   type mode_error = unit [@@deriving sexp]
+
+  let decode_mode_error _ : mode_error = Decode.pad 32
+
   type device_busy_error = unit [@@deriving sexp]
+
+  let decode_device_busy_error _ : device_busy_error = Decode.pad 32
+
   type class_error = unit [@@deriving sexp]
+
+  let decode_class_error _ : class_error = Decode.pad 32
 end
 
 module Xprint = struct
@@ -12080,7 +12188,12 @@ module Xprint = struct
     { detail; context }
 
   type bad_context_error = unit [@@deriving sexp]
+
+  let decode_bad_context_error _ : bad_context_error = Decode.pad 32
+
   type bad_sequence_error = unit [@@deriving sexp]
+
+  let decode_bad_sequence_error _ : bad_sequence_error = Decode.pad 32
 end
 
 module Xselinux = struct
@@ -12569,8 +12682,16 @@ module Xv = struct
     }
 
   type bad_port_error = unit [@@deriving sexp]
+
+  let decode_bad_port_error _ : bad_port_error = Decode.pad 32
+
   type bad_encoding_error = unit [@@deriving sexp]
+
+  let decode_bad_encoding_error _ : bad_encoding_error = Decode.pad 32
+
   type bad_control_error = unit [@@deriving sexp]
+
+  let decode_bad_control_error _ : bad_control_error = Decode.pad 32
 
   type video_notify_event = {
     reason : video_notify_reason_enum;
