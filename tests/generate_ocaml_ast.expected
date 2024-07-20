@@ -3,7 +3,6 @@ module Bigreq = struct
 end
 
 module Xproto = struct
-  type char2b = utf16_string [@@deriving sexp]
   type window = xid [@@deriving sexp]
 
   let decode_window = decode_xid
