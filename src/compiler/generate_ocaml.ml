@@ -650,12 +650,12 @@ let gen_decode_reply_fields ctx out = function
       gen_decode_fields ctx out fields
   | [] -> failwith "reply with no fields"
 
-let gen_variant_item ctx out { vi_name; vi_tag = _; vi_fields } =
+let gen_variant_item ctx out { vi_name; vi_tag = _; vi_fields; _ } =
   Printf.fprintf out "%s of { %a}" (Ident.caml vi_name)
     (list (gen_field ctx))
     vi_fields
 
-let gen_decode_variant_item ctx out { vi_name; vi_tag; vi_fields } =
+let gen_decode_variant_item ctx out { vi_name; vi_tag; vi_fields; _ } =
   Printf.fprintf out "%Ld -> %a Some (%s { %a}, at)" vi_tag
     (list_sep " " (gen_decode_field ctx []))
     vi_fields (Ident.caml vi_name)
@@ -719,7 +719,7 @@ let gen_declaration ctx out = function
       (* Printf.fprintf out "let %s = %a;;"
          (Ident.snake ~prefix:"size_of" name)
          (gen_size_of_type ctx) type_ *)
-  | Struct { name; fields } ->
+  | Struct { name; fields; _ } ->
       Printf.fprintf out "type %s = %a [@@deriving sexp];;\n" (Ident.snake name)
         (gen_fields ctx) fields;
       Printf.fprintf out "let %s buf ~at : (%s * int) option = %a;;\n"
@@ -807,7 +807,7 @@ let gen_declaration ctx out = function
         (Ident.snake name ~suffix:"mask")
         (list_sep " | " gen_encode_mask_item)
         items
-  | Variant { name; items } ->
+  | Variant { name; items; _ } ->
       Printf.fprintf out "type %s = %a [@@deriving sexp];;"
         (Ident.snake name ~suffix:"variant")
         (list_sep " | " (gen_variant_item ctx))

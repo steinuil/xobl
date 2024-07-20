@@ -55,7 +55,7 @@ let rec conv_expression ctx = function
   | Unop (op, e) -> Hir.Unop (op, conv_expression ctx e)
   | Field_ref f -> Hir.Field_ref f
   | Param_ref { param; type_ } ->
-      Hir.Param_ref { param; type_ = Some (conv_type ctx type_) }
+      Hir.Param_ref { param; type_ = conv_type ctx type_ }
   | Enum_ref { enum; item } -> Hir.Enum_ref { enum = conv_ident enum; item }
   | Pop_count e -> Hir.Pop_count (conv_expression ctx e)
   | Sum_of { field; by_expr } ->
@@ -230,6 +230,27 @@ let collect_invertible_lists fields =
          | Error e -> (cache, e :: errors))
        ({ length_by_list = []; by_length = [] }, [])
 
+let rec collect_param_refs_in_expr = function
+  | Parsetree.Param_ref { param; type_ } -> [ (param, type_) ]
+  | Binop (_, e1, e2) ->
+      collect_param_refs_in_expr e1 @ collect_param_refs_in_expr e2
+  | Unop (_, e) -> collect_param_refs_in_expr e
+  | Pop_count e -> collect_param_refs_in_expr e
+  | Sum_of { by_expr = Some e; _ } -> collect_param_refs_in_expr e
+  | Field_ref _ | Enum_ref _
+  | Sum_of { by_expr = None; _ }
+  | List_element_ref | Expr_value _ | Expr_bit _ ->
+      []
+
+let collect_param_refs_in_fields fields =
+  ListLabels.concat_map fields ~f:(function
+    | Parsetree.Field_expr { expr; _ } | Field_list { length = Some expr; _ } ->
+        collect_param_refs_in_expr expr
+    | Field_switch _ -> []
+    | Field_list { length = None; _ }
+    | Field_file_descriptor _ | Field_pad _ | Field _ ->
+        [])
+
 let resolve_module n =
   ListExt.find_map_exn ~f:(function
     | Parsetree.Core decls when n = "xproto" -> Some decls
@@ -273,10 +294,18 @@ let conv_optional_fields ~cond ~cases fields xcbs =
            Hir.Field_optional { name; mask = cond; bit; type_ } *)
     | _ -> failwith "unexpected")
 
-type variant = { name : string; items : Hir.variant_item list }
+type variant = {
+  name : string;
+  items : Hir.variant_item list;
+  external_params : Hir.external_param list;
+}
 
 let with_variants v t =
-  List.map (fun { name; items } -> Hir.Variant { name; items }) v @ [ t ]
+  List.map
+    (fun { name; items; external_params } ->
+      Hir.Variant { name; items; external_params })
+    v
+  @ [ t ]
 
 type variant_name_cache = {
   v_by_switch : (string * string) list;
@@ -302,9 +331,9 @@ let mk_list f = [ f ]
     be mutually recursive with [conv_fields] and return a list of variant
     types to be added to the list of top-level declarations along with
     the switch field info. *)
-let rec conv_variant_field ~cond ~cases fields (curr_module, xcbs) =
+let rec conv_variant_field ~cond ~cases enclosing_fields (curr_module, xcbs) =
   let enum =
-    ListExt.find_map_exn fields ~f:(function
+    ListExt.find_map_exn enclosing_fields ~f:(function
       | Parsetree.Field
           { name; type_ = { ft_allowed = Some (Allowed_enum enum); _ } }
         when name = cond ->
@@ -325,7 +354,7 @@ let rec conv_variant_field ~cond ~cases fields (curr_module, xcbs) =
               | name, Parsetree.Item_value v when name = item -> Some v
               | _ -> None)
           in
-          let { fields; variant_types } =
+          let { fields; variant_types }, external_params =
             conv_fields cs_fields (curr_module, xcbs)
           in
           let field_names =
@@ -342,23 +371,54 @@ let rec conv_variant_field ~cond ~cases fields (curr_module, xcbs) =
               | Hir.Field_optional_mask _ ->
                   None)
           in
-          let fields =
+          let external_params = conv_external_params xcbs external_params in
+          let fields, external_params =
             let fix_param_refs = function
               | Hir.Field_ref f when not (List.mem f field_names) ->
-                  Hir.Param_ref { param = f; type_ = None }
-              | e -> e
+                  let type_ =
+                    ListExt.find_map_exn enclosing_fields ~f:(fun field ->
+                        match field with
+                        | Parsetree.Field
+                            { name; type_ = { ft_type = type_; _ } }
+                          when name = f ->
+                            Some type_
+                        | _ -> None)
+                  in
+                  let type_ = conv_type xcbs type_ in
+                  ( Hir.Param_ref { param = f; type_ },
+                    [ Hir.{ ep_name = f; ep_type = type_ } ] )
+              | e -> (e, [])
             in
-            ListLabels.map fields ~f:(function
-              | Hir.Field_list { name; type_; length = Some expr } ->
-                  Hir.Field_list
-                    { name; type_; length = Some (fix_param_refs expr) }
-              | f -> f)
+            let fields, params =
+              ListLabels.map fields ~f:(function
+                | Hir.Field_list { name; type_; length = Some expr } ->
+                    let length, params = fix_param_refs expr in
+                    ( Hir.Field_list { name; type_; length = Some length },
+                      params )
+                | f -> (f, []))
+              |> List.split
+            in
+            (fields, external_params @ List.flatten params)
           in
-          (Hir.{ vi_name = item; vi_tag; vi_fields = fields }, variant_types)
+          ( Hir.
+              {
+                vi_name = item;
+                vi_tag;
+                vi_fields = fields;
+                vi_external_params = external_params;
+              },
+            variant_types )
       | _ -> failwith "unexpected")
     |> List.split
   in
-  let variant_type = { name = enum.id_name; items = variant_items } in
+  let external_params =
+    ListLabels.concat_map variant_items ~f:(fun { Hir.vi_external_params; _ } ->
+        vi_external_params)
+    |> List.sort_uniq (fun a b -> if a.Hir.ep_name = b.ep_name then 0 else -1)
+  in
+  let variant_type =
+    { name = enum.id_name; items = variant_items; external_params }
+  in
   (enum.id_name, variant_type :: List.flatten variant_types)
 
 (** In summary:
@@ -412,6 +472,7 @@ and conv_fields fields (curr_module, xcbs) =
           by_condition = (cond, cases) :: acc.by_condition;
         })
   in
+  let external_params = collect_param_refs_in_fields fields in
   let fields =
     ListLabels.map fields ~f:(function
       (* List *)
@@ -491,7 +552,17 @@ and conv_fields fields (curr_module, xcbs) =
             }
           |> mk_list)
   in
-  { fields = List.flatten fields; variant_types = List.flatten variant_types }
+  ( { fields = List.flatten fields; variant_types = List.flatten variant_types },
+    external_params )
+
+and conv_fields_without_external_params fields ctx =
+  match conv_fields fields ctx with
+  | fields, [] -> fields
+  | _ -> failwith "unexpected param_ref"
+
+and conv_external_params ctx =
+  List.map (fun (name, type_) ->
+      Hir.{ ep_name = name; ep_type = conv_type ctx type_ })
 
 let conv_declaration (curr_module, xcbs) = function
   | Parsetree.Xid name ->
@@ -526,7 +597,9 @@ let conv_declaration (curr_module, xcbs) = function
         fields;
         doc = _;
       } ->
-      let { fields; variant_types } = conv_fields fields (curr_module, xcbs) in
+      let { fields; variant_types } =
+        conv_fields_without_external_params fields (curr_module, xcbs)
+      in
       Hir.Event
         {
           name;
@@ -538,24 +611,32 @@ let conv_declaration (curr_module, xcbs) = function
         }
       |> with_variants variant_types
   | Error { name; number; fields } ->
-      let { fields; variant_types } = conv_fields fields (curr_module, xcbs) in
+      let { fields; variant_types } =
+        conv_fields_without_external_params fields (curr_module, xcbs)
+      in
       Hir.Error { name; number; fields } |> with_variants variant_types
   | Struct { name; fields } ->
-      let { fields; variant_types } = conv_fields fields (curr_module, xcbs) in
-      Hir.Struct { name; fields } |> with_variants variant_types
+      let { fields; variant_types }, external_params =
+        conv_fields fields (curr_module, xcbs)
+      in
+      let external_params = conv_external_params xcbs external_params in
+      Hir.Struct { name; fields; external_params }
+      |> with_variants variant_types
   | Request
       { name; opcode; combine_adjacent; fields; reply = Some reply; doc = _ } ->
       let { fields; variant_types = v1 } =
-        conv_fields fields (curr_module, xcbs)
+        conv_fields_without_external_params fields (curr_module, xcbs)
       in
       let { fields = reply_fields; variant_types = v2 } =
-        conv_fields reply.fields (curr_module, xcbs)
+        conv_fields_without_external_params reply.fields (curr_module, xcbs)
       in
       Hir.Request
         { name; opcode; combine_adjacent; fields; reply = Some reply_fields }
       |> with_variants (v1 @ v2)
   | Request { name; opcode; combine_adjacent; fields; reply = None; doc = _ } ->
-      let { fields; variant_types } = conv_fields fields (curr_module, xcbs) in
+      let { fields; variant_types } =
+        conv_fields_without_external_params fields (curr_module, xcbs)
+      in
       Hir.Request { name; opcode; combine_adjacent; fields; reply = None }
       |> with_variants variant_types
 

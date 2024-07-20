@@ -43,7 +43,7 @@ type expression =
   (* The field's type should probably be resolved so that when outputting
      expressions we know which conversion function to use when the type of the
      field is not compatible with that of the length, i.e. card32. *)
-  | Param_ref of { param : string; type_ : type_ option }
+  | Param_ref of { param : string; type_ : type_ }
   | Enum_ref of { enum : ident; item : string }
   | Pop_count of expression
   | Sum_of of { field : string; by_expr : expression option }
@@ -108,7 +108,15 @@ type field =
           Should be hidden in the public API. *)
 [@@deriving show, sexp]
 
-type variant_item = { vi_name : string; vi_tag : int64; vi_fields : field list }
+type external_param = { ep_name : string; ep_type : type_ }
+[@@deriving show, sexp]
+
+type variant_item = {
+  vi_name : string;
+  vi_tag : int64;
+  vi_fields : field list;
+  vi_external_params : external_param list;
+}
 [@@deriving show, sexp]
 
 type mask_additional_value =
@@ -120,9 +128,17 @@ type enum_item = string * int64 [@@deriving show, sexp]
 
 type declaration =
   | Type_alias of { name : string; type_ : type_ }
-  | Struct of { name : string; fields : field list }
+  | Struct of {
+      name : string;
+      fields : field list;
+      external_params : external_param list;
+    }
   | Event_struct of { name : string; events : ident list }
-  | Variant of { name : string; items : variant_item list }
+  | Variant of {
+      name : string;
+      items : variant_item list;
+      external_params : external_param list;
+    }
   | Enum of { name : string; items : enum_item list }
   | Mask of {
       name : string;

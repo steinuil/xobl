@@ -197,7 +197,7 @@ module Type = struct
   let t_enum_items ~loc items =
     Ast_helper.Typ.variant ~loc (List.map (rf_enum_item ~loc) items) Closed None
 
-  let cd_variant_item ~ctx ~loc { vi_name; vi_tag = _; vi_fields } =
+  let cd_variant_item ~ctx ~loc { vi_name; vi_tag = _; vi_fields; _ } =
     let name = Ident.caml vi_name |> with_loc ~loc in
     let args =
       match t_fields ~ctx ~loc vi_fields with
@@ -225,7 +225,8 @@ module Type = struct
     | Type_alias { name; type_ } ->
         td_type ~loc name (t_type ~ctx ~loc type_) |> Option.some
     | Struct { name = "CHAR2B"; _ } -> None
-    | Struct { name; fields } -> td_fields ~ctx ~loc name fields |> Option.some
+    | Struct { name; fields; _ } ->
+        td_fields ~ctx ~loc name fields |> Option.some
     | Event { name; fields; _ } ->
         td_fields ~suffix:"event" ~ctx ~loc name fields |> Option.some
     | Error { name; fields; _ } ->
@@ -248,7 +249,7 @@ module Type = struct
         td_type ~suffix:"mask" ~loc name
           [%type: ([%t items] list, [%t values]) mask]
         |> Option.some
-    | Variant { name; items } ->
+    | Variant { name; items; _ } ->
         td_variant ~suffix:"variant" ~ctx ~loc name items |> Option.some
     | Event_copy { name; event; _ } ->
         let event = t_ident ~suffix:"event" ~ctx ~loc event in
@@ -434,7 +435,7 @@ module Decode = struct
   let vb_declaration ~ctx ~loc = function
     | Type_alias { name; type_ } ->
         vb ~prefix:"decode" ~loc name (e_type ~ctx ~loc type_) :: []
-    | Struct { name; fields } ->
+    | Struct { name; fields; _ } ->
         let expr = e_struct ~ctx ~loc name fields in
         vb ~prefix:"decode" ~loc name expr :: []
         (* | Enum { name; items } -> *)
