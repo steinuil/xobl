@@ -438,14 +438,15 @@ module Decode = struct
     | _ -> []
   (* | f -> Printf.ksprintf unexpected "field: %s" (show_field f) *)
 
-  let e_struct_fields ~ctx ~loc fields =
-    let result =
-      let fields =
-        names_of_visible_fields fields
-        |> List.map (fun name -> (lid ~loc name, e_id ~loc name))
-      in
-      Ast_helper.Exp.record ~loc fields None
+  let e_result_fields_record ~loc fields =
+    let fields =
+      names_of_visible_fields fields
+      |> List.map (fun name -> (lid ~loc name, e_id ~loc name))
     in
+    Ast_helper.Exp.record ~loc fields None
+
+  let e_struct_fields ~ctx ~loc fields =
+    let result = e_result_fields_record ~loc fields in
     List.concat_map (e_field ~ctx ~loc) fields
     |> ListLabels.fold_right ~init:result ~f:(fun field expr ->
            match field with
@@ -464,6 +465,40 @@ module Decode = struct
         [%expr fun buf [%p param] : [%t type_] -> [%e fields]]
     | _ -> not_implemented "multiple param_refs"
 
+  let e_reply_fields ~ctx ~loc name fields =
+    let type_ = t_id ~suffix:"reply" ~loc name in
+    let reply_length_field =
+      Field_list_length
+        {
+          name = "length";
+          type_ = Type_primitive Card32;
+          expr = None;
+          list = "";
+          list_type = Type_primitive Void;
+        }
+    in
+    let pad size = Field_pad { pad = Pad_bytes size; serialize = false } in
+    match fields with
+    | _ when visible_fields fields = [] ->
+        [%expr fun _ : [%t type_] -> Decode.pad 32]
+    | Field_pad { pad = Pad_bytes 1; serialize = false } :: rest ->
+        (* Collapse padding if the first reply field is padding.
+           See below for explanation. *)
+        let fields = pad 4 :: reply_length_field :: rest in
+        let fields = e_struct_fields ~ctx ~loc fields in
+        [%expr fun buf : [%t type_] -> [%e fields]]
+    | first :: rest ->
+        (* Replies include:
+           - a 0x1 byte to indicate that this a reply
+           - a field whose length is a single byte
+           - the sequence number (2 bytes)
+           - the reply length (4 bytes)
+           Add some dummy fields. *)
+        let fields = pad 1 :: first :: pad 2 :: reply_length_field :: rest in
+        let fields = e_struct_fields ~ctx ~loc fields in
+        [%expr fun buf : [%t type_] -> [%e fields]]
+    | [] -> Printf.ksprintf unexpected "reply with no fields: %s" name
+
   let vb_declaration ~ctx ~loc = function
     | Type_alias { name; type_ } ->
         vb ~prefix:"decode" ~loc name (e_type ~ctx ~loc type_) :: []
@@ -477,6 +512,10 @@ module Decode = struct
     | Error_copy { name; error; _ } ->
         let error = e_ident ~prefix:"decode" ~suffix:"error" ~ctx ~loc error in
         vb ~prefix:"decode" ~suffix:"error" ~loc name error :: []
+    | Request { reply = None; _ } -> []
+    | Request { name; reply = Some reply; _ } ->
+        let reply = e_reply_fields ~ctx ~loc name reply in
+        vb ~prefix:"decode" ~suffix:"reply" ~loc name reply :: []
     | _ -> not_implemented "declaration"
 
   let stri_declaration ~ctx ~loc decl =
