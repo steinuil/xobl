@@ -190,11 +190,6 @@ module Type = struct
         let name = Ident.snake ?prefix ?suffix name |> with_loc ~loc in
         Ast_helper.Type.mk ~loc ~kind:(Ptype_record fields) name
 
-  let td_struct ~ctx ~loc name fields =
-    match (name, ctx) with
-    | "CHAR2B", Cm "xproto" -> None
-    | _ -> td_fields ~ctx ~loc name fields |> Option.some
-
   let rf_enum_item ~loc (name, _) =
     let name = Ident.caml name |> with_loc ~loc in
     Ast_helper.Rf.mk ~loc (Rtag (name, true, []))
@@ -229,7 +224,8 @@ module Type = struct
   let td_declaration ~ctx ~loc = function
     | Type_alias { name; type_ } ->
         td_type ~loc name (t_type ~ctx ~loc type_) |> Option.some
-    | Struct { name; fields } -> td_struct ~ctx ~loc name fields
+    | Struct { name = "CHAR2B"; _ } -> None
+    | Struct { name; fields } -> td_fields ~ctx ~loc name fields |> Option.some
     | Event { name; fields; _ } ->
         td_fields ~suffix:"event" ~ctx ~loc name fields |> Option.some
     | Error { name; fields; _ } ->
@@ -337,21 +333,21 @@ let rec e_expression ?it ~loc = function
 
 module Decode = struct
   let e_prim ~loc = function
-    | Bool -> [%expr decode_bool]
-    | Int8 -> [%expr decode_i8]
-    | Card8 -> [%expr decode_u8]
-    | Int16 -> [%expr decode_i16]
-    | Card16 -> [%expr decode_u16]
-    | Int32 -> [%expr decode_i32]
-    | Card32 -> [%expr decode_u32]
-    | Card64 -> [%expr decode_u64]
-    | Void -> [%expr decode_void]
-    | Char -> [%expr decode_char]
-    | Byte -> [%expr decode_byte]
-    | Float -> [%expr decode_float]
-    | Double -> [%expr decode_double]
-    | Fd -> [%expr decode_file_descr]
-    | Xid -> [%expr decode_xid]
+    | Bool -> [%expr Decode.bool]
+    | Int8 -> [%expr Decode.i8]
+    | Card8 -> [%expr Decode.u8]
+    | Int16 -> [%expr Decode.i16]
+    | Card16 -> [%expr Decode.u16]
+    | Int32 -> [%expr Decode.i32]
+    | Card32 -> [%expr Decode.u32]
+    | Card64 -> [%expr Decode.u64]
+    | Void -> [%expr Decode.void]
+    | Char -> [%expr Decode.char]
+    | Byte -> [%expr Decode.byte]
+    | Float -> [%expr Decode.float]
+    | Double -> [%expr Decode.double]
+    | Fd -> [%expr Decode.file_descr]
+    | Xid -> [%expr Decode.xid]
 
   let e_type ~ctx ~loc = function
     | Type_primitive prim -> e_prim ~loc prim
@@ -367,7 +363,9 @@ module Decode = struct
           |> Option.value ~default:[%expr identity]
         in
         let enum_of_int = e_ident ~suffix:"enum_of_int" ~ctx ~loc enum in
-        [%expr decode_enum [%e decode_t] [%e to_int] [%e enum_of_int]]
+        [%expr
+          Decode.enum ~decode:[%e decode_t] ~int_of_t:[%e to_int]
+            ~enum_of_int:[%e enum_of_int]]
     | { ft_type; ft_allowed = Some (Allowed_alt_enum enum) } ->
         let decode_t = e_type ~ctx ~loc ft_type in
         let to_int =
@@ -375,7 +373,7 @@ module Decode = struct
           |> Option.value ~default:[%expr identity]
         in
         let enum_of_int = e_ident ~suffix:"enum_of_int" ~ctx ~loc enum in
-        [%expr decode_alt_enum [%e decode_t] [%e to_int] [%e enum_of_int]]
+        [%expr Decode.alt_enum [%e decode_t] [%e to_int] [%e enum_of_int]]
     | { ft_type; ft_allowed = Some (Allowed_mask mask) } ->
         let decode_t = e_type ~ctx ~loc ft_type in
         let to_int =
@@ -383,7 +381,7 @@ module Decode = struct
           |> Option.value ~default:[%expr identity]
         in
         let mask_of_int = e_ident ~suffix:"mask_of_int64" ~ctx ~loc mask in
-        [%expr decode_mask [%e decode_t] [%e to_int] [%e mask_of_int]]
+        [%expr Decode.mask [%e decode_t] [%e to_int] [%e mask_of_int]]
     | { ft_type; ft_allowed = Some (Allowed_alt_mask mask) } ->
         let decode_t = e_type ~ctx ~loc ft_type in
         let to_int =
@@ -391,34 +389,55 @@ module Decode = struct
           |> Option.value ~default:[%expr identity]
         in
         let mask_of_int = e_ident ~suffix:"mask_of_int64" ~ctx ~loc mask in
-        [%expr decode_alt_mask [%e decode_t] [%e to_int] [%e mask_of_int]]
+        [%expr Decode.alt_mask [%e decode_t] [%e to_int] [%e mask_of_int]]
 
   let e_list_type ~ctx ~loc = function
     | {
         ft_type = Type_ref ({ id_module = "xproto"; id_name = "CHAR2B" }, None);
         ft_allowed = None;
       } ->
-        [%expr decode_utf16_string]
+        [%expr Decode.utf16_string]
     | t -> (
         match primitive_of_type t.ft_type with
-        | Some Char | Some Void -> [%expr decode_string]
+        | Some Char | Some Void -> [%expr Decode.string]
         | Some _ | None ->
             let decode_t = e_field_type ~ctx ~loc t in
-            [%expr decode_list [%e decode_t]])
+            [%expr Decode.list ~item:[%e decode_t]])
 
-  let vb_field ~ctx ~loc = function
+  let e_field ~ctx ~loc = function
     | Field { name; type_ } ->
-        let name = p_id ~loc name in
         let body = e_field_type ~ctx ~loc type_ in
-        [ `Letop (name, body) ]
-    | Field_pad { pad = Pad_bytes n; _ } -> [ `Let [%expr at + [%e e_int n]] ]
+        [ `Let (name, [%expr [%e body] buf]) ]
+    | Field_pad { pad = Pad_bytes n; _ } ->
+        [ `Sequence [%expr Decode.pad buf [%e e_int n]] ]
     | Field_pad { pad = Pad_align n; _ } ->
-        [ `Let [%expr at + ((at - orig) mod [%e e_int n])] ]
-    | f -> Printf.ksprintf unexpected "field: %s" (show_field f)
+        [ `Sequence [%expr Decode.align buf [%e e_int n]] ]
+    | Field_list_simple { name; type_; length } ->
+        let body = e_list_type ~ctx ~loc type_ in
+        [ `Let (name, [%expr [%e body] ~len:[%e e_id ~loc length] buf]) ]
+    (* | f -> Printf.ksprintf unexpected "field: %s" (show_field f) *)
+    | _ -> []
+
+  let e_struct_fields ~ctx ~loc fields =
+    List.concat_map (e_field ~ctx ~loc) fields
+    |> ListLabels.fold_right ~init:[%expr ()] ~f:(fun field expr ->
+           match field with
+           | `Let (name, body) ->
+               let binding = vb ~loc name body in
+               Ast_helper.Exp.let_ ~loc Nonrecursive [ binding ] expr
+           | `Sequence body -> Ast_helper.Exp.sequence ~loc body expr)
+
+  let e_struct ~ctx ~loc name fields =
+    let fields = e_struct_fields ~ctx ~loc fields in
+    [%expr fun buf : [%t t_id ~loc name] -> [%e fields]]
 
   let vb_declaration ~ctx ~loc = function
     | Type_alias { name; type_ } ->
         vb ~prefix:"decode" ~loc name (e_type ~ctx ~loc type_) :: []
+    | Struct { name; fields } ->
+        let expr = e_struct ~ctx ~loc name fields in
+        vb ~prefix:"decode" ~loc name expr :: []
+        (* | Enum { name; items } -> *)
     | Event_copy { name; event; _ } ->
         let event = e_ident ~prefix:"decode" ~suffix:"event" ~ctx ~loc event in
         vb ~prefix:"decode" ~suffix:"event" ~loc name event :: []
