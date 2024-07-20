@@ -186,6 +186,11 @@ module Type = struct
         let name = Ident.snake ?prefix ?suffix name |> with_loc ~loc in
         Ast_helper.Type.mk ~loc ~kind:(Ptype_record fields) name
 
+  let td_struct ~ctx ~loc name fields =
+    match (name, ctx) with
+    | "CHAR2B", Cm "xproto" -> td_type ~loc name [%type: utf16_string]
+    | _ -> td_fields ~ctx ~loc name fields
+
   let rf_enum_item ~loc (name, _) =
     let name = Ident.caml name |> with_loc ~loc in
     Ast_helper.Rf.mk ~loc (Rtag (name, true, []))
@@ -220,7 +225,7 @@ module Type = struct
   let td_declaration ~ctx ~loc = function
     | Type_alias { name; type_ } ->
         td_type ~loc name (t_type ~ctx ~loc type_) |> Option.some
-    | Struct { name; fields } -> td_fields ~ctx ~loc name fields |> Option.some
+    | Struct { name; fields } -> td_struct ~ctx ~loc name fields |> Option.some
     | Event { name; fields; _ } ->
         td_fields ~suffix:"event" ~ctx ~loc name fields |> Option.some
     | Error { name; fields; _ } ->
