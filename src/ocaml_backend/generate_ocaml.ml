@@ -420,7 +420,8 @@ module Decode = struct
         [ `Sequence [%expr Decode.align buf [%e e_int n]] ]
     | Field_list_simple { name; type_; length } ->
         let body = e_list_type ~ctx ~loc type_ in
-        [ `Let (name, [%expr [%e body] ~len:[%e e_id ~loc length] buf]) ]
+        let len = e_id ~loc length in
+        [ `Let (name, [%expr [%e body] ~len:[%e len] buf]) ]
     | Field_list_length { name; type_; expr; _ } -> (
         let body = e_type ~ctx ~loc type_ in
         match expr with
@@ -431,16 +432,18 @@ module Decode = struct
               `Let (name, e_expression ~loc expr);
             ])
     | Field_list { name; type_; length = Some length } ->
-        [
-          `Let
-            ( name,
-              [%expr
-                [%e e_list_type ~ctx ~loc type_]
-                  ~len:[%e e_expression ~loc length] buf] );
-        ]
+        let len = e_expression ~loc length in
+        let body = e_list_type ~ctx ~loc type_ in
+        [ `Let (name, [%expr [%e body] ~len:[%e len] buf]) ]
     | Field_variant_tag { field_name; variant = _; type_ } ->
         let body = e_type ~ctx ~loc type_ in
         [ `Let (field_name ^ "_tag", [%expr [%e body] buf]) ]
+    | Field_variant { name; variant } ->
+        let body =
+          e_ident ~prefix:"decode" ~suffix:"variant" ~ctx ~loc variant
+        in
+        let tag = e_id ~suffix:"tag" ~loc name in
+        [ `Let (name, [%expr [%e body] ~tag:[%e tag] buf]) ]
     | _ -> []
   (* | f -> Printf.ksprintf unexpected "field: %s" (show_field f) *)
 

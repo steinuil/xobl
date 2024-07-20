@@ -7515,6 +7515,7 @@ module Xinput = struct
   let decode_input_info buf : input_info =
     let info_tag = Decode.u8 buf in
     let len = Decode.u8 buf in
+    let info = decode_input_class_variant ~tag:info_tag buf in
     { len; info }
 
   type device_name = string [@@deriving sexp]
@@ -8009,6 +8010,7 @@ module Xinput = struct
     let data_tag = Decode.u8 buf in
     let feedback_id = Decode.u8 buf in
     let len = Decode.u16 buf in
+    let data = decode_feedback_class_variant ~tag:data_tag buf in
     { feedback_id; len; data }
 
   type get_feedback_control_reply = {
@@ -8196,6 +8198,7 @@ module Xinput = struct
     let data_tag = Decode.u8 buf in
     let feedback_id = Decode.u8 buf in
     let len = Decode.u16 buf in
+    let data = decode_feedback_class_variant ~tag:data_tag buf in
     { feedback_id; len; data }
 
   type change_feedback_control_mask =
@@ -8379,6 +8382,7 @@ module Xinput = struct
   let decode_input_state buf : input_state =
     let data_tag = Decode.u8 buf in
     let len = Decode.u8 buf in
+    let data = decode_input_class_variant ~tag:data_tag buf in
     { len; data }
 
   type query_device_state_reply = {
@@ -8598,6 +8602,7 @@ module Xinput = struct
   let decode_device_state buf : device_state =
     let data_tag = Decode.u16 buf in
     let len = Decode.u16 buf in
+    let data = decode_device_control_variant ~tag:data_tag buf in
     { len; data }
 
   type get_device_control_reply = {
@@ -8753,6 +8758,7 @@ module Xinput = struct
   let decode_device_ctl buf : device_ctl =
     let data_tag = Decode.u16 buf in
     let len = Decode.u16 buf in
+    let data = decode_device_control_variant ~tag:data_tag buf in
     { len; data }
 
   type change_device_control_reply = {
@@ -8825,6 +8831,7 @@ module Xinput = struct
     let items_tag = Decode.u8 buf in
     let device_id = Decode.u8 buf in
     Decode.pad buf 10;
+    let items = decode_property_format_variant ~tag:items_tag buf in
     { xi_reply_type; type_; bytes_after; num_items; device_id; items }
 
   type device_enum = [ `All | `All_master ] [@@deriving sexp]
@@ -9043,6 +9050,7 @@ module Xinput = struct
   let decode_hierarchy_change buf : hierarchy_change =
     let data_tag = Decode.u16 buf in
     let len = Decode.u16 buf in
+    let data = decode_hierarchy_change_type_variant ~tag:data_tag buf in
     { len; data }
 
   type xi_get_client_pointer_reply = {
@@ -9336,6 +9344,7 @@ module Xinput = struct
     let data_tag = Decode.u16 buf in
     let len = Decode.u16 buf in
     let sourceid = decode_device_id buf in
+    let data = decode_device_class_type_variant ~tag:data_tag buf in
     { len; sourceid; data }
 
   type xi_device_info = {
@@ -9516,6 +9525,7 @@ module Xinput = struct
     let num_items = Decode.u32 buf in
     let items_tag = Decode.u8 buf in
     Decode.pad buf 11;
+    let items = decode_property_format_variant ~tag:items_tag buf in
     { type_; bytes_after; num_items; items }
 
   type xi_get_selected_events_reply = event_mask list [@@deriving sexp]
