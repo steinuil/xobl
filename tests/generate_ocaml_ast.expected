@@ -5,7 +5,7 @@ module Bigreq = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let maximum_request_length = Decode.u32 buf in
-    { maximum_request_length }
+    maximum_request_length
 end
 
 module Xproto = struct
@@ -990,6 +990,19 @@ module Xproto = struct
     | Data32 of u32 list
   [@@deriving sexp]
 
+  let decode_client_message_data_format_variant buf ~tag :
+      client_message_data_format_variant =
+    match tag with
+    | 8 ->
+        let data8 = (Decode.list ~item:Decode.u8) ~len:20 buf in
+        Data8 data8
+    | 16 ->
+        let data16 = (Decode.list ~item:Decode.u16) ~len:10 buf in
+        Data16 data16
+    | 32 ->
+        let data32 = (Decode.list ~item:Decode.u32) ~len:5 buf in
+        Data32 data32
+
   type client_message_event = {
     window : window;
     type_ : atom;
@@ -1328,7 +1341,7 @@ module Xproto = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let atom = (Decode.alt_enum decode_atom identity atom_enum_of_int) buf in
-    { atom }
+    atom
 
   type get_atom_name_reply = string [@@deriving sexp]
 
@@ -1338,7 +1351,7 @@ module Xproto = struct
     let name_len = Decode.u16 buf in
     Decode.pad buf 22;
     let name = Decode.string ~len:name_len buf in
-    { name }
+    name
 
   type prop_mode_enum = [ `Replace | `Prepend | `Append ] [@@deriving sexp]
 
@@ -1385,7 +1398,7 @@ module Xproto = struct
     let atoms_len = Decode.u16 buf in
     Decode.pad buf 22;
     let atoms = (Decode.list ~item:decode_atom) ~len:atoms_len buf in
-    { atoms }
+    atoms
 
   type get_selection_owner_reply = window_enum alt_enum [@@deriving sexp]
 
@@ -1395,7 +1408,7 @@ module Xproto = struct
     let owner =
       (Decode.alt_enum decode_window identity window_enum_of_int) buf
     in
-    { owner }
+    owner
 
   type send_event_dest_enum = [ `Pointer_window | `Item_focus ]
   [@@deriving sexp]
@@ -1438,7 +1451,7 @@ module Xproto = struct
     in
     Decode.pad buf 2;
     let length = Decode.u32 buf in
-    { status }
+    status
 
   type button_index_enum = [ `Any | `D1 | `D2 | `D3 | `D4 | `D5 ]
   [@@deriving sexp]
@@ -1464,7 +1477,7 @@ module Xproto = struct
     in
     Decode.pad buf 2;
     let length = Decode.u32 buf in
-    { status }
+    status
 
   type grab_enum = [ `Any ] [@@deriving sexp]
 
@@ -1543,7 +1556,7 @@ module Xproto = struct
     let events_len = Decode.u32 buf in
     Decode.pad buf 20;
     let events = (Decode.list ~item:decode_timecoord) ~len:events_len buf in
-    { events }
+    events
 
   type translate_coordinates_reply = {
     same_screen : bool;
@@ -1602,7 +1615,7 @@ module Xproto = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let keys = (Decode.list ~item:Decode.u8) ~len:32 buf in
-    { keys }
+    keys
 
   type font_draw_enum = [ `Left_to_right | `Right_to_left ] [@@deriving sexp]
 
@@ -1750,7 +1763,7 @@ module Xproto = struct
   let decode_str buf : str =
     let name_len = Decode.u8 buf in
     let name = Decode.string ~len:name_len buf in
-    { name }
+    name
 
   type list_fonts_reply = str list [@@deriving sexp]
 
@@ -1760,7 +1773,7 @@ module Xproto = struct
     let names_len = Decode.u16 buf in
     Decode.pad buf 22;
     let names = (Decode.list ~item:decode_str) ~len:names_len buf in
-    { names }
+    names
 
   type list_fonts_with_info_reply = {
     min_bounds : charinfo;
@@ -1833,7 +1846,7 @@ module Xproto = struct
     let path_len = Decode.u16 buf in
     Decode.pad buf 22;
     let path = (Decode.list ~item:decode_str) ~len:path_len buf in
-    { path }
+    path
 
   type gc_mask =
     [ `Function
@@ -2051,7 +2064,7 @@ module Xproto = struct
     let cmaps_len = Decode.u16 buf in
     Decode.pad buf 22;
     let cmaps = (Decode.list ~item:decode_colormap) ~len:cmaps_len buf in
-    { cmaps }
+    cmaps
 
   type alloc_color_reply = { red : u16; green : u16; blue : u16; pixel : u32 }
   [@@deriving sexp]
@@ -2169,7 +2182,7 @@ module Xproto = struct
     let colors_len = Decode.u16 buf in
     Decode.pad buf 22;
     let colors = (Decode.list ~item:decode_rgb) ~len:colors_len buf in
-    { colors }
+    colors
 
   type lookup_color_reply = {
     exact_red : u16;
@@ -2245,7 +2258,7 @@ module Xproto = struct
     let length = Decode.u32 buf in
     Decode.pad buf 24;
     let names = (Decode.list ~item:decode_str) ~len:names_len buf in
-    { names }
+    names
 
   type get_keyboard_mapping_reply = {
     keysyms_per_keycode : byte;
@@ -2494,7 +2507,7 @@ module Xproto = struct
     in
     Decode.pad buf 2;
     let length = Decode.u32 buf in
-    { status }
+    status
 
   type get_pointer_mapping_reply = u8 list [@@deriving sexp]
 
@@ -2505,7 +2518,7 @@ module Xproto = struct
     let length = Decode.u32 buf in
     Decode.pad buf 24;
     let map = (Decode.list ~item:Decode.u8) ~len:map_len buf in
-    { map }
+    map
 
   type map_index_enum =
     [ `Shift | `Lock | `Control | `D1 | `D2 | `D3 | `D4 | `D5 ]
@@ -2534,7 +2547,7 @@ module Xproto = struct
     in
     Decode.pad buf 2;
     let length = Decode.u32 buf in
-    { status }
+    status
 
   type get_modifier_mapping_reply = keycode list [@@deriving sexp]
 
@@ -2548,7 +2561,7 @@ module Xproto = struct
     let keycodes =
       (Decode.list ~item:decode_keycode) ~len:keycodes_per_modifier buf
     in
-    { keycodes }
+    keycodes
 end
 
 module Render = struct
@@ -2983,7 +2996,7 @@ module Render = struct
     let num_values = Decode.u32 buf in
     Decode.pad buf 20;
     let values = (Decode.list ~item:decode_indexvalue) ~len:num_values buf in
-    { values }
+    values
 
   type transform = {
     matrix11 : fixed;
@@ -3156,7 +3169,7 @@ module Shape = struct
     let enabled = Decode.bool buf in
     Decode.pad buf 2;
     let length = Decode.u32 buf in
-    { enabled }
+    enabled
 
   type get_rectangles_reply = {
     ordering : Xproto.clip_ordering_enum;
@@ -3421,7 +3434,7 @@ module Composite = struct
     let length = Decode.u32 buf in
     let overlay_win = Xproto.decode_window buf in
     Decode.pad buf 20;
-    { overlay_win }
+    overlay_win
 end
 
 module Damage = struct
@@ -3486,7 +3499,7 @@ module Dpms = struct
     let length = Decode.u32 buf in
     let capable = Decode.bool buf in
     Decode.pad buf 23;
-    { capable }
+    capable
 
   type get_timeouts_reply = {
     standby_timeout : u16;
@@ -3649,7 +3662,7 @@ module Dri2 = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let authenticated = Decode.u32 buf in
-    { authenticated }
+    authenticated
 
   type get_buffers_reply = {
     width : u32;
@@ -4067,7 +4080,7 @@ module Glx = struct
     let length = Decode.u32 buf in
     let context_tag = decode_context_tag buf in
     Decode.pad buf 20;
-    { context_tag }
+    context_tag
 
   type is_direct_reply = bool [@@deriving sexp]
 
@@ -4076,7 +4089,7 @@ module Glx = struct
     let length = Decode.u32 buf in
     let is_direct = Decode.bool buf in
     Decode.pad buf 23;
-    { is_direct }
+    is_direct
 
   type query_version_reply = { major_version : u32; minor_version : u32 }
   [@@deriving sexp]
@@ -4154,7 +4167,7 @@ module Glx = struct
     Decode.pad buf 4;
     let n = Decode.u32 buf in
     Decode.pad buf 16;
-    { n }
+    n
 
   type query_server_string_reply = string [@@deriving sexp]
 
@@ -4165,7 +4178,7 @@ module Glx = struct
     let str_len = Decode.u32 buf in
     Decode.pad buf 16;
     let string = Decode.string ~len:str_len buf in
-    { string }
+    string
 
   type get_fb_configs_reply = {
     num_f_b_configs : u32;
@@ -4192,7 +4205,7 @@ module Glx = struct
     let num_attribs = num_attribs / 2 in
     Decode.pad buf 20;
     let attribs = (Decode.list ~item:Decode.u32) ~len:num_attribs buf in
-    { attribs }
+    attribs
 
   type make_context_current_reply = context_tag [@@deriving sexp]
 
@@ -4201,7 +4214,7 @@ module Glx = struct
     let length = Decode.u32 buf in
     let context_tag = decode_context_tag buf in
     Decode.pad buf 20;
-    { context_tag }
+    context_tag
 
   type get_drawable_attributes_reply = u32 list [@@deriving sexp]
 
@@ -4212,7 +4225,7 @@ module Glx = struct
     let num_attribs = num_attribs / 2 in
     Decode.pad buf 20;
     let attribs = (Decode.list ~item:Decode.u32) ~len:num_attribs buf in
-    { attribs }
+    attribs
 
   type gen_lists_reply = u32 [@@deriving sexp]
 
@@ -4220,7 +4233,7 @@ module Glx = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let ret_val = Decode.u32 buf in
-    { ret_val }
+    ret_val
 
   type render_mode_reply = { ret_val : u32; new_mode : u32; data : u32 list }
   [@@deriving sexp]
@@ -4255,7 +4268,7 @@ module Glx = struct
     let length = Decode.u32 buf in
     Decode.pad buf 24;
     let data = (Decode.list ~item:Decode.byte) ~len:(length * 4) buf in
-    { data }
+    data
 
   type get_booleanv_reply = { datum : bool; data : bool list } [@@deriving sexp]
 
@@ -4276,7 +4289,7 @@ module Glx = struct
     let length = Decode.u32 buf in
     Decode.pad buf 24;
     let data = (Decode.list ~item:decode_float64) ~len:(length / 2) buf in
-    { data }
+    data
 
   type get_doublev_reply = { datum : float64; data : float64 list }
   [@@deriving sexp]
@@ -4297,7 +4310,7 @@ module Glx = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let error = Decode.i32 buf in
-    { error }
+    error
 
   type get_floatv_reply = { datum : float32; data : float32 list }
   [@@deriving sexp]
@@ -4458,7 +4471,7 @@ module Glx = struct
     let length = Decode.u32 buf in
     Decode.pad buf 24;
     let data = (Decode.list ~item:Decode.byte) ~len:(length * 4) buf in
-    { data }
+    data
 
   type get_string_reply = string [@@deriving sexp]
 
@@ -4469,7 +4482,7 @@ module Glx = struct
     let n = Decode.u32 buf in
     Decode.pad buf 16;
     let string = Decode.string ~len:n buf in
-    { string }
+    string
 
   type get_tex_envfv_reply = { datum : float32; data : float32 list }
   [@@deriving sexp]
@@ -4616,7 +4629,7 @@ module Glx = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let ret_val = decode_bool32 buf in
-    { ret_val }
+    ret_val
 
   type is_list_reply = bool32 [@@deriving sexp]
 
@@ -4624,7 +4637,7 @@ module Glx = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let ret_val = decode_bool32 buf in
-    { ret_val }
+    ret_val
 
   type are_textures_resident_reply = { ret_val : bool32; data : bool list }
   [@@deriving sexp]
@@ -4644,7 +4657,7 @@ module Glx = struct
     let length = Decode.u32 buf in
     Decode.pad buf 24;
     let data = (Decode.list ~item:Decode.u32) ~len:length buf in
-    { data }
+    data
 
   type is_texture_reply = bool32 [@@deriving sexp]
 
@@ -4652,7 +4665,7 @@ module Glx = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let ret_val = decode_bool32 buf in
-    { ret_val }
+    ret_val
 
   type get_color_table_reply = { width : i32; data : byte list }
   [@@deriving sexp]
@@ -4811,7 +4824,7 @@ module Glx = struct
     let length = Decode.u32 buf in
     Decode.pad buf 24;
     let data = (Decode.list ~item:Decode.byte) ~len:(length * 4) buf in
-    { data }
+    data
 
   type get_minmax_parameterfv_reply = { datum : float32; data : float32 list }
   [@@deriving sexp]
@@ -4859,7 +4872,7 @@ module Glx = struct
     let length = Decode.u32 buf in
     Decode.pad buf 24;
     let data = (Decode.list ~item:Decode.u32) ~len:length buf in
-    { data }
+    data
 
   type is_query_arb_reply = bool32 [@@deriving sexp]
 
@@ -4867,7 +4880,7 @@ module Glx = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let ret_val = decode_bool32 buf in
-    { ret_val }
+    ret_val
 
   type get_queryiv_arb_reply = { datum : i32; data : i32 list }
   [@@deriving sexp]
@@ -4960,7 +4973,7 @@ module Randr = struct
   let decode_refresh_rates buf : refresh_rates =
     let n_rates = Decode.u16 buf in
     let rates = (Decode.list ~item:Decode.u16) ~len:n_rates buf in
-    { rates }
+    rates
 
   type query_version_reply = { major_version : u32; minor_version : u32 }
   [@@deriving sexp]
@@ -5267,7 +5280,7 @@ module Randr = struct
     let num_atoms = Decode.u16 buf in
     Decode.pad buf 22;
     let atoms = (Decode.list ~item:Xproto.decode_atom) ~len:num_atoms buf in
-    { atoms }
+    atoms
 
   type query_output_property_reply = {
     pending : bool;
@@ -5319,7 +5332,7 @@ module Randr = struct
     let length = Decode.u32 buf in
     let mode = decode_mode buf in
     Decode.pad buf 20;
-    { mode }
+    mode
 
   type get_crtc_info_reply = {
     status : set_config_enum;
@@ -5403,7 +5416,7 @@ module Randr = struct
     let length = Decode.u32 buf in
     let size = Decode.u16 buf in
     Decode.pad buf 22;
-    { size }
+    size
 
   type get_crtc_gamma_reply = {
     red : u16 list;
@@ -5576,7 +5589,7 @@ module Randr = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let output = decode_output buf in
-    { output }
+    output
 
   type get_providers_reply = {
     timestamp : Xproto.timestamp;
@@ -5655,7 +5668,7 @@ module Randr = struct
     let num_atoms = Decode.u16 buf in
     Decode.pad buf 22;
     let atoms = (Decode.list ~item:Xproto.decode_atom) ~len:num_atoms buf in
-    { atoms }
+    atoms
 
   type query_provider_property_reply = {
     pending : bool;
@@ -5967,6 +5980,30 @@ module Randr = struct
     | Lease of lease_notify
   [@@deriving sexp]
 
+  let decode_notify_variant buf ~tag : notify_variant =
+    match tag with
+    | 0 ->
+        let cc = decode_crtc_change buf in
+        Crtc_change cc
+    | 1 ->
+        let oc = decode_output_change buf in
+        Output_change oc
+    | 2 ->
+        let op = decode_output_property buf in
+        Output_property op
+    | 3 ->
+        let pc = decode_provider_change buf in
+        Provider_change pc
+    | 4 ->
+        let pp = decode_provider_property buf in
+        Provider_property pp
+    | 5 ->
+        let rc = decode_resource_change buf in
+        Resource_change rc
+    | 6 ->
+        let lc = decode_lease_notify buf in
+        Lease lc
+
   type notify_event = notify_variant [@@deriving sexp]
 end
 
@@ -6099,7 +6136,7 @@ module Sync = struct
     let counters =
       (Decode.list ~item:decode_systemcounter) ~len:counters_len buf
     in
-    { counters }
+    counters
 
   type query_counter_reply = int64 [@@deriving sexp]
 
@@ -6107,7 +6144,7 @@ module Sync = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let counter_value = decode_int64 buf in
-    { counter_value }
+    counter_value
 
   type query_alarm_reply = {
     trigger : trigger;
@@ -6137,7 +6174,7 @@ module Sync = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let priority = Decode.i32 buf in
-    { priority }
+    priority
 
   type query_fence_reply = bool [@@deriving sexp]
 
@@ -6146,7 +6183,7 @@ module Sync = struct
     let length = Decode.u32 buf in
     let triggered = Decode.bool buf in
     Decode.pad buf 23;
-    { triggered }
+    triggered
 
   type counter_notify_event = {
     kind : u8;
@@ -6238,7 +6275,7 @@ module Present = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let capabilities = Decode.u32 buf in
-    { capabilities }
+    capabilities
 
   type generic_event = {
     extension : u8;
@@ -6561,7 +6598,7 @@ module Res = struct
     let num_clients = Decode.u32 buf in
     Decode.pad buf 20;
     let clients = (Decode.list ~item:decode_client) ~len:num_clients buf in
-    { clients }
+    clients
 
   type query_client_resources_reply = type_ list [@@deriving sexp]
 
@@ -6571,7 +6608,7 @@ module Res = struct
     let num_types = Decode.u32 buf in
     Decode.pad buf 20;
     let types = (Decode.list ~item:decode_type) ~len:num_types buf in
-    { types }
+    types
 
   type query_client_pixmap_bytes_reply = { bytes : u32; bytes_overflow : u32 }
   [@@deriving sexp]
@@ -6592,7 +6629,7 @@ module Res = struct
     let num_ids = Decode.u32 buf in
     Decode.pad buf 20;
     let ids = (Decode.list ~item:decode_client_id_value) ~len:num_ids buf in
-    { ids }
+    ids
 
   type query_resource_bytes_reply = resource_size_value list [@@deriving sexp]
 
@@ -6604,7 +6641,7 @@ module Res = struct
     let sizes =
       (Decode.list ~item:decode_resource_size_value) ~len:num_sizes buf
     in
-    { sizes }
+    sizes
 end
 
 module Screensaver = struct
@@ -6784,7 +6821,7 @@ module Xc_misc = struct
     let ids_len = Decode.u32 buf in
     Decode.pad buf 20;
     let ids = (Decode.list ~item:Decode.u32) ~len:ids_len buf in
-    { ids }
+    ids
 end
 
 module Xf86dri = struct
@@ -6820,7 +6857,7 @@ module Xf86dri = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let is_capable = Decode.bool buf in
-    { is_capable }
+    is_capable
 
   type open_connection_reply = {
     sarea_handle_low : u32;
@@ -6869,7 +6906,7 @@ module Xf86dri = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let hw_context = Decode.u32 buf in
-    { hw_context }
+    hw_context
 
   type create_drawable_reply = u32 [@@deriving sexp]
 
@@ -6877,7 +6914,7 @@ module Xf86dri = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let hw_drawable_handle = Decode.u32 buf in
-    { hw_drawable_handle }
+    hw_drawable_handle
 
   type get_drawable_info_reply = {
     drawable_table_index : u32;
@@ -6962,7 +6999,7 @@ module Xf86dri = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let authenticated = Decode.u32 buf in
-    { authenticated }
+    authenticated
 end
 
 module Xf86vidmode = struct
@@ -7137,7 +7174,7 @@ module Xf86vidmode = struct
     let modecount = Decode.u32 buf in
     Decode.pad buf 20;
     let modeinfo = (Decode.list ~item:decode_mode_info) ~len:modecount buf in
-    { modeinfo }
+    modeinfo
 
   type validate_mode_line_reply = u32 [@@deriving sexp]
 
@@ -7146,7 +7183,7 @@ module Xf86vidmode = struct
     let length = Decode.u32 buf in
     let status = Decode.u32 buf in
     Decode.pad buf 20;
-    { status }
+    status
 
   type get_view_port_reply = { x : u32; y : u32 } [@@deriving sexp]
 
@@ -7223,7 +7260,7 @@ module Xf86vidmode = struct
     let length = Decode.u32 buf in
     let size = Decode.u16 buf in
     Decode.pad buf 22;
-    { size }
+    size
 
   type get_permissions_reply = permission_mask [@@deriving sexp]
 
@@ -7234,7 +7271,7 @@ module Xf86vidmode = struct
       (Decode.mask Decode.u32 Int64.of_int permission_mask_of_int64) buf
     in
     Decode.pad buf 20;
-    { permissions }
+    permissions
 
   type bad_clock_error = unit [@@deriving sexp]
   type bad_h_timings_error = unit [@@deriving sexp]
@@ -7310,7 +7347,7 @@ module Xinerama = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let state = Decode.u32 buf in
-    { state }
+    state
 
   type query_screens_reply = screen_info list [@@deriving sexp]
 
@@ -7320,7 +7357,7 @@ module Xinerama = struct
     let number = Decode.u32 buf in
     Decode.pad buf 20;
     let screen_info = (Decode.list ~item:decode_screen_info) ~len:number buf in
-    { screen_info }
+    screen_info
 end
 
 module Xinput = struct
@@ -7510,6 +7547,28 @@ module Xinput = struct
       }
   [@@deriving sexp]
 
+  let decode_input_class_variant buf ~tag : input_class_variant =
+    match tag with
+    | 0 ->
+        let min_keycode = decode_key_code buf in
+        let max_keycode = decode_key_code buf in
+        let num_keys = Decode.u16 buf in
+        Decode.pad buf 2;
+        Key { min_keycode; max_keycode; num_keys }
+    | 1 ->
+        let num_buttons = Decode.u16 buf in
+        Button num_buttons
+    | 2 ->
+        let axes_len = Decode.u8 buf in
+        let mode =
+          (Decode.enum ~decode:Decode.u8 ~int_of_t:identity
+             ~enum_of_int:valuator_mode_enum_of_int)
+            buf
+        in
+        let motion_size = Decode.u32 buf in
+        let axes = (Decode.list ~item:decode_axis_info) ~len:axes_len buf in
+        Valuator { mode; motion_size; axes }
+
   type input_info = { len : u8; info : input_class_variant } [@@deriving sexp]
 
   let decode_input_info buf : input_info =
@@ -7523,7 +7582,7 @@ module Xinput = struct
   let decode_device_name buf : device_name =
     let len = Decode.u8 buf in
     let string = Decode.string ~len buf in
-    { string }
+    string
 
   type list_input_devices_reply = {
     xi_reply_type : u8;
@@ -7998,6 +8057,58 @@ module Xinput = struct
     | Led of { led_mask : u32; led_values : u32 }
     | Bell of { percent : u8; pitch : u16; duration : u16 }
   [@@deriving sexp]
+
+  let decode_feedback_class_variant buf ~tag : feedback_class_variant =
+    match tag with
+    | 0 ->
+        let pitch = Decode.u16 buf in
+        let duration = Decode.u16 buf in
+        let led_mask = Decode.u32 buf in
+        let led_values = Decode.u32 buf in
+        let global_auto_repeat = Decode.bool buf in
+        let click = Decode.u8 buf in
+        let percent = Decode.u8 buf in
+        Decode.pad buf 1;
+        let auto_repeats = (Decode.list ~item:Decode.u8) ~len:32 buf in
+        Keyboard
+          {
+            pitch;
+            duration;
+            led_mask;
+            led_values;
+            global_auto_repeat;
+            click;
+            percent;
+            auto_repeats;
+          }
+    | 1 ->
+        Decode.pad buf 2;
+        let accel_num = Decode.u16 buf in
+        let accel_denom = Decode.u16 buf in
+        let threshold = Decode.u16 buf in
+        Pointer { accel_num; accel_denom; threshold }
+    | 2 ->
+        let max_symbols = Decode.u16 buf in
+        let num_keysyms = Decode.u16 buf in
+        let keysyms =
+          (Decode.list ~item:Xproto.decode_keysym) ~len:num_keysyms buf
+        in
+        String { max_symbols; keysyms }
+    | 3 ->
+        let resolution = Decode.u32 buf in
+        let min_value = Decode.i32 buf in
+        let max_value = Decode.i32 buf in
+        Integer { resolution; min_value; max_value }
+    | 4 ->
+        let led_mask = Decode.u32 buf in
+        let led_values = Decode.u32 buf in
+        Led { led_mask; led_values }
+    | 5 ->
+        let percent = Decode.u8 buf in
+        Decode.pad buf 3;
+        let pitch = Decode.u16 buf in
+        let duration = Decode.u16 buf in
+        Bell { percent; pitch; duration }
 
   type feedback_state = {
     feedback_id : u8;
@@ -8596,6 +8707,58 @@ module Xinput = struct
       }
   [@@deriving sexp]
 
+  let decode_device_control_variant buf ~tag : device_control_variant =
+    match tag with
+    | 1 ->
+        let num_valuators = Decode.u32 buf in
+        let resolution_values =
+          (Decode.list ~item:Decode.u32) ~len:num_valuators buf
+        in
+        let resolution_min =
+          (Decode.list ~item:Decode.u32) ~len:num_valuators buf
+        in
+        let resolution_max =
+          (Decode.list ~item:Decode.u32) ~len:num_valuators buf
+        in
+        Resolution { resolution_values; resolution_min; resolution_max }
+    | 2 ->
+        let min_x = Decode.i32 buf in
+        let max_x = Decode.i32 buf in
+        let min_y = Decode.i32 buf in
+        let max_y = Decode.i32 buf in
+        let flip_x = Decode.u32 buf in
+        let flip_y = Decode.u32 buf in
+        let rotation = Decode.u32 buf in
+        let button_threshold = Decode.u32 buf in
+        Abs_calib
+          {
+            min_x;
+            max_x;
+            min_y;
+            max_y;
+            flip_x;
+            flip_y;
+            rotation;
+            button_threshold;
+          }
+    | 3 ->
+        let status = Decode.u8 buf in
+        let iscore = Decode.u8 buf in
+        Decode.pad buf 2;
+        Core { status; iscore }
+    | 4 ->
+        let enable = Decode.u8 buf in
+        Decode.pad buf 3;
+        Enable enable
+    | 5 ->
+        let offset_x = Decode.u32 buf in
+        let offset_y = Decode.u32 buf in
+        let width = Decode.u32 buf in
+        let height = Decode.u32 buf in
+        let screen = Decode.u32 buf in
+        let following = Decode.u32 buf in
+        Abs_area { offset_x; offset_y; width; height; screen; following }
+
   type device_state = { len : u16; data : device_control_variant }
   [@@deriving sexp]
 
@@ -8809,6 +8972,21 @@ module Xinput = struct
     | D16_bits of u16 list
     | D32_bits of u32 list
   [@@deriving sexp]
+
+  let decode_property_format_variant buf ~tag ext_num_items :
+      property_format_variant =
+    match tag with
+    | 8 ->
+        let data8 = (Decode.list ~item:Decode.u8) ~len:ext_num_items buf in
+        Decode.align buf 4;
+        D8_bits data8
+    | 16 ->
+        let data16 = (Decode.list ~item:Decode.u16) ~len:ext_num_items buf in
+        Decode.align buf 4;
+        D16_bits data16
+    | 32 ->
+        let data32 = (Decode.list ~item:Decode.u32) ~len:ext_num_items buf in
+        D32_bits data32
 
   type get_device_property_reply = {
     xi_reply_type : u8;
@@ -9043,6 +9221,48 @@ module Xinput = struct
       }
     | Detach_slave of device_enum alt_enum
   [@@deriving sexp]
+
+  let decode_hierarchy_change_type_variant buf ~tag :
+      hierarchy_change_type_variant =
+    match tag with
+    | 1 ->
+        let name_len = Decode.u16 buf in
+        let send_core = Decode.bool buf in
+        let enable = Decode.bool buf in
+        let name = Decode.string ~len:name_len buf in
+        Decode.align buf 4;
+        Add_master { send_core; enable; name }
+    | 2 ->
+        let deviceid =
+          (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+        in
+        let return_mode =
+          (Decode.enum ~decode:Decode.u8 ~int_of_t:identity
+             ~enum_of_int:change_mode_enum_of_int)
+            buf
+        in
+        Decode.pad buf 1;
+        let return_pointer =
+          (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+        in
+        let return_keyboard =
+          (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+        in
+        Remove_master { deviceid; return_mode; return_pointer; return_keyboard }
+    | 3 ->
+        let deviceid =
+          (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+        in
+        let master =
+          (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+        in
+        Attach_slave { deviceid; master }
+    | 4 ->
+        let deviceid =
+          (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+        in
+        Decode.pad buf 2;
+        Detach_slave deviceid
 
   type hierarchy_change = { len : u16; data : hierarchy_change_type_variant }
   [@@deriving sexp]
@@ -9333,6 +9553,57 @@ module Xinput = struct
     | Touch of { mode : touch_mode_enum; num_touches : u8 }
   [@@deriving sexp]
 
+  let decode_device_class_type_variant buf ~tag : device_class_type_variant =
+    match tag with
+    | 0 ->
+        let num_keys = Decode.u16 buf in
+        let keys = (Decode.list ~item:Decode.u32) ~len:num_keys buf in
+        Key keys
+    | 1 ->
+        let num_buttons = Decode.u16 buf in
+        let state =
+          (Decode.list ~item:Decode.u32) ~len:((num_buttons + 31) / 32) buf
+        in
+        let labels =
+          (Decode.list ~item:Xproto.decode_atom) ~len:num_buttons buf
+        in
+        Button { state; labels }
+    | 2 ->
+        let number = Decode.u16 buf in
+        let label = Xproto.decode_atom buf in
+        let min = decode_fp3232 buf in
+        let max = decode_fp3232 buf in
+        let value = decode_fp3232 buf in
+        let resolution = Decode.u32 buf in
+        let mode =
+          (Decode.enum ~decode:Decode.u8 ~int_of_t:identity
+             ~enum_of_int:valuator_mode_enum_of_int)
+            buf
+        in
+        Decode.pad buf 3;
+        Valuator { number; label; min; max; value; resolution; mode }
+    | 3 ->
+        let number = Decode.u16 buf in
+        let scroll_type =
+          (Decode.enum ~decode:Decode.u16 ~int_of_t:identity
+             ~enum_of_int:scroll_type_enum_of_int)
+            buf
+        in
+        Decode.pad buf 2;
+        let flags =
+          (Decode.mask Decode.u32 Int64.of_int scroll_flags_mask_of_int64) buf
+        in
+        let increment = decode_fp3232 buf in
+        Scroll { number; scroll_type; flags; increment }
+    | 8 ->
+        let mode =
+          (Decode.enum ~decode:Decode.u8 ~int_of_t:identity
+             ~enum_of_int:touch_mode_enum_of_int)
+            buf
+        in
+        let num_touches = Decode.u8 buf in
+        Touch { mode; num_touches }
+
   type device_class = {
     len : u16;
     sourceid : device_id;
@@ -9388,7 +9659,7 @@ module Xinput = struct
     let num_infos = Decode.u16 buf in
     Decode.pad buf 22;
     let infos = (Decode.list ~item:decode_xi_device_info) ~len:num_infos buf in
-    { infos }
+    infos
 
   type xi_get_focus_reply = Xproto.window [@@deriving sexp]
 
@@ -9397,7 +9668,7 @@ module Xinput = struct
     let length = Decode.u32 buf in
     let focus = Xproto.decode_window buf in
     Decode.pad buf 20;
-    { focus }
+    focus
 
   type grab_owner_enum = [ `No_owner | `Owner ] [@@deriving sexp]
 
@@ -9418,7 +9689,7 @@ module Xinput = struct
         buf
     in
     Decode.pad buf 23;
-    { status }
+    status
 
   type event_mode_enum =
     [ `Async_device
@@ -9495,7 +9766,7 @@ module Xinput = struct
     let modifiers =
       (Decode.list ~item:decode_grab_modifier_info) ~len:num_modifiers buf
     in
-    { modifiers }
+    modifiers
 
   type xi_list_properties_reply = Xproto.atom list [@@deriving sexp]
 
@@ -9507,7 +9778,7 @@ module Xinput = struct
     let properties =
       (Decode.list ~item:Xproto.decode_atom) ~len:num_properties buf
     in
-    { properties }
+    properties
 
   type xi_get_property_reply = {
     type_ : Xproto.atom;
@@ -9536,7 +9807,7 @@ module Xinput = struct
     let num_masks = Decode.u16 buf in
     Decode.pad buf 22;
     let masks = (Decode.list ~item:decode_event_mask) ~len:num_masks buf in
-    { masks }
+    masks
 
   type barrier_release_pointer_info = {
     deviceid : device_id;
@@ -10172,7 +10443,7 @@ module Xprint = struct
     let list_count = Decode.u32 buf in
     Decode.pad buf 20;
     let printers = (Decode.list ~item:decode_printer) ~len:list_count buf in
-    { printers }
+    printers
 
   type print_get_context_reply = u32 [@@deriving sexp]
 
@@ -10180,7 +10451,7 @@ module Xprint = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let context = Decode.u32 buf in
-    { context }
+    context
 
   type print_get_screen_of_context_reply = Xproto.window [@@deriving sexp]
 
@@ -10189,7 +10460,7 @@ module Xprint = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let root = Xproto.decode_window buf in
-    { root }
+    root
 
   type print_get_document_data_reply = {
     status_code : u32;
@@ -10226,7 +10497,7 @@ module Xprint = struct
     let string_len = Decode.u32 buf in
     Decode.pad buf 20;
     let attributes = Decode.string ~len:string_len buf in
-    { attributes }
+    attributes
 
   type print_get_one_attributes_reply = string [@@deriving sexp]
 
@@ -10237,7 +10508,7 @@ module Xprint = struct
     let value_len = Decode.u32 buf in
     Decode.pad buf 20;
     let value = Decode.string ~len:value_len buf in
-    { value }
+    value
 
   type print_get_page_dimensions_reply = {
     width : u16;
@@ -10276,7 +10547,7 @@ module Xprint = struct
     let list_count = Decode.u32 buf in
     Decode.pad buf 20;
     let roots = (Decode.list ~item:Xproto.decode_window) ~len:list_count buf in
-    { roots }
+    roots
 
   type print_set_image_resolution_reply = {
     status : bool;
@@ -10300,7 +10571,7 @@ module Xprint = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let image_resolution = Decode.u16 buf in
-    { image_resolution }
+    image_resolution
 
   type notify_event = { detail : u8; context : pcontext; cancel : bool }
   [@@deriving sexp]
@@ -10332,7 +10603,7 @@ module Xselinux = struct
     let context_len = Decode.u32 buf in
     Decode.pad buf 20;
     let context = Decode.string ~len:context_len buf in
-    { context }
+    context
 
   type get_device_context_reply = string [@@deriving sexp]
 
@@ -10342,7 +10613,7 @@ module Xselinux = struct
     let context_len = Decode.u32 buf in
     Decode.pad buf 20;
     let context = Decode.string ~len:context_len buf in
-    { context }
+    context
 
   type get_window_create_context_reply = string [@@deriving sexp]
 
@@ -10353,7 +10624,7 @@ module Xselinux = struct
     let context_len = Decode.u32 buf in
     Decode.pad buf 20;
     let context = Decode.string ~len:context_len buf in
-    { context }
+    context
 
   type get_window_context_reply = string [@@deriving sexp]
 
@@ -10363,7 +10634,7 @@ module Xselinux = struct
     let context_len = Decode.u32 buf in
     Decode.pad buf 20;
     let context = Decode.string ~len:context_len buf in
-    { context }
+    context
 
   type list_item = {
     name : Xproto.atom;
@@ -10391,7 +10662,7 @@ module Xselinux = struct
     let context_len = Decode.u32 buf in
     Decode.pad buf 20;
     let context = Decode.string ~len:context_len buf in
-    { context }
+    context
 
   type get_property_use_context_reply = string [@@deriving sexp]
 
@@ -10402,7 +10673,7 @@ module Xselinux = struct
     let context_len = Decode.u32 buf in
     Decode.pad buf 20;
     let context = Decode.string ~len:context_len buf in
-    { context }
+    context
 
   type get_property_context_reply = string [@@deriving sexp]
 
@@ -10412,7 +10683,7 @@ module Xselinux = struct
     let context_len = Decode.u32 buf in
     Decode.pad buf 20;
     let context = Decode.string ~len:context_len buf in
-    { context }
+    context
 
   type get_property_data_context_reply = string [@@deriving sexp]
 
@@ -10423,7 +10694,7 @@ module Xselinux = struct
     let context_len = Decode.u32 buf in
     Decode.pad buf 20;
     let context = Decode.string ~len:context_len buf in
-    { context }
+    context
 
   type list_properties_reply = list_item list [@@deriving sexp]
 
@@ -10435,7 +10706,7 @@ module Xselinux = struct
     let properties =
       (Decode.list ~item:decode_list_item) ~len:properties_len buf
     in
-    { properties }
+    properties
 
   type get_selection_create_context_reply = string [@@deriving sexp]
 
@@ -10446,7 +10717,7 @@ module Xselinux = struct
     let context_len = Decode.u32 buf in
     Decode.pad buf 20;
     let context = Decode.string ~len:context_len buf in
-    { context }
+    context
 
   type get_selection_use_context_reply = string [@@deriving sexp]
 
@@ -10457,7 +10728,7 @@ module Xselinux = struct
     let context_len = Decode.u32 buf in
     Decode.pad buf 20;
     let context = Decode.string ~len:context_len buf in
-    { context }
+    context
 
   type get_selection_context_reply = string [@@deriving sexp]
 
@@ -10467,7 +10738,7 @@ module Xselinux = struct
     let context_len = Decode.u32 buf in
     Decode.pad buf 20;
     let context = Decode.string ~len:context_len buf in
-    { context }
+    context
 
   type get_selection_data_context_reply = string [@@deriving sexp]
 
@@ -10478,7 +10749,7 @@ module Xselinux = struct
     let context_len = Decode.u32 buf in
     Decode.pad buf 20;
     let context = Decode.string ~len:context_len buf in
-    { context }
+    context
 
   type list_selections_reply = list_item list [@@deriving sexp]
 
@@ -10490,7 +10761,7 @@ module Xselinux = struct
     let selections =
       (Decode.list ~item:decode_list_item) ~len:selections_len buf
     in
-    { selections }
+    selections
 
   type get_client_context_reply = string [@@deriving sexp]
 
@@ -10500,7 +10771,7 @@ module Xselinux = struct
     let context_len = Decode.u32 buf in
     Decode.pad buf 20;
     let context = Decode.string ~len:context_len buf in
-    { context }
+    context
 end
 
 module Xtest = struct
@@ -10530,7 +10801,7 @@ module Xtest = struct
     let same = Decode.bool buf in
     Decode.pad buf 2;
     let length = Decode.u32 buf in
-    { same }
+    same
 end
 
 module Xv = struct
@@ -10834,7 +11105,7 @@ module Xv = struct
     let num_adaptors = Decode.u16 buf in
     Decode.pad buf 22;
     let info = (Decode.list ~item:decode_adaptor_info) ~len:num_adaptors buf in
-    { info }
+    info
 
   type query_encodings_reply = encoding_info list [@@deriving sexp]
 
@@ -10846,7 +11117,7 @@ module Xv = struct
     let info =
       (Decode.list ~item:decode_encoding_info) ~len:num_encodings buf
     in
-    { info }
+    info
 
   type grab_port_reply = grab_port_status_enum [@@deriving sexp]
 
@@ -10859,7 +11130,7 @@ module Xv = struct
     in
     Decode.pad buf 2;
     let length = Decode.u32 buf in
-    { result }
+    result
 
   type query_best_size_reply = { actual_width : u16; actual_height : u16 }
   [@@deriving sexp]
@@ -10877,7 +11148,7 @@ module Xv = struct
     Decode.pad buf 4;
     let length = Decode.u32 buf in
     let value = Decode.i32 buf in
-    { value }
+    value
 
   type query_port_attributes_reply = {
     text_size : u32;
@@ -10906,7 +11177,7 @@ module Xv = struct
     let format =
       (Decode.list ~item:decode_image_format_info) ~len:num_formats buf
     in
-    { format }
+    format
 
   type query_image_attributes_reply = {
     data_size : u32;
@@ -10995,7 +11266,7 @@ module Xvmc = struct
     let num = Decode.u32 buf in
     Decode.pad buf 20;
     let surfaces = (Decode.list ~item:decode_surface_info) ~len:num buf in
-    { surfaces }
+    surfaces
 
   type create_context_reply = {
     width_actual : u16;
@@ -11022,7 +11293,7 @@ module Xvmc = struct
     let length = Decode.u32 buf in
     Decode.pad buf 24;
     let priv_data = (Decode.list ~item:Decode.u32) ~len:length buf in
-    { priv_data }
+    priv_data
 
   type create_subpicture_reply = {
     width_actual : u16;
@@ -11061,5 +11332,5 @@ module Xvmc = struct
     let num = Decode.u32 buf in
     Decode.pad buf 20;
     let types = (Decode.list ~item:Xv.decode_image_format_info) ~len:num buf in
-    { types }
+    types
 end

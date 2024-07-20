@@ -78,6 +78,15 @@ let lid ?prefix ?suffix ?parent ~loc name =
   in
   with_loc ~loc txt
 
+let lid_caml ?parent ~loc name =
+  let name = Ident.caml name in
+  let txt =
+    match parent with
+    | Some parent -> Ldot (Lident parent, name)
+    | None -> Lident name
+  in
+  with_loc ~loc txt
+
 let e_id ?prefix ?suffix ?parent ~loc name =
   let ident = lid ?prefix ?suffix ?parent ~loc name in
   Ast_helper.Exp.ident ~loc ident
@@ -453,21 +462,27 @@ module Decode = struct
   (* | f -> Printf.ksprintf unexpected "field: %s" (show_field f) *)
 
   let e_result_fields_record ~loc fields =
-    let fields =
-      names_of_visible_fields fields
-      |> List.map (fun name -> (lid ~loc name, e_id ~loc name))
-    in
-    Ast_helper.Exp.record ~loc fields None
+    let fields = names_of_visible_fields fields in
+    match fields with
+    | [ name ] -> e_id ~loc name
+    | _ ->
+        let fields =
+          List.map (fun name -> (lid ~loc name, e_id ~loc name)) fields
+        in
+        Ast_helper.Exp.record ~loc fields None
+
+  let e_fields ~ctx ~loc fields result =
+    let fields = List.concat_map (e_field ~ctx ~loc) fields in
+    ListLabels.fold_right fields ~init:result ~f:(fun field expr ->
+        match field with
+        | `Let (name, body) ->
+            let binding = vb ~loc name body in
+            Ast_helper.Exp.let_ ~loc Nonrecursive [ binding ] expr
+        | `Sequence body -> Ast_helper.Exp.sequence ~loc body expr)
 
   let e_struct_fields ~ctx ~loc fields =
     let result = e_result_fields_record ~loc fields in
-    List.concat_map (e_field ~ctx ~loc) fields
-    |> ListLabels.fold_right ~init:result ~f:(fun field expr ->
-           match field with
-           | `Let (name, body) ->
-               let binding = vb ~loc name body in
-               Ast_helper.Exp.let_ ~loc Nonrecursive [ binding ] expr
-           | `Sequence body -> Ast_helper.Exp.sequence ~loc body expr)
+    e_fields ~ctx ~loc fields result
 
   let e_struct ~ctx ~loc name fields external_params =
     let fields = e_struct_fields ~ctx ~loc fields in
@@ -528,6 +543,27 @@ module Decode = struct
     let body = Ast_helper.Exp.match_ ~loc (e_id ~loc "n") items in
     [%expr fun n : [%t type_] -> [%e body]]
 
+  let e_variant ~ctx ~loc name items external_params =
+    let type_ = t_id ~suffix:"variant" ~loc name in
+    let items =
+      ListLabels.map items ~f:(fun { vi_name; vi_tag; vi_fields; _ } ->
+          let result =
+            Ast_helper.Exp.construct ~loc (lid_caml ~loc vi_name)
+              (Some (e_result_fields_record ~loc vi_fields))
+          in
+
+          Ast_helper.Exp.case
+            (p_int ~loc (Int64.to_int vi_tag))
+            (e_fields ~ctx ~loc vi_fields result))
+    in
+    let body = Ast_helper.Exp.match_ ~loc (e_id ~loc "tag") items in
+    match external_params with
+    | [] -> [%expr fun buf ~tag : [%t type_] -> [%e body]]
+    | [ param ] ->
+        let param = p_id ~loc ~prefix:"ext" param.ep_name in
+        [%expr fun buf ~tag [%p param] : [%t type_] -> [%e body]]
+    | _ -> not_implemented "multiple param_refs"
+
   let vb_declaration ~ctx ~loc = function
     | Type_alias { name; type_ } ->
         vb ~prefix:"decode" ~loc name (e_type ~ctx ~loc type_) :: []
@@ -537,6 +573,9 @@ module Decode = struct
     | Enum { name; items } ->
         let items = e_enum_of_int ~loc name items in
         vb ~suffix:"enum_of_int" ~loc name items :: []
+    | Variant { name; items; external_params } ->
+        let variant = e_variant ~ctx ~loc name items external_params in
+        vb ~prefix:"decode" ~suffix:"variant" ~loc name variant :: []
     | Event_copy { name; event; _ } ->
         let event = e_ident ~prefix:"decode" ~suffix:"event" ~ctx ~loc event in
         vb ~prefix:"decode" ~suffix:"event" ~loc name event :: []
