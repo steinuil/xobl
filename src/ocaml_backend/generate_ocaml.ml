@@ -22,7 +22,7 @@ let is_field_visible = function
   | Field_optional_mask _ ->
       false
 
-let visible_fields fields = fields |> List.filter is_field_visible
+let visible_fields = List.filter is_field_visible
 
 let name_of_field = function
   | Field { name; _ }
@@ -38,7 +38,7 @@ let name_of_field = function
   | Field_pad _ -> None
 
 let names_of_visible_fields fields =
-  visible_fields fields |> List.map name_of_field
+  visible_fields fields |> List.filter_map name_of_field
 
 let primitive_of_type = function
   | Type_primitive prim -> Some prim
@@ -439,8 +439,15 @@ module Decode = struct
   (* | f -> Printf.ksprintf unexpected "field: %s" (show_field f) *)
 
   let e_struct_fields ~ctx ~loc fields =
+    let result =
+      let fields =
+        names_of_visible_fields fields
+        |> List.map (fun name -> (lid ~loc name, e_id ~loc name))
+      in
+      Ast_helper.Exp.record ~loc fields None
+    in
     List.concat_map (e_field ~ctx ~loc) fields
-    |> ListLabels.fold_right ~init:[%expr ()] ~f:(fun field expr ->
+    |> ListLabels.fold_right ~init:result ~f:(fun field expr ->
            match field with
            | `Let (name, body) ->
                let binding = vb ~loc name body in
