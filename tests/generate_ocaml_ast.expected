@@ -1497,9 +1497,7 @@ module Xproto = struct
   let decode_request_error buf : request_error =
     Decode.pad buf 4;
     let bad_value = Decode.u32 buf in
-    Decode.pad buf 2;
-    Decode.pad buf 1;
-    Decode.pad buf 1;
+    Decode.pad buf 4;
     bad_value
 
   type value_error = u32 [@@deriving sexp]
@@ -1507,9 +1505,7 @@ module Xproto = struct
   let decode_value_error buf : value_error =
     Decode.pad buf 4;
     let bad_value = Decode.u32 buf in
-    Decode.pad buf 2;
-    Decode.pad buf 1;
-    Decode.pad buf 1;
+    Decode.pad buf 4;
     bad_value
 
   type window_error = value_error [@@deriving sexp]
@@ -4569,9 +4565,7 @@ module Glx = struct
   let decode_generic_error buf : generic_error =
     Decode.pad buf 4;
     let bad_value = Decode.u32 buf in
-    Decode.pad buf 2;
-    Decode.pad buf 1;
-    Decode.pad buf 21;
+    Decode.pad buf 24;
     bad_value
 
   type bad_context_error = generic_error [@@deriving sexp]
@@ -6802,8 +6796,7 @@ module Sync = struct
   let decode_counter_error buf : counter_error =
     Decode.pad buf 4;
     let bad_counter = Decode.u32 buf in
-    Decode.pad buf 2;
-    Decode.pad buf 1;
+    Decode.pad buf 3;
     bad_counter
 
   type alarm_error = u32 [@@deriving sexp]
@@ -6811,8 +6804,7 @@ module Sync = struct
   let decode_alarm_error buf : alarm_error =
     Decode.pad buf 4;
     let bad_alarm = Decode.u32 buf in
-    Decode.pad buf 2;
-    Decode.pad buf 1;
+    Decode.pad buf 3;
     bad_alarm
 
   type initialize_reply = { major_version : u8; minor_version : u8 }
@@ -7043,9 +7035,7 @@ module Present = struct
   [@@deriving sexp]
 
   let decode_configure_notify_event buf : configure_notify_event =
-    Decode.pad buf 1;
-    Decode.pad buf 2;
-    Decode.pad buf 2;
+    Decode.pad buf 5;
     let length = Decode.u32 buf in
     let event = decode_event buf in
     let window = Xproto.decode_window buf in
@@ -7114,9 +7104,7 @@ module Present = struct
   [@@deriving sexp]
 
   let decode_idle_notify_event buf : idle_notify_event =
-    Decode.pad buf 1;
-    Decode.pad buf 2;
-    Decode.pad buf 2;
+    Decode.pad buf 5;
     let length = Decode.u32 buf in
     let event = decode_event buf in
     let window = Xproto.decode_window buf in

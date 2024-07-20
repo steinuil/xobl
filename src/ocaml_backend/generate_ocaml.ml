@@ -346,6 +346,20 @@ let rec e_expression ?it ~loc = function
             [%e e_expression ~it:"list_element_ref" ~loc by_expr])
           [%e e_id ~loc field]]
 
+let pad_field size = Field_pad { pad = Pad_bytes size; serialize = false }
+
+let collapse_padding fields =
+  let leftover, fields =
+    ListLabels.fold_left fields ~init:(0, []) ~f:(fun (padding, fields) field ->
+        match field with
+        | Field_pad { pad = Pad_bytes n; serialize = false } ->
+            (padding + n, fields)
+        | f when padding > 0 -> (0, f :: pad_field padding :: fields)
+        | f -> (0, f :: fields))
+  in
+  let fields = if leftover > 0 then pad_field leftover :: fields else fields in
+  List.rev fields
+
 module Decode = struct
   let e_prim ~loc = function
     | Bool -> [%expr Decode.bool]
@@ -497,8 +511,6 @@ module Decode = struct
         [%expr fun buf [%p param] : [%t type_] -> [%e fields]]
     | _ -> not_implemented "multiple param_refs"
 
-  let pad_field size = Field_pad { pad = Pad_bytes size; serialize = false }
-
   let e_response ~suffix ~ctx ~loc name fields =
     let type_ = t_id ~suffix ~loc name in
     let length_field =
@@ -514,12 +526,6 @@ module Decode = struct
     match fields with
     | _ when visible_fields fields = [] ->
         [%expr fun _ : [%t type_] -> Decode.pad 32]
-    | Field_pad { pad = Pad_bytes 1; serialize = false } :: rest ->
-        (* Collapse padding if the first reply field is padding.
-           See below for explanation. *)
-        let fields = pad_field 4 :: length_field :: rest in
-        let fields = e_struct_fields ~ctx ~loc fields in
-        [%expr fun buf : [%t type_] -> [%e fields]]
     | first :: rest ->
         (* Replies and events include:
            - a byte to indicate that this is a reply or an event
@@ -531,6 +537,7 @@ module Decode = struct
            The reply length field is used in some replies so we specify it. *)
         let fields =
           pad_field 1 :: first :: pad_field 2 :: length_field :: rest
+          |> collapse_padding
         in
         let fields = e_struct_fields ~ctx ~loc fields in
         [%expr fun buf : [%t type_] -> [%e fields]]
@@ -552,7 +559,9 @@ module Decode = struct
            - major opcode (1 byte)
            The first four bytes are not specified so we add some padding.
         *)
-        let fields = pad_field 4 :: fields in
+        let fields =
+          (pad_field 4 :: fields) @ [ pad_align 32 ] |> collapse_padding
+        in
         let fields = e_struct_fields ~ctx ~loc fields in
         [%expr fun buf : [%t type_] -> [%e fields]]
 
