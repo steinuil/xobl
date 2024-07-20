@@ -318,8 +318,7 @@ let rec e_expression ?it ~loc = function
       | None -> unexpected "List_element_ref outside of a Sum_of expression"
       | Some it -> e_id ~loc it)
   | Enum_ref _ -> unexpected "Enum_ref"
-  | Param_ref { param = _; type_ = _ } ->
-      [%expr failwith "Param_ref not implemented"]
+  | Param_ref { param = name; type_ = _ } -> e_id ~prefix:"ext" ~loc name
   | Pop_count e -> [%expr pop_count [%e e_expression ?it ~loc e]]
   | Expr_value v -> e_int (Int64.to_int v)
   | Expr_bit b -> [%expr 1 lsl [%e e_int b]]
@@ -416,7 +415,12 @@ module Decode = struct
     | Field_list_simple { name; type_; length } ->
         let body = e_list_type ~ctx ~loc type_ in
         [ `Let (name, [%expr [%e body] ~len:[%e e_id ~loc length] buf]) ]
-    (* | f -> Printf.ksprintf unexpected "field: %s" (show_field f) *)
+    | Field_list_length { name; type_; expr; _ } ->
+        let body = e_type ~ctx ~loc type_ in
+        [
+          `Let (name, [%expr [%e body] buf]); `Let (name, e_expression ~loc expr);
+        ]
+        (* | f -> Printf.ksprintf unexpected "field: %s" (show_field f) *)
     | _ -> []
 
   let e_struct_fields ~ctx ~loc fields =
