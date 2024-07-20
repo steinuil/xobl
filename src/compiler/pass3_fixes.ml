@@ -85,7 +85,7 @@ let fix_xproto_declaration_order =
       ("ConfigWindow", `Event "ConfigureRequest");
     ]
 
-let apply_fixes = function
+let special_cases = function
   | Parsetree.Extension
       { name; file_name = "dri2"; query_name; multiword; version; declarations }
     ->
@@ -121,3 +121,34 @@ let apply_fixes = function
   | Core declarations ->
       Parsetree.Core (fix_xproto_declaration_order declarations)
   | xcb -> xcb
+
+(* Major and minor opcodes are parsed earlier than the decode phase
+   so we don't really need those *)
+let remove_opcodes_from_errors_in_field = function
+  | Parsetree.Field { name = "minor_opcode"; _ } ->
+      Parsetree.Field_pad { pad = Pad_bytes 2; serialize = false }
+  | Parsetree.Field { name = "major_opcode"; _ } ->
+      Field_pad { pad = Pad_bytes 1; serialize = false }
+  | f -> f
+
+let remove_opcodes_from_errors_in_decl = function
+  | Parsetree.Error { name; number; fields } ->
+      let fields = List.map remove_opcodes_from_errors_in_field fields in
+      Parsetree.Error { name; number; fields }
+  | d -> d
+
+let remove_opcodes_from_errors_in_xcb = function
+  | Parsetree.Extension
+      { name; file_name; query_name; multiword; version; declarations } ->
+      let declarations =
+        List.map remove_opcodes_from_errors_in_decl declarations
+      in
+      Parsetree.Extension
+        { name; file_name; query_name; multiword; version; declarations }
+  | Core declarations ->
+      let declarations =
+        List.map remove_opcodes_from_errors_in_decl declarations
+      in
+      Core declarations
+
+let apply_fixes xcb = xcb |> special_cases |> remove_opcodes_from_errors_in_xcb

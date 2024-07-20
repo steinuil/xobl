@@ -1492,31 +1492,25 @@ module Xproto = struct
 
   let decode_ge_generic_event _ : ge_generic_event = Decode.pad 32
 
-  type request_error = {
-    bad_value : u32;
-    minor_opcode : u16;
-    major_opcode : u8;
-  }
-  [@@deriving sexp]
+  type request_error = u32 [@@deriving sexp]
 
   let decode_request_error buf : request_error =
     Decode.pad buf 4;
     let bad_value = Decode.u32 buf in
-    let minor_opcode = Decode.u16 buf in
-    let major_opcode = Decode.u8 buf in
+    Decode.pad buf 2;
     Decode.pad buf 1;
-    { bad_value; minor_opcode; major_opcode }
+    Decode.pad buf 1;
+    bad_value
 
-  type value_error = { bad_value : u32; minor_opcode : u16; major_opcode : u8 }
-  [@@deriving sexp]
+  type value_error = u32 [@@deriving sexp]
 
   let decode_value_error buf : value_error =
     Decode.pad buf 4;
     let bad_value = Decode.u32 buf in
-    let minor_opcode = Decode.u16 buf in
-    let major_opcode = Decode.u8 buf in
+    Decode.pad buf 2;
     Decode.pad buf 1;
-    { bad_value; minor_opcode; major_opcode }
+    Decode.pad buf 1;
+    bad_value
 
   type window_error = value_error [@@deriving sexp]
 
@@ -4570,20 +4564,15 @@ module Glx = struct
 
   let decode_context_tag = Decode.u32
 
-  type generic_error = {
-    bad_value : u32;
-    minor_opcode : u16;
-    major_opcode : u8;
-  }
-  [@@deriving sexp]
+  type generic_error = u32 [@@deriving sexp]
 
   let decode_generic_error buf : generic_error =
     Decode.pad buf 4;
     let bad_value = Decode.u32 buf in
-    let minor_opcode = Decode.u16 buf in
-    let major_opcode = Decode.u8 buf in
+    Decode.pad buf 2;
+    Decode.pad buf 1;
     Decode.pad buf 21;
-    { bad_value; minor_opcode; major_opcode }
+    bad_value
 
   type bad_context_error = generic_error [@@deriving sexp]
 
@@ -6808,29 +6797,23 @@ module Sync = struct
     let event_threshold = decode_int64 buf in
     { trigger; event_threshold }
 
-  type counter_error = {
-    bad_counter : u32;
-    minor_opcode : u16;
-    major_opcode : u8;
-  }
-  [@@deriving sexp]
+  type counter_error = u32 [@@deriving sexp]
 
   let decode_counter_error buf : counter_error =
     Decode.pad buf 4;
     let bad_counter = Decode.u32 buf in
-    let minor_opcode = Decode.u16 buf in
-    let major_opcode = Decode.u8 buf in
-    { bad_counter; minor_opcode; major_opcode }
+    Decode.pad buf 2;
+    Decode.pad buf 1;
+    bad_counter
 
-  type alarm_error = { bad_alarm : u32; minor_opcode : u16; major_opcode : u8 }
-  [@@deriving sexp]
+  type alarm_error = u32 [@@deriving sexp]
 
   let decode_alarm_error buf : alarm_error =
     Decode.pad buf 4;
     let bad_alarm = Decode.u32 buf in
-    let minor_opcode = Decode.u16 buf in
-    let major_opcode = Decode.u8 buf in
-    { bad_alarm; minor_opcode; major_opcode }
+    Decode.pad buf 2;
+    Decode.pad buf 1;
+    bad_alarm
 
   type initialize_reply = { major_version : u8; minor_version : u8 }
   [@@deriving sexp]

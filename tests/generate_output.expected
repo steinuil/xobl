@@ -2125,16 +2125,8 @@ module Xproto = struct
     ignore orig;
     Some ((), at)
 
-  type request_error = {
-    bad_value : int;
-    minor_opcode : int;
-    major_opcode : int;
-  }
-  [@@deriving sexp]
-
-  type value_error = { bad_value : int; minor_opcode : int; major_opcode : int }
-  [@@deriving sexp]
-
+  type request_error = int [@@deriving sexp]
+  type value_error = int [@@deriving sexp]
   type window_error = value_error [@@deriving sexp]
   type pixmap_error = value_error [@@deriving sexp]
   type atom_error = value_error [@@deriving sexp]
@@ -9750,13 +9742,7 @@ module Glx = struct
   let decode_context_tag = decode_int32
   let encode_context_tag = encode_int32
 
-  type generic_error = {
-    bad_value : int;
-    minor_opcode : int;
-    major_opcode : int;
-  }
-  [@@deriving sexp]
-
+  type generic_error = int [@@deriving sexp]
   type bad_context_error = generic_error [@@deriving sexp]
   type bad_context_state_error = generic_error [@@deriving sexp]
   type bad_drawable_error = generic_error [@@deriving sexp]
@@ -14619,15 +14605,8 @@ module Sync = struct
     encode_int64 buf v.event_threshold;
     ()
 
-  type counter_error = {
-    bad_counter : int;
-    minor_opcode : int;
-    major_opcode : int;
-  }
-  [@@deriving sexp]
-
-  type alarm_error = { bad_alarm : int; minor_opcode : int; major_opcode : int }
-  [@@deriving sexp]
+  type counter_error = int [@@deriving sexp]
+  type alarm_error = int [@@deriving sexp]
 
   type initialize_reply = { major_version : int; minor_version : int }
   [@@deriving sexp]
