@@ -5,6 +5,10 @@ module Ident = Casing.OCaml
 exception Unexpected of string
 
 let unexpected str = raise (Unexpected str)
+
+exception Not_implemented of string
+
+let not_implemented str = raise (Not_implemented str)
 let ( let& ) = Option.bind
 
 (** Current module *)
@@ -410,14 +414,20 @@ module Decode = struct
     | Field_pad { pad = Pad_bytes n; _ } -> [ `Let [%expr at + [%e e_int n]] ]
     | Field_pad { pad = Pad_align n; _ } ->
         [ `Let [%expr at + ((at - orig) mod [%e e_int n])] ]
-    | _ -> failwith "a"
+    | f -> Printf.ksprintf unexpected "field: %s" (show_field f)
 
   let vb_declaration ~ctx ~loc = function
     | Type_alias { name; type_ } ->
-        vb ~prefix:"decode" ~loc name (e_type ~ctx ~loc type_)
-    | _ -> failwith "a"
+        vb ~prefix:"decode" ~loc name (e_type ~ctx ~loc type_) :: []
+    | Event_copy { name; event; _ } ->
+        let event = e_ident ~prefix:"decode" ~suffix:"event" ~ctx ~loc event in
+        vb ~prefix:"decode" ~suffix:"event" ~loc name event :: []
+    | Error_copy { name; error; _ } ->
+        let error = e_ident ~prefix:"decode" ~suffix:"error" ~ctx ~loc error in
+        vb ~prefix:"decode" ~suffix:"error" ~loc name error :: []
+    | _ -> not_implemented "declaration"
 
   let stri_declaration ~ctx ~loc decl =
-    let decl = vb_declaration ~ctx ~loc decl in
-    Ast_helper.Str.value ~loc Nonrecursive [ decl ]
+    let decls = vb_declaration ~ctx ~loc decl in
+    List.map (fun decl -> Ast_helper.Str.value ~loc Nonrecursive [ decl ]) decls
 end

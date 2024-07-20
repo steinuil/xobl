@@ -242,6 +242,8 @@ module Xproto = struct
 
   type key_release_event = key_press_event [@@deriving sexp]
 
+  let decode_key_release_event = decode_key_press_event
+
   type button_mask = [ `D1 | `D2 | `D3 | `D4 | `D5 | `Any ] list
   [@@deriving sexp]
 
@@ -261,6 +263,9 @@ module Xproto = struct
   [@@deriving sexp]
 
   type button_release_event = button_press_event [@@deriving sexp]
+
+  let decode_button_release_event = decode_button_press_event
+
   type motion_enum = [ `Normal | `Hint ] [@@deriving sexp]
 
   type motion_notify_event = {
@@ -310,6 +315,8 @@ module Xproto = struct
 
   type leave_notify_event = enter_notify_event [@@deriving sexp]
 
+  let decode_leave_notify_event = decode_enter_notify_event
+
   type focus_in_event = {
     detail : notify_detail_enum;
     event : window;
@@ -318,6 +325,9 @@ module Xproto = struct
   [@@deriving sexp]
 
   type focus_out_event = focus_in_event [@@deriving sexp]
+
+  let decode_focus_out_event = decode_focus_in_event
+
   type keymap_notify_event = u8 list [@@deriving sexp]
 
   type expose_event = {
@@ -452,6 +462,9 @@ module Xproto = struct
   [@@deriving sexp]
 
   type circulate_request_event = circulate_notify_event [@@deriving sexp]
+
+  let decode_circulate_request_event = decode_circulate_notify_event
+
   type property_enum = [ `New_value | `Delete ] [@@deriving sexp]
 
   type property_notify_event = {
@@ -612,20 +625,64 @@ module Xproto = struct
   [@@deriving sexp]
 
   type window_error = value_error [@@deriving sexp]
+
+  let decode_window_error = decode_value_error
+
   type pixmap_error = value_error [@@deriving sexp]
+
+  let decode_pixmap_error = decode_value_error
+
   type atom_error = value_error [@@deriving sexp]
+
+  let decode_atom_error = decode_value_error
+
   type cursor_error = value_error [@@deriving sexp]
+
+  let decode_cursor_error = decode_value_error
+
   type font_error = value_error [@@deriving sexp]
+
+  let decode_font_error = decode_value_error
+
   type match_error = request_error [@@deriving sexp]
+
+  let decode_match_error = decode_request_error
+
   type drawable_error = value_error [@@deriving sexp]
+
+  let decode_drawable_error = decode_value_error
+
   type access_error = request_error [@@deriving sexp]
+
+  let decode_access_error = decode_request_error
+
   type alloc_error = request_error [@@deriving sexp]
+
+  let decode_alloc_error = decode_request_error
+
   type colormap_error = value_error [@@deriving sexp]
+
+  let decode_colormap_error = decode_value_error
+
   type g_context_error = value_error [@@deriving sexp]
+
+  let decode_g_context_error = decode_value_error
+
   type id_choice_error = value_error [@@deriving sexp]
+
+  let decode_id_choice_error = decode_value_error
+
   type name_error = request_error [@@deriving sexp]
+
+  let decode_name_error = decode_request_error
+
   type length_error = request_error [@@deriving sexp]
+
+  let decode_length_error = decode_request_error
+
   type implementation_error = request_error [@@deriving sexp]
+
+  let decode_implementation_error = decode_request_error
 
   type window_class_enum = [ `Copy_from_parent | `Input_output | `Input_only ]
   [@@deriving sexp]
@@ -1710,19 +1767,60 @@ module Glx = struct
   [@@deriving sexp]
 
   type bad_context_error = generic_error [@@deriving sexp]
+
+  let decode_bad_context_error = decode_generic_error
+
   type bad_context_state_error = generic_error [@@deriving sexp]
+
+  let decode_bad_context_state_error = decode_generic_error
+
   type bad_drawable_error = generic_error [@@deriving sexp]
+
+  let decode_bad_drawable_error = decode_generic_error
+
   type bad_pixmap_error = generic_error [@@deriving sexp]
+
+  let decode_bad_pixmap_error = decode_generic_error
+
   type bad_context_tag_error = generic_error [@@deriving sexp]
+
+  let decode_bad_context_tag_error = decode_generic_error
+
   type bad_current_window_error = generic_error [@@deriving sexp]
+
+  let decode_bad_current_window_error = decode_generic_error
+
   type bad_render_request_error = generic_error [@@deriving sexp]
+
+  let decode_bad_render_request_error = decode_generic_error
+
   type bad_large_request_error = generic_error [@@deriving sexp]
+
+  let decode_bad_large_request_error = decode_generic_error
+
   type unsupported_private_request_error = generic_error [@@deriving sexp]
+
+  let decode_unsupported_private_request_error = decode_generic_error
+
   type bad_fb_config_error = generic_error [@@deriving sexp]
+
+  let decode_bad_fb_config_error = decode_generic_error
+
   type bad_pbuffer_error = generic_error [@@deriving sexp]
+
+  let decode_bad_pbuffer_error = decode_generic_error
+
   type bad_current_drawable_error = generic_error [@@deriving sexp]
+
+  let decode_bad_current_drawable_error = decode_generic_error
+
   type bad_window_error = generic_error [@@deriving sexp]
+
+  let decode_bad_window_error = decode_generic_error
+
   type glx_bad_profile_arb_error = generic_error [@@deriving sexp]
+
+  let decode_glx_bad_profile_arb_error = decode_generic_error
 
   type pbuffer_clobber_event = {
     event_type : u16;
@@ -2743,6 +2841,8 @@ module Shm = struct
   [@@deriving sexp]
 
   type bad_seg_error = Xproto.value_error [@@deriving sexp]
+
+  let decode_bad_seg_error = Xproto.decode_value_error
 
   type query_version_reply = {
     shared_pixmaps : bool;
@@ -3883,9 +3983,20 @@ module Xinput = struct
   [@@deriving sexp]
 
   type device_key_release_event = device_key_press_event [@@deriving sexp]
+
+  let decode_device_key_release_event = decode_device_key_press_event
+
   type device_button_press_event = device_key_press_event [@@deriving sexp]
+
+  let decode_device_button_press_event = decode_device_key_press_event
+
   type device_button_release_event = device_key_press_event [@@deriving sexp]
+
+  let decode_device_button_release_event = decode_device_key_press_event
+
   type device_motion_notify_event = device_key_press_event [@@deriving sexp]
+
+  let decode_device_motion_notify_event = decode_device_key_press_event
 
   type device_focus_in_event = {
     detail : Xproto.notify_detail_enum;
@@ -3897,8 +4008,16 @@ module Xinput = struct
   [@@deriving sexp]
 
   type device_focus_out_event = device_focus_in_event [@@deriving sexp]
+
+  let decode_device_focus_out_event = decode_device_focus_in_event
+
   type proximity_in_event = device_key_press_event [@@deriving sexp]
+
+  let decode_proximity_in_event = decode_device_key_press_event
+
   type proximity_out_event = device_key_press_event [@@deriving sexp]
+
+  let decode_proximity_out_event = decode_device_key_press_event
 
   type classes_reported_mask =
     [ `Out_of_proximity
@@ -4012,6 +4131,9 @@ module Xinput = struct
   [@@deriving sexp]
 
   type key_release_event = key_press_event [@@deriving sexp]
+
+  let decode_key_release_event = decode_key_press_event
+
   type pointer_event_flags_mask = [ `Pointer_emulated ] list [@@deriving sexp]
 
   type button_press_event = {
@@ -4036,7 +4158,12 @@ module Xinput = struct
   [@@deriving sexp]
 
   type button_release_event = button_press_event [@@deriving sexp]
+
+  let decode_button_release_event = decode_button_press_event
+
   type motion_event = button_press_event [@@deriving sexp]
+
+  let decode_motion_event = decode_button_press_event
 
   type notify_mode_enum =
     [ `Normal
@@ -4080,8 +4207,16 @@ module Xinput = struct
   [@@deriving sexp]
 
   type leave_event = enter_event [@@deriving sexp]
+
+  let decode_leave_event = decode_enter_event
+
   type focus_in_event = enter_event [@@deriving sexp]
+
+  let decode_focus_in_event = decode_enter_event
+
   type focus_out_event = enter_event [@@deriving sexp]
+
+  let decode_focus_out_event = decode_enter_event
 
   type hierarchy_mask =
     [ `Master_added
@@ -4137,6 +4272,8 @@ module Xinput = struct
 
   type raw_key_release_event = raw_key_press_event [@@deriving sexp]
 
+  let decode_raw_key_release_event = decode_raw_key_press_event
+
   type raw_button_press_event = {
     deviceid : device_enum alt_enum;
     time : Xproto.time_enum alt_enum;
@@ -4150,7 +4287,12 @@ module Xinput = struct
   [@@deriving sexp]
 
   type raw_button_release_event = raw_button_press_event [@@deriving sexp]
+
+  let decode_raw_button_release_event = decode_raw_button_press_event
+
   type raw_motion_event = raw_button_press_event [@@deriving sexp]
+
+  let decode_raw_motion_event = decode_raw_button_press_event
 
   type touch_event_flags_mask =
     [ `Touch_pending_end | `Touch_emulating_pointer ] list
@@ -4178,7 +4320,13 @@ module Xinput = struct
   [@@deriving sexp]
 
   type touch_update_event = touch_begin_event [@@deriving sexp]
+
+  let decode_touch_update_event = decode_touch_begin_event
+
   type touch_end_event = touch_begin_event [@@deriving sexp]
+
+  let decode_touch_end_event = decode_touch_begin_event
+
   type touch_ownership_flags_enum = [ `None ] [@@deriving sexp]
 
   type touch_ownership_event = {
@@ -4206,7 +4354,12 @@ module Xinput = struct
   [@@deriving sexp]
 
   type raw_touch_update_event = raw_touch_begin_event [@@deriving sexp]
+
+  let decode_raw_touch_update_event = decode_raw_touch_begin_event
+
   type raw_touch_end_event = raw_touch_begin_event [@@deriving sexp]
+
+  let decode_raw_touch_end_event = decode_raw_touch_begin_event
 
   type barrier_flags_mask = [ `Pointer_released | `Device_is_grabbed ] list
   [@@deriving sexp]
@@ -4229,6 +4382,8 @@ module Xinput = struct
   [@@deriving sexp]
 
   type barrier_leave_event = barrier_hit_event [@@deriving sexp]
+
+  let decode_barrier_leave_event = decode_barrier_hit_event
 
   type event_for_send =
     | Device_valuator of device_valuator_event

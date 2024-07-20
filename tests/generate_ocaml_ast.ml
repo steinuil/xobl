@@ -63,8 +63,8 @@ let () =
                  try
                    Xobl_ocaml_backend.Generate_ocaml.Decode.stri_declaration
                      ~loc ~ctx decl
-                   :: []
-                 with _ -> []
+                 with Xobl_ocaml_backend.Generate_ocaml.Not_implemented _ ->
+                   []
                in
                x @ decode)
              declarations
