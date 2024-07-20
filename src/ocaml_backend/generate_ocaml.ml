@@ -415,13 +415,17 @@ module Decode = struct
     | Field_list_simple { name; type_; length } ->
         let body = e_list_type ~ctx ~loc type_ in
         [ `Let (name, [%expr [%e body] ~len:[%e e_id ~loc length] buf]) ]
-    | Field_list_length { name; type_; expr; _ } ->
+    | Field_list_length { name; type_; expr; _ } -> (
         let body = e_type ~ctx ~loc type_ in
-        [
-          `Let (name, [%expr [%e body] buf]); `Let (name, e_expression ~loc expr);
-        ]
-        (* | f -> Printf.ksprintf unexpected "field: %s" (show_field f) *)
+        match expr with
+        | None -> [ `Let (name, [%expr [%e body] buf]) ]
+        | Some expr ->
+            [
+              `Let (name, [%expr [%e body] buf]);
+              `Let (name, e_expression ~loc expr);
+            ])
     | _ -> []
+  (* | f -> Printf.ksprintf unexpected "field: %s" (show_field f) *)
 
   let e_struct_fields ~ctx ~loc fields =
     List.concat_map (e_field ~ctx ~loc) fields

@@ -490,7 +490,10 @@ and conv_fields fields (curr_module, xcbs) =
             {
               name;
               type_ = conv_type xcbs ft_type;
-              expr = l.inverted_expr;
+              expr =
+                (match l.inverted_expr with
+                | Hir.Field_ref _ -> None
+                | e -> Some e);
               list = l.list_name;
               list_type = conv_type xcbs l.type_;
             }

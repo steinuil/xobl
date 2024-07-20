@@ -390,7 +390,7 @@ let gen_decode_field ctx _fields out = function
             (Ident.snake name))
         (primitive_of_type type_ |> Option.get |> gen_to_int);
       Printf.fprintf out "let %s = %a in" (Ident.snake name) (gen_expr None)
-        expr
+        (Option.value expr ~default:(Hir.Field_ref name))
   | Field_list_simple { name; type_; length } ->
       Printf.fprintf out "let* %s, at = %a %s buf ~at in" (Ident.snake name)
         (gen_decode_list ctx) type_ (Ident.snake length)

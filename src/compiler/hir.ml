@@ -79,7 +79,7 @@ type field =
   | Field_list_length of {
       name : string;
       type_ : type_;
-      expr : expression;
+      expr : expression option;
       list : string;
       list_type : type_;
     }
