@@ -11,10 +11,13 @@ type hostname =
   | Internet_domain of ([ `Ipv4 | `Ipv6 ] * string * int)
 [@@deriving sexp]
 
+let default_unix_domain_socket_path display =
+  Unix_domain_socket ("/tmp/.X11-unix/X" ^ string_of_int display)
+
 type t = { hostname : hostname; display : int; screen : int } [@@deriving sexp]
 
 let default =
-  { hostname = Unix_domain_socket "/tmp/.X11-unix/X0"; display = 0; screen = 0 }
+  { hostname = default_unix_domain_socket_path 0; display = 0; screen = 0 }
 
 let ( let& ) = Option.bind
 
@@ -61,10 +64,9 @@ let%test "invalid screen number" = parse_name "0.ayy" = None
 (* Host name parser that tries to be compliant with the libxcb
    implementation. *)
 let parse_hostname ~display = function
-  | "" | "unix" ->
-      Some (Unix_domain_socket ("/tmp/.X11-unix/X" ^ string_of_int display))
-  | path when String.length path >= 5 && String.sub path 0 5 = "unix/" ->
-      Some (Unix_domain_socket ("/tmp/.X11-unix/X" ^ string_of_int display))
+  | "" | "unix" -> Some (default_unix_domain_socket_path display)
+  | path when String.starts_with ~prefix:"unix/" path ->
+      Some (default_unix_domain_socket_path display)
   | hostname -> (
       let port = xorg_tcp_port + display in
       let len = String.length hostname in
