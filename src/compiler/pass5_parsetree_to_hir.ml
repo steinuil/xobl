@@ -308,7 +308,7 @@ let with_variants v t =
   @ [ t ]
 
 type variant_name_cache = {
-  v_by_switch : (string * string) list;
+  v_by_switch : (string * (string * Hir.external_param list)) list;
   switch_by_cond : (string * string) list;
 }
 
@@ -419,7 +419,7 @@ let rec conv_variant_field ~cond ~cases enclosing_fields (curr_module, xcbs) =
   let variant_type =
     { name = enum.id_name; items = variant_items; external_params }
   in
-  (enum.id_name, variant_type :: List.flatten variant_types)
+  (enum.id_name, external_params, variant_type :: List.flatten variant_types)
 
 (** In summary:
     - detect inferrable list fields
@@ -441,10 +441,11 @@ and conv_fields fields (curr_module, xcbs) =
   let variants, optionals =
     ListLabels.partition_map switches ~f:(function
       | `Eq, cond, name, cases ->
-          let variant_name, variant_types =
+          let variant_name, external_params, variant_types =
             conv_variant_field ~cond ~cases fields (curr_module, xcbs)
           in
-          Either.Left ((name, cond, variant_name), variant_types)
+          Either.Left
+            ((name, cond, variant_name, external_params), variant_types)
       | `Bit_and, cond, name, cases ->
           let optional_fields = conv_optional_fields ~cond ~cases fields xcbs in
           Either.Right (name, cond, optional_fields))
@@ -453,9 +454,10 @@ and conv_fields fields (curr_module, xcbs) =
   let variants =
     ListLabels.fold_left variants
       ~init:{ v_by_switch = []; switch_by_cond = [] }
-      ~f:(fun acc (switch, cond, variant_name) ->
+      ~f:(fun acc (switch, cond, variant_name, external_params) ->
         {
-          v_by_switch = (switch, variant_name) :: acc.v_by_switch;
+          v_by_switch =
+            (switch, (variant_name, external_params)) :: acc.v_by_switch;
           switch_by_cond = (cond, switch) :: acc.switch_by_cond;
         })
   in
@@ -500,18 +502,21 @@ and conv_fields fields (curr_module, xcbs) =
           |> mk_list
       (* Variant field *)
       | Field_switch { sw_cond = Cond_eq _; sw_name; _ } ->
-          let variant_name = List.assoc sw_name variants.v_by_switch in
+          let variant_name, external_params =
+            List.assoc sw_name variants.v_by_switch
+          in
           Hir.Field_variant
             {
               name = sw_name;
               variant = { id_module = curr_module; id_name = variant_name };
+              external_params;
             }
           |> mk_list
       (* Variant tag *)
       | Field { name; type_ = { ft_type; _ } }
         when List.mem_assoc name variants.switch_by_cond ->
           let field_name = List.assoc name variants.switch_by_cond in
-          let variant_name = List.assoc field_name variants.v_by_switch in
+          let variant_name, _ = List.assoc field_name variants.v_by_switch in
           Hir.Field_variant_tag
             {
               field_name;

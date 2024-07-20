@@ -65,6 +65,9 @@ type field_allowed =
 type field_type = { ft_type : type_; ft_allowed : field_allowed option }
 [@@deriving show, sexp]
 
+type external_param = { ep_name : string; ep_type : type_ }
+[@@deriving show, sexp]
+
 type field =
   | Field of { name : string; type_ : field_type }
   | Field_expr of { name : string; type_ : field_type; expr : expression }
@@ -85,7 +88,11 @@ type field =
     }
       (** Contains the length of the associated simple list.
           Should be hidden in the public API. *)
-  | Field_variant of { name : string; variant : ident }
+  | Field_variant of {
+      name : string;
+      variant : ident;
+      external_params : external_param list;
+    }
   | Field_variant_tag of { field_name : string; variant : ident; type_ : type_ }
       (** The tag that discriminates between the branches of the associated
           variant. Should be hidden in the public API. *)
@@ -106,9 +113,6 @@ type field =
       (** Contains the mask that indicates whether the optional fields
           associated are present or not in the struct.
           Should be hidden in the public API. *)
-[@@deriving show, sexp]
-
-type external_param = { ep_name : string; ep_type : type_ }
 [@@deriving show, sexp]
 
 type variant_item = {

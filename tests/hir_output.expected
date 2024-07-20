@@ -1004,7 +1004,8 @@
        ((ft_type (Type_ref ((id_module xproto) (id_name ATOM)) (Xid)))
         (ft_allowed ()))))
      (Field_variant (name data)
-      (variant ((id_module xproto) (id_name ClientMessageDataFormat)))))))
+      (variant ((id_module xproto) (id_name ClientMessageDataFormat)))
+      (external_params ())))))
   (Enum (name Mapping) (items ((Modifier 0) (Keyboard 1) (Pointer 2))))
   (Event (name MappingNotify) (number 34) (is_generic false)
    (is_serializable false) (no_sequence_number false)
@@ -10096,7 +10097,8 @@
      ((Field_variant_tag (field_name u)
        (variant ((id_module randr) (id_name Notify)))
        (type_ (Type_primitive Card8)))
-      (Field_variant (name u) (variant ((id_module randr) (id_name Notify))))))))))
+      (Field_variant (name u) (variant ((id_module randr) (id_name Notify)))
+       (external_params ()))))))))
 (Extension (name Sync) (file_name sync) (query_name SYNC) (multiword false)
  (version (3 1)) (imports (xproto))
  (declarations
@@ -12690,7 +12692,8 @@
       (Field (name len)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
       (Field_variant (name info)
-       (variant ((id_module xinput) (id_name InputClass))))))
+       (variant ((id_module xinput) (id_name InputClass)))
+       (external_params ()))))
     (external_params ()))
    (Struct (name DeviceName)
     (fields
@@ -13437,7 +13440,8 @@
       (Field (name len)
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
       (Field_variant (name data)
-       (variant ((id_module xinput) (id_name FeedbackClass))))))
+       (variant ((id_module xinput) (id_name FeedbackClass)))
+       (external_params ()))))
     (external_params ()))
    (Request (name GetFeedbackControl) (opcode 22) (combine_adjacent true)
     (fields
@@ -13587,7 +13591,8 @@
       (Field (name len)
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
       (Field_variant (name data)
-       (variant ((id_module xinput) (id_name FeedbackClass))))))
+       (variant ((id_module xinput) (id_name FeedbackClass)))
+       (external_params ()))))
     (external_params ()))
    (Mask (name ChangeFeedbackControlMask)
     (items
@@ -13792,7 +13797,8 @@
       (Field (name len)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
       (Field_variant (name data)
-       (variant ((id_module xinput) (id_name InputClass))))))
+       (variant ((id_module xinput) (id_name InputClass)))
+       (external_params ()))))
     (external_params ()))
    (Request (name QueryDeviceState) (opcode 30) (combine_adjacent true)
     (fields
@@ -14017,7 +14023,8 @@
       (Field (name len)
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
       (Field_variant (name data)
-       (variant ((id_module xinput) (id_name DeviceControl))))))
+       (variant ((id_module xinput) (id_name DeviceControl)))
+       (external_params ()))))
     (external_params ()))
    (Request (name GetDeviceControl) (opcode 34) (combine_adjacent true)
     (fields
@@ -14143,7 +14150,8 @@
       (Field (name len)
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
       (Field_variant (name data)
-       (variant ((id_module xinput) (id_name DeviceControl))))))
+       (variant ((id_module xinput) (id_name DeviceControl)))
+       (external_params ()))))
     (external_params ()))
    (Request (name ChangeDeviceControl) (opcode 35) (combine_adjacent true)
     (fields
@@ -14240,7 +14248,9 @@
       (Field (name num_items)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_variant (name items)
-       (variant ((id_module xinput) (id_name PropertyFormat))))))
+       (variant ((id_module xinput) (id_name PropertyFormat)))
+       (external_params
+        (((ep_name num_items) (ep_type (Type_primitive Card32))))))))
     (reply ()))
    (Request (name DeleteDeviceProperty) (opcode 38) (combine_adjacent true)
     (fields
@@ -14289,7 +14299,9 @@
         (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
        (Field_pad (pad (Pad_bytes 10)) (serialize false))
        (Field_variant (name items)
-        (variant ((id_module xinput) (id_name PropertyFormat))))))))
+        (variant ((id_module xinput) (id_name PropertyFormat)))
+        (external_params
+         (((ep_name num_items) (ep_type (Type_primitive Card32))))))))))
    (Enum (name Device) (items ((All 0) (AllMaster 1))))
    (Struct (name GroupInfo)
     (fields
@@ -14596,7 +14608,8 @@
       (Field (name len)
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
       (Field_variant (name data)
-       (variant ((id_module xinput) (id_name HierarchyChangeType))))))
+       (variant ((id_module xinput) (id_name HierarchyChangeType)))
+       (external_params ()))))
     (external_params ()))
    (Request (name XIChangeHierarchy) (opcode 43) (combine_adjacent true)
     (fields
@@ -14952,7 +14965,8 @@
           (Type_ref ((id_module xinput) (id_name DeviceId)) (Card16)))
          (ft_allowed ()))))
       (Field_variant (name data)
-       (variant ((id_module xinput) (id_name DeviceClassType))))))
+       (variant ((id_module xinput) (id_name DeviceClassType)))
+       (external_params ()))))
     (external_params ()))
    (Struct (name XIDeviceInfo)
     (fields
@@ -15306,7 +15320,9 @@
       (Field (name num_items)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_variant (name items)
-       (variant ((id_module xinput) (id_name PropertyFormat))))))
+       (variant ((id_module xinput) (id_name PropertyFormat)))
+       (external_params
+        (((ep_name num_items) (ep_type (Type_primitive Card32))))))))
     (reply ()))
    (Request (name XIDeleteProperty) (opcode 58) (combine_adjacent true)
     (fields
@@ -15360,7 +15376,9 @@
         (type_ (Type_primitive Card8)))
        (Field_pad (pad (Pad_bytes 11)) (serialize false))
        (Field_variant (name items)
-        (variant ((id_module xinput) (id_name PropertyFormat))))))))
+        (variant ((id_module xinput) (id_name PropertyFormat)))
+        (external_params
+         (((ep_name num_items) (ep_type (Type_primitive Card32))))))))))
    (Request (name XIGetSelectedEvents) (opcode 60) (combine_adjacent true)
     (fields
      ((Field (name window)

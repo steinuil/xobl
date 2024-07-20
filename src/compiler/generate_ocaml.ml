@@ -291,7 +291,7 @@ let gen_field ctx out = function
   | Field_list { name; type_; _ } | Field_list_simple { name; type_; _ } ->
       Printf.fprintf out "%s : %a; " (Ident.snake name) (gen_list_type ctx)
         type_
-  | Field_variant { name; variant } ->
+  | Field_variant { name; variant; _ } ->
       Printf.fprintf out "%s : %a; " (Ident.snake name) (gen_ident ctx)
         { variant with id_name = Ident.snake variant.id_name ~suffix:"variant" }
   | Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _
@@ -414,7 +414,7 @@ let gen_decode_field ctx _fields out = function
       Printf.fprintf out "let* %s, at = %a buf ~at in"
         (Ident.snake field_name ~suffix:"tag")
         (gen_decode_type ctx) type_
-  | Field_variant { name; variant } ->
+  | Field_variant { name; variant; _ } ->
       Printf.fprintf out "let* %s, at = %a %s buf ~at ~orig in"
         (Ident.snake name) (gen_ident ctx)
         {
@@ -457,7 +457,7 @@ let gen_encode_field ctx out = function
   | Field_list_simple { name; type_; _ } ->
       Printf.fprintf out "%a buf v.%s;" (gen_encode_list ctx) type_
         (Ident.snake name)
-  | Field_variant { name; variant } ->
+  | Field_variant { name; variant; _ } ->
       Printf.fprintf out "%a buf v.%s;"
         (gen_ident ~prefix:"encode" ~suffix:"variant" ctx)
         variant name
@@ -495,7 +495,7 @@ let gen_encode_arg_field ctx out = function
   | Field_list_simple { name; type_; _ } ->
       Printf.fprintf out "%a buf %s;" (gen_encode_list ctx) type_
         (Ident.snake name)
-  | Field_variant { name; variant } ->
+  | Field_variant { name; variant; _ } ->
       Printf.fprintf out "%a buf %s;"
         (gen_ident ~prefix:"encode" ~suffix:"variant" ctx)
         variant name
@@ -682,7 +682,7 @@ let gen_named_arg ctx out = function
   | Field_list { name; type_; _ } | Field_list_simple { name; type_; _ } ->
       Printf.fprintf out "~(%s : %a) " (Ident.snake name) (gen_list_type ctx)
         type_
-  | Field_variant { name; variant } ->
+  | Field_variant { name; variant; _ } ->
       Printf.fprintf out "~(%s : %a) " (Ident.snake name) (gen_ident ctx)
         { variant with id_name = Ident.snake variant.id_name ~suffix:"variant" }
   | Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _

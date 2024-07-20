@@ -438,7 +438,7 @@ module Decode = struct
     | Field_variant_tag { field_name; variant = _; type_ } ->
         let body = e_type ~ctx ~loc type_ in
         [ `Let (field_name ^ "_tag", [%expr [%e body] buf]) ]
-    | Field_variant { name; variant } ->
+    | Field_variant { name; variant; _ } ->
         let body =
           e_ident ~prefix:"decode" ~suffix:"variant" ~ctx ~loc variant
         in
