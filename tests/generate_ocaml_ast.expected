@@ -3856,6 +3856,7 @@ module Xinput = struct
   type input_info = { len : u8; info : input_class_variant } [@@deriving sexp]
 
   let decode_input_info buf : input_info =
+    let info_tag = Decode.u8 buf in
     let len = Decode.u8 buf in
     ()
 
@@ -4152,6 +4153,7 @@ module Xinput = struct
   [@@deriving sexp]
 
   let decode_feedback_state buf : feedback_state =
+    let data_tag = Decode.u8 buf in
     let feedback_id = Decode.u8 buf in
     let len = Decode.u16 buf in
     ()
@@ -4314,6 +4316,7 @@ module Xinput = struct
   [@@deriving sexp]
 
   let decode_feedback_ctl buf : feedback_ctl =
+    let data_tag = Decode.u8 buf in
     let feedback_id = Decode.u8 buf in
     let len = Decode.u16 buf in
     ()
@@ -4431,6 +4434,7 @@ module Xinput = struct
   type input_state = { len : u8; data : input_class_variant } [@@deriving sexp]
 
   let decode_input_state buf : input_state =
+    let data_tag = Decode.u8 buf in
     let len = Decode.u8 buf in
     ()
 
@@ -4606,6 +4610,7 @@ module Xinput = struct
   [@@deriving sexp]
 
   let decode_device_state buf : device_state =
+    let data_tag = Decode.u16 buf in
     let len = Decode.u16 buf in
     ()
 
@@ -4737,6 +4742,7 @@ module Xinput = struct
   [@@deriving sexp]
 
   let decode_device_ctl buf : device_ctl =
+    let data_tag = Decode.u16 buf in
     let len = Decode.u16 buf in
     ()
 
@@ -4937,6 +4943,7 @@ module Xinput = struct
   [@@deriving sexp]
 
   let decode_hierarchy_change buf : hierarchy_change =
+    let data_tag = Decode.u16 buf in
     let len = Decode.u16 buf in
     ()
 
@@ -5175,6 +5182,7 @@ module Xinput = struct
   [@@deriving sexp]
 
   let decode_device_class buf : device_class =
+    let data_tag = Decode.u16 buf in
     let len = Decode.u16 buf in
     let sourceid = decode_device_id buf in
     ()

@@ -424,6 +424,9 @@ module Decode = struct
               `Let (name, [%expr [%e body] buf]);
               `Let (name, e_expression ~loc expr);
             ])
+    | Field_variant_tag { field_name; variant = _; type_ } ->
+        let body = e_type ~ctx ~loc type_ in
+        [ `Let (field_name ^ "_tag", [%expr [%e body] buf]) ]
     | _ -> []
   (* | f -> Printf.ksprintf unexpected "field: %s" (show_field f) *)
 
