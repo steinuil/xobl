@@ -8831,7 +8831,7 @@ module Xinput = struct
     let items_tag = Decode.u8 buf in
     let device_id = Decode.u8 buf in
     Decode.pad buf 10;
-    let items = decode_property_format_variant ~tag:items_tag buf in
+    let items = decode_property_format_variant ~tag:items_tag buf num_items in
     { xi_reply_type; type_; bytes_after; num_items; device_id; items }
 
   type device_enum = [ `All | `All_master ] [@@deriving sexp]
@@ -9525,7 +9525,7 @@ module Xinput = struct
     let num_items = Decode.u32 buf in
     let items_tag = Decode.u8 buf in
     Decode.pad buf 11;
-    let items = decode_property_format_variant ~tag:items_tag buf in
+    let items = decode_property_format_variant ~tag:items_tag buf num_items in
     { type_; bytes_after; num_items; items }
 
   type xi_get_selected_events_reply = event_mask list [@@deriving sexp]

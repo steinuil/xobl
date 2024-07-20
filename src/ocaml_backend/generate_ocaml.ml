@@ -438,12 +438,17 @@ module Decode = struct
     | Field_variant_tag { field_name; variant = _; type_ } ->
         let body = e_type ~ctx ~loc type_ in
         [ `Let (field_name ^ "_tag", [%expr [%e body] buf]) ]
-    | Field_variant { name; variant; _ } ->
+    | Field_variant { name; variant; external_params } -> (
         let body =
           e_ident ~prefix:"decode" ~suffix:"variant" ~ctx ~loc variant
         in
         let tag = e_id ~suffix:"tag" ~loc name in
-        [ `Let (name, [%expr [%e body] ~tag:[%e tag] buf]) ]
+        match external_params with
+        | [] -> [ `Let (name, [%expr [%e body] ~tag:[%e tag] buf]) ]
+        | [ param ] ->
+            let param = e_id ~loc param.ep_name in
+            [ `Let (name, [%expr [%e body] ~tag:[%e tag] buf [%e param]]) ]
+        | _ -> not_implemented "multiple param_refs")
     | _ -> []
   (* | f -> Printf.ksprintf unexpected "field: %s" (show_field f) *)
 
