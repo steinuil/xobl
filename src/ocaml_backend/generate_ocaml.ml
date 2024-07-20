@@ -504,6 +504,7 @@ module Decode = struct
 
   let e_struct ?(external_params = []) ?suffix ~ctx ~loc name fields =
     let type_ = t_id ?suffix ~loc name in
+    let fields = collapse_padding fields in
     let fields = e_struct_fields ~ctx ~loc fields in
     match external_params with
     | [] -> [%expr fun buf : [%t type_] -> [%e fields]]
