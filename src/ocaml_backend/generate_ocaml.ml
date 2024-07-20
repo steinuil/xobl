@@ -424,6 +424,14 @@ module Decode = struct
               `Let (name, [%expr [%e body] buf]);
               `Let (name, e_expression ~loc expr);
             ])
+    | Field_list { name; type_; length = Some length } ->
+        [
+          `Let
+            ( name,
+              [%expr
+                [%e e_list_type ~ctx ~loc type_]
+                  ~len:[%e e_expression ~loc length] buf] );
+        ]
     | Field_variant_tag { field_name; variant = _; type_ } ->
         let body = e_type ~ctx ~loc type_ in
         [ `Let (field_name ^ "_tag", [%expr [%e body] buf]) ]
@@ -439,15 +447,21 @@ module Decode = struct
                Ast_helper.Exp.let_ ~loc Nonrecursive [ binding ] expr
            | `Sequence body -> Ast_helper.Exp.sequence ~loc body expr)
 
-  let e_struct ~ctx ~loc name fields =
+  let e_struct ~ctx ~loc name fields external_params =
     let fields = e_struct_fields ~ctx ~loc fields in
-    [%expr fun buf : [%t t_id ~loc name] -> [%e fields]]
+    let type_ = t_id ~loc name in
+    match external_params with
+    | [] -> [%expr fun buf : [%t type_] -> [%e fields]]
+    | [ param ] ->
+        let param = p_id ~loc ~prefix:"ext" param.ep_name in
+        [%expr fun buf [%p param] : [%t type_] -> [%e fields]]
+    | _ -> not_implemented "multiple param_refs"
 
   let vb_declaration ~ctx ~loc = function
     | Type_alias { name; type_ } ->
         vb ~prefix:"decode" ~loc name (e_type ~ctx ~loc type_) :: []
-    | Struct { name; fields; _ } ->
-        let expr = e_struct ~ctx ~loc name fields in
+    | Struct { name; fields; external_params } ->
+        let expr = e_struct ~ctx ~loc name fields external_params in
         vb ~prefix:"decode" ~loc name expr :: []
         (* | Enum { name; items } -> *)
     | Event_copy { name; event; _ } ->

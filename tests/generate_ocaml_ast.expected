@@ -3925,8 +3925,9 @@ module Xinput = struct
   type device_time_coord = { time : Xproto.timestamp; axisvalues : i32 list }
   [@@deriving sexp]
 
-  let decode_device_time_coord buf : device_time_coord =
+  let decode_device_time_coord buf ext_num_axes : device_time_coord =
     let time = Xproto.decode_timestamp buf in
+    let axisvalues = (Decode.list ~item:Decode.i32) ~len:ext_num_axes buf in
     ()
 
   type get_device_motion_events_reply = {
@@ -4009,6 +4010,7 @@ module Xinput = struct
     let click = Decode.u8 buf in
     let percent = Decode.u8 buf in
     Decode.pad buf 1;
+    let auto_repeats = (Decode.list ~item:Decode.u8) ~len:32 buf in
     ()
 
   type ptr_feedback_state = {
@@ -4383,6 +4385,7 @@ module Xinput = struct
     let len = Decode.u8 buf in
     let num_keys = Decode.u8 buf in
     Decode.pad buf 1;
+    let keys = (Decode.list ~item:Decode.u8) ~len:32 buf in
     ()
 
   type button_state = {
@@ -4402,6 +4405,7 @@ module Xinput = struct
     let len = Decode.u8 buf in
     let num_buttons = Decode.u8 buf in
     Decode.pad buf 1;
+    let buttons = (Decode.list ~item:Decode.u8) ~len:32 buf in
     ()
 
   type valuator_state_mode_mask =
@@ -5037,6 +5041,9 @@ module Xinput = struct
     let len = Decode.u16 buf in
     let sourceid = decode_device_id buf in
     let num_buttons = Decode.u16 buf in
+    let state =
+      (Decode.list ~item:Decode.u32) ~len:((num_buttons + 31) / 32) buf
+    in
     let labels = (Decode.list ~item:Xproto.decode_atom) ~len:num_buttons buf in
     ()
 
@@ -6073,6 +6080,7 @@ module Xv = struct
         buf
     in
     Decode.pad buf 2;
+    let guid = (Decode.list ~item:Decode.u8) ~len:16 buf in
     let bpp = Decode.u8 buf in
     let num_planes = Decode.u8 buf in
     Decode.pad buf 2;
@@ -6096,6 +6104,7 @@ module Xv = struct
     let vvert_y_period = Decode.u32 buf in
     let vvert_u_period = Decode.u32 buf in
     let vvert_v_period = Decode.u32 buf in
+    let vcomp_order = (Decode.list ~item:Decode.u8) ~len:32 buf in
     let vscanline_order =
       (Decode.enum ~decode:Decode.u8 ~int_of_t:identity
          ~enum_of_int:scanline_order_enum_of_int)
