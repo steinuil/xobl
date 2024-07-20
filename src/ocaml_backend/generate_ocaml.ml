@@ -546,7 +546,7 @@ module Decode = struct
         (* Errors include:
            - a 0x0 byte to indicate that this is an error
            - the error code (1 byte)
-           - the sequence number (2 bytes)
+           - the 2 LSB of the request sequence number (2 bytes)
            - a field (4 bytes)
            - minor opcode (2 bytes)
            - major opcode (1 byte)
