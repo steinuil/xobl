@@ -497,6 +497,8 @@ module Decode = struct
         [%expr fun buf [%p param] : [%t type_] -> [%e fields]]
     | _ -> not_implemented "multiple param_refs"
 
+  let pad_field size = Field_pad { pad = Pad_bytes size; serialize = false }
+
   let e_response ~suffix ~ctx ~loc name fields =
     let type_ = t_id ~suffix ~loc name in
     let length_field =
@@ -509,14 +511,13 @@ module Decode = struct
           list_type = Type_primitive Void;
         }
     in
-    let pad size = Field_pad { pad = Pad_bytes size; serialize = false } in
     match fields with
     | _ when visible_fields fields = [] ->
         [%expr fun _ : [%t type_] -> Decode.pad 32]
     | Field_pad { pad = Pad_bytes 1; serialize = false } :: rest ->
         (* Collapse padding if the first reply field is padding.
            See below for explanation. *)
-        let fields = pad 4 :: length_field :: rest in
+        let fields = pad_field 4 :: length_field :: rest in
         let fields = e_struct_fields ~ctx ~loc fields in
         [%expr fun buf : [%t type_] -> [%e fields]]
     | first :: rest ->
@@ -528,7 +529,9 @@ module Decode = struct
            The first byte, the sequence number and the reply length are not
            specified in the definitions so we put some dummy fields.
            The reply length field is used in some replies so we specify it. *)
-        let fields = pad 1 :: first :: pad 2 :: length_field :: rest in
+        let fields =
+          pad_field 1 :: first :: pad_field 2 :: length_field :: rest
+        in
         let fields = e_struct_fields ~ctx ~loc fields in
         [%expr fun buf : [%t type_] -> [%e fields]]
     | [] -> Printf.ksprintf unexpected "%s with no fields: %s" suffix name
@@ -540,7 +543,6 @@ module Decode = struct
         [%expr fun _ : [%t type_] -> Decode.pad 32]
     | [] -> Printf.ksprintf unexpected "error with no fields: %s" name
     | fields ->
-        (* TODO maybe we should filter out major_opcode and minor_opcode *)
         (* Errors include:
            - a 0x0 byte to indicate that this is an error
            - the error code (1 byte)
@@ -548,11 +550,9 @@ module Decode = struct
            - a field (4 bytes)
            - minor opcode (2 bytes)
            - major opcode (1 byte)
-           The first four bytes are not
+           The first four bytes are not specified so we add some padding.
         *)
-        let fields =
-          Field_pad { pad = Pad_bytes 4; serialize = false } :: fields
-        in
+        let fields = pad_field 4 :: fields in
         let fields = e_struct_fields ~ctx ~loc fields in
         [%expr fun buf : [%t type_] -> [%e fields]]
 
