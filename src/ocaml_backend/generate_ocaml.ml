@@ -42,22 +42,20 @@ let primitive_of_type = function
   | Type_union _ -> Some Xid
 
 let prim_to_string = function
-  | Void -> "char"
+  | Void -> "void"
   | Char -> "char"
-  | Byte -> "char"
+  | Byte -> "byte"
   | Bool -> "bool"
-  | Int8 -> "int"
-  | Int16 -> "int"
-  | Int32 -> "int"
-  (* FIXME: Int32 and Card32 should be mapped to int32 to ensure compatibility with
-     32-bit platforms. *)
+  | Int8 -> "i8"
+  | Int16 -> "i16"
+  | Int32 -> "i32"
   | Fd -> "file_descr"
-  | Card8 -> "int"
-  | Card16 -> "int"
-  | Card32 -> "int"
-  | Card64 -> "int64"
+  | Card8 -> "u8"
+  | Card16 -> "u16"
+  | Card32 -> "u32"
+  | Card64 -> "u64"
   | Float -> "float"
-  | Double -> "float"
+  | Double -> "double"
   | Xid -> "xid"
 
 (** Helpers *)
@@ -102,8 +100,6 @@ let vb ?prefix ?suffix ~loc name expr =
   let name = p_id ?prefix ?suffix ~loc name in
   Ast_helper.Vb.mk ~loc name expr
 
-(** *)
-
 module Type = struct
   let t_prim ~loc prim =
     let str = prim_to_string prim in
@@ -133,10 +129,16 @@ module Type = struct
             [%t t_type ~ctx ~loc ft_type] )
           alt_mask]
 
-  let t_list_type ~ctx ~loc t =
-    match primitive_of_type t.ft_type with
-    | Some Char | Some Void -> t_id ~loc "string"
-    | Some _ | None -> [%type: [%t t_field_type ~ctx ~loc t] list]
+  let t_list_type ~ctx ~loc = function
+    | {
+        ft_type = Type_ref ({ id_module = "xproto"; id_name = "CHAR2B" }, None);
+        ft_allowed = None;
+      } ->
+        t_id ~loc "utf16_string"
+    | t -> (
+        match primitive_of_type t.ft_type with
+        | Some Char | Some Void -> t_id ~loc "string"
+        | Some _ | None -> [%type: [%t t_field_type ~ctx ~loc t] list])
 
   let e_list_length ~loc t =
     match primitive_of_type t with
@@ -151,9 +153,9 @@ module Type = struct
         t_ident ~suffix:"variant" ~ctx ~loc variant
     | Field_optional { type_; _ } ->
         [%type: [%t t_field_type ~ctx ~loc type_] option]
-    | Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _
-    | Field_optional_mask _ ->
-        unexpected "field is not visible"
+    | ( Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _
+      | Field_optional_mask _ ) as f ->
+        Format.ksprintf unexpected "field is not visible:\n%s" (show_field f)
 
   let td_type ?prefix ?suffix ~loc name typ =
     let name = Ident.snake ?prefix ?suffix name |> with_loc ~loc in
@@ -327,15 +329,18 @@ let rec e_expression ?it ~loc = function
 module Decode = struct
   let e_prim ~loc = function
     | Bool -> [%expr decode_bool]
-    | Int8 -> [%expr decode_int8]
-    | Card8 -> [%expr decode_uint8]
-    | Int16 -> [%expr decode_int16]
-    | Card16 -> [%expr decode_uint16]
-    | Int32 -> [%expr decode_int32]
-    | Card32 -> [%expr decode_int32]
-    | Card64 -> [%expr decode_int64]
-    | Void | Char | Byte -> [%expr decode_char]
-    | Float | Double -> [%expr decode_float]
+    | Int8 -> [%expr decode_i8]
+    | Card8 -> [%expr decode_u8]
+    | Int16 -> [%expr decode_i16]
+    | Card16 -> [%expr decode_u16]
+    | Int32 -> [%expr decode_i32]
+    | Card32 -> [%expr decode_u32]
+    | Card64 -> [%expr decode_u64]
+    | Void -> [%expr decode_void]
+    | Char -> [%expr decode_char]
+    | Byte -> [%expr decode_byte]
+    | Float -> [%expr decode_float]
+    | Double -> [%expr decode_double]
     | Fd -> [%expr decode_file_descr]
     | Xid -> [%expr decode_xid]
 
@@ -378,6 +383,19 @@ module Decode = struct
         in
         let mask_of_int = e_ident ~suffix:"mask_of_int64" ~ctx ~loc mask in
         [%expr decode_alt_mask [%e decode_t] [%e to_int] [%e mask_of_int]]
+
+  let e_list_type ~ctx ~loc = function
+    | {
+        ft_type = Type_ref ({ id_module = "xproto"; id_name = "CHAR2B" }, None);
+        ft_allowed = None;
+      } ->
+        [%expr decode_utf16_string]
+    | t -> (
+        match primitive_of_type t.ft_type with
+        | Some Char | Some Void -> [%expr decode_string]
+        | Some _ | None ->
+            let decode_t = e_field_type ~ctx ~loc t in
+            [%expr decode_list [%e decode_t]])
 
   let vb_field ~ctx ~loc = function
     | Field { name; type_ } ->

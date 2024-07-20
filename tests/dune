@@ -21,6 +21,21 @@
  (action
   (diff generate_output.expected generate_output.output)))
 
+(rule
+ (deps
+  (glob_files ../xml-xcb/*.xml))
+ (action
+  (with-stdout-to
+   generate_ocaml_ast.output
+   (pipe-stdout
+    (run ./generate_ocaml_ast.exe)
+    (run ocamlformat - --impl)))))
+
+(rule
+ (alias runtest)
+ (action
+  (diff generate_ocaml_ast.expected generate_ocaml_ast.output)))
+
 (executable
  (name generate_output)
  (modules generate_output)
