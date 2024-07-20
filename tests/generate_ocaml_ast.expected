@@ -481,6 +481,40 @@ module Xproto = struct
   }
   [@@deriving sexp]
 
+  let decode_key_press_event buf : key_press_event =
+    Decode.pad buf 1;
+    let detail = decode_keycode buf in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time = decode_timestamp buf in
+    let root = decode_window buf in
+    let event = decode_window buf in
+    let child =
+      (Decode.alt_enum decode_window identity window_enum_of_int) buf
+    in
+    let root_x = Decode.i16 buf in
+    let root_y = Decode.i16 buf in
+    let event_x = Decode.i16 buf in
+    let event_y = Decode.i16 buf in
+    let state =
+      (Decode.mask Decode.u16 Int64.of_int key_but_mask_mask_of_int64) buf
+    in
+    let same_screen = Decode.bool buf in
+    Decode.pad buf 1;
+    {
+      detail;
+      time;
+      root;
+      event;
+      child;
+      root_x;
+      root_y;
+      event_x;
+      event_y;
+      state;
+      same_screen;
+    }
+
   type key_release_event = key_press_event [@@deriving sexp]
 
   let decode_key_release_event = decode_key_press_event
@@ -502,6 +536,40 @@ module Xproto = struct
     same_screen : bool;
   }
   [@@deriving sexp]
+
+  let decode_button_press_event buf : button_press_event =
+    Decode.pad buf 1;
+    let detail = decode_button buf in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time = decode_timestamp buf in
+    let root = decode_window buf in
+    let event = decode_window buf in
+    let child =
+      (Decode.alt_enum decode_window identity window_enum_of_int) buf
+    in
+    let root_x = Decode.i16 buf in
+    let root_y = Decode.i16 buf in
+    let event_x = Decode.i16 buf in
+    let event_y = Decode.i16 buf in
+    let state =
+      (Decode.mask Decode.u16 Int64.of_int key_but_mask_mask_of_int64) buf
+    in
+    let same_screen = Decode.bool buf in
+    Decode.pad buf 1;
+    {
+      detail;
+      time;
+      root;
+      event;
+      child;
+      root_x;
+      root_y;
+      event_x;
+      event_y;
+      state;
+      same_screen;
+    }
 
   type button_release_event = button_press_event [@@deriving sexp]
 
@@ -529,6 +597,44 @@ module Xproto = struct
     same_screen : bool;
   }
   [@@deriving sexp]
+
+  let decode_motion_notify_event buf : motion_notify_event =
+    Decode.pad buf 1;
+    let detail =
+      (Decode.enum ~decode:Decode.byte ~int_of_t:Char.code
+         ~enum_of_int:motion_enum_of_int)
+        buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time = decode_timestamp buf in
+    let root = decode_window buf in
+    let event = decode_window buf in
+    let child =
+      (Decode.alt_enum decode_window identity window_enum_of_int) buf
+    in
+    let root_x = Decode.i16 buf in
+    let root_y = Decode.i16 buf in
+    let event_x = Decode.i16 buf in
+    let event_y = Decode.i16 buf in
+    let state =
+      (Decode.mask Decode.u16 Int64.of_int key_but_mask_mask_of_int64) buf
+    in
+    let same_screen = Decode.bool buf in
+    Decode.pad buf 1;
+    {
+      detail;
+      time;
+      root;
+      event;
+      child;
+      root_x;
+      root_y;
+      event_x;
+      event_y;
+      state;
+      same_screen;
+    }
 
   type notify_detail_enum =
     [ `Ancestor
@@ -580,6 +686,49 @@ module Xproto = struct
   }
   [@@deriving sexp]
 
+  let decode_enter_notify_event buf : enter_notify_event =
+    Decode.pad buf 1;
+    let detail =
+      (Decode.enum ~decode:Decode.byte ~int_of_t:Char.code
+         ~enum_of_int:notify_detail_enum_of_int)
+        buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time = decode_timestamp buf in
+    let root = decode_window buf in
+    let event = decode_window buf in
+    let child =
+      (Decode.alt_enum decode_window identity window_enum_of_int) buf
+    in
+    let root_x = Decode.i16 buf in
+    let root_y = Decode.i16 buf in
+    let event_x = Decode.i16 buf in
+    let event_y = Decode.i16 buf in
+    let state =
+      (Decode.mask Decode.u16 Int64.of_int key_but_mask_mask_of_int64) buf
+    in
+    let mode =
+      (Decode.enum ~decode:Decode.byte ~int_of_t:Char.code
+         ~enum_of_int:notify_mode_enum_of_int)
+        buf
+    in
+    let same_screen_focus = Decode.byte buf in
+    {
+      detail;
+      time;
+      root;
+      event;
+      child;
+      root_x;
+      root_y;
+      event_x;
+      event_y;
+      state;
+      mode;
+      same_screen_focus;
+    }
+
   type leave_notify_event = enter_notify_event [@@deriving sexp]
 
   let decode_leave_notify_event = decode_enter_notify_event
@@ -591,11 +740,36 @@ module Xproto = struct
   }
   [@@deriving sexp]
 
+  let decode_focus_in_event buf : focus_in_event =
+    Decode.pad buf 1;
+    let detail =
+      (Decode.enum ~decode:Decode.byte ~int_of_t:Char.code
+         ~enum_of_int:notify_detail_enum_of_int)
+        buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let event = decode_window buf in
+    let mode =
+      (Decode.enum ~decode:Decode.byte ~int_of_t:Char.code
+         ~enum_of_int:notify_mode_enum_of_int)
+        buf
+    in
+    Decode.pad buf 3;
+    { detail; event; mode }
+
   type focus_out_event = focus_in_event [@@deriving sexp]
 
   let decode_focus_out_event = decode_focus_in_event
 
   type keymap_notify_event = u8 list [@@deriving sexp]
+
+  let decode_keymap_notify_event buf : keymap_notify_event =
+    Decode.pad buf 1;
+    let keys = (Decode.list ~item:Decode.u8) ~len:31 buf in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    keys
 
   type expose_event = {
     window : window;
@@ -606,6 +780,18 @@ module Xproto = struct
     count : u16;
   }
   [@@deriving sexp]
+
+  let decode_expose_event buf : expose_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let window = decode_window buf in
+    let x = Decode.u16 buf in
+    let y = Decode.u16 buf in
+    let width = Decode.u16 buf in
+    let height = Decode.u16 buf in
+    let count = Decode.u16 buf in
+    Decode.pad buf 2;
+    { window; x; y; width; height; count }
 
   type graphics_exposure_event = {
     drawable : drawable;
@@ -619,12 +805,35 @@ module Xproto = struct
   }
   [@@deriving sexp]
 
+  let decode_graphics_exposure_event buf : graphics_exposure_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let drawable = decode_drawable buf in
+    let x = Decode.u16 buf in
+    let y = Decode.u16 buf in
+    let width = Decode.u16 buf in
+    let height = Decode.u16 buf in
+    let minor_opcode = Decode.u16 buf in
+    let count = Decode.u16 buf in
+    let major_opcode = Decode.u8 buf in
+    Decode.pad buf 3;
+    { drawable; x; y; width; height; minor_opcode; count; major_opcode }
+
   type no_exposure_event = {
     drawable : drawable;
     minor_opcode : u16;
     major_opcode : u8;
   }
   [@@deriving sexp]
+
+  let decode_no_exposure_event buf : no_exposure_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let drawable = decode_drawable buf in
+    let minor_opcode = Decode.u16 buf in
+    let major_opcode = Decode.u8 buf in
+    Decode.pad buf 1;
+    { drawable; minor_opcode; major_opcode }
 
   type visibility_enum = [ `Unobscured | `Partially_obscured | `Fully_obscured ]
   [@@deriving sexp]
@@ -639,6 +848,18 @@ module Xproto = struct
   type visibility_notify_event = { window : window; state : visibility_enum }
   [@@deriving sexp]
 
+  let decode_visibility_notify_event buf : visibility_notify_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let window = decode_window buf in
+    let state =
+      (Decode.enum ~decode:Decode.byte ~int_of_t:Char.code
+         ~enum_of_int:visibility_enum_of_int)
+        buf
+    in
+    Decode.pad buf 3;
+    { window; state }
+
   type create_notify_event = {
     parent : window;
     window : window;
@@ -651,8 +872,29 @@ module Xproto = struct
   }
   [@@deriving sexp]
 
+  let decode_create_notify_event buf : create_notify_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let parent = decode_window buf in
+    let window = decode_window buf in
+    let x = Decode.i16 buf in
+    let y = Decode.i16 buf in
+    let width = Decode.u16 buf in
+    let height = Decode.u16 buf in
+    let border_width = Decode.u16 buf in
+    let override_redirect = Decode.bool buf in
+    Decode.pad buf 1;
+    { parent; window; x; y; width; height; border_width; override_redirect }
+
   type destroy_notify_event = { event : window; window : window }
   [@@deriving sexp]
+
+  let decode_destroy_notify_event buf : destroy_notify_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let event = decode_window buf in
+    let window = decode_window buf in
+    { event; window }
 
   type unmap_notify_event = {
     event : window;
@@ -661,6 +903,15 @@ module Xproto = struct
   }
   [@@deriving sexp]
 
+  let decode_unmap_notify_event buf : unmap_notify_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let event = decode_window buf in
+    let window = decode_window buf in
+    let from_configure = Decode.bool buf in
+    Decode.pad buf 3;
+    { event; window; from_configure }
+
   type map_notify_event = {
     event : window;
     window : window;
@@ -668,8 +919,24 @@ module Xproto = struct
   }
   [@@deriving sexp]
 
+  let decode_map_notify_event buf : map_notify_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let event = decode_window buf in
+    let window = decode_window buf in
+    let override_redirect = Decode.bool buf in
+    Decode.pad buf 3;
+    { event; window; override_redirect }
+
   type map_request_event = { parent : window; window : window }
   [@@deriving sexp]
+
+  let decode_map_request_event buf : map_request_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let parent = decode_window buf in
+    let window = decode_window buf in
+    { parent; window }
 
   type reparent_notify_event = {
     event : window;
@@ -680,6 +947,18 @@ module Xproto = struct
     override_redirect : bool;
   }
   [@@deriving sexp]
+
+  let decode_reparent_notify_event buf : reparent_notify_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let event = decode_window buf in
+    let window = decode_window buf in
+    let parent = decode_window buf in
+    let x = Decode.i16 buf in
+    let y = Decode.i16 buf in
+    let override_redirect = Decode.bool buf in
+    Decode.pad buf 3;
+    { event; window; parent; x; y; override_redirect }
 
   type configure_notify_event = {
     event : window;
@@ -693,6 +972,33 @@ module Xproto = struct
     override_redirect : bool;
   }
   [@@deriving sexp]
+
+  let decode_configure_notify_event buf : configure_notify_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let event = decode_window buf in
+    let window = decode_window buf in
+    let above_sibling =
+      (Decode.alt_enum decode_window identity window_enum_of_int) buf
+    in
+    let x = Decode.i16 buf in
+    let y = Decode.i16 buf in
+    let width = Decode.u16 buf in
+    let height = Decode.u16 buf in
+    let border_width = Decode.u16 buf in
+    let override_redirect = Decode.bool buf in
+    Decode.pad buf 1;
+    {
+      event;
+      window;
+      above_sibling;
+      x;
+      y;
+      width;
+      height;
+      border_width;
+      override_redirect;
+    }
 
   type stack_mode_enum = [ `Above | `Below | `Top_if | `Bottom_if | `Opposite ]
   [@@deriving sexp]
@@ -724,6 +1030,41 @@ module Xproto = struct
   }
   [@@deriving sexp]
 
+  let decode_configure_request_event buf : configure_request_event =
+    Decode.pad buf 1;
+    let stack_mode =
+      (Decode.enum ~decode:Decode.byte ~int_of_t:Char.code
+         ~enum_of_int:stack_mode_enum_of_int)
+        buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let parent = decode_window buf in
+    let window = decode_window buf in
+    let sibling =
+      (Decode.alt_enum decode_window identity window_enum_of_int) buf
+    in
+    let x = Decode.i16 buf in
+    let y = Decode.i16 buf in
+    let width = Decode.u16 buf in
+    let height = Decode.u16 buf in
+    let border_width = Decode.u16 buf in
+    let value_mask =
+      (Decode.mask Decode.u16 Int64.of_int config_window_mask_of_int64) buf
+    in
+    {
+      stack_mode;
+      parent;
+      window;
+      sibling;
+      x;
+      y;
+      width;
+      height;
+      border_width;
+      value_mask;
+    }
+
   type gravity_notify_event = {
     event : window;
     window : window;
@@ -732,8 +1073,25 @@ module Xproto = struct
   }
   [@@deriving sexp]
 
+  let decode_gravity_notify_event buf : gravity_notify_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let event = decode_window buf in
+    let window = decode_window buf in
+    let x = Decode.i16 buf in
+    let y = Decode.i16 buf in
+    { event; window; x; y }
+
   type resize_request_event = { window : window; width : u16; height : u16 }
   [@@deriving sexp]
+
+  let decode_resize_request_event buf : resize_request_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let window = decode_window buf in
+    let width = Decode.u16 buf in
+    let height = Decode.u16 buf in
+    { window; width; height }
 
   type place_enum = [ `On_top | `On_bottom ] [@@deriving sexp]
 
@@ -749,6 +1107,20 @@ module Xproto = struct
     place : place_enum;
   }
   [@@deriving sexp]
+
+  let decode_circulate_notify_event buf : circulate_notify_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let event = decode_window buf in
+    let window = decode_window buf in
+    Decode.pad buf 4;
+    let place =
+      (Decode.enum ~decode:Decode.byte ~int_of_t:Char.code
+         ~enum_of_int:place_enum_of_int)
+        buf
+    in
+    Decode.pad buf 3;
+    { event; window; place }
 
   type circulate_request_event = circulate_notify_event [@@deriving sexp]
 
@@ -770,12 +1142,34 @@ module Xproto = struct
   }
   [@@deriving sexp]
 
+  let decode_property_notify_event buf : property_notify_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let window = decode_window buf in
+    let atom = decode_atom buf in
+    let time = decode_timestamp buf in
+    let state =
+      (Decode.enum ~decode:Decode.byte ~int_of_t:Char.code
+         ~enum_of_int:property_enum_of_int)
+        buf
+    in
+    Decode.pad buf 3;
+    { window; atom; time; state }
+
   type selection_clear_event = {
     time : timestamp;
     owner : window;
     selection : atom;
   }
   [@@deriving sexp]
+
+  let decode_selection_clear_event buf : selection_clear_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let time = decode_timestamp buf in
+    let owner = decode_window buf in
+    let selection = decode_atom buf in
+    { time; owner; selection }
 
   type time_enum = [ `Current_time ] [@@deriving sexp]
 
@@ -941,6 +1335,21 @@ module Xproto = struct
   }
   [@@deriving sexp]
 
+  let decode_selection_request_event buf : selection_request_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let time =
+      (Decode.alt_enum decode_timestamp identity time_enum_of_int) buf
+    in
+    let owner = decode_window buf in
+    let requestor = decode_window buf in
+    let selection = decode_atom buf in
+    let target = decode_atom buf in
+    let property =
+      (Decode.alt_enum decode_atom identity atom_enum_of_int) buf
+    in
+    { time; owner; requestor; selection; target; property }
+
   type selection_notify_event = {
     time : time_enum alt_enum;
     requestor : window;
@@ -949,6 +1358,20 @@ module Xproto = struct
     property : atom_enum alt_enum;
   }
   [@@deriving sexp]
+
+  let decode_selection_notify_event buf : selection_notify_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let time =
+      (Decode.alt_enum decode_timestamp identity time_enum_of_int) buf
+    in
+    let requestor = decode_window buf in
+    let selection = decode_atom buf in
+    let target = decode_atom buf in
+    let property =
+      (Decode.alt_enum decode_atom identity atom_enum_of_int) buf
+    in
+    { time; requestor; selection; target; property }
 
   type colormap_state_enum = [ `Uninstalled | `Installed ] [@@deriving sexp]
 
@@ -972,6 +1395,22 @@ module Xproto = struct
     state : colormap_state_enum;
   }
   [@@deriving sexp]
+
+  let decode_colormap_notify_event buf : colormap_notify_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let window = decode_window buf in
+    let colormap =
+      (Decode.alt_enum decode_colormap identity colormap_enum_of_int) buf
+    in
+    let new_ = Decode.bool buf in
+    let state =
+      (Decode.enum ~decode:Decode.byte ~int_of_t:Char.code
+         ~enum_of_int:colormap_state_enum_of_int)
+        buf
+    in
+    Decode.pad buf 2;
+    { window; colormap; new_; state }
 
   type client_message_data_format_enum = [ `Data8 | `Data16 | `Data32 ]
   [@@deriving sexp]
@@ -1010,6 +1449,16 @@ module Xproto = struct
   }
   [@@deriving sexp]
 
+  let decode_client_message_event buf : client_message_event =
+    Decode.pad buf 1;
+    let data_tag = Decode.u8 buf in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let window = decode_window buf in
+    let type_ = decode_atom buf in
+    let data = decode_client_message_data_format_variant ~tag:data_tag buf in
+    { window; type_; data }
+
   type mapping_enum = [ `Modifier | `Keyboard | `Pointer ] [@@deriving sexp]
 
   let mapping_enum_of_int n : mapping_enum =
@@ -1026,7 +1475,22 @@ module Xproto = struct
   }
   [@@deriving sexp]
 
+  let decode_mapping_notify_event buf : mapping_notify_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let request =
+      (Decode.enum ~decode:Decode.byte ~int_of_t:Char.code
+         ~enum_of_int:mapping_enum_of_int)
+        buf
+    in
+    let first_keycode = decode_keycode buf in
+    let count = Decode.u8 buf in
+    Decode.pad buf 1;
+    { request; first_keycode; count }
+
   type ge_generic_event = unit [@@deriving sexp]
+
+  let decode_ge_generic_event _ : ge_generic_event = Decode.pad 32
 
   type request_error = {
     bad_value : u32;
@@ -3111,6 +3575,34 @@ module Shape = struct
   }
   [@@deriving sexp]
 
+  let decode_notify_event buf : notify_event =
+    Decode.pad buf 1;
+    let shape_kind =
+      (Decode.enum ~decode:decode_kind ~int_of_t:identity
+         ~enum_of_int:sk_enum_of_int)
+        buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let affected_window = Xproto.decode_window buf in
+    let extents_x = Decode.i16 buf in
+    let extents_y = Decode.i16 buf in
+    let extents_width = Decode.u16 buf in
+    let extents_height = Decode.u16 buf in
+    let server_time = Xproto.decode_timestamp buf in
+    let shaped = Decode.bool buf in
+    Decode.pad buf 11;
+    {
+      shape_kind;
+      affected_window;
+      extents_x;
+      extents_y;
+      extents_width;
+      extents_height;
+      server_time;
+      shaped;
+    }
+
   type query_version_reply = { major_version : u16; minor_version : u16 }
   [@@deriving sexp]
 
@@ -3260,6 +3752,23 @@ module Xfixes = struct
   }
   [@@deriving sexp]
 
+  let decode_selection_notify_event buf : selection_notify_event =
+    Decode.pad buf 1;
+    let subtype =
+      (Decode.enum ~decode:Decode.u8 ~int_of_t:identity
+         ~enum_of_int:selection_event_enum_of_int)
+        buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let window = Xproto.decode_window buf in
+    let owner = Xproto.decode_window buf in
+    let selection = Xproto.decode_atom buf in
+    let timestamp = Xproto.decode_timestamp buf in
+    let selection_timestamp = Xproto.decode_timestamp buf in
+    Decode.pad buf 8;
+    { subtype; window; owner; selection; timestamp; selection_timestamp }
+
   type cursor_notify_enum = [ `Display_cursor ] [@@deriving sexp]
 
   let cursor_notify_enum_of_int n : cursor_notify_enum =
@@ -3277,6 +3786,24 @@ module Xfixes = struct
     name : Xproto.atom_enum alt_enum;
   }
   [@@deriving sexp]
+
+  let decode_cursor_notify_event buf : cursor_notify_event =
+    Decode.pad buf 1;
+    let subtype =
+      (Decode.enum ~decode:Decode.u8 ~int_of_t:identity
+         ~enum_of_int:cursor_notify_enum_of_int)
+        buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let window = Xproto.decode_window buf in
+    let cursor_serial = Decode.u32 buf in
+    let timestamp = Xproto.decode_timestamp buf in
+    let name =
+      (Decode.alt_enum Xproto.decode_atom identity Xproto.atom_enum_of_int) buf
+    in
+    Decode.pad buf 12;
+    { subtype; window; cursor_serial; timestamp; name }
 
   type get_cursor_image_reply = {
     x : i16;
@@ -3476,6 +4003,22 @@ module Damage = struct
     geometry : Xproto.rectangle;
   }
   [@@deriving sexp]
+
+  let decode_notify_event buf : notify_event =
+    Decode.pad buf 1;
+    let level =
+      (Decode.enum ~decode:Decode.u8 ~int_of_t:identity
+         ~enum_of_int:report_level_enum_of_int)
+        buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let drawable = Xproto.decode_drawable buf in
+    let damage = decode_damage buf in
+    let timestamp = Xproto.decode_timestamp buf in
+    let area = Xproto.decode_rectangle buf in
+    let geometry = Xproto.decode_rectangle buf in
+    { level; drawable; damage; timestamp; area; geometry }
 end
 
 module Dpms = struct
@@ -3801,7 +4344,30 @@ module Dri2 = struct
   }
   [@@deriving sexp]
 
+  let decode_buffer_swap_complete_event buf : buffer_swap_complete_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let event_type =
+      (Decode.enum ~decode:Decode.u16 ~int_of_t:identity
+         ~enum_of_int:event_type_enum_of_int)
+        buf
+    in
+    Decode.pad buf 2;
+    let drawable = Xproto.decode_drawable buf in
+    let ust_hi = Decode.u32 buf in
+    let ust_lo = Decode.u32 buf in
+    let msc_hi = Decode.u32 buf in
+    let msc_lo = Decode.u32 buf in
+    let sbc = Decode.u32 buf in
+    { event_type; drawable; ust_hi; ust_lo; msc_hi; msc_lo; sbc }
+
   type invalidate_buffers_event = Xproto.drawable [@@deriving sexp]
+
+  let decode_invalidate_buffers_event buf : invalidate_buffers_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let drawable = Xproto.decode_drawable buf in
+    drawable
 end
 
 module Dri3 = struct
@@ -4046,6 +4612,33 @@ module Glx = struct
   }
   [@@deriving sexp]
 
+  let decode_pbuffer_clobber_event buf : pbuffer_clobber_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let event_type = Decode.u16 buf in
+    let draw_type = Decode.u16 buf in
+    let drawable = decode_drawable buf in
+    let b_mask = Decode.u32 buf in
+    let aux_buffer = Decode.u16 buf in
+    let x = Decode.u16 buf in
+    let y = Decode.u16 buf in
+    let width = Decode.u16 buf in
+    let height = Decode.u16 buf in
+    let count = Decode.u16 buf in
+    Decode.pad buf 4;
+    {
+      event_type;
+      draw_type;
+      drawable;
+      b_mask;
+      aux_buffer;
+      x;
+      y;
+      width;
+      height;
+      count;
+    }
+
   type buffer_swap_complete_event = {
     event_type : u16;
     drawable : drawable;
@@ -4056,6 +4649,19 @@ module Glx = struct
     sbc : u32;
   }
   [@@deriving sexp]
+
+  let decode_buffer_swap_complete_event buf : buffer_swap_complete_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let event_type = Decode.u16 buf in
+    Decode.pad buf 2;
+    let drawable = decode_drawable buf in
+    let ust_hi = Decode.u32 buf in
+    let ust_lo = Decode.u32 buf in
+    let msc_hi = Decode.u32 buf in
+    let msc_lo = Decode.u32 buf in
+    let sbc = Decode.u32 buf in
+    { event_type; drawable; ust_hi; ust_lo; msc_hi; msc_lo; sbc }
 
   type pbcet_enum = [ `Damaged | `Saved ] [@@deriving sexp]
 
@@ -5724,6 +6330,41 @@ module Randr = struct
   }
   [@@deriving sexp]
 
+  let decode_screen_change_notify_event buf : screen_change_notify_event =
+    Decode.pad buf 1;
+    let rotation =
+      (Decode.mask Decode.u8 Int64.of_int rotation_mask_of_int64) buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let timestamp = Xproto.decode_timestamp buf in
+    let config_timestamp = Xproto.decode_timestamp buf in
+    let root = Xproto.decode_window buf in
+    let request_window = Xproto.decode_window buf in
+    let size_id = Decode.u16 buf in
+    let subpixel_order =
+      (Decode.enum ~decode:Decode.u16 ~int_of_t:identity
+         ~enum_of_int:Render.sub_pixel_enum_of_int)
+        buf
+    in
+    let width = Decode.u16 buf in
+    let height = Decode.u16 buf in
+    let mwidth = Decode.u16 buf in
+    let mheight = Decode.u16 buf in
+    {
+      rotation;
+      timestamp;
+      config_timestamp;
+      root;
+      request_window;
+      size_id;
+      subpixel_order;
+      width;
+      height;
+      mwidth;
+      mheight;
+    }
+
   type notify_enum =
     [ `Crtc_change
     | `Output_change
@@ -6005,6 +6646,14 @@ module Randr = struct
         Lease lc
 
   type notify_event = notify_variant [@@deriving sexp]
+
+  let decode_notify_event buf : notify_event =
+    Decode.pad buf 1;
+    let u_tag = Decode.u8 buf in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let u = decode_notify_variant ~tag:u_tag buf in
+    u
 end
 
 module Sync = struct
@@ -6196,6 +6845,20 @@ module Sync = struct
   }
   [@@deriving sexp]
 
+  let decode_counter_notify_event buf : counter_notify_event =
+    Decode.pad buf 1;
+    let kind = Decode.u8 buf in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let counter = decode_counter buf in
+    let wait_value = decode_int64 buf in
+    let counter_value = decode_int64 buf in
+    let timestamp = Xproto.decode_timestamp buf in
+    let count = Decode.u16 buf in
+    let destroyed = Decode.bool buf in
+    Decode.pad buf 1;
+    { kind; counter; wait_value; counter_value; timestamp; count; destroyed }
+
   type alarm_notify_event = {
     kind : u8;
     alarm : alarm;
@@ -6205,6 +6868,23 @@ module Sync = struct
     state : alarmstate_enum;
   }
   [@@deriving sexp]
+
+  let decode_alarm_notify_event buf : alarm_notify_event =
+    Decode.pad buf 1;
+    let kind = Decode.u8 buf in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let alarm = decode_alarm buf in
+    let counter_value = decode_int64 buf in
+    let alarm_value = decode_int64 buf in
+    let timestamp = Xproto.decode_timestamp buf in
+    let state =
+      (Decode.enum ~decode:Decode.u8 ~int_of_t:identity
+         ~enum_of_int:alarmstate_enum_of_int)
+        buf
+    in
+    Decode.pad buf 3;
+    { kind; alarm; counter_value; alarm_value; timestamp; state }
 end
 
 module Present = struct
@@ -6285,6 +6965,17 @@ module Present = struct
   }
   [@@deriving sexp]
 
+  let decode_generic_event buf : generic_event =
+    Decode.pad buf 1;
+    let extension = Decode.u8 buf in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let length = Decode.u32 buf in
+    let evtype = Decode.u16 buf in
+    Decode.pad buf 2;
+    let event = decode_event buf in
+    { extension; length; evtype; event }
+
   type configure_notify_event = {
     event : event;
     window : Xproto.window;
@@ -6300,6 +6991,36 @@ module Present = struct
   }
   [@@deriving sexp]
 
+  let decode_configure_notify_event buf : configure_notify_event =
+    Decode.pad buf 1;
+    Decode.pad buf 2;
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let event = decode_event buf in
+    let window = Xproto.decode_window buf in
+    let x = Decode.i16 buf in
+    let y = Decode.i16 buf in
+    let width = Decode.u16 buf in
+    let height = Decode.u16 buf in
+    let off_x = Decode.i16 buf in
+    let off_y = Decode.i16 buf in
+    let pixmap_width = Decode.u16 buf in
+    let pixmap_height = Decode.u16 buf in
+    let pixmap_flags = Decode.u32 buf in
+    {
+      event;
+      window;
+      x;
+      y;
+      width;
+      height;
+      off_x;
+      off_y;
+      pixmap_width;
+      pixmap_height;
+      pixmap_flags;
+    }
+
   type complete_notify_event = {
     kind : complete_kind_enum;
     mode : complete_mode_enum;
@@ -6311,6 +7032,27 @@ module Present = struct
   }
   [@@deriving sexp]
 
+  let decode_complete_notify_event buf : complete_notify_event =
+    Decode.pad buf 1;
+    let kind =
+      (Decode.enum ~decode:Decode.u8 ~int_of_t:identity
+         ~enum_of_int:complete_kind_enum_of_int)
+        buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let mode =
+      (Decode.enum ~decode:Decode.u8 ~int_of_t:identity
+         ~enum_of_int:complete_mode_enum_of_int)
+        buf
+    in
+    let event = decode_event buf in
+    let window = Xproto.decode_window buf in
+    let serial = Decode.u32 buf in
+    let ust = Decode.u64 buf in
+    let msc = Decode.u64 buf in
+    { kind; mode; event; window; serial; ust; msc }
+
   type idle_notify_event = {
     event : event;
     window : Xproto.window;
@@ -6319,6 +7061,18 @@ module Present = struct
     idle_fence : Sync.fence;
   }
   [@@deriving sexp]
+
+  let decode_idle_notify_event buf : idle_notify_event =
+    Decode.pad buf 1;
+    Decode.pad buf 2;
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let event = decode_event buf in
+    let window = Xproto.decode_window buf in
+    let serial = Decode.u32 buf in
+    let pixmap = Xproto.decode_pixmap buf in
+    let idle_fence = Sync.decode_fence buf in
+    { event; window; serial; pixmap; idle_fence }
 
   type redirect_notify_event = {
     update_window : bool;
@@ -6722,6 +7476,27 @@ module Screensaver = struct
     forced : bool;
   }
   [@@deriving sexp]
+
+  let decode_notify_event buf : notify_event =
+    Decode.pad buf 1;
+    let state =
+      (Decode.enum ~decode:Decode.byte ~int_of_t:Char.code
+         ~enum_of_int:state_enum_of_int)
+        buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time = Xproto.decode_timestamp buf in
+    let root = Xproto.decode_window buf in
+    let window = Xproto.decode_window buf in
+    let kind =
+      (Decode.enum ~decode:Decode.byte ~int_of_t:Char.code
+         ~enum_of_int:kind_enum_of_int)
+        buf
+    in
+    let forced = Decode.bool buf in
+    Decode.pad buf 14;
+    { state; time; root; window; kind; forced }
 end
 
 module Shm = struct
@@ -6737,6 +7512,17 @@ module Shm = struct
     offset : u32;
   }
   [@@deriving sexp]
+
+  let decode_completion_event buf : completion_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let drawable = Xproto.decode_drawable buf in
+    let minor_event = Decode.u16 buf in
+    let major_event = Decode.byte buf in
+    Decode.pad buf 1;
+    let shmseg = decode_seg buf in
+    let offset = Decode.u32 buf in
+    { drawable; minor_event; major_event; shmseg; offset }
 
   type bad_seg_error = Xproto.value_error [@@deriving sexp]
 
@@ -9832,6 +10618,17 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
+  let decode_device_valuator_event buf : device_valuator_event =
+    Decode.pad buf 1;
+    let device_id = Decode.u8 buf in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let device_state = Decode.u16 buf in
+    let num_valuators = Decode.u8 buf in
+    let first_valuator = Decode.u8 buf in
+    let valuators = (Decode.list ~item:Decode.i32) ~len:6 buf in
+    { device_id; device_state; num_valuators; first_valuator; valuators }
+
   type more_events_mask = [ `More_events ] list [@@deriving sexp]
 
   type device_key_press_event = {
@@ -9849,6 +10646,46 @@ module Xinput = struct
     device_id : (more_events_mask, u8) alt_mask;
   }
   [@@deriving sexp]
+
+  let decode_device_key_press_event buf : device_key_press_event =
+    Decode.pad buf 1;
+    let detail = Decode.byte buf in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time = Xproto.decode_timestamp buf in
+    let root = Xproto.decode_window buf in
+    let event = Xproto.decode_window buf in
+    let child =
+      (Decode.alt_enum Xproto.decode_window identity Xproto.window_enum_of_int)
+        buf
+    in
+    let root_x = Decode.i16 buf in
+    let root_y = Decode.i16 buf in
+    let event_x = Decode.i16 buf in
+    let event_y = Decode.i16 buf in
+    let state =
+      (Decode.mask Decode.u16 Int64.of_int Xproto.key_but_mask_mask_of_int64)
+        buf
+    in
+    let same_screen = Decode.bool buf in
+    let device_id =
+      (Decode.alt_mask Decode.u8 Int64.of_int more_events_mask_mask_of_int64)
+        buf
+    in
+    {
+      detail;
+      time;
+      root;
+      event;
+      child;
+      root_x;
+      root_y;
+      event_x;
+      event_y;
+      state;
+      same_screen;
+      device_id;
+    }
 
   type device_key_release_event = device_key_press_event [@@deriving sexp]
 
@@ -9874,6 +10711,26 @@ module Xinput = struct
     device_id : u8;
   }
   [@@deriving sexp]
+
+  let decode_device_focus_in_event buf : device_focus_in_event =
+    Decode.pad buf 1;
+    let detail =
+      (Decode.enum ~decode:Decode.byte ~int_of_t:Char.code
+         ~enum_of_int:Xproto.notify_detail_enum_of_int)
+        buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time = Xproto.decode_timestamp buf in
+    let window = Xproto.decode_window buf in
+    let mode =
+      (Decode.enum ~decode:Decode.byte ~int_of_t:Char.code
+         ~enum_of_int:Xproto.notify_mode_enum_of_int)
+        buf
+    in
+    let device_id = Decode.u8 buf in
+    Decode.pad buf 18;
+    { detail; time; window; mode; device_id }
 
   type device_focus_out_event = device_focus_in_event [@@deriving sexp]
 
@@ -9909,6 +10766,37 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
+  let decode_device_state_notify_event buf : device_state_notify_event =
+    Decode.pad buf 1;
+    let device_id =
+      (Decode.alt_mask Decode.byte char_to_int64 more_events_mask_mask_of_int64)
+        buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time = Xproto.decode_timestamp buf in
+    let num_keys = Decode.u8 buf in
+    let num_buttons = Decode.u8 buf in
+    let num_valuators = Decode.u8 buf in
+    let classes_reported =
+      (Decode.mask Decode.u8 Int64.of_int classes_reported_mask_mask_of_int64)
+        buf
+    in
+    let buttons = (Decode.list ~item:Decode.u8) ~len:4 buf in
+    let keys = (Decode.list ~item:Decode.u8) ~len:4 buf in
+    let valuators = (Decode.list ~item:Decode.u32) ~len:3 buf in
+    {
+      device_id;
+      time;
+      num_keys;
+      num_buttons;
+      num_valuators;
+      classes_reported;
+      buttons;
+      keys;
+      valuators;
+    }
+
   type device_mapping_notify_event = {
     device_id : byte;
     request : Xproto.mapping_enum;
@@ -9917,6 +10805,23 @@ module Xinput = struct
     time : Xproto.timestamp;
   }
   [@@deriving sexp]
+
+  let decode_device_mapping_notify_event buf : device_mapping_notify_event =
+    Decode.pad buf 1;
+    let device_id = Decode.byte buf in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let request =
+      (Decode.enum ~decode:Decode.u8 ~int_of_t:identity
+         ~enum_of_int:Xproto.mapping_enum_of_int)
+        buf
+    in
+    let first_keycode = decode_key_code buf in
+    let count = Decode.u8 buf in
+    Decode.pad buf 1;
+    let time = Xproto.decode_timestamp buf in
+    Decode.pad buf 20;
+    { device_id; request; first_keycode; count; time }
 
   type change_device_enum = [ `New_pointer | `New_keyboard ] [@@deriving sexp]
 
@@ -9933,17 +10838,54 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
+  let decode_change_device_notify_event buf : change_device_notify_event =
+    Decode.pad buf 1;
+    let device_id = Decode.byte buf in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time = Xproto.decode_timestamp buf in
+    let request =
+      (Decode.enum ~decode:Decode.u8 ~int_of_t:identity
+         ~enum_of_int:change_device_enum_of_int)
+        buf
+    in
+    Decode.pad buf 23;
+    { device_id; time; request }
+
   type device_key_state_notify_event = {
     device_id : (more_events_mask, byte) alt_mask;
     keys : u8 list;
   }
   [@@deriving sexp]
 
+  let decode_device_key_state_notify_event buf : device_key_state_notify_event =
+    Decode.pad buf 1;
+    let device_id =
+      (Decode.alt_mask Decode.byte char_to_int64 more_events_mask_mask_of_int64)
+        buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let keys = (Decode.list ~item:Decode.u8) ~len:28 buf in
+    { device_id; keys }
+
   type device_button_state_notify_event = {
     device_id : (more_events_mask, byte) alt_mask;
     buttons : u8 list;
   }
   [@@deriving sexp]
+
+  let decode_device_button_state_notify_event buf :
+      device_button_state_notify_event =
+    Decode.pad buf 1;
+    let device_id =
+      (Decode.alt_mask Decode.byte char_to_int64 more_events_mask_mask_of_int64)
+        buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let buttons = (Decode.list ~item:Decode.u8) ~len:28 buf in
+    { device_id; buttons }
 
   type device_change_enum =
     [ `Added
@@ -9972,6 +10914,20 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
+  let decode_device_presence_notify_event buf : device_presence_notify_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let time = Xproto.decode_timestamp buf in
+    let devchange =
+      (Decode.enum ~decode:Decode.byte ~int_of_t:Char.code
+         ~enum_of_int:device_change_enum_of_int)
+        buf
+    in
+    let device_id = Decode.byte buf in
+    let control = Decode.u16 buf in
+    Decode.pad buf 20;
+    { time; devchange; device_id; control }
+
   type device_property_notify_event = {
     state : Xproto.property_enum;
     time : Xproto.timestamp;
@@ -9979,6 +10935,21 @@ module Xinput = struct
     device_id : u8;
   }
   [@@deriving sexp]
+
+  let decode_device_property_notify_event buf : device_property_notify_event =
+    Decode.pad buf 1;
+    let state =
+      (Decode.enum ~decode:Decode.byte ~int_of_t:Char.code
+         ~enum_of_int:Xproto.property_enum_of_int)
+        buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time = Xproto.decode_timestamp buf in
+    let property = Xproto.decode_atom buf in
+    Decode.pad buf 19;
+    let device_id = Decode.u8 buf in
+    { state; time; property; device_id }
 
   type change_reason_enum = [ `Slave_switch | `Device_change ] [@@deriving sexp]
 
@@ -9996,6 +10967,32 @@ module Xinput = struct
     classes : device_class list;
   }
   [@@deriving sexp]
+
+  let decode_device_changed_event buf : device_changed_event =
+    Decode.pad buf 1;
+    let deviceid =
+      (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time =
+      (Decode.alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int)
+        buf
+    in
+    let num_classes = Decode.u16 buf in
+    let sourceid =
+      (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+    in
+    let reason =
+      (Decode.enum ~decode:Decode.u8 ~int_of_t:identity
+         ~enum_of_int:change_reason_enum_of_int)
+        buf
+    in
+    Decode.pad buf 11;
+    let classes =
+      (Decode.list ~item:decode_device_class) ~len:num_classes buf
+    in
+    { deviceid; time; sourceid; reason; classes }
 
   type key_event_flags_mask = [ `Key_repeat ] list [@@deriving sexp]
 
@@ -10019,6 +11016,66 @@ module Xinput = struct
     axisvalues : fp3232 list;
   }
   [@@deriving sexp]
+
+  let decode_key_press_event buf : key_press_event =
+    Decode.pad buf 1;
+    let deviceid =
+      (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time =
+      (Decode.alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int)
+        buf
+    in
+    let detail = Decode.u32 buf in
+    let root = Xproto.decode_window buf in
+    let event = Xproto.decode_window buf in
+    let child = Xproto.decode_window buf in
+    let root_x = decode_fp1616 buf in
+    let root_y = decode_fp1616 buf in
+    let event_x = decode_fp1616 buf in
+    let event_y = decode_fp1616 buf in
+    let buttons_len = Decode.u16 buf in
+    let valuators_len = Decode.u16 buf in
+    let sourceid =
+      (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+    in
+    Decode.pad buf 2;
+    let flags =
+      (Decode.mask Decode.u32 Int64.of_int key_event_flags_mask_of_int64) buf
+    in
+    let mods = decode_modifier_info buf in
+    let group = decode_group_info buf in
+    let button_mask = (Decode.list ~item:Decode.u32) ~len:buttons_len buf in
+    let valuator_mask = (Decode.list ~item:Decode.u32) ~len:valuators_len buf in
+    let axisvalues =
+      (Decode.list ~item:decode_fp3232)
+        ~len:
+          (sum_of_expr
+             (fun list_element_ref -> pop_count list_element_ref)
+             valuator_mask)
+        buf
+    in
+    {
+      deviceid;
+      time;
+      detail;
+      root;
+      event;
+      child;
+      root_x;
+      root_y;
+      event_x;
+      event_y;
+      sourceid;
+      flags;
+      mods;
+      group;
+      button_mask;
+      valuator_mask;
+      axisvalues;
+    }
 
   type key_release_event = key_press_event [@@deriving sexp]
 
@@ -10046,6 +11103,67 @@ module Xinput = struct
     axisvalues : fp3232 list;
   }
   [@@deriving sexp]
+
+  let decode_button_press_event buf : button_press_event =
+    Decode.pad buf 1;
+    let deviceid =
+      (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time =
+      (Decode.alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int)
+        buf
+    in
+    let detail = Decode.u32 buf in
+    let root = Xproto.decode_window buf in
+    let event = Xproto.decode_window buf in
+    let child = Xproto.decode_window buf in
+    let root_x = decode_fp1616 buf in
+    let root_y = decode_fp1616 buf in
+    let event_x = decode_fp1616 buf in
+    let event_y = decode_fp1616 buf in
+    let buttons_len = Decode.u16 buf in
+    let valuators_len = Decode.u16 buf in
+    let sourceid =
+      (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+    in
+    Decode.pad buf 2;
+    let flags =
+      (Decode.mask Decode.u32 Int64.of_int pointer_event_flags_mask_of_int64)
+        buf
+    in
+    let mods = decode_modifier_info buf in
+    let group = decode_group_info buf in
+    let button_mask = (Decode.list ~item:Decode.u32) ~len:buttons_len buf in
+    let valuator_mask = (Decode.list ~item:Decode.u32) ~len:valuators_len buf in
+    let axisvalues =
+      (Decode.list ~item:decode_fp3232)
+        ~len:
+          (sum_of_expr
+             (fun list_element_ref -> pop_count list_element_ref)
+             valuator_mask)
+        buf
+    in
+    {
+      deviceid;
+      time;
+      detail;
+      root;
+      event;
+      child;
+      root_x;
+      root_y;
+      event_x;
+      event_y;
+      sourceid;
+      flags;
+      mods;
+      group;
+      button_mask;
+      valuator_mask;
+      axisvalues;
+    }
 
   type button_release_event = button_press_event [@@deriving sexp]
 
@@ -10118,6 +11236,63 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
+  let decode_enter_event buf : enter_event =
+    Decode.pad buf 1;
+    let deviceid =
+      (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time =
+      (Decode.alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int)
+        buf
+    in
+    let sourceid =
+      (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+    in
+    let mode =
+      (Decode.enum ~decode:Decode.u8 ~int_of_t:identity
+         ~enum_of_int:notify_mode_enum_of_int)
+        buf
+    in
+    let detail =
+      (Decode.enum ~decode:Decode.u8 ~int_of_t:identity
+         ~enum_of_int:notify_detail_enum_of_int)
+        buf
+    in
+    let root = Xproto.decode_window buf in
+    let event = Xproto.decode_window buf in
+    let child = Xproto.decode_window buf in
+    let root_x = decode_fp1616 buf in
+    let root_y = decode_fp1616 buf in
+    let event_x = decode_fp1616 buf in
+    let event_y = decode_fp1616 buf in
+    let same_screen = Decode.bool buf in
+    let focus = Decode.bool buf in
+    let buttons_len = Decode.u16 buf in
+    let mods = decode_modifier_info buf in
+    let group = decode_group_info buf in
+    let buttons = (Decode.list ~item:Decode.u32) ~len:buttons_len buf in
+    {
+      deviceid;
+      time;
+      sourceid;
+      mode;
+      detail;
+      root;
+      event;
+      child;
+      root_x;
+      root_y;
+      event_x;
+      event_y;
+      same_screen;
+      focus;
+      mods;
+      group;
+      buttons;
+    }
+
   type leave_event = enter_event [@@deriving sexp]
 
   let decode_leave_event = decode_enter_event
@@ -10178,6 +11353,25 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
+  let decode_hierarchy_event buf : hierarchy_event =
+    Decode.pad buf 1;
+    let deviceid =
+      (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time =
+      (Decode.alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int)
+        buf
+    in
+    let flags =
+      (Decode.mask Decode.u32 Int64.of_int hierarchy_mask_mask_of_int64) buf
+    in
+    let num_infos = Decode.u16 buf in
+    Decode.pad buf 10;
+    let infos = (Decode.list ~item:decode_hierarchy_info) ~len:num_infos buf in
+    { deviceid; time; flags; infos }
+
   type property_flag_enum = [ `Deleted | `Created | `Modified ]
   [@@deriving sexp]
 
@@ -10196,6 +11390,26 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
+  let decode_property_event buf : property_event =
+    Decode.pad buf 1;
+    let deviceid =
+      (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time =
+      (Decode.alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int)
+        buf
+    in
+    let property = Xproto.decode_atom buf in
+    let what =
+      (Decode.enum ~decode:Decode.u8 ~int_of_t:identity
+         ~enum_of_int:property_flag_enum_of_int)
+        buf
+    in
+    Decode.pad buf 11;
+    { deviceid; time; property; what }
+
   type raw_key_press_event = {
     deviceid : device_enum alt_enum;
     time : Xproto.time_enum alt_enum;
@@ -10207,6 +11421,52 @@ module Xinput = struct
     axisvalues_raw : fp3232 list;
   }
   [@@deriving sexp]
+
+  let decode_raw_key_press_event buf : raw_key_press_event =
+    Decode.pad buf 1;
+    let deviceid =
+      (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time =
+      (Decode.alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int)
+        buf
+    in
+    let detail = Decode.u32 buf in
+    let sourceid = decode_device_id buf in
+    let valuators_len = Decode.u16 buf in
+    let flags =
+      (Decode.mask Decode.u32 Int64.of_int key_event_flags_mask_of_int64) buf
+    in
+    Decode.pad buf 4;
+    let valuator_mask = (Decode.list ~item:Decode.u32) ~len:valuators_len buf in
+    let axisvalues =
+      (Decode.list ~item:decode_fp3232)
+        ~len:
+          (sum_of_expr
+             (fun list_element_ref -> pop_count list_element_ref)
+             valuator_mask)
+        buf
+    in
+    let axisvalues_raw =
+      (Decode.list ~item:decode_fp3232)
+        ~len:
+          (sum_of_expr
+             (fun list_element_ref -> pop_count list_element_ref)
+             valuator_mask)
+        buf
+    in
+    {
+      deviceid;
+      time;
+      detail;
+      sourceid;
+      flags;
+      valuator_mask;
+      axisvalues;
+      axisvalues_raw;
+    }
 
   type raw_key_release_event = raw_key_press_event [@@deriving sexp]
 
@@ -10223,6 +11483,53 @@ module Xinput = struct
     axisvalues_raw : fp3232 list;
   }
   [@@deriving sexp]
+
+  let decode_raw_button_press_event buf : raw_button_press_event =
+    Decode.pad buf 1;
+    let deviceid =
+      (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time =
+      (Decode.alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int)
+        buf
+    in
+    let detail = Decode.u32 buf in
+    let sourceid = decode_device_id buf in
+    let valuators_len = Decode.u16 buf in
+    let flags =
+      (Decode.mask Decode.u32 Int64.of_int pointer_event_flags_mask_of_int64)
+        buf
+    in
+    Decode.pad buf 4;
+    let valuator_mask = (Decode.list ~item:Decode.u32) ~len:valuators_len buf in
+    let axisvalues =
+      (Decode.list ~item:decode_fp3232)
+        ~len:
+          (sum_of_expr
+             (fun list_element_ref -> pop_count list_element_ref)
+             valuator_mask)
+        buf
+    in
+    let axisvalues_raw =
+      (Decode.list ~item:decode_fp3232)
+        ~len:
+          (sum_of_expr
+             (fun list_element_ref -> pop_count list_element_ref)
+             valuator_mask)
+        buf
+    in
+    {
+      deviceid;
+      time;
+      detail;
+      sourceid;
+      flags;
+      valuator_mask;
+      axisvalues;
+      axisvalues_raw;
+    }
 
   type raw_button_release_event = raw_button_press_event [@@deriving sexp]
 
@@ -10257,6 +11564,66 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
+  let decode_touch_begin_event buf : touch_begin_event =
+    Decode.pad buf 1;
+    let deviceid =
+      (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time =
+      (Decode.alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int)
+        buf
+    in
+    let detail = Decode.u32 buf in
+    let root = Xproto.decode_window buf in
+    let event = Xproto.decode_window buf in
+    let child = Xproto.decode_window buf in
+    let root_x = decode_fp1616 buf in
+    let root_y = decode_fp1616 buf in
+    let event_x = decode_fp1616 buf in
+    let event_y = decode_fp1616 buf in
+    let buttons_len = Decode.u16 buf in
+    let valuators_len = Decode.u16 buf in
+    let sourceid =
+      (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+    in
+    Decode.pad buf 2;
+    let flags =
+      (Decode.mask Decode.u32 Int64.of_int touch_event_flags_mask_of_int64) buf
+    in
+    let mods = decode_modifier_info buf in
+    let group = decode_group_info buf in
+    let button_mask = (Decode.list ~item:Decode.u32) ~len:buttons_len buf in
+    let valuator_mask = (Decode.list ~item:Decode.u32) ~len:valuators_len buf in
+    let axisvalues =
+      (Decode.list ~item:decode_fp3232)
+        ~len:
+          (sum_of_expr
+             (fun list_element_ref -> pop_count list_element_ref)
+             valuator_mask)
+        buf
+    in
+    {
+      deviceid;
+      time;
+      detail;
+      root;
+      event;
+      child;
+      root_x;
+      root_y;
+      event_x;
+      event_y;
+      sourceid;
+      flags;
+      mods;
+      group;
+      button_mask;
+      valuator_mask;
+      axisvalues;
+    }
+
   type touch_update_event = touch_begin_event [@@deriving sexp]
 
   let decode_touch_update_event = decode_touch_begin_event
@@ -10284,6 +11651,33 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
+  let decode_touch_ownership_event buf : touch_ownership_event =
+    Decode.pad buf 1;
+    let deviceid =
+      (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time =
+      (Decode.alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int)
+        buf
+    in
+    let touchid = Decode.u32 buf in
+    let root = Xproto.decode_window buf in
+    let event = Xproto.decode_window buf in
+    let child = Xproto.decode_window buf in
+    let sourceid =
+      (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+    in
+    Decode.pad buf 2;
+    let flags =
+      (Decode.enum ~decode:Decode.u32 ~int_of_t:identity
+         ~enum_of_int:touch_ownership_flags_enum_of_int)
+        buf
+    in
+    Decode.pad buf 8;
+    { deviceid; time; touchid; root; event; child; sourceid; flags }
+
   type raw_touch_begin_event = {
     deviceid : device_enum alt_enum;
     time : Xproto.time_enum alt_enum;
@@ -10295,6 +11689,52 @@ module Xinput = struct
     axisvalues_raw : fp3232 list;
   }
   [@@deriving sexp]
+
+  let decode_raw_touch_begin_event buf : raw_touch_begin_event =
+    Decode.pad buf 1;
+    let deviceid =
+      (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time =
+      (Decode.alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int)
+        buf
+    in
+    let detail = Decode.u32 buf in
+    let sourceid = decode_device_id buf in
+    let valuators_len = Decode.u16 buf in
+    let flags =
+      (Decode.mask Decode.u32 Int64.of_int touch_event_flags_mask_of_int64) buf
+    in
+    Decode.pad buf 4;
+    let valuator_mask = (Decode.list ~item:Decode.u32) ~len:valuators_len buf in
+    let axisvalues =
+      (Decode.list ~item:decode_fp3232)
+        ~len:
+          (sum_of_expr
+             (fun list_element_ref -> pop_count list_element_ref)
+             valuator_mask)
+        buf
+    in
+    let axisvalues_raw =
+      (Decode.list ~item:decode_fp3232)
+        ~len:
+          (sum_of_expr
+             (fun list_element_ref -> pop_count list_element_ref)
+             valuator_mask)
+        buf
+    in
+    {
+      deviceid;
+      time;
+      detail;
+      sourceid;
+      flags;
+      valuator_mask;
+      axisvalues;
+      axisvalues_raw;
+    }
 
   type raw_touch_update_event = raw_touch_begin_event [@@deriving sexp]
 
@@ -10323,6 +11763,49 @@ module Xinput = struct
     dy : fp3232;
   }
   [@@deriving sexp]
+
+  let decode_barrier_hit_event buf : barrier_hit_event =
+    Decode.pad buf 1;
+    let deviceid =
+      (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time =
+      (Decode.alt_enum Xproto.decode_timestamp identity Xproto.time_enum_of_int)
+        buf
+    in
+    let eventid = Decode.u32 buf in
+    let root = Xproto.decode_window buf in
+    let event = Xproto.decode_window buf in
+    let barrier = Xfixes.decode_barrier buf in
+    let dtime = Decode.u32 buf in
+    let flags =
+      (Decode.mask Decode.u32 Int64.of_int barrier_flags_mask_of_int64) buf
+    in
+    let sourceid =
+      (Decode.alt_enum decode_device_id identity device_enum_of_int) buf
+    in
+    Decode.pad buf 2;
+    let root_x = decode_fp1616 buf in
+    let root_y = decode_fp1616 buf in
+    let dx = decode_fp3232 buf in
+    let dy = decode_fp3232 buf in
+    {
+      deviceid;
+      time;
+      eventid;
+      root;
+      event;
+      barrier;
+      dtime;
+      flags;
+      sourceid;
+      root_x;
+      root_y;
+      dx;
+      dy;
+    }
 
   type barrier_leave_event = barrier_hit_event [@@deriving sexp]
 
@@ -10576,8 +12059,25 @@ module Xprint = struct
   type notify_event = { detail : u8; context : pcontext; cancel : bool }
   [@@deriving sexp]
 
+  let decode_notify_event buf : notify_event =
+    Decode.pad buf 1;
+    let detail = Decode.u8 buf in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let context = decode_pcontext buf in
+    let cancel = Decode.bool buf in
+    { detail; context; cancel }
+
   type attribut_notify_event = { detail : u8; context : pcontext }
   [@@deriving sexp]
+
+  let decode_attribut_notify_event buf : attribut_notify_event =
+    Decode.pad buf 1;
+    let detail = Decode.u8 buf in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let context = decode_pcontext buf in
+    { detail; context }
 
   type bad_context_error = unit [@@deriving sexp]
   type bad_sequence_error = unit [@@deriving sexp]
@@ -11080,6 +12580,20 @@ module Xv = struct
   }
   [@@deriving sexp]
 
+  let decode_video_notify_event buf : video_notify_event =
+    Decode.pad buf 1;
+    let reason =
+      (Decode.enum ~decode:Decode.byte ~int_of_t:Char.code
+         ~enum_of_int:video_notify_reason_enum_of_int)
+        buf
+    in
+    Decode.pad buf 2;
+    let length = Decode.u32 buf in
+    let time = Xproto.decode_timestamp buf in
+    let drawable = Xproto.decode_drawable buf in
+    let port = decode_port buf in
+    { reason; time; drawable; port }
+
   type port_notify_event = {
     time : Xproto.timestamp;
     port : port;
@@ -11087,6 +12601,15 @@ module Xv = struct
     value : i32;
   }
   [@@deriving sexp]
+
+  let decode_port_notify_event buf : port_notify_event =
+    Decode.pad buf 4;
+    let length = Decode.u32 buf in
+    let time = Xproto.decode_timestamp buf in
+    let port = decode_port buf in
+    let attribute = Xproto.decode_atom buf in
+    let value = Decode.i32 buf in
+    { time; port; attribute; value }
 
   type query_extension_reply = { major : u16; minor : u16 } [@@deriving sexp]
 

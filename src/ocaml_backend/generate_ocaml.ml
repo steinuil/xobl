@@ -458,12 +458,15 @@ module Decode = struct
             let param = e_id ~loc param.ep_name in
             [ `Let (name, [%expr [%e body] ~tag:[%e tag] buf [%e param]]) ]
         | _ -> not_implemented "multiple param_refs")
-    | _ -> []
-  (* | f -> Printf.ksprintf unexpected "field: %s" (show_field f) *)
+    | Field_expr _ -> unexpected "field_expr in decoder"
+    | Field_list { name; length = None; _ } ->
+        Printf.ksprintf unexpected "list field with length = None: %s" name
+    | f -> Printf.ksprintf unexpected "field: %s" (show_field f)
 
   let e_result_fields_record ~loc fields =
     let fields = names_of_visible_fields fields in
     match fields with
+    | [] -> [%expr ()]
     | [ name ] -> e_id ~loc name
     | _ ->
         let fields =
@@ -494,8 +497,8 @@ module Decode = struct
         [%expr fun buf [%p param] : [%t type_] -> [%e fields]]
     | _ -> not_implemented "multiple param_refs"
 
-  let e_reply_fields ~ctx ~loc name fields =
-    let type_ = t_id ~suffix:"reply" ~loc name in
+  let e_response ~suffix ~ctx ~loc name fields =
+    let type_ = t_id ~suffix ~loc name in
     let reply_length_field =
       Field_list_length
         {
@@ -582,9 +585,13 @@ module Decode = struct
     | Error_copy { name; error; _ } ->
         let error = e_ident ~prefix:"decode" ~suffix:"error" ~ctx ~loc error in
         vb ~prefix:"decode" ~suffix:"error" ~loc name error :: []
+    | Event { name = "RedirectNotify"; _ } -> []
+    | Event { name; fields; _ } ->
+        let event = e_response ~suffix:"event" ~ctx ~loc name fields in
+        vb ~prefix:"decode" ~suffix:"event" ~loc name event :: []
     | Request { reply = None; _ } -> []
     | Request { name; reply = Some reply; _ } ->
-        let reply = e_reply_fields ~ctx ~loc name reply in
+        let reply = e_response ~suffix:"reply" ~ctx ~loc name reply in
         vb ~prefix:"decode" ~suffix:"reply" ~loc name reply :: []
     | _ -> not_implemented "declaration"
 
