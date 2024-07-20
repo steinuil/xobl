@@ -100,6 +100,12 @@ let p_id ?prefix ?suffix ~loc name =
   let ident = Ident.snake ?prefix ?suffix name |> with_loc ~loc in
   Ast_helper.Pat.var ~loc ident
 
+let p_int ~loc n =
+  let n = Ast_helper.Const.int n in
+  Ast_helper.Pat.constant ~loc n
+
+let e_variant ~loc name = Ast_helper.Exp.variant ~loc (Ident.caml name) None
+
 let vb ?prefix ?suffix ~loc name expr =
   let name = p_id ?prefix ?suffix ~loc name in
   Ast_helper.Vb.mk ~loc name expr
@@ -499,13 +505,30 @@ module Decode = struct
         [%expr fun buf : [%t type_] -> [%e fields]]
     | [] -> Printf.ksprintf unexpected "reply with no fields: %s" name
 
+  let e_enum_of_int ~loc name items =
+    let type_ = t_id ~suffix:"enum" ~loc name in
+    let items =
+      ListLabels.map items ~f:(fun (name, value) ->
+          Ast_helper.Exp.case
+            (p_int ~loc (Int64.to_int value))
+            (e_variant ~loc name))
+      @ [
+          Ast_helper.Exp.case (Ast_helper.Pat.any ())
+            [%expr failwith ("Invalid enum item:" ^ int_of_string n)];
+        ]
+    in
+    let body = Ast_helper.Exp.match_ ~loc (e_id ~loc "n") items in
+    [%expr fun n : [%t type_] -> [%e body]]
+
   let vb_declaration ~ctx ~loc = function
     | Type_alias { name; type_ } ->
         vb ~prefix:"decode" ~loc name (e_type ~ctx ~loc type_) :: []
     | Struct { name; fields; external_params } ->
         let expr = e_struct ~ctx ~loc name fields external_params in
         vb ~prefix:"decode" ~loc name expr :: []
-        (* | Enum { name; items } -> *)
+    | Enum { name; items } ->
+        let items = e_enum_of_int ~loc name items in
+        vb ~suffix:"enum_of_int" ~loc name items :: []
     | Event_copy { name; event; _ } ->
         let event = e_ident ~prefix:"decode" ~suffix:"event" ~ctx ~loc event in
         vb ~prefix:"decode" ~suffix:"event" ~loc name event :: []

@@ -133,6 +133,16 @@ module Xproto = struct
     | `Direct_color ]
   [@@deriving sexp]
 
+  let visual_class_enum_of_int n : visual_class_enum =
+    match n with
+    | 0 -> `Static_gray
+    | 1 -> `Gray_scale
+    | 2 -> `Static_color
+    | 3 -> `Pseudo_color
+    | 4 -> `True_color
+    | 5 -> `Direct_color
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type visualtype = {
     visual_id : visualid;
     class_ : visual_class_enum;
@@ -208,6 +218,13 @@ module Xproto = struct
 
   type backing_store_enum = [ `Not_useful | `When_mapped | `Always ]
   [@@deriving sexp]
+
+  let backing_store_enum_of_int n : backing_store_enum =
+    match n with
+    | 0 -> `Not_useful
+    | 1 -> `When_mapped
+    | 2 -> `Always
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type screen = {
     root : window;
@@ -337,6 +354,12 @@ module Xproto = struct
 
   type image_order_enum = [ `Lsb_first | `Msb_first ] [@@deriving sexp]
 
+  let image_order_enum_of_int n : image_order_enum =
+    match n with
+    | 0 -> `Lsb_first
+    | 1 -> `Msb_first
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type setup = {
     status : u8;
     protocol_major_version : u16;
@@ -438,6 +461,11 @@ module Xproto = struct
 
   type window_enum = [ `None ] [@@deriving sexp]
 
+  let window_enum_of_int n : window_enum =
+    match n with
+    | 0 -> `None
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type key_press_event = {
     detail : keycode;
     time : timestamp;
@@ -481,6 +509,12 @@ module Xproto = struct
 
   type motion_enum = [ `Normal | `Hint ] [@@deriving sexp]
 
+  let motion_enum_of_int n : motion_enum =
+    match n with
+    | 0 -> `Normal
+    | 1 -> `Hint
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type motion_notify_event = {
     detail : motion_enum;
     time : timestamp;
@@ -507,8 +541,28 @@ module Xproto = struct
     | `None ]
   [@@deriving sexp]
 
+  let notify_detail_enum_of_int n : notify_detail_enum =
+    match n with
+    | 0 -> `Ancestor
+    | 1 -> `Virtual
+    | 2 -> `Inferior
+    | 3 -> `Nonlinear
+    | 4 -> `Nonlinear_virtual
+    | 5 -> `Pointer
+    | 6 -> `Pointer_root
+    | 7 -> `None
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type notify_mode_enum = [ `Normal | `Grab | `Ungrab | `While_grabbed ]
   [@@deriving sexp]
+
+  let notify_mode_enum_of_int n : notify_mode_enum =
+    match n with
+    | 0 -> `Normal
+    | 1 -> `Grab
+    | 2 -> `Ungrab
+    | 3 -> `While_grabbed
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type enter_notify_event = {
     detail : notify_detail_enum;
@@ -575,6 +629,13 @@ module Xproto = struct
   type visibility_enum = [ `Unobscured | `Partially_obscured | `Fully_obscured ]
   [@@deriving sexp]
 
+  let visibility_enum_of_int n : visibility_enum =
+    match n with
+    | 0 -> `Unobscured
+    | 1 -> `Partially_obscured
+    | 2 -> `Fully_obscured
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type visibility_notify_event = { window : window; state : visibility_enum }
   [@@deriving sexp]
 
@@ -636,6 +697,15 @@ module Xproto = struct
   type stack_mode_enum = [ `Above | `Below | `Top_if | `Bottom_if | `Opposite ]
   [@@deriving sexp]
 
+  let stack_mode_enum_of_int n : stack_mode_enum =
+    match n with
+    | 0 -> `Above
+    | 1 -> `Below
+    | 2 -> `Top_if
+    | 3 -> `Bottom_if
+    | 4 -> `Opposite
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type config_window_mask =
     [ `X | `Y | `Width | `Height | `Border_width | `Sibling | `Stack_mode ] list
   [@@deriving sexp]
@@ -667,6 +737,12 @@ module Xproto = struct
 
   type place_enum = [ `On_top | `On_bottom ] [@@deriving sexp]
 
+  let place_enum_of_int n : place_enum =
+    match n with
+    | 0 -> `On_top
+    | 1 -> `On_bottom
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type circulate_notify_event = {
     event : window;
     window : window;
@@ -679,6 +755,12 @@ module Xproto = struct
   let decode_circulate_request_event = decode_circulate_notify_event
 
   type property_enum = [ `New_value | `Delete ] [@@deriving sexp]
+
+  let property_enum_of_int n : property_enum =
+    match n with
+    | 0 -> `New_value
+    | 1 -> `Delete
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type property_notify_event = {
     window : window;
@@ -696,6 +778,11 @@ module Xproto = struct
   [@@deriving sexp]
 
   type time_enum = [ `Current_time ] [@@deriving sexp]
+
+  let time_enum_of_int n : time_enum =
+    match n with
+    | 0 -> `Current_time
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type atom_enum =
     [ `None
@@ -770,6 +857,80 @@ module Xproto = struct
     | `Wm_transient_for ]
   [@@deriving sexp]
 
+  let atom_enum_of_int n : atom_enum =
+    match n with
+    | 0 -> `None
+    | 0 -> `Any
+    | 1 -> `Primary
+    | 2 -> `Secondary
+    | 3 -> `Arc
+    | 4 -> `Atom
+    | 5 -> `Bitmap
+    | 6 -> `Cardinal
+    | 7 -> `Colormap
+    | 8 -> `Cursor
+    | 9 -> `Cut_buffer0
+    | 10 -> `Cut_buffer1
+    | 11 -> `Cut_buffer2
+    | 12 -> `Cut_buffer3
+    | 13 -> `Cut_buffer4
+    | 14 -> `Cut_buffer5
+    | 15 -> `Cut_buffer6
+    | 16 -> `Cut_buffer7
+    | 17 -> `Drawable
+    | 18 -> `Font
+    | 19 -> `Integer
+    | 20 -> `Pixmap
+    | 21 -> `Point
+    | 22 -> `Rectangle
+    | 23 -> `Resource_manager
+    | 24 -> `Rgb_color_map
+    | 25 -> `Rgb_best_map
+    | 26 -> `Rgb_blue_map
+    | 27 -> `Rgb_default_map
+    | 28 -> `Rgb_gray_map
+    | 29 -> `Rgb_green_map
+    | 30 -> `Rgb_red_map
+    | 31 -> `String
+    | 32 -> `Visualid
+    | 33 -> `Window
+    | 34 -> `Wm_command
+    | 35 -> `Wm_hints
+    | 36 -> `Wm_client_machine
+    | 37 -> `Wm_icon_name
+    | 38 -> `Wm_icon_size
+    | 39 -> `Wm_name
+    | 40 -> `Wm_normal_hints
+    | 41 -> `Wm_size_hints
+    | 42 -> `Wm_zoom_hints
+    | 43 -> `Min_space
+    | 44 -> `Norm_space
+    | 45 -> `Max_space
+    | 46 -> `End_space
+    | 47 -> `Superscript_x
+    | 48 -> `Superscript_y
+    | 49 -> `Subscript_x
+    | 50 -> `Subscript_y
+    | 51 -> `Underline_position
+    | 52 -> `Underline_thickness
+    | 53 -> `Strikeout_ascent
+    | 54 -> `Strikeout_descent
+    | 55 -> `Italic_angle
+    | 56 -> `X_height
+    | 57 -> `Quad_width
+    | 58 -> `Weight
+    | 59 -> `Point_size
+    | 60 -> `Resolution
+    | 61 -> `Copyright
+    | 62 -> `Notice
+    | 63 -> `Font_name
+    | 64 -> `Family_name
+    | 65 -> `Full_name
+    | 66 -> `Cap_height
+    | 67 -> `Wm_class
+    | 68 -> `Wm_transient_for
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type selection_request_event = {
     time : time_enum alt_enum;
     owner : window;
@@ -790,7 +951,19 @@ module Xproto = struct
   [@@deriving sexp]
 
   type colormap_state_enum = [ `Uninstalled | `Installed ] [@@deriving sexp]
+
+  let colormap_state_enum_of_int n : colormap_state_enum =
+    match n with
+    | 0 -> `Uninstalled
+    | 1 -> `Installed
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type colormap_enum = [ `None ] [@@deriving sexp]
+
+  let colormap_enum_of_int n : colormap_enum =
+    match n with
+    | 0 -> `None
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type colormap_notify_event = {
     window : window;
@@ -802,6 +975,14 @@ module Xproto = struct
 
   type client_message_data_format_enum = [ `Data8 | `Data16 | `Data32 ]
   [@@deriving sexp]
+
+  let client_message_data_format_enum_of_int n : client_message_data_format_enum
+      =
+    match n with
+    | 8 -> `Data8
+    | 16 -> `Data16
+    | 32 -> `Data32
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type client_message_data_format_variant =
     | Data8 of u8 list
@@ -817,6 +998,13 @@ module Xproto = struct
   [@@deriving sexp]
 
   type mapping_enum = [ `Modifier | `Keyboard | `Pointer ] [@@deriving sexp]
+
+  let mapping_enum_of_int n : mapping_enum =
+    match n with
+    | 0 -> `Modifier
+    | 1 -> `Keyboard
+    | 2 -> `Pointer
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type mapping_notify_event = {
     request : mapping_enum;
@@ -900,6 +1088,13 @@ module Xproto = struct
   type window_class_enum = [ `Copy_from_parent | `Input_output | `Input_only ]
   [@@deriving sexp]
 
+  let window_class_enum_of_int n : window_class_enum =
+    match n with
+    | 0 -> `Copy_from_parent
+    | 1 -> `Input_output
+    | 2 -> `Input_only
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type cw_mask =
     [ `Back_pixmap
     | `Back_pixel
@@ -921,6 +1116,12 @@ module Xproto = struct
 
   type back_pixmap_enum = [ `None | `Parent_relative ] [@@deriving sexp]
 
+  let back_pixmap_enum_of_int n : back_pixmap_enum =
+    match n with
+    | 0 -> `None
+    | 1 -> `Parent_relative
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type gravity_enum =
     [ `Bit_forget
     | `Win_unmap
@@ -936,11 +1137,45 @@ module Xproto = struct
     | `Static ]
   [@@deriving sexp]
 
+  let gravity_enum_of_int n : gravity_enum =
+    match n with
+    | 0 -> `Bit_forget
+    | 0 -> `Win_unmap
+    | 1 -> `North_west
+    | 2 -> `North
+    | 3 -> `North_east
+    | 4 -> `West
+    | 5 -> `Center
+    | 6 -> `East
+    | 7 -> `South_west
+    | 8 -> `South
+    | 9 -> `South_east
+    | 10 -> `Static
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type pixmap_enum = [ `None ] [@@deriving sexp]
+
+  let pixmap_enum_of_int n : pixmap_enum =
+    match n with
+    | 0 -> `None
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type cursor_enum = [ `None ] [@@deriving sexp]
+
+  let cursor_enum_of_int n : cursor_enum =
+    match n with
+    | 0 -> `None
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type map_state_enum = [ `Unmapped | `Unviewable | `Viewable ]
   [@@deriving sexp]
+
+  let map_state_enum_of_int n : map_state_enum =
+    match n with
+    | 0 -> `Unmapped
+    | 1 -> `Unviewable
+    | 2 -> `Viewable
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type get_window_attributes_reply = {
     backing_store : backing_store_enum;
@@ -1028,7 +1263,20 @@ module Xproto = struct
     }
 
   type set_mode_enum = [ `Insert | `Delete ] [@@deriving sexp]
+
+  let set_mode_enum_of_int n : set_mode_enum =
+    match n with
+    | 0 -> `Insert
+    | 1 -> `Delete
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type circulate_enum = [ `Raise_lowest | `Lower_highest ] [@@deriving sexp]
+
+  let circulate_enum_of_int n : circulate_enum =
+    match n with
+    | 0 -> `Raise_lowest
+    | 1 -> `Lower_highest
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type get_geometry_reply = {
     depth : u8;
@@ -1093,7 +1341,20 @@ module Xproto = struct
     { name }
 
   type prop_mode_enum = [ `Replace | `Prepend | `Append ] [@@deriving sexp]
+
+  let prop_mode_enum_of_int n : prop_mode_enum =
+    match n with
+    | 0 -> `Replace
+    | 1 -> `Prepend
+    | 2 -> `Append
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type get_property_type_enum = [ `Any ] [@@deriving sexp]
+
+  let get_property_type_enum_of_int n : get_property_type_enum =
+    match n with
+    | 0 -> `Any
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type get_property_reply = {
     format : u8;
@@ -1139,11 +1400,32 @@ module Xproto = struct
   type send_event_dest_enum = [ `Pointer_window | `Item_focus ]
   [@@deriving sexp]
 
+  let send_event_dest_enum_of_int n : send_event_dest_enum =
+    match n with
+    | 0 -> `Pointer_window
+    | 1 -> `Item_focus
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type grab_mode_enum = [ `Sync | `Async ] [@@deriving sexp]
+
+  let grab_mode_enum_of_int n : grab_mode_enum =
+    match n with
+    | 0 -> `Sync
+    | 1 -> `Async
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type grab_status_enum =
     [ `Success | `Already_grabbed | `Invalid_time | `Not_viewable | `Frozen ]
   [@@deriving sexp]
+
+  let grab_status_enum_of_int n : grab_status_enum =
+    match n with
+    | 0 -> `Success
+    | 1 -> `Already_grabbed
+    | 2 -> `Invalid_time
+    | 3 -> `Not_viewable
+    | 4 -> `Frozen
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type grab_pointer_reply = grab_status_enum [@@deriving sexp]
 
@@ -1161,6 +1443,16 @@ module Xproto = struct
   type button_index_enum = [ `Any | `D1 | `D2 | `D3 | `D4 | `D5 ]
   [@@deriving sexp]
 
+  let button_index_enum_of_int n : button_index_enum =
+    match n with
+    | 0 -> `Any
+    | 1 -> `D1
+    | 2 -> `D2
+    | 3 -> `D3
+    | 4 -> `D4
+    | 5 -> `D5
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type grab_keyboard_reply = grab_status_enum [@@deriving sexp]
 
   let decode_grab_keyboard_reply buf : grab_keyboard_reply =
@@ -1176,6 +1468,11 @@ module Xproto = struct
 
   type grab_enum = [ `Any ] [@@deriving sexp]
 
+  let grab_enum_of_int n : grab_enum =
+    match n with
+    | 0 -> `Any
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type allow_enum =
     [ `Async_pointer
     | `Sync_pointer
@@ -1186,6 +1483,18 @@ module Xproto = struct
     | `Async_both
     | `Sync_both ]
   [@@deriving sexp]
+
+  let allow_enum_of_int n : allow_enum =
+    match n with
+    | 0 -> `Async_pointer
+    | 1 -> `Sync_pointer
+    | 2 -> `Replay_pointer
+    | 3 -> `Async_keyboard
+    | 4 -> `Sync_keyboard
+    | 5 -> `Replay_keyboard
+    | 6 -> `Async_both
+    | 7 -> `Sync_both
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type query_pointer_reply = {
     same_screen : bool;
@@ -1259,6 +1568,14 @@ module Xproto = struct
   type input_focus_enum = [ `None | `Pointer_root | `Parent | `Follow_keyboard ]
   [@@deriving sexp]
 
+  let input_focus_enum_of_int n : input_focus_enum =
+    match n with
+    | 0 -> `None
+    | 1 -> `Pointer_root
+    | 2 -> `Parent
+    | 3 -> `Follow_keyboard
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type get_input_focus_reply = {
     revert_to : input_focus_enum;
     focus : input_focus_enum alt_enum;
@@ -1288,6 +1605,13 @@ module Xproto = struct
     { keys }
 
   type font_draw_enum = [ `Left_to_right | `Right_to_left ] [@@deriving sexp]
+
+  let font_draw_enum_of_int n : font_draw_enum =
+    match n with
+    | 0 -> `Left_to_right
+    | 1 -> `Right_to_left
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type fontprop = { name : atom; value : u32 } [@@deriving sexp]
 
   let decode_fontprop buf : fontprop =
@@ -1557,29 +1881,118 @@ module Xproto = struct
     | `Set ]
   [@@deriving sexp]
 
+  let gx_enum_of_int n : gx_enum =
+    match n with
+    | 0 -> `Clear
+    | 1 -> `And
+    | 2 -> `And_reverse
+    | 3 -> `Copy
+    | 4 -> `And_inverted
+    | 5 -> `Noop
+    | 6 -> `Xor
+    | 7 -> `Or
+    | 8 -> `Nor
+    | 9 -> `Equiv
+    | 10 -> `Invert
+    | 11 -> `Or_reverse
+    | 12 -> `Copy_inverted
+    | 13 -> `Or_inverted
+    | 14 -> `Nand
+    | 15 -> `Set
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type line_style_enum = [ `Solid | `On_off_dash | `Double_dash ]
   [@@deriving sexp]
+
+  let line_style_enum_of_int n : line_style_enum =
+    match n with
+    | 0 -> `Solid
+    | 1 -> `On_off_dash
+    | 2 -> `Double_dash
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type cap_style_enum = [ `Not_last | `Butt | `Round | `Projecting ]
   [@@deriving sexp]
 
+  let cap_style_enum_of_int n : cap_style_enum =
+    match n with
+    | 0 -> `Not_last
+    | 1 -> `Butt
+    | 2 -> `Round
+    | 3 -> `Projecting
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type join_style_enum = [ `Miter | `Round | `Bevel ] [@@deriving sexp]
+
+  let join_style_enum_of_int n : join_style_enum =
+    match n with
+    | 0 -> `Miter
+    | 1 -> `Round
+    | 2 -> `Bevel
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type fill_style_enum = [ `Solid | `Tiled | `Stippled | `Opaque_stippled ]
   [@@deriving sexp]
 
+  let fill_style_enum_of_int n : fill_style_enum =
+    match n with
+    | 0 -> `Solid
+    | 1 -> `Tiled
+    | 2 -> `Stippled
+    | 3 -> `Opaque_stippled
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type fill_rule_enum = [ `Even_odd | `Winding ] [@@deriving sexp]
+
+  let fill_rule_enum_of_int n : fill_rule_enum =
+    match n with
+    | 0 -> `Even_odd
+    | 1 -> `Winding
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type subwindow_mode_enum = [ `Clip_by_children | `Include_inferiors ]
   [@@deriving sexp]
 
+  let subwindow_mode_enum_of_int n : subwindow_mode_enum =
+    match n with
+    | 0 -> `Clip_by_children
+    | 1 -> `Include_inferiors
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type arc_mode_enum = [ `Chord | `Pie_slice ] [@@deriving sexp]
+
+  let arc_mode_enum_of_int n : arc_mode_enum =
+    match n with
+    | 0 -> `Chord
+    | 1 -> `Pie_slice
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type font_enum = [ `None ] [@@deriving sexp]
+
+  let font_enum_of_int n : font_enum =
+    match n with
+    | 0 -> `None
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type clip_ordering_enum = [ `Unsorted | `Y_sorted | `Yx_sorted | `Yx_banded ]
   [@@deriving sexp]
 
+  let clip_ordering_enum_of_int n : clip_ordering_enum =
+    match n with
+    | 0 -> `Unsorted
+    | 1 -> `Y_sorted
+    | 2 -> `Yx_sorted
+    | 3 -> `Yx_banded
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type coord_mode_enum = [ `Origin | `Previous ] [@@deriving sexp]
+
+  let coord_mode_enum_of_int n : coord_mode_enum =
+    match n with
+    | 0 -> `Origin
+    | 1 -> `Previous
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type segment = { x1 : i16; y1 : i16; x2 : i16; y2 : i16 } [@@deriving sexp]
 
   let decode_segment buf : segment =
@@ -1591,8 +2004,22 @@ module Xproto = struct
 
   type poly_shape_enum = [ `Complex | `Nonconvex | `Convex ] [@@deriving sexp]
 
+  let poly_shape_enum_of_int n : poly_shape_enum =
+    match n with
+    | 0 -> `Complex
+    | 1 -> `Nonconvex
+    | 2 -> `Convex
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type image_format_enum = [ `Xy_bitmap | `Xy_pixmap | `Z_pixmap ]
   [@@deriving sexp]
+
+  let image_format_enum_of_int n : image_format_enum =
+    match n with
+    | 0 -> `Xy_bitmap
+    | 1 -> `Xy_pixmap
+    | 2 -> `Z_pixmap
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type get_image_reply = { depth : u8; visual : visualid; data : byte list }
   [@@deriving sexp]
@@ -1608,6 +2035,13 @@ module Xproto = struct
     { depth; visual; data }
 
   type colormap_alloc_enum = [ `None | `All ] [@@deriving sexp]
+
+  let colormap_alloc_enum_of_int n : colormap_alloc_enum =
+    match n with
+    | 0 -> `None
+    | 1 -> `All
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type list_installed_colormaps_reply = colormap list [@@deriving sexp]
 
   let decode_list_installed_colormaps_reply buf : list_installed_colormaps_reply
@@ -1769,6 +2203,13 @@ module Xproto = struct
     [ `Largest_cursor | `Fastest_tile | `Fastest_stipple ]
   [@@deriving sexp]
 
+  let query_shape_of_enum_of_int n : query_shape_of_enum =
+    match n with
+    | 0 -> `Largest_cursor
+    | 1 -> `Fastest_tile
+    | 2 -> `Fastest_stipple
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type query_best_size_reply = { width : u16; height : u16 } [@@deriving sexp]
 
   let decode_query_best_size_reply buf : query_best_size_reply =
@@ -1834,7 +2275,21 @@ module Xproto = struct
   [@@deriving sexp]
 
   type led_mode_enum = [ `Off | `On ] [@@deriving sexp]
+
+  let led_mode_enum_of_int n : led_mode_enum =
+    match n with
+    | 0 -> `Off
+    | 1 -> `On
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type auto_repeat_mode_enum = [ `Off | `On | `Default ] [@@deriving sexp]
+
+  let auto_repeat_mode_enum_of_int n : auto_repeat_mode_enum =
+    match n with
+    | 0 -> `Off
+    | 1 -> `On
+    | 2 -> `Default
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type get_keyboard_control_reply = {
     global_auto_repeat : auto_repeat_mode_enum;
@@ -1892,7 +2347,21 @@ module Xproto = struct
   type blanking_enum = [ `Not_preferred | `Preferred | `Default ]
   [@@deriving sexp]
 
+  let blanking_enum_of_int n : blanking_enum =
+    match n with
+    | 0 -> `Not_preferred
+    | 1 -> `Preferred
+    | 2 -> `Default
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type exposures_enum = [ `Not_allowed | `Allowed | `Default ] [@@deriving sexp]
+
+  let exposures_enum_of_int n : exposures_enum =
+    match n with
+    | 0 -> `Not_allowed
+    | 1 -> `Allowed
+    | 2 -> `Default
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type get_screen_saver_reply = {
     timeout : u16;
@@ -1922,9 +2391,24 @@ module Xproto = struct
 
   type host_mode_enum = [ `Insert | `Delete ] [@@deriving sexp]
 
+  let host_mode_enum_of_int n : host_mode_enum =
+    match n with
+    | 0 -> `Insert
+    | 1 -> `Delete
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type family_enum =
     [ `Internet | `Decnet | `Chaos | `Server_interpreted | `Internet6 ]
   [@@deriving sexp]
+
+  let family_enum_of_int n : family_enum =
+    match n with
+    | 0 -> `Internet
+    | 1 -> `Decnet
+    | 2 -> `Chaos
+    | 5 -> `Server_interpreted
+    | 6 -> `Internet6
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type host = { family : family_enum; address : byte list } [@@deriving sexp]
 
@@ -1941,6 +2425,12 @@ module Xproto = struct
     { family; address }
 
   type access_control_enum = [ `Disable | `Enable ] [@@deriving sexp]
+
+  let access_control_enum_of_int n : access_control_enum =
+    match n with
+    | 0 -> `Disable
+    | 1 -> `Enable
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type list_hosts_reply = { mode : access_control_enum; hosts : host list }
   [@@deriving sexp]
@@ -1962,9 +2452,37 @@ module Xproto = struct
   type close_down_enum = [ `Destroy_all | `Retain_permanent | `Retain_temporary ]
   [@@deriving sexp]
 
+  let close_down_enum_of_int n : close_down_enum =
+    match n with
+    | 0 -> `Destroy_all
+    | 1 -> `Retain_permanent
+    | 2 -> `Retain_temporary
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type kill_enum = [ `All_temporary ] [@@deriving sexp]
+
+  let kill_enum_of_int n : kill_enum =
+    match n with
+    | 0 -> `All_temporary
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type screen_saver_enum = [ `Reset | `Active ] [@@deriving sexp]
+
+  let screen_saver_enum_of_int n : screen_saver_enum =
+    match n with
+    | 0 -> `Reset
+    | 1 -> `Active
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type mapping_status_enum = [ `Success | `Busy | `Failure ] [@@deriving sexp]
+
+  let mapping_status_enum_of_int n : mapping_status_enum =
+    match n with
+    | 0 -> `Success
+    | 1 -> `Busy
+    | 2 -> `Failure
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type set_pointer_mapping_reply = mapping_status_enum [@@deriving sexp]
 
   let decode_set_pointer_mapping_reply buf : set_pointer_mapping_reply =
@@ -1992,6 +2510,18 @@ module Xproto = struct
   type map_index_enum =
     [ `Shift | `Lock | `Control | `D1 | `D2 | `D3 | `D4 | `D5 ]
   [@@deriving sexp]
+
+  let map_index_enum_of_int n : map_index_enum =
+    match n with
+    | 0 -> `Shift
+    | 1 -> `Lock
+    | 2 -> `Control
+    | 3 -> `D1
+    | 4 -> `D2
+    | 5 -> `D3
+    | 6 -> `D4
+    | 7 -> `D5
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type set_modifier_mapping_reply = mapping_status_enum [@@deriving sexp]
 
@@ -2023,7 +2553,19 @@ end
 
 module Render = struct
   type pict_type_enum = [ `Indexed | `Direct ] [@@deriving sexp]
+
+  let pict_type_enum_of_int n : pict_type_enum =
+    match n with
+    | 0 -> `Indexed
+    | 1 -> `Direct
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type picture_enum = [ `None ] [@@deriving sexp]
+
+  let picture_enum_of_int n : picture_enum =
+    match n with
+    | 0 -> `None
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type pict_op_enum =
     [ `Clear
@@ -2081,8 +2623,78 @@ module Render = struct
     | `Hsl_luminosity ]
   [@@deriving sexp]
 
+  let pict_op_enum_of_int n : pict_op_enum =
+    match n with
+    | 0 -> `Clear
+    | 1 -> `Src
+    | 2 -> `Dst
+    | 3 -> `Over
+    | 4 -> `Over_reverse
+    | 5 -> `In
+    | 6 -> `In_reverse
+    | 7 -> `Out
+    | 8 -> `Out_reverse
+    | 9 -> `Atop
+    | 10 -> `Atop_reverse
+    | 11 -> `Xor
+    | 12 -> `Add
+    | 13 -> `Saturate
+    | 16 -> `Disjoint_clear
+    | 17 -> `Disjoint_src
+    | 18 -> `Disjoint_dst
+    | 19 -> `Disjoint_over
+    | 20 -> `Disjoint_over_reverse
+    | 21 -> `Disjoint_in
+    | 22 -> `Disjoint_in_reverse
+    | 23 -> `Disjoint_out
+    | 24 -> `Disjoint_out_reverse
+    | 25 -> `Disjoint_atop
+    | 26 -> `Disjoint_atop_reverse
+    | 27 -> `Disjoint_xor
+    | 32 -> `Conjoint_clear
+    | 33 -> `Conjoint_src
+    | 34 -> `Conjoint_dst
+    | 35 -> `Conjoint_over
+    | 36 -> `Conjoint_over_reverse
+    | 37 -> `Conjoint_in
+    | 38 -> `Conjoint_in_reverse
+    | 39 -> `Conjoint_out
+    | 40 -> `Conjoint_out_reverse
+    | 41 -> `Conjoint_atop
+    | 42 -> `Conjoint_atop_reverse
+    | 43 -> `Conjoint_xor
+    | 48 -> `Multiply
+    | 49 -> `Screen
+    | 50 -> `Overlay
+    | 51 -> `Darken
+    | 52 -> `Lighten
+    | 53 -> `Color_dodge
+    | 54 -> `Color_burn
+    | 55 -> `Hard_light
+    | 56 -> `Soft_light
+    | 57 -> `Difference
+    | 58 -> `Exclusion
+    | 59 -> `Hsl_hue
+    | 60 -> `Hsl_saturation
+    | 61 -> `Hsl_color
+    | 62 -> `Hsl_luminosity
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type poly_edge_enum = [ `Sharp | `Smooth ] [@@deriving sexp]
+
+  let poly_edge_enum_of_int n : poly_edge_enum =
+    match n with
+    | 0 -> `Sharp
+    | 1 -> `Smooth
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type poly_mode_enum = [ `Precise | `Imprecise ] [@@deriving sexp]
+
+  let poly_mode_enum_of_int n : poly_mode_enum =
+    match n with
+    | 0 -> `Precise
+    | 1 -> `Imprecise
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type cp_mask =
     [ `Repeat
@@ -2110,7 +2722,26 @@ module Render = struct
     | `None ]
   [@@deriving sexp]
 
+  let sub_pixel_enum_of_int n : sub_pixel_enum =
+    match n with
+    | 0 -> `Unknown
+    | 1 -> `Horizontal_rgb
+    | 2 -> `Horizontal_bgr
+    | 3 -> `Vertical_rgb
+    | 4 -> `Vertical_bgr
+    | 5 -> `None
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type repeat_enum = [ `None | `Normal | `Pad | `Reflect ] [@@deriving sexp]
+
+  let repeat_enum_of_int n : repeat_enum =
+    match n with
+    | 0 -> `None
+    | 1 -> `Normal
+    | 2 -> `Pad
+    | 3 -> `Reflect
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type glyph = u32 [@@deriving sexp]
 
   let decode_glyph = Decode.u32
@@ -2437,7 +3068,23 @@ module Shape = struct
   type so_enum = [ `Set | `Union | `Intersect | `Subtract | `Invert ]
   [@@deriving sexp]
 
+  let so_enum_of_int n : so_enum =
+    match n with
+    | 0 -> `Set
+    | 1 -> `Union
+    | 2 -> `Intersect
+    | 3 -> `Subtract
+    | 4 -> `Invert
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type sk_enum = [ `Bounding | `Clip | `Input ] [@@deriving sexp]
+
+  let sk_enum_of_int n : sk_enum =
+    match n with
+    | 0 -> `Bounding
+    | 1 -> `Clip
+    | 2 -> `Input
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type notify_event = {
     shape_kind : sk_enum;
@@ -2547,14 +3194,41 @@ module Xfixes = struct
     { major_version; minor_version }
 
   type save_set_mode_enum = [ `Insert | `Delete ] [@@deriving sexp]
+
+  let save_set_mode_enum_of_int n : save_set_mode_enum =
+    match n with
+    | 0 -> `Insert
+    | 1 -> `Delete
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type save_set_target_enum = [ `Nearest | `Root ] [@@deriving sexp]
+
+  let save_set_target_enum_of_int n : save_set_target_enum =
+    match n with
+    | 0 -> `Nearest
+    | 1 -> `Root
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type save_set_mapping_enum = [ `Map | `Unmap ] [@@deriving sexp]
+
+  let save_set_mapping_enum_of_int n : save_set_mapping_enum =
+    match n with
+    | 0 -> `Map
+    | 1 -> `Unmap
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type selection_event_enum =
     [ `Set_selection_owner
     | `Selection_window_destroy
     | `Selection_client_close ]
   [@@deriving sexp]
+
+  let selection_event_enum_of_int n : selection_event_enum =
+    match n with
+    | 0 -> `Set_selection_owner
+    | 1 -> `Selection_window_destroy
+    | 2 -> `Selection_client_close
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type selection_event_mask =
     [ `Set_selection_owner
@@ -2574,6 +3248,12 @@ module Xfixes = struct
   [@@deriving sexp]
 
   type cursor_notify_enum = [ `Display_cursor ] [@@deriving sexp]
+
+  let cursor_notify_enum_of_int n : cursor_notify_enum =
+    match n with
+    | 0 -> `Display_cursor
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type cursor_notify_mask = [ `Display_cursor ] list [@@deriving sexp]
 
   type cursor_notify_event = {
@@ -2619,6 +3299,11 @@ module Xfixes = struct
 
   type bad_region_error = unit [@@deriving sexp]
   type region_enum = [ `None ] [@@deriving sexp]
+
+  let region_enum_of_int n : region_enum =
+    match n with
+    | 0 -> `None
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type fetch_region_reply = {
     extents : Xproto.rectangle;
@@ -2712,6 +3397,12 @@ end
 module Composite = struct
   type redirect_enum = [ `Automatic | `Manual ] [@@deriving sexp]
 
+  let redirect_enum_of_int n : redirect_enum =
+    match n with
+    | 0 -> `Automatic
+    | 1 -> `Manual
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type query_version_reply = { major_version : u32; minor_version : u32 }
   [@@deriving sexp]
 
@@ -2741,6 +3432,14 @@ module Damage = struct
   type report_level_enum =
     [ `Raw_rectangles | `Delta_rectangles | `Bounding_box | `Non_empty ]
   [@@deriving sexp]
+
+  let report_level_enum_of_int n : report_level_enum =
+    match n with
+    | 0 -> `Raw_rectangles
+    | 1 -> `Delta_rectangles
+    | 2 -> `Bounding_box
+    | 3 -> `Non_empty
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type bad_damage_error = unit [@@deriving sexp]
 
@@ -2807,6 +3506,14 @@ module Dpms = struct
 
   type dpms_mode_enum = [ `On | `Standby | `Suspend | `Off ] [@@deriving sexp]
 
+  let dpms_mode_enum_of_int n : dpms_mode_enum =
+    match n with
+    | 0 -> `On
+    | 1 -> `Standby
+    | 2 -> `Suspend
+    | 3 -> `Off
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type info_reply = { power_level : dpms_mode_enum; state : bool }
   [@@deriving sexp]
 
@@ -2838,10 +3545,38 @@ module Dri2 = struct
     | `Buffer_hiz ]
   [@@deriving sexp]
 
+  let attachment_enum_of_int n : attachment_enum =
+    match n with
+    | 0 -> `Buffer_front_left
+    | 1 -> `Buffer_back_left
+    | 2 -> `Buffer_front_right
+    | 3 -> `Buffer_back_right
+    | 4 -> `Buffer_depth
+    | 5 -> `Buffer_stencil
+    | 6 -> `Buffer_accum
+    | 7 -> `Buffer_fake_front_left
+    | 8 -> `Buffer_fake_front_right
+    | 9 -> `Buffer_depth_stencil
+    | 10 -> `Buffer_hiz
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type driver_type_enum = [ `Dri | `Vdpau ] [@@deriving sexp]
+
+  let driver_type_enum_of_int n : driver_type_enum =
+    match n with
+    | 0 -> `Dri
+    | 1 -> `Vdpau
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type event_type_enum = [ `Exchange_complete | `Blit_complete | `Flip_complete ]
   [@@deriving sexp]
+
+  let event_type_enum_of_int n : event_type_enum =
+    match n with
+    | 1 -> `Exchange_complete
+    | 2 -> `Blit_complete
+    | 3 -> `Flip_complete
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type dri2_buffer = {
     attachment : attachment_enum;
@@ -3310,7 +4045,21 @@ module Glx = struct
   [@@deriving sexp]
 
   type pbcet_enum = [ `Damaged | `Saved ] [@@deriving sexp]
+
+  let pbcet_enum_of_int n : pbcet_enum =
+    match n with
+    | 32791 -> `Damaged
+    | 32792 -> `Saved
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type pbcdt_enum = [ `Window | `Pbuffer ] [@@deriving sexp]
+
+  let pbcdt_enum_of_int n : pbcdt_enum =
+    match n with
+    | 32793 -> `Window
+    | 32794 -> `Pbuffer
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type make_current_reply = context_tag [@@deriving sexp]
 
   let decode_make_current_reply buf : make_current_reply =
@@ -3487,6 +4236,14 @@ module Glx = struct
     { ret_val; new_mode; data }
 
   type rm_enum = [ `Gl_render | `Gl_feedback | `Gl_select ] [@@deriving sexp]
+
+  let rm_enum_of_int n : rm_enum =
+    match n with
+    | 7168 -> `Gl_render
+    | 7169 -> `Gl_feedback
+    | 7170 -> `Gl_select
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type finish_reply = unit [@@deriving sexp]
 
   let decode_finish_reply _ : finish_reply = Decode.pad 32
@@ -4220,6 +4977,14 @@ module Randr = struct
     [ `Success | `Invalid_config_time | `Invalid_time | `Failed ]
   [@@deriving sexp]
 
+  let set_config_enum_of_int n : set_config_enum =
+    match n with
+    | 0 -> `Success
+    | 1 -> `Invalid_config_time
+    | 2 -> `Invalid_time
+    | 3 -> `Failed
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type set_screen_config_reply = {
     status : set_config_enum;
     new_timestamp : Xproto.timestamp;
@@ -4423,6 +5188,13 @@ module Randr = struct
 
   type connection_enum = [ `Connected | `Disconnected | `Unknown ]
   [@@deriving sexp]
+
+  let connection_enum_of_int n : connection_enum =
+    match n with
+    | 0 -> `Connected
+    | 1 -> `Disconnected
+    | 2 -> `Unknown
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type get_output_info_reply = {
     status : set_config_enum;
@@ -4949,6 +5721,17 @@ module Randr = struct
     | `Lease ]
   [@@deriving sexp]
 
+  let notify_enum_of_int n : notify_enum =
+    match n with
+    | 0 -> `Crtc_change
+    | 1 -> `Output_change
+    | 2 -> `Output_property
+    | 3 -> `Provider_change
+    | 4 -> `Provider_property
+    | 5 -> `Resource_change
+    | 6 -> `Lease
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type crtc_change = {
     timestamp : Xproto.timestamp;
     window : Xproto.window;
@@ -5193,6 +5976,14 @@ module Sync = struct
   let decode_alarm = Decode.xid
 
   type alarmstate_enum = [ `Active | `Inactive | `Destroyed ] [@@deriving sexp]
+
+  let alarmstate_enum_of_int n : alarmstate_enum =
+    match n with
+    | 0 -> `Active
+    | 1 -> `Inactive
+    | 2 -> `Destroyed
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type counter = xid [@@deriving sexp]
 
   let decode_counter = Decode.xid
@@ -5208,7 +5999,21 @@ module Sync = struct
     | `Negative_comparison ]
   [@@deriving sexp]
 
+  let testtype_enum_of_int n : testtype_enum =
+    match n with
+    | 0 -> `Positive_transition
+    | 1 -> `Negative_transition
+    | 2 -> `Positive_comparison
+    | 3 -> `Negative_comparison
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type valuetype_enum = [ `Absolute | `Relative ] [@@deriving sexp]
+
+  let valuetype_enum_of_int n : valuetype_enum =
+    match n with
+    | 0 -> `Absolute
+    | 1 -> `Relative
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type ca_mask =
     [ `Counter | `Value_type | `Value | `Test_type | `Delta | `Events ] list
@@ -5370,6 +6175,14 @@ module Present = struct
     [ `Configure_notify | `Complete_notify | `Idle_notify | `Redirect_notify ]
   [@@deriving sexp]
 
+  let event_enum_of_int n : event_enum =
+    match n with
+    | 0 -> `Configure_notify
+    | 1 -> `Complete_notify
+    | 2 -> `Idle_notify
+    | 3 -> `Redirect_notify
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type event_mask =
     [ `Configure_notify | `Complete_notify | `Idle_notify | `Redirect_notify ]
     list
@@ -5381,8 +6194,22 @@ module Present = struct
   type capability_mask = [ `Async | `Fence | `Ust ] list [@@deriving sexp]
   type complete_kind_enum = [ `Pixmap | `Notify_msc ] [@@deriving sexp]
 
+  let complete_kind_enum_of_int n : complete_kind_enum =
+    match n with
+    | 0 -> `Pixmap
+    | 1 -> `Notify_msc
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type complete_mode_enum = [ `Copy | `Flip | `Skip | `Suboptimal_copy ]
   [@@deriving sexp]
+
+  let complete_mode_enum_of_int n : complete_mode_enum =
+    match n with
+    | 0 -> `Copy
+    | 1 -> `Flip
+    | 2 -> `Skip
+    | 3 -> `Suboptimal_copy
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type notify = { window : Xproto.window; serial : u32 } [@@deriving sexp]
 
@@ -5556,6 +6383,13 @@ module Record = struct
 
   type cs_enum = [ `Current_clients | `Future_clients | `All_clients ]
   [@@deriving sexp]
+
+  let cs_enum_of_int n : cs_enum =
+    match n with
+    | 1 -> `Current_clients
+    | 2 -> `Future_clients
+    | 3 -> `All_clients
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type client_info = { client_resource : client_spec; ranges : range list }
   [@@deriving sexp]
@@ -5775,8 +6609,24 @@ end
 
 module Screensaver = struct
   type kind_enum = [ `Blanked | `Internal | `External ] [@@deriving sexp]
+
+  let kind_enum_of_int n : kind_enum =
+    match n with
+    | 0 -> `Blanked
+    | 1 -> `Internal
+    | 2 -> `External
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type event_mask = [ `Notify_mask | `Cycle_mask ] list [@@deriving sexp]
   type state_enum = [ `Off | `On | `Cycle | `Disabled ] [@@deriving sexp]
+
+  let state_enum_of_int n : state_enum =
+    match n with
+    | 0 -> `Off
+    | 1 -> `On
+    | 2 -> `Cycle
+    | 3 -> `Disabled
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type query_version_reply = {
     server_major_version : u16;
@@ -6524,11 +7374,37 @@ module Xinput = struct
     | `Is_x_extension_pointer ]
   [@@deriving sexp]
 
+  let device_use_enum_of_int n : device_use_enum =
+    match n with
+    | 0 -> `Is_x_pointer
+    | 1 -> `Is_x_keyboard
+    | 2 -> `Is_x_extension_device
+    | 3 -> `Is_x_extension_keyboard
+    | 4 -> `Is_x_extension_pointer
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type input_class_enum =
     [ `Key | `Button | `Valuator | `Feedback | `Proximity | `Focus | `Other ]
   [@@deriving sexp]
 
+  let input_class_enum_of_int n : input_class_enum =
+    match n with
+    | 0 -> `Key
+    | 1 -> `Button
+    | 2 -> `Valuator
+    | 3 -> `Feedback
+    | 4 -> `Proximity
+    | 5 -> `Focus
+    | 6 -> `Other
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type valuator_mode_enum = [ `Relative | `Absolute ] [@@deriving sexp]
+
+  let valuator_mode_enum_of_int n : valuator_mode_enum =
+    match n with
+    | 0 -> `Relative
+    | 1 -> `Absolute
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type device_info = {
     device_type : Xproto.atom;
@@ -6760,6 +7636,12 @@ module Xinput = struct
   type propagate_mode_enum = [ `Add_to_list | `Delete_from_list ]
   [@@deriving sexp]
 
+  let propagate_mode_enum_of_int n : propagate_mode_enum =
+    match n with
+    | 0 -> `Add_to_list
+    | 1 -> `Delete_from_list
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type get_device_dont_propagate_list_reply = {
     xi_reply_type : u8;
     classes : event_class list;
@@ -6871,6 +7753,11 @@ module Xinput = struct
 
   type modifier_device_enum = [ `Use_x_keyboard ] [@@deriving sexp]
 
+  let modifier_device_enum_of_int n : modifier_device_enum =
+    match n with
+    | 255 -> `Use_x_keyboard
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type device_input_mode_enum =
     [ `Async_this_device
     | `Sync_this_device
@@ -6879,6 +7766,16 @@ module Xinput = struct
     | `Async_all
     | `Sync_all ]
   [@@deriving sexp]
+
+  let device_input_mode_enum_of_int n : device_input_mode_enum =
+    match n with
+    | 0 -> `Async_this_device
+    | 1 -> `Sync_this_device
+    | 2 -> `Replay_this_device
+    | 3 -> `Async_other_devices
+    | 4 -> `Async_all
+    | 5 -> `Sync_all
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type get_device_focus_reply = {
     xi_reply_type : u8;
@@ -6910,6 +7807,16 @@ module Xinput = struct
   type feedback_class_enum =
     [ `Keyboard | `Pointer | `String | `Integer | `Led | `Bell ]
   [@@deriving sexp]
+
+  let feedback_class_enum_of_int n : feedback_class_enum =
+    match n with
+    | 0 -> `Keyboard
+    | 1 -> `Pointer
+    | 2 -> `String
+    | 3 -> `Integer
+    | 4 -> `Led
+    | 5 -> `Bell
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type kbd_feedback_state = {
     class_id : feedback_class_enum;
@@ -7513,6 +8420,15 @@ module Xinput = struct
     [ `Resolution | `Abs_calib | `Core | `Enable | `Abs_area ]
   [@@deriving sexp]
 
+  let device_control_enum_of_int n : device_control_enum =
+    match n with
+    | 1 -> `Resolution
+    | 2 -> `Abs_calib
+    | 3 -> `Core
+    | 4 -> `Enable
+    | 5 -> `Abs_area
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type device_resolution_state = {
     control_id : device_control_enum;
     len : u16;
@@ -7875,6 +8791,13 @@ module Xinput = struct
   type property_format_enum = [ `D8_bits | `D16_bits | `D32_bits ]
   [@@deriving sexp]
 
+  let property_format_enum_of_int n : property_format_enum =
+    match n with
+    | 8 -> `D8_bits
+    | 16 -> `D16_bits
+    | 32 -> `D32_bits
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type property_format_variant =
     | D8_bits of u8 list
     | D16_bits of u16 list
@@ -7905,6 +8828,12 @@ module Xinput = struct
     { xi_reply_type; type_; bytes_after; num_items; device_id; items }
 
   type device_enum = [ `All | `All_master ] [@@deriving sexp]
+
+  let device_enum_of_int n : device_enum =
+    match n with
+    | 0 -> `All
+    | 1 -> `All_master
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type group_info = { base : u8; latched : u8; locked : u8; effective : u8 }
   [@@deriving sexp]
@@ -7977,7 +8906,21 @@ module Xinput = struct
     [ `Add_master | `Remove_master | `Attach_slave | `Detach_slave ]
   [@@deriving sexp]
 
+  let hierarchy_change_type_enum_of_int n : hierarchy_change_type_enum =
+    match n with
+    | 1 -> `Add_master
+    | 2 -> `Remove_master
+    | 3 -> `Attach_slave
+    | 4 -> `Detach_slave
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type change_mode_enum = [ `Attach | `Float ] [@@deriving sexp]
+
+  let change_mode_enum_of_int n : change_mode_enum =
+    match n with
+    | 1 -> `Attach
+    | 2 -> `Float
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type add_master = {
     type_ : hierarchy_change_type_enum;
@@ -8181,6 +9124,15 @@ module Xinput = struct
   type device_class_type_enum = [ `Key | `Button | `Valuator | `Scroll | `Touch ]
   [@@deriving sexp]
 
+  let device_class_type_enum_of_int n : device_class_type_enum =
+    match n with
+    | 0 -> `Key
+    | 1 -> `Button
+    | 2 -> `Valuator
+    | 3 -> `Scroll
+    | 8 -> `Touch
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type device_type_enum =
     [ `Master_pointer
     | `Master_keyboard
@@ -8189,9 +9141,31 @@ module Xinput = struct
     | `Floating_slave ]
   [@@deriving sexp]
 
+  let device_type_enum_of_int n : device_type_enum =
+    match n with
+    | 1 -> `Master_pointer
+    | 2 -> `Master_keyboard
+    | 3 -> `Slave_pointer
+    | 4 -> `Slave_keyboard
+    | 5 -> `Floating_slave
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type scroll_flags_mask = [ `No_emulation | `Preferred ] list [@@deriving sexp]
   type scroll_type_enum = [ `Vertical | `Horizontal ] [@@deriving sexp]
+
+  let scroll_type_enum_of_int n : scroll_type_enum =
+    match n with
+    | 1 -> `Vertical
+    | 2 -> `Horizontal
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type touch_mode_enum = [ `Direct | `Dependent ] [@@deriving sexp]
+
+  let touch_mode_enum_of_int n : touch_mode_enum =
+    match n with
+    | 1 -> `Direct
+    | 2 -> `Dependent
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type button_class = {
     type_ : device_class_type_enum;
@@ -8417,6 +9391,13 @@ module Xinput = struct
     { focus }
 
   type grab_owner_enum = [ `No_owner | `Owner ] [@@deriving sexp]
+
+  let grab_owner_enum_of_int n : grab_owner_enum =
+    match n with
+    | 0 -> `No_owner
+    | 1 -> `Owner
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type xi_grab_device_reply = Xproto.grab_status_enum [@@deriving sexp]
 
   let decode_xi_grab_device_reply buf : xi_grab_device_reply =
@@ -8441,11 +9422,39 @@ module Xinput = struct
     | `Reject_touch ]
   [@@deriving sexp]
 
+  let event_mode_enum_of_int n : event_mode_enum =
+    match n with
+    | 0 -> `Async_device
+    | 1 -> `Sync_device
+    | 2 -> `Replay_device
+    | 3 -> `Async_paired_device
+    | 4 -> `Async_pair
+    | 5 -> `Sync_pair
+    | 6 -> `Accept_touch
+    | 7 -> `Reject_touch
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type grab_mode22_enum = [ `Sync | `Async | `Touch ] [@@deriving sexp]
+
+  let grab_mode22_enum_of_int n : grab_mode22_enum =
+    match n with
+    | 0 -> `Sync
+    | 1 -> `Async
+    | 2 -> `Touch
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type grab_type_enum =
     [ `Button | `Keycode | `Enter | `Focus_in | `Touch_begin ]
   [@@deriving sexp]
+
+  let grab_type_enum_of_int n : grab_type_enum =
+    match n with
+    | 0 -> `Button
+    | 1 -> `Keycode
+    | 2 -> `Enter
+    | 3 -> `Focus_in
+    | 4 -> `Touch_begin
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type modifier_mask = [ `Any ] list [@@deriving sexp]
 
@@ -8630,6 +9639,12 @@ module Xinput = struct
 
   type change_device_enum = [ `New_pointer | `New_keyboard ] [@@deriving sexp]
 
+  let change_device_enum_of_int n : change_device_enum =
+    match n with
+    | 0 -> `New_pointer
+    | 1 -> `New_keyboard
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type change_device_notify_event = {
     device_id : byte;
     time : Xproto.timestamp;
@@ -8658,6 +9673,16 @@ module Xinput = struct
     | `Control_changed ]
   [@@deriving sexp]
 
+  let device_change_enum_of_int n : device_change_enum =
+    match n with
+    | 0 -> `Added
+    | 1 -> `Removed
+    | 2 -> `Enabled
+    | 3 -> `Disabled
+    | 4 -> `Unrecoverable
+    | 5 -> `Control_changed
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type device_presence_notify_event = {
     time : Xproto.timestamp;
     devchange : device_change_enum;
@@ -8675,6 +9700,12 @@ module Xinput = struct
   [@@deriving sexp]
 
   type change_reason_enum = [ `Slave_switch | `Device_change ] [@@deriving sexp]
+
+  let change_reason_enum_of_int n : change_reason_enum =
+    match n with
+    | 1 -> `Slave_switch
+    | 2 -> `Device_change
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type device_changed_event = {
     deviceid : device_enum alt_enum;
@@ -8752,6 +9783,16 @@ module Xinput = struct
     | `Passive_ungrab ]
   [@@deriving sexp]
 
+  let notify_mode_enum_of_int n : notify_mode_enum =
+    match n with
+    | 0 -> `Normal
+    | 1 -> `Grab
+    | 2 -> `Ungrab
+    | 3 -> `While_grabbed
+    | 4 -> `Passive_grab
+    | 5 -> `Passive_ungrab
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type notify_detail_enum =
     [ `Ancestor
     | `Virtual
@@ -8762,6 +9803,18 @@ module Xinput = struct
     | `Pointer_root
     | `None ]
   [@@deriving sexp]
+
+  let notify_detail_enum_of_int n : notify_detail_enum =
+    match n with
+    | 0 -> `Ancestor
+    | 1 -> `Virtual
+    | 2 -> `Inferior
+    | 3 -> `Nonlinear
+    | 4 -> `Nonlinear_virtual
+    | 5 -> `Pointer
+    | 6 -> `Pointer_root
+    | 7 -> `None
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type enter_event = {
     deviceid : device_enum alt_enum;
@@ -8847,6 +9900,13 @@ module Xinput = struct
   type property_flag_enum = [ `Deleted | `Created | `Modified ]
   [@@deriving sexp]
 
+  let property_flag_enum_of_int n : property_flag_enum =
+    match n with
+    | 0 -> `Deleted
+    | 1 -> `Created
+    | 2 -> `Modified
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type property_event = {
     deviceid : device_enum alt_enum;
     time : Xproto.time_enum alt_enum;
@@ -8925,6 +9985,11 @@ module Xinput = struct
   let decode_touch_end_event = decode_touch_begin_event
 
   type touch_ownership_flags_enum = [ `None ] [@@deriving sexp]
+
+  let touch_ownership_flags_enum_of_int n : touch_ownership_flags_enum =
+    match n with
+    | 0 -> `None
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type touch_ownership_event = {
     deviceid : device_enum alt_enum;
@@ -9030,6 +10095,13 @@ module Xprint = struct
   let decode_pcontext = Decode.xid
 
   type get_doc_enum = [ `Finished | `Second_consumer ] [@@deriving sexp]
+
+  let get_doc_enum_of_int n : get_doc_enum =
+    match n with
+    | 0 -> `Finished
+    | 1 -> `Second_consumer
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type ev_mask = [ `Print_mask | `Attribute_mask ] list [@@deriving sexp]
 
   type detail_enum =
@@ -9041,6 +10113,16 @@ module Xprint = struct
     | `End_page_notify ]
   [@@deriving sexp]
 
+  let detail_enum_of_int n : detail_enum =
+    match n with
+    | 1 -> `Start_job_notify
+    | 2 -> `End_job_notify
+    | 3 -> `Start_doc_notify
+    | 4 -> `End_doc_notify
+    | 5 -> `Start_page_notify
+    | 6 -> `End_page_notify
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type attr_enum =
     [ `Job_attr
     | `Doc_attr
@@ -9050,6 +10132,17 @@ module Xprint = struct
     | `Medium_attr
     | `Spooler_attr ]
   [@@deriving sexp]
+
+  let attr_enum_of_int n : attr_enum =
+    match n with
+    | 1 -> `Job_attr
+    | 2 -> `Doc_attr
+    | 3 -> `Page_attr
+    | 4 -> `Printer_attr
+    | 5 -> `Server_attr
+    | 6 -> `Medium_attr
+    | 7 -> `Spooler_attr
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type print_query_version_reply = { major_version : u16; minor_version : u16 }
   [@@deriving sexp]
@@ -9413,6 +10506,13 @@ module Xtest = struct
     { major_version; minor_version }
 
   type cursor_enum = [ `None | `Current ] [@@deriving sexp]
+
+  let cursor_enum_of_int n : cursor_enum =
+    match n with
+    | 0 -> `None
+    | 1 -> `Current
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type compare_cursor_reply = bool [@@deriving sexp]
 
   let decode_compare_cursor_reply buf : compare_cursor_reply =
@@ -9438,15 +10538,44 @@ module Xv = struct
   [@@deriving sexp]
 
   type image_format_info_type_enum = [ `Rgb | `Yuv ] [@@deriving sexp]
+
+  let image_format_info_type_enum_of_int n : image_format_info_type_enum =
+    match n with
+    | 0 -> `Rgb
+    | 1 -> `Yuv
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type image_format_info_format_enum = [ `Packed | `Planar ] [@@deriving sexp]
+
+  let image_format_info_format_enum_of_int n : image_format_info_format_enum =
+    match n with
+    | 0 -> `Packed
+    | 1 -> `Planar
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type attribute_flag_mask = [ `Gettable | `Settable ] list [@@deriving sexp]
 
   type video_notify_reason_enum =
     [ `Started | `Stopped | `Busy | `Preempted | `Hard_error ]
   [@@deriving sexp]
 
+  let video_notify_reason_enum_of_int n : video_notify_reason_enum =
+    match n with
+    | 0 -> `Started
+    | 1 -> `Stopped
+    | 2 -> `Busy
+    | 3 -> `Preempted
+    | 4 -> `Hard_error
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
+
   type scanline_order_enum = [ `Top_to_bottom | `Bottom_to_top ]
   [@@deriving sexp]
+
+  let scanline_order_enum_of_int n : scanline_order_enum =
+    match n with
+    | 0 -> `Top_to_bottom
+    | 1 -> `Bottom_to_top
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type grab_port_status_enum =
     [ `Success
@@ -9456,6 +10585,16 @@ module Xv = struct
     | `Bad_reply
     | `Bad_alloc ]
   [@@deriving sexp]
+
+  let grab_port_status_enum_of_int n : grab_port_status_enum =
+    match n with
+    | 0 -> `Success
+    | 1 -> `Bad_extension
+    | 2 -> `Already_grabbed
+    | 3 -> `Invalid_time
+    | 4 -> `Bad_reply
+    | 5 -> `Bad_alloc
+    | _ -> failwith ("Invalid enum item:" ^ int_of_string n)
 
   type rational = { numerator : i32; denominator : i32 } [@@deriving sexp]
 
