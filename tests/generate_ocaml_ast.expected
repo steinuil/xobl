@@ -1498,6 +1498,7 @@ module Xproto = struct
     Decode.pad buf 4;
     let bad_value = Decode.u32 buf in
     Decode.pad buf 4;
+    Decode.align buf 32;
     bad_value
 
   type value_error = u32 [@@deriving sexp]
@@ -1506,6 +1507,7 @@ module Xproto = struct
     Decode.pad buf 4;
     let bad_value = Decode.u32 buf in
     Decode.pad buf 4;
+    Decode.align buf 32;
     bad_value
 
   type window_error = value_error [@@deriving sexp]
@@ -4566,6 +4568,7 @@ module Glx = struct
     Decode.pad buf 4;
     let bad_value = Decode.u32 buf in
     Decode.pad buf 24;
+    Decode.align buf 32;
     bad_value
 
   type bad_context_error = generic_error [@@deriving sexp]
@@ -6797,6 +6800,7 @@ module Sync = struct
     Decode.pad buf 4;
     let bad_counter = Decode.u32 buf in
     Decode.pad buf 3;
+    Decode.align buf 32;
     bad_counter
 
   type alarm_error = u32 [@@deriving sexp]
@@ -6805,6 +6809,7 @@ module Sync = struct
     Decode.pad buf 4;
     let bad_alarm = Decode.u32 buf in
     Decode.pad buf 3;
+    Decode.align buf 32;
     bad_alarm
 
   type initialize_reply = { major_version : u8; minor_version : u8 }
@@ -7235,6 +7240,7 @@ module Record = struct
   let decode_bad_context_error buf : bad_context_error =
     Decode.pad buf 4;
     let invalid_record = Decode.u32 buf in
+    Decode.align buf 32;
     invalid_record
 
   type query_version_reply = { major_version : u16; minor_version : u16 }

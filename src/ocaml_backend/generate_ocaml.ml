@@ -347,6 +347,7 @@ let rec e_expression ?it ~loc = function
           [%e e_id ~loc field]]
 
 let pad_field size = Field_pad { pad = Pad_bytes size; serialize = false }
+let pad_align size = Field_pad { pad = Pad_align size; serialize = false }
 
 let collapse_padding fields =
   let leftover, fields =
