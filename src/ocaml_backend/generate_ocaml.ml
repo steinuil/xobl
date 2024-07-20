@@ -540,6 +540,7 @@ module Decode = struct
         [%expr fun _ : [%t type_] -> Decode.pad 32]
     | [] -> Printf.ksprintf unexpected "error with no fields: %s" name
     | fields ->
+        (* TODO maybe we should filter out major_opcode and minor_opcode *)
         (* Errors include:
            - a 0x0 byte to indicate that this is an error
            - the error code (1 byte)
