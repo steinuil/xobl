@@ -632,6 +632,9 @@ module Decode = struct
     | Request { name; reply = Some reply; _ } ->
         let reply = e_response ~suffix:"reply" ~ctx ~loc name reply in
         vb ~prefix:"decode" ~suffix:"reply" ~loc name reply :: []
+    | Event_struct _ ->
+        (* Event structs are only for encoding. *)
+        []
     | _ -> not_implemented "declaration"
 
   let stri_declaration ~ctx ~loc decl =
