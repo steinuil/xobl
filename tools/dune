@@ -5,6 +5,12 @@
  (libraries xobl.compiler))
 
 (executable
+ (name compile_ocaml)
+ (modules compile_ocaml)
+ (public_name compile-ocaml)
+ (libraries xobl.compiler xobl.ocaml_backend))
+
+(executable
  (name compile_keysyms)
  (modules compile_keysyms)
  (public_name compile-keysyms)

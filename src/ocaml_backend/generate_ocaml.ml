@@ -541,7 +541,13 @@ module Decode = struct
           pad_field 1 :: first :: pad_field 2 :: length_field :: rest
           |> collapse_padding
         in
-        let fields = e_struct_fields ~ctx ~loc fields in
+        let result = e_result_fields_record ~loc fields in
+        let result =
+          [%expr
+            ignore length;
+            [%e result]]
+        in
+        let fields = e_fields ~ctx ~loc fields result in
         [%expr fun buf : [%t type_] -> [%e fields]]
     | [] -> Printf.ksprintf unexpected "%s with no fields: %s" suffix name
 
@@ -576,7 +582,7 @@ module Decode = struct
             (e_variant ~loc name))
       @ [
           Ast_helper.Exp.case (Ast_helper.Pat.any ())
-            [%expr failwith ("Invalid enum item:" ^ int_of_string n)];
+            [%expr failwith ("Invalid enum item:" ^ string_of_int n)];
         ]
     in
     let body = Ast_helper.Exp.match_ ~loc (e_id ~loc "n") items in
@@ -606,6 +612,7 @@ module Decode = struct
   let vb_declaration ~ctx ~loc = function
     | Type_alias { name; type_ } ->
         vb ~prefix:"decode" ~loc name (e_type ~ctx ~loc type_) :: []
+    | Struct { name = "CHAR2B"; _ } -> []
     | Struct { name; fields; external_params } ->
         let expr = e_struct ~ctx ~loc name fields ~external_params in
         vb ~prefix:"decode" ~loc name expr :: []
