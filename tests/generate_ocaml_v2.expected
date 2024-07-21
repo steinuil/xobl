@@ -25,6 +25,25 @@ module Xproto = struct
   type keycode32 = u32 [@@deriving sexp]
   type button = u8 [@@deriving sexp]
 
+  module Visual_class_enum = struct
+    type t =
+      [ `Static_gray
+      | `Gray_scale
+      | `Static_color
+      | `Pseudo_color
+      | `True_color
+      | `Direct_color ]
+    [@@deriving sexp]
+  end
+
+  module Backing_store_enum = struct
+    type t = [ `Not_useful | `When_mapped | `Always ] [@@deriving sexp]
+  end
+
+  module Image_order_enum = struct
+    type t = [ `Lsb_first | `Msb_first ] [@@deriving sexp]
+  end
+
   module Mod_mask = struct
     include Mask
 
@@ -57,6 +76,10 @@ module Xproto = struct
     let (button5 : t) = of_int64 (Int64.shift_right 1L 12)
   end
 
+  module Window_enum = struct
+    type t = [ `None ] [@@deriving sexp]
+  end
+
   module Button_mask = struct
     include Mask
 
@@ -66,6 +89,37 @@ module Xproto = struct
     let (_4 : t) = of_int64 (Int64.shift_right 1L 11)
     let (_5 : t) = of_int64 (Int64.shift_right 1L 12)
     let (any : t) = of_int64 (Int64.shift_right 1L 15)
+  end
+
+  module Motion_enum = struct
+    type t = [ `Normal | `Hint ] [@@deriving sexp]
+  end
+
+  module Notify_detail_enum = struct
+    type t =
+      [ `Ancestor
+      | `Virtual_
+      | `Inferior
+      | `Nonlinear
+      | `Nonlinear_virtual
+      | `Pointer
+      | `Pointer_root
+      | `None ]
+    [@@deriving sexp]
+  end
+
+  module Notify_mode_enum = struct
+    type t = [ `Normal | `Grab | `Ungrab | `While_grabbed ] [@@deriving sexp]
+  end
+
+  module Visibility_enum = struct
+    type t = [ `Unobscured | `Partially_obscured | `Fully_obscured ]
+    [@@deriving sexp]
+  end
+
+  module Stack_mode_enum = struct
+    type t = [ `Above | `Below | `Top_if | `Bottom_if | `Opposite ]
+    [@@deriving sexp]
   end
 
   module Config_window_mask = struct
@@ -78,6 +132,114 @@ module Xproto = struct
     let (border_width : t) = of_int64 (Int64.shift_right 1L 4)
     let (sibling : t) = of_int64 (Int64.shift_right 1L 5)
     let (stack_mode : t) = of_int64 (Int64.shift_right 1L 6)
+  end
+
+  module Place_enum = struct
+    type t = [ `On_top | `On_bottom ] [@@deriving sexp]
+  end
+
+  module Property_enum = struct
+    type t = [ `New_value | `Delete ] [@@deriving sexp]
+  end
+
+  module Time_enum = struct
+    type t = [ `Current_time ] [@@deriving sexp]
+  end
+
+  module Atom_enum = struct
+    type t =
+      [ `None
+      | `Any
+      | `Primary
+      | `Secondary
+      | `Arc
+      | `Atom
+      | `Bitmap
+      | `Cardinal
+      | `Colormap
+      | `Cursor
+      | `Cut_buffer0
+      | `Cut_buffer1
+      | `Cut_buffer2
+      | `Cut_buffer3
+      | `Cut_buffer4
+      | `Cut_buffer5
+      | `Cut_buffer6
+      | `Cut_buffer7
+      | `Drawable
+      | `Font
+      | `Integer
+      | `Pixmap
+      | `Point
+      | `Rectangle
+      | `Resource_manager
+      | `Rgb_color_map
+      | `Rgb_best_map
+      | `Rgb_blue_map
+      | `Rgb_default_map
+      | `Rgb_gray_map
+      | `Rgb_green_map
+      | `Rgb_red_map
+      | `String
+      | `Visualid
+      | `Window
+      | `Wm_command
+      | `Wm_hints
+      | `Wm_client_machine
+      | `Wm_icon_name
+      | `Wm_icon_size
+      | `Wm_name
+      | `Wm_normal_hints
+      | `Wm_size_hints
+      | `Wm_zoom_hints
+      | `Min_space
+      | `Norm_space
+      | `Max_space
+      | `End_space
+      | `Superscript_x
+      | `Superscript_y
+      | `Subscript_x
+      | `Subscript_y
+      | `Underline_position
+      | `Underline_thickness
+      | `Strikeout_ascent
+      | `Strikeout_descent
+      | `Italic_angle
+      | `X_height
+      | `Quad_width
+      | `Weight
+      | `Point_size
+      | `Resolution
+      | `Copyright
+      | `Notice
+      | `Font_name
+      | `Family_name
+      | `Full_name
+      | `Cap_height
+      | `Wm_class
+      | `Wm_transient_for ]
+    [@@deriving sexp]
+  end
+
+  module Colormap_state_enum = struct
+    type t = [ `Uninstalled | `Installed ] [@@deriving sexp]
+  end
+
+  module Colormap_enum = struct
+    type t = [ `None ] [@@deriving sexp]
+  end
+
+  module Client_message_data_format_enum = struct
+    type t = [ `Data8 | `Data16 | `Data32 ] [@@deriving sexp]
+  end
+
+  module Mapping_enum = struct
+    type t = [ `Modifier | `Keyboard | `Pointer ] [@@deriving sexp]
+  end
+
+  module Window_class_enum = struct
+    type t = [ `Copy_from_parent | `Input_output | `Input_only ]
+    [@@deriving sexp]
   end
 
   module Cw_mask = struct
@@ -98,6 +260,99 @@ module Xproto = struct
     let (dont_propagate : t) = of_int64 (Int64.shift_right 1L 12)
     let (colormap : t) = of_int64 (Int64.shift_right 1L 13)
     let (cursor : t) = of_int64 (Int64.shift_right 1L 14)
+  end
+
+  module Back_pixmap_enum = struct
+    type t = [ `None | `Parent_relative ] [@@deriving sexp]
+  end
+
+  module Gravity_enum = struct
+    type t =
+      [ `Bit_forget
+      | `Win_unmap
+      | `North_west
+      | `North
+      | `North_east
+      | `West
+      | `Center
+      | `East
+      | `South_west
+      | `South
+      | `South_east
+      | `Static ]
+    [@@deriving sexp]
+  end
+
+  module Pixmap_enum = struct
+    type t = [ `None ] [@@deriving sexp]
+  end
+
+  module Cursor_enum = struct
+    type t = [ `None ] [@@deriving sexp]
+  end
+
+  module Map_state_enum = struct
+    type t = [ `Unmapped | `Unviewable | `Viewable ] [@@deriving sexp]
+  end
+
+  module Set_mode_enum = struct
+    type t = [ `Insert | `Delete ] [@@deriving sexp]
+  end
+
+  module Circulate_enum = struct
+    type t = [ `Raise_lowest | `Lower_highest ] [@@deriving sexp]
+  end
+
+  module Prop_mode_enum = struct
+    type t = [ `Replace | `Prepend | `Append ] [@@deriving sexp]
+  end
+
+  module Get_property_type_enum = struct
+    type t = [ `Any ] [@@deriving sexp]
+  end
+
+  module Send_event_dest_enum = struct
+    type t = [ `Pointer_window | `Item_focus ] [@@deriving sexp]
+  end
+
+  module Grab_mode_enum = struct
+    type t = [ `Sync | `Async ] [@@deriving sexp]
+  end
+
+  module Grab_status_enum = struct
+    type t =
+      [ `Success | `Already_grabbed | `Invalid_time | `Not_viewable | `Frozen ]
+    [@@deriving sexp]
+  end
+
+  module Button_index_enum = struct
+    type t = [ `Any | `D1 | `D2 | `D3 | `D4 | `D5 ] [@@deriving sexp]
+  end
+
+  module Grab_enum = struct
+    type t = [ `Any ] [@@deriving sexp]
+  end
+
+  module Allow_enum = struct
+    type t =
+      [ `Async_pointer
+      | `Sync_pointer
+      | `Replay_pointer
+      | `Async_keyboard
+      | `Sync_keyboard
+      | `Replay_keyboard
+      | `Async_both
+      | `Sync_both ]
+    [@@deriving sexp]
+  end
+
+  module Input_focus_enum = struct
+    type t = [ `None | `Pointer_root | `Parent | `Follow_keyboard ]
+    [@@deriving sexp]
+  end
+
+  module Font_draw_enum = struct
+    type t = [ `Left_to_right | `Right_to_left ] [@@deriving sexp]
   end
 
   module Gc_mask = struct
@@ -128,12 +383,92 @@ module Xproto = struct
     let (arc_mode : t) = of_int64 (Int64.shift_right 1L 22)
   end
 
+  module Gx_enum = struct
+    type t =
+      [ `Clear
+      | `And_
+      | `And_reverse
+      | `Copy
+      | `And_inverted
+      | `Noop
+      | `Xor
+      | `Or_
+      | `Nor
+      | `Equiv
+      | `Invert
+      | `Or_reverse
+      | `Copy_inverted
+      | `Or_inverted
+      | `Nand
+      | `Set ]
+    [@@deriving sexp]
+  end
+
+  module Line_style_enum = struct
+    type t = [ `Solid | `On_off_dash | `Double_dash ] [@@deriving sexp]
+  end
+
+  module Cap_style_enum = struct
+    type t = [ `Not_last | `Butt | `Round | `Projecting ] [@@deriving sexp]
+  end
+
+  module Join_style_enum = struct
+    type t = [ `Miter | `Round | `Bevel ] [@@deriving sexp]
+  end
+
+  module Fill_style_enum = struct
+    type t = [ `Solid | `Tiled | `Stippled | `Opaque_stippled ]
+    [@@deriving sexp]
+  end
+
+  module Fill_rule_enum = struct
+    type t = [ `Even_odd | `Winding ] [@@deriving sexp]
+  end
+
+  module Subwindow_mode_enum = struct
+    type t = [ `Clip_by_children | `Include_inferiors ] [@@deriving sexp]
+  end
+
+  module Arc_mode_enum = struct
+    type t = [ `Chord | `Pie_slice ] [@@deriving sexp]
+  end
+
+  module Font_enum = struct
+    type t = [ `None ] [@@deriving sexp]
+  end
+
+  module Clip_ordering_enum = struct
+    type t = [ `Unsorted | `Y_sorted | `Yx_sorted | `Yx_banded ]
+    [@@deriving sexp]
+  end
+
+  module Coord_mode_enum = struct
+    type t = [ `Origin | `Previous ] [@@deriving sexp]
+  end
+
+  module Poly_shape_enum = struct
+    type t = [ `Complex | `Nonconvex | `Convex ] [@@deriving sexp]
+  end
+
+  module Image_format_enum = struct
+    type t = [ `Xy_bitmap | `Xy_pixmap | `Z_pixmap ] [@@deriving sexp]
+  end
+
+  module Colormap_alloc_enum = struct
+    type t = [ `None | `All ] [@@deriving sexp]
+  end
+
   module Color_flag_mask = struct
     include Mask
 
     let (red : t) = of_int64 (Int64.shift_right 1L 0)
     let (green : t) = of_int64 (Int64.shift_right 1L 1)
     let (blue : t) = of_int64 (Int64.shift_right 1L 2)
+  end
+
+  module Query_shape_of_enum = struct
+    type t = [ `Largest_cursor | `Fastest_tile | `Fastest_stipple ]
+    [@@deriving sexp]
   end
 
   module Kb_mask = struct
@@ -148,6 +483,57 @@ module Xproto = struct
     let (key : t) = of_int64 (Int64.shift_right 1L 6)
     let (auto_repeat_mode : t) = of_int64 (Int64.shift_right 1L 7)
   end
+
+  module Led_mode_enum = struct
+    type t = [ `Off | `On ] [@@deriving sexp]
+  end
+
+  module Auto_repeat_mode_enum = struct
+    type t = [ `Off | `On | `Default ] [@@deriving sexp]
+  end
+
+  module Blanking_enum = struct
+    type t = [ `Not_preferred | `Preferred | `Default ] [@@deriving sexp]
+  end
+
+  module Exposures_enum = struct
+    type t = [ `Not_allowed | `Allowed | `Default ] [@@deriving sexp]
+  end
+
+  module Host_mode_enum = struct
+    type t = [ `Insert | `Delete ] [@@deriving sexp]
+  end
+
+  module Family_enum = struct
+    type t = [ `Internet | `Decnet | `Chaos | `Server_interpreted | `Internet6 ]
+    [@@deriving sexp]
+  end
+
+  module Access_control_enum = struct
+    type t = [ `Disable | `Enable ] [@@deriving sexp]
+  end
+
+  module Close_down_enum = struct
+    type t = [ `Destroy_all | `Retain_permanent | `Retain_temporary ]
+    [@@deriving sexp]
+  end
+
+  module Kill_enum = struct
+    type t = [ `All_temporary ] [@@deriving sexp]
+  end
+
+  module Screen_saver_enum = struct
+    type t = [ `Reset | `Active ] [@@deriving sexp]
+  end
+
+  module Mapping_status_enum = struct
+    type t = [ `Success | `Busy | `Failure ] [@@deriving sexp]
+  end
+
+  module Map_index_enum = struct
+    type t = [ `Shift | `Lock | `Control | `D1 | `D2 | `D3 | `D4 | `D5 ]
+    [@@deriving sexp]
+  end
 end
 
 module Render = struct
@@ -156,6 +542,80 @@ module Render = struct
 
     let version = (0, 11)
     let query_name = "RENDER"
+  end
+
+  module Pict_type_enum = struct
+    type t = [ `Indexed | `Direct ] [@@deriving sexp]
+  end
+
+  module Picture_enum = struct
+    type t = [ `None ] [@@deriving sexp]
+  end
+
+  module Pict_op_enum = struct
+    type t =
+      [ `Clear
+      | `Src
+      | `Dst
+      | `Over
+      | `Over_reverse
+      | `In_
+      | `In_reverse
+      | `Out
+      | `Out_reverse
+      | `Atop
+      | `Atop_reverse
+      | `Xor
+      | `Add
+      | `Saturate
+      | `Disjoint_clear
+      | `Disjoint_src
+      | `Disjoint_dst
+      | `Disjoint_over
+      | `Disjoint_over_reverse
+      | `Disjoint_in
+      | `Disjoint_in_reverse
+      | `Disjoint_out
+      | `Disjoint_out_reverse
+      | `Disjoint_atop
+      | `Disjoint_atop_reverse
+      | `Disjoint_xor
+      | `Conjoint_clear
+      | `Conjoint_src
+      | `Conjoint_dst
+      | `Conjoint_over
+      | `Conjoint_over_reverse
+      | `Conjoint_in
+      | `Conjoint_in_reverse
+      | `Conjoint_out
+      | `Conjoint_out_reverse
+      | `Conjoint_atop
+      | `Conjoint_atop_reverse
+      | `Conjoint_xor
+      | `Multiply
+      | `Screen
+      | `Overlay
+      | `Darken
+      | `Lighten
+      | `Color_dodge
+      | `Color_burn
+      | `Hard_light
+      | `Soft_light
+      | `Difference
+      | `Exclusion
+      | `Hsl_hue
+      | `Hsl_saturation
+      | `Hsl_color
+      | `Hsl_luminosity ]
+    [@@deriving sexp]
+  end
+
+  module Poly_edge_enum = struct
+    type t = [ `Sharp | `Smooth ] [@@deriving sexp]
+  end
+
+  module Poly_mode_enum = struct
+    type t = [ `Precise | `Imprecise ] [@@deriving sexp]
   end
 
   module Cp_mask = struct
@@ -176,6 +636,21 @@ module Render = struct
     let (component_alpha : t) = of_int64 (Int64.shift_right 1L 12)
   end
 
+  module Sub_pixel_enum = struct
+    type t =
+      [ `Unknown
+      | `Horizontal_rgb
+      | `Horizontal_bgr
+      | `Vertical_rgb
+      | `Vertical_bgr
+      | `None ]
+    [@@deriving sexp]
+  end
+
+  module Repeat_enum = struct
+    type t = [ `None | `Normal | `Pad | `Reflect ] [@@deriving sexp]
+  end
+
   type glyph = u32 [@@deriving sexp]
   type glyphset = xid [@@deriving sexp]
   type picture = xid [@@deriving sexp]
@@ -193,6 +668,15 @@ module Shape = struct
 
   type op = u8 [@@deriving sexp]
   type kind = u8 [@@deriving sexp]
+
+  module So_enum = struct
+    type t = [ `Set | `Union | `Intersect | `Subtract | `Invert ]
+    [@@deriving sexp]
+  end
+
+  module Sk_enum = struct
+    type t = [ `Bounding | `Clip | `Input ] [@@deriving sexp]
+  end
 end
 
 module Xfixes = struct
@@ -203,12 +687,36 @@ module Xfixes = struct
     let query_name = "XFIXES"
   end
 
+  module Save_set_mode_enum = struct
+    type t = [ `Insert | `Delete ] [@@deriving sexp]
+  end
+
+  module Save_set_target_enum = struct
+    type t = [ `Nearest | `Root ] [@@deriving sexp]
+  end
+
+  module Save_set_mapping_enum = struct
+    type t = [ `Map | `Unmap ] [@@deriving sexp]
+  end
+
+  module Selection_event_enum = struct
+    type t =
+      [ `Set_selection_owner
+      | `Selection_window_destroy
+      | `Selection_client_close ]
+    [@@deriving sexp]
+  end
+
   module Selection_event_mask = struct
     include Mask
 
     let (set_selection_owner : t) = of_int64 (Int64.shift_right 1L 0)
     let (selection_window_destroy : t) = of_int64 (Int64.shift_right 1L 1)
     let (selection_client_close : t) = of_int64 (Int64.shift_right 1L 2)
+  end
+
+  module Cursor_notify_enum = struct
+    type t = [ `Display_cursor ] [@@deriving sexp]
   end
 
   module Cursor_notify_mask = struct
@@ -218,6 +726,11 @@ module Xfixes = struct
   end
 
   type region = xid [@@deriving sexp]
+
+  module Region_enum = struct
+    type t = [ `None ] [@@deriving sexp]
+  end
+
   type barrier = xid [@@deriving sexp]
 
   module Barrier_directions_mask = struct
@@ -237,6 +750,10 @@ module Composite = struct
     let version = (0, 4)
     let query_name = "Composite"
   end
+
+  module Redirect_enum = struct
+    type t = [ `Automatic | `Manual ] [@@deriving sexp]
+  end
 end
 
 module Damage = struct
@@ -248,6 +765,11 @@ module Damage = struct
   end
 
   type damage = xid [@@deriving sexp]
+
+  module Report_level_enum = struct
+    type t = [ `Raw_rectangles | `Delta_rectangles | `Bounding_box | `Non_empty ]
+    [@@deriving sexp]
+  end
 end
 
 module Dpms = struct
@@ -257,6 +779,10 @@ module Dpms = struct
     let version = (0, 0)
     let query_name = "DPMS"
   end
+
+  module Dpms_mode_enum = struct
+    type t = [ `On | `Standby | `Suspend | `Off ] [@@deriving sexp]
+  end
 end
 
 module Dri2 = struct
@@ -265,6 +791,31 @@ module Dri2 = struct
 
     let version = (1, 4)
     let query_name = "DRI2"
+  end
+
+  module Attachment_enum = struct
+    type t =
+      [ `Buffer_front_left
+      | `Buffer_back_left
+      | `Buffer_front_right
+      | `Buffer_back_right
+      | `Buffer_depth
+      | `Buffer_stencil
+      | `Buffer_accum
+      | `Buffer_fake_front_left
+      | `Buffer_fake_front_right
+      | `Buffer_depth_stencil
+      | `Buffer_hiz ]
+    [@@deriving sexp]
+  end
+
+  module Driver_type_enum = struct
+    type t = [ `Dri | `Vdpau ] [@@deriving sexp]
+  end
+
+  module Event_type_enum = struct
+    type t = [ `Exchange_complete | `Blit_complete | `Flip_complete ]
+    [@@deriving sexp]
   end
 end
 
@@ -304,6 +855,18 @@ module Glx = struct
   type float64 = double [@@deriving sexp]
   type bool32 = u32 [@@deriving sexp]
   type context_tag = u32 [@@deriving sexp]
+
+  module Pbcet_enum = struct
+    type t = [ `Damaged | `Saved ] [@@deriving sexp]
+  end
+
+  module Pbcdt_enum = struct
+    type t = [ `Window | `Pbuffer ] [@@deriving sexp]
+  end
+
+  module Rm_enum = struct
+    type t = [ `Gl_render | `Gl_feedback | `Gl_select ] [@@deriving sexp]
+  end
 end
 
 module Randr = struct
@@ -329,6 +892,11 @@ module Randr = struct
     let (rotate_270 : t) = of_int64 (Int64.shift_right 1L 3)
     let (reflect_x : t) = of_int64 (Int64.shift_right 1L 4)
     let (reflect_y : t) = of_int64 (Int64.shift_right 1L 5)
+  end
+
+  module Set_config_enum = struct
+    type t = [ `Success | `Invalid_config_time | `Invalid_time | `Failed ]
+    [@@deriving sexp]
   end
 
   module Notify_mask = struct
@@ -363,6 +931,10 @@ module Randr = struct
     let (halve_clock : t) = of_int64 (Int64.shift_right 1L 13)
   end
 
+  module Connection_enum = struct
+    type t = [ `Connected | `Disconnected | `Unknown ] [@@deriving sexp]
+  end
+
   module Transform_mask = struct
     include Mask
 
@@ -380,6 +952,18 @@ module Randr = struct
     let (source_offload : t) = of_int64 (Int64.shift_right 1L 2)
     let (sink_offload : t) = of_int64 (Int64.shift_right 1L 3)
   end
+
+  module Notify_enum = struct
+    type t =
+      [ `Crtc_change
+      | `Output_change
+      | `Output_property
+      | `Provider_change
+      | `Provider_property
+      | `Resource_change
+      | `Lease ]
+    [@@deriving sexp]
+  end
 end
 
 module Sync = struct
@@ -391,8 +975,26 @@ module Sync = struct
   end
 
   type alarm = xid [@@deriving sexp]
+
+  module Alarmstate_enum = struct
+    type t = [ `Active | `Inactive | `Destroyed ] [@@deriving sexp]
+  end
+
   type counter = xid [@@deriving sexp]
   type fence = xid [@@deriving sexp]
+
+  module Testtype_enum = struct
+    type t =
+      [ `Positive_transition
+      | `Negative_transition
+      | `Positive_comparison
+      | `Negative_comparison ]
+    [@@deriving sexp]
+  end
+
+  module Valuetype_enum = struct
+    type t = [ `Absolute | `Relative ] [@@deriving sexp]
+  end
 
   module Ca_mask = struct
     include Mask
@@ -412,6 +1014,20 @@ module Present = struct
 
     let version = (1, 2)
     let query_name = "Present"
+  end
+
+  module Event_enum = struct
+    type t =
+      [ `Configure_notify | `Complete_notify | `Idle_notify | `Redirect_notify ]
+    [@@deriving sexp]
+  end
+
+  module Complete_kind_enum = struct
+    type t = [ `Pixmap | `Notify_msc ] [@@deriving sexp]
+  end
+
+  module Complete_mode_enum = struct
+    type t = [ `Copy | `Flip | `Skip | `Suboptimal_copy ] [@@deriving sexp]
   end
 
   type event = xid [@@deriving sexp]
@@ -437,6 +1053,11 @@ module Record = struct
   end
 
   type client_spec = u32 [@@deriving sexp]
+
+  module Cs_enum = struct
+    type t = [ `Current_clients | `Future_clients | `All_clients ]
+    [@@deriving sexp]
+  end
 end
 
 module Res = struct
@@ -463,11 +1084,19 @@ module Screensaver = struct
     let query_name = "MIT-SCREEN-SAVER"
   end
 
+  module Kind_enum = struct
+    type t = [ `Blanked | `Internal | `External_ ] [@@deriving sexp]
+  end
+
   module Event_mask = struct
     include Mask
 
     let (notify_mask : t) = of_int64 (Int64.shift_right 1L 0)
     let (cycle_mask : t) = of_int64 (Int64.shift_right 1L 1)
+  end
+
+  module State_enum = struct
+    type t = [ `Off | `On | `Cycle | `Disabled ] [@@deriving sexp]
   end
 end
 
@@ -564,7 +1193,52 @@ module Xinput = struct
   type key_code = u8 [@@deriving sexp]
   type device_id = u16 [@@deriving sexp]
   type fp1616 = i32 [@@deriving sexp]
+
+  module Device_use_enum = struct
+    type t =
+      [ `Is_x_pointer
+      | `Is_x_keyboard
+      | `Is_x_extension_device
+      | `Is_x_extension_keyboard
+      | `Is_x_extension_pointer ]
+    [@@deriving sexp]
+  end
+
+  module Input_class_enum = struct
+    type t =
+      [ `Key | `Button | `Valuator | `Feedback | `Proximity | `Focus | `Other ]
+    [@@deriving sexp]
+  end
+
+  module Valuator_mode_enum = struct
+    type t = [ `Relative | `Absolute ] [@@deriving sexp]
+  end
+
   type event_type_base = u8 [@@deriving sexp]
+
+  module Propagate_mode_enum = struct
+    type t = [ `Add_to_list | `Delete_from_list ] [@@deriving sexp]
+  end
+
+  module Modifier_device_enum = struct
+    type t = [ `Use_x_keyboard ] [@@deriving sexp]
+  end
+
+  module Device_input_mode_enum = struct
+    type t =
+      [ `Async_this_device
+      | `Sync_this_device
+      | `Replay_this_device
+      | `Async_other_devices
+      | `Async_all
+      | `Sync_all ]
+    [@@deriving sexp]
+  end
+
+  module Feedback_class_enum = struct
+    type t = [ `Keyboard | `Pointer | `String | `Integer | `Led | `Bell ]
+    [@@deriving sexp]
+  end
 
   module Change_feedback_control_mask = struct
     include Mask
@@ -589,6 +1263,28 @@ module Xinput = struct
 
     let (device_mode_absolute : t) = of_int64 (Int64.shift_right 1L 0)
     let (out_of_proximity : t) = of_int64 (Int64.shift_right 1L 1)
+  end
+
+  module Device_control_enum = struct
+    type t = [ `Resolution | `Abs_calib | `Core | `Enable | `Abs_area ]
+    [@@deriving sexp]
+  end
+
+  module Property_format_enum = struct
+    type t = [ `D8_bits | `D16_bits | `D32_bits ] [@@deriving sexp]
+  end
+
+  module Device_enum = struct
+    type t = [ `All | `All_master ] [@@deriving sexp]
+  end
+
+  module Hierarchy_change_type_enum = struct
+    type t = [ `Add_master | `Remove_master | `Attach_slave | `Detach_slave ]
+    [@@deriving sexp]
+  end
+
+  module Change_mode_enum = struct
+    type t = [ `Attach | `Float ] [@@deriving sexp]
   end
 
   module Xi_event_mask = struct
@@ -622,11 +1318,59 @@ module Xinput = struct
     let (barrier_leave : t) = of_int64 (Int64.shift_right 1L 26)
   end
 
+  module Device_class_type_enum = struct
+    type t = [ `Key | `Button | `Valuator | `Scroll | `Touch ] [@@deriving sexp]
+  end
+
+  module Device_type_enum = struct
+    type t =
+      [ `Master_pointer
+      | `Master_keyboard
+      | `Slave_pointer
+      | `Slave_keyboard
+      | `Floating_slave ]
+    [@@deriving sexp]
+  end
+
   module Scroll_flags_mask = struct
     include Mask
 
     let (no_emulation : t) = of_int64 (Int64.shift_right 1L 0)
     let (preferred : t) = of_int64 (Int64.shift_right 1L 1)
+  end
+
+  module Scroll_type_enum = struct
+    type t = [ `Vertical | `Horizontal ] [@@deriving sexp]
+  end
+
+  module Touch_mode_enum = struct
+    type t = [ `Direct | `Dependent ] [@@deriving sexp]
+  end
+
+  module Grab_owner_enum = struct
+    type t = [ `No_owner | `Owner ] [@@deriving sexp]
+  end
+
+  module Event_mode_enum = struct
+    type t =
+      [ `Async_device
+      | `Sync_device
+      | `Replay_device
+      | `Async_paired_device
+      | `Async_pair
+      | `Sync_pair
+      | `Accept_touch
+      | `Reject_touch ]
+    [@@deriving sexp]
+  end
+
+  module Grab_mode22_enum = struct
+    type t = [ `Sync | `Async | `Touch ] [@@deriving sexp]
+  end
+
+  module Grab_type_enum = struct
+    type t = [ `Button | `Keycode | `Enter | `Focus_in | `Touch_begin ]
+    [@@deriving sexp]
   end
 
   module Modifier_mask = struct
@@ -651,6 +1395,25 @@ module Xinput = struct
     let (reporting_keys : t) = of_int64 (Int64.shift_right 1L 0)
   end
 
+  module Change_device_enum = struct
+    type t = [ `New_pointer | `New_keyboard ] [@@deriving sexp]
+  end
+
+  module Device_change_enum = struct
+    type t =
+      [ `Added
+      | `Removed
+      | `Enabled
+      | `Disabled
+      | `Unrecoverable
+      | `Control_changed ]
+    [@@deriving sexp]
+  end
+
+  module Change_reason_enum = struct
+    type t = [ `Slave_switch | `Device_change ] [@@deriving sexp]
+  end
+
   module Key_event_flags_mask = struct
     include Mask
 
@@ -661,6 +1424,30 @@ module Xinput = struct
     include Mask
 
     let (pointer_emulated : t) = of_int64 (Int64.shift_right 1L 16)
+  end
+
+  module Notify_mode_enum = struct
+    type t =
+      [ `Normal
+      | `Grab
+      | `Ungrab
+      | `While_grabbed
+      | `Passive_grab
+      | `Passive_ungrab ]
+    [@@deriving sexp]
+  end
+
+  module Notify_detail_enum = struct
+    type t =
+      [ `Ancestor
+      | `Virtual_
+      | `Inferior
+      | `Nonlinear
+      | `Nonlinear_virtual
+      | `Pointer
+      | `Pointer_root
+      | `None ]
+    [@@deriving sexp]
   end
 
   module Hierarchy_mask = struct
@@ -676,11 +1463,19 @@ module Xinput = struct
     let (device_disabled : t) = of_int64 (Int64.shift_right 1L 7)
   end
 
+  module Property_flag_enum = struct
+    type t = [ `Deleted | `Created | `Modified ] [@@deriving sexp]
+  end
+
   module Touch_event_flags_mask = struct
     include Mask
 
     let (touch_pending_end : t) = of_int64 (Int64.shift_right 1L 16)
     let (touch_emulating_pointer : t) = of_int64 (Int64.shift_right 1L 17)
+  end
+
+  module Touch_ownership_flags_enum = struct
+    type t = [ `None ] [@@deriving sexp]
   end
 
   module Barrier_flags_mask = struct
@@ -701,6 +1496,33 @@ module Xprint = struct
 
   type string8 = char [@@deriving sexp]
   type pcontext = xid [@@deriving sexp]
+
+  module Get_doc_enum = struct
+    type t = [ `Finished | `Second_consumer ] [@@deriving sexp]
+  end
+
+  module Detail_enum = struct
+    type t =
+      [ `Start_job_notify
+      | `End_job_notify
+      | `Start_doc_notify
+      | `End_doc_notify
+      | `Start_page_notify
+      | `End_page_notify ]
+    [@@deriving sexp]
+  end
+
+  module Attr_enum = struct
+    type t =
+      [ `Job_attr
+      | `Doc_attr
+      | `Page_attr
+      | `Printer_attr
+      | `Server_attr
+      | `Medium_attr
+      | `Spooler_attr ]
+    [@@deriving sexp]
+  end
 end
 
 module Xselinux = struct
@@ -718,6 +1540,10 @@ module Xtest = struct
 
     let version = (2, 2)
     let query_name = "XTEST"
+  end
+
+  module Cursor_enum = struct
+    type t = [ `None | `Current ] [@@deriving sexp]
   end
 end
 
@@ -742,11 +1568,39 @@ module Xv = struct
     let (image_mask : t) = of_int64 (Int64.shift_right 1L 4)
   end
 
+  module Image_format_info_type_enum = struct
+    type t = [ `Rgb | `Yuv ] [@@deriving sexp]
+  end
+
+  module Image_format_info_format_enum = struct
+    type t = [ `Packed | `Planar ] [@@deriving sexp]
+  end
+
   module Attribute_flag_mask = struct
     include Mask
 
     let (gettable : t) = of_int64 (Int64.shift_right 1L 0)
     let (settable : t) = of_int64 (Int64.shift_right 1L 1)
+  end
+
+  module Video_notify_reason_enum = struct
+    type t = [ `Started | `Stopped | `Busy | `Preempted | `Hard_error ]
+    [@@deriving sexp]
+  end
+
+  module Scanline_order_enum = struct
+    type t = [ `Top_to_bottom | `Bottom_to_top ] [@@deriving sexp]
+  end
+
+  module Grab_port_status_enum = struct
+    type t =
+      [ `Success
+      | `Bad_extension
+      | `Already_grabbed
+      | `Invalid_time
+      | `Bad_reply
+      | `Bad_alloc ]
+    [@@deriving sexp]
   end
 end
 

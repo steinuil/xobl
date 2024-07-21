@@ -161,12 +161,13 @@ module Type = struct
   let t_field_type ~ctx ~loc { ft_type; ft_allowed } =
     match ft_allowed with
     | None -> t_type ~ctx ~loc ft_type
-    | Some (Allowed_enum enum) -> t_ident ~suffix:"enum" ~ctx ~loc enum
+    | Some (Allowed_enum enum) ->
+        t_module_ident ~suffix:"enum" ~ctx ~loc enum "t"
     | Some (Allowed_mask mask) ->
         t_module_ident ~suffix:"mask" ~ctx ~loc mask "t"
     | Some (Allowed_alt_enum enum) ->
         let type_ = t_type ~ctx ~loc ft_type in
-        let enum = t_ident ~suffix:"enum" ~ctx ~loc enum in
+        let enum = t_module_ident ~suffix:"enum" ~ctx ~loc enum "t" in
         [%type: [ [%t enum] | [%t type_] alt ]]
     | _ -> failwith "a"
 
@@ -184,6 +185,13 @@ module Type = struct
     let decl = { td with ptype_attributes = [ a_deriving_sexp ~loc ] } in
     Ast_helper.Str.type_ ~loc Recursive [ decl ]
 
+  let stri_module ?suffix ~loc name body =
+    let name = Ident.caml ?suffix name in
+    Ast_helper.Str.module_ ~loc
+      (Ast_helper.Mb.mk ~loc
+         (Some name |> with_loc ~loc)
+         (Ast_helper.Mod.structure ~loc body))
+
   let rf_enum_item ~loc (name, _) =
     let name = Ident.caml name |> with_loc ~loc in
     Ast_helper.Rf.mk ~loc (Rtag (name, true, []))
@@ -197,19 +205,22 @@ module Type = struct
         |> Option.some
     | _ -> None
 
+  let stri_enum ~loc = function
+    | Enum { name; items } ->
+        let body = td_type ~loc "t" (t_enum_items ~loc items) in
+        stri_module ~loc ~suffix:"enum" name [ stri_td ~loc body ]
+        |> Option.some
+    | _ -> None
+
   let stri_mask ~loc = function
     | Mask { name; items; additional_values = Additional_values [] } ->
-        let name = Ident.caml ~suffix:"mask" name in
         let body =
           ListLabels.map items ~f:(fun (name, value) ->
               [%stri
                 let [%p p_id ~loc name] : t =
                   of_int64 (Int64.shift_right 1L [%e e_int ~loc value])])
         in
-        Ast_helper.Str.module_ ~loc
-          (Ast_helper.Mb.mk ~loc
-             (Some name |> with_loc ~loc)
-             (Ast_helper.Mod.structure ~loc ([%stri include Mask] :: body)))
+        stri_module ~loc ~suffix:"mask" name ([%stri include Mask] :: body)
         |> Option.some
     | _ -> None
 
@@ -217,7 +228,7 @@ module Type = struct
     let type_decl =
       td_type_declaration ~ctx ~loc decl |> Option.map (stri_td ~loc)
     in
-    let enum_decl = td_enum ~loc decl |> Option.map (stri_td ~loc) in
+    let enum_decl = stri_enum ~loc decl in
     let mask_decl = stri_mask ~loc decl in
     List.filter_map Fun.id [ type_decl; enum_decl; mask_decl ]
 
