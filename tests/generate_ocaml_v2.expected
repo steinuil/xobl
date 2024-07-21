@@ -8,6 +8,7 @@ module Bigreq = struct
 end
 
 module Xproto = struct
+  type char2b = { byte1 : u8; byte2 : u8 } [@@deriving sexp]
   type window = xid [@@deriving sexp]
   type pixmap = xid [@@deriving sexp]
   type cursor = xid [@@deriving sexp]
@@ -24,6 +25,23 @@ module Xproto = struct
   type keycode = u8 [@@deriving sexp]
   type keycode32 = u32 [@@deriving sexp]
   type button = u8 [@@deriving sexp]
+  type point = { x : i16; y : i16 } [@@deriving sexp]
+
+  type rectangle = { x : i16; y : i16; width : u16; height : u16 }
+  [@@deriving sexp]
+
+  type arc = {
+    x : i16;
+    y : i16;
+    width : u16;
+    height : u16;
+    angle1 : i16;
+    angle2 : i16;
+  }
+  [@@deriving sexp]
+
+  type format = { depth : u8; bits_per_pixel : u8; scanline_pad : u8 }
+  [@@deriving sexp]
 
   module Visual_class_enum = struct
     type t =
@@ -36,13 +54,88 @@ module Xproto = struct
     [@@deriving sexp]
   end
 
+  type visualtype = {
+    visual_id : visualid;
+    class_ : Visual_class_enum.t;
+    bits_per_rgb_value : u8;
+    colormap_entries : u16;
+    red_mask : u32;
+    green_mask : u32;
+    blue_mask : u32;
+  }
+  [@@deriving sexp]
+
+  type depth = { depth : u8; visuals : visualtype list } [@@deriving sexp]
+
   module Backing_store_enum = struct
     type t = [ `Not_useful | `When_mapped | `Always ] [@@deriving sexp]
   end
 
+  type screen = {
+    root : window;
+    default_colormap : colormap;
+    white_pixel : u32;
+    black_pixel : u32;
+    current_input_masks : Event_mask.t;
+    width_in_pixels : u16;
+    height_in_pixels : u16;
+    width_in_millimeters : u16;
+    height_in_millimeters : u16;
+    min_installed_maps : u16;
+    max_installed_maps : u16;
+    root_visual : visualid;
+    backing_stores : Backing_store_enum.t;
+    save_unders : bool;
+    root_depth : u8;
+    allowed_depths : depth list;
+  }
+  [@@deriving sexp]
+
+  type setup_request = {
+    byte_order : u8;
+    protocol_major_version : u16;
+    protocol_minor_version : u16;
+    authorization_protocol_name : string;
+    authorization_protocol_data : string;
+  }
+  [@@deriving sexp]
+
+  type setup_failed = {
+    status : u8;
+    protocol_major_version : u16;
+    protocol_minor_version : u16;
+    length : u16;
+    reason : string;
+  }
+  [@@deriving sexp]
+
+  type setup_authenticate = { status : u8; reason : string } [@@deriving sexp]
+
   module Image_order_enum = struct
     type t = [ `Lsb_first | `Msb_first ] [@@deriving sexp]
   end
+
+  type setup = {
+    status : u8;
+    protocol_major_version : u16;
+    protocol_minor_version : u16;
+    length : u16;
+    release_number : u32;
+    resource_id_base : u32;
+    resource_id_mask : u32;
+    motion_buffer_size : u32;
+    maximum_request_length : u16;
+    image_byte_order : Image_order_enum.t;
+    bitmap_format_bit_order : Image_order_enum.t;
+    bitmap_format_scanline_unit : u8;
+    bitmap_format_scanline_pad : u8;
+    min_keycode : keycode;
+    max_keycode : keycode;
+    vendor : string;
+    pixmap_formats : format list;
+    roots : screen list;
+  }
+  [@@deriving sexp]
 
   module Mod_mask = struct
     include Mask
@@ -346,6 +439,8 @@ module Xproto = struct
     [@@deriving sexp]
   end
 
+  type timecoord = { time : timestamp; x : i16; y : i16 } [@@deriving sexp]
+
   module Input_focus_enum = struct
     type t = [ `None | `Pointer_root | `Parent | `Follow_keyboard ]
     [@@deriving sexp]
@@ -354,6 +449,20 @@ module Xproto = struct
   module Font_draw_enum = struct
     type t = [ `Left_to_right | `Right_to_left ] [@@deriving sexp]
   end
+
+  type fontprop = { name : atom; value : u32 } [@@deriving sexp]
+
+  type charinfo = {
+    left_side_bearing : i16;
+    right_side_bearing : i16;
+    character_width : i16;
+    ascent : i16;
+    descent : i16;
+    attributes : u16;
+  }
+  [@@deriving sexp]
+
+  type str = string [@@deriving sexp]
 
   module Gc_mask = struct
     include Mask
@@ -446,6 +555,8 @@ module Xproto = struct
     type t = [ `Origin | `Previous ] [@@deriving sexp]
   end
 
+  type segment = { x1 : i16; y1 : i16; x2 : i16; y2 : i16 } [@@deriving sexp]
+
   module Poly_shape_enum = struct
     type t = [ `Complex | `Nonconvex | `Convex ] [@@deriving sexp]
   end
@@ -465,6 +576,17 @@ module Xproto = struct
     let (green : t) = of_int64 (Int64.shift_right 1L 1)
     let (blue : t) = of_int64 (Int64.shift_right 1L 2)
   end
+
+  type coloritem = {
+    pixel : u32;
+    red : u16;
+    green : u16;
+    blue : u16;
+    flags : Color_flag_mask.t;
+  }
+  [@@deriving sexp]
+
+  type rgb = { red : u16; green : u16; blue : u16 } [@@deriving sexp]
 
   module Query_shape_of_enum = struct
     type t = [ `Largest_cursor | `Fastest_tile | `Fastest_stipple ]
@@ -508,6 +630,8 @@ module Xproto = struct
     type t = [ `Internet | `Decnet | `Chaos | `Server_interpreted | `Internet6 ]
     [@@deriving sexp]
   end
+
+  type host = { family : Family_enum.t; address : byte list } [@@deriving sexp]
 
   module Access_control_enum = struct
     type t = [ `Disable | `Enable ] [@@deriving sexp]
@@ -656,6 +780,88 @@ module Render = struct
   type picture = xid [@@deriving sexp]
   type pictformat = xid [@@deriving sexp]
   type fixed = i32 [@@deriving sexp]
+
+  type directformat = {
+    red_shift : u16;
+    red_mask : u16;
+    green_shift : u16;
+    green_mask : u16;
+    blue_shift : u16;
+    blue_mask : u16;
+    alpha_shift : u16;
+    alpha_mask : u16;
+  }
+  [@@deriving sexp]
+
+  type pictforminfo = {
+    id : pictformat;
+    type_ : Pict_type_enum.t;
+    depth : u8;
+    direct : directformat;
+    colormap : Xproto.colormap;
+  }
+  [@@deriving sexp]
+
+  type pictvisual = { visual : Xproto.visualid; format : pictformat }
+  [@@deriving sexp]
+
+  type pictdepth = { depth : u8; visuals : pictvisual list } [@@deriving sexp]
+
+  type pictscreen = { fallback : pictformat; depths : pictdepth list }
+  [@@deriving sexp]
+
+  type indexvalue = {
+    pixel : u32;
+    red : u16;
+    green : u16;
+    blue : u16;
+    alpha : u16;
+  }
+  [@@deriving sexp]
+
+  type color = { red : u16; green : u16; blue : u16; alpha : u16 }
+  [@@deriving sexp]
+
+  type pointfix = { x : fixed; y : fixed } [@@deriving sexp]
+  type linefix = { p1 : pointfix; p2 : pointfix } [@@deriving sexp]
+
+  type triangle = { p1 : pointfix; p2 : pointfix; p3 : pointfix }
+  [@@deriving sexp]
+
+  type trapezoid = {
+    top : fixed;
+    bottom : fixed;
+    left : linefix;
+    right : linefix;
+  }
+  [@@deriving sexp]
+
+  type glyphinfo = {
+    width : u16;
+    height : u16;
+    x : i16;
+    y : i16;
+    x_off : i16;
+    y_off : i16;
+  }
+  [@@deriving sexp]
+
+  type transform = {
+    matrix11 : fixed;
+    matrix12 : fixed;
+    matrix13 : fixed;
+    matrix21 : fixed;
+    matrix22 : fixed;
+    matrix23 : fixed;
+    matrix31 : fixed;
+    matrix32 : fixed;
+    matrix33 : fixed;
+  }
+  [@@deriving sexp]
+
+  type animcursorelt = { cursor : Xproto.cursor; delay : u32 } [@@deriving sexp]
+  type spanfix = { l : fixed; r : fixed; y : fixed } [@@deriving sexp]
+  type trap = { top : spanfix; bot : spanfix } [@@deriving sexp]
 end
 
 module Shape = struct
@@ -817,6 +1023,18 @@ module Dri2 = struct
     type t = [ `Exchange_complete | `Blit_complete | `Flip_complete ]
     [@@deriving sexp]
   end
+
+  type dri2_buffer = {
+    attachment : Attachment_enum.t;
+    name : u32;
+    pitch : u32;
+    cpp : u32;
+    flags : u32;
+  }
+  [@@deriving sexp]
+
+  type attach_format = { attachment : Attachment_enum.t; format : u32 }
+  [@@deriving sexp]
 end
 
 module Dri3 = struct
@@ -894,6 +1112,11 @@ module Randr = struct
     let (reflect_y : t) = of_int64 (Int64.shift_right 1L 5)
   end
 
+  type screen_size = { width : u16; height : u16; mwidth : u16; mheight : u16 }
+  [@@deriving sexp]
+
+  type refresh_rates = u16 list [@@deriving sexp]
+
   module Set_config_enum = struct
     type t = [ `Success | `Invalid_config_time | `Invalid_time | `Failed ]
     [@@deriving sexp]
@@ -931,6 +1154,23 @@ module Randr = struct
     let (halve_clock : t) = of_int64 (Int64.shift_right 1L 13)
   end
 
+  type mode_info = {
+    id : u32;
+    width : u16;
+    height : u16;
+    dot_clock : u32;
+    hsync_start : u16;
+    hsync_end : u16;
+    htotal : u16;
+    hskew : u16;
+    vsync_start : u16;
+    vsync_end : u16;
+    vtotal : u16;
+    name_len : u16;
+    mode_flags : Mode_flag_mask.t;
+  }
+  [@@deriving sexp]
+
   module Connection_enum = struct
     type t = [ `Connected | `Disconnected | `Unknown ] [@@deriving sexp]
   end
@@ -964,6 +1204,85 @@ module Randr = struct
       | `Lease ]
     [@@deriving sexp]
   end
+
+  type crtc_change = {
+    timestamp : Xproto.timestamp;
+    window : Xproto.window;
+    crtc : crtc;
+    mode : mode;
+    rotation : Rotation_mask.t;
+    x : i16;
+    y : i16;
+    width : u16;
+    height : u16;
+  }
+  [@@deriving sexp]
+
+  type output_change = {
+    timestamp : Xproto.timestamp;
+    config_timestamp : Xproto.timestamp;
+    window : Xproto.window;
+    output : output;
+    crtc : crtc;
+    mode : mode;
+    rotation : Rotation_mask.t;
+    connection : Connection_enum.t;
+    subpixel_order : Randr.Sub_pixel_enum.t;
+  }
+  [@@deriving sexp]
+
+  type output_property = {
+    window : Xproto.window;
+    output : output;
+    atom : Xproto.atom;
+    timestamp : Xproto.timestamp;
+    status : Randr.Property_enum.t;
+  }
+  [@@deriving sexp]
+
+  type provider_change = {
+    timestamp : Xproto.timestamp;
+    window : Xproto.window;
+    provider : provider;
+  }
+  [@@deriving sexp]
+
+  type provider_property = {
+    window : Xproto.window;
+    provider : provider;
+    atom : Xproto.atom;
+    timestamp : Xproto.timestamp;
+    state : u8;
+  }
+  [@@deriving sexp]
+
+  type resource_change = {
+    timestamp : Xproto.timestamp;
+    window : Xproto.window;
+  }
+  [@@deriving sexp]
+
+  type monitor_info = {
+    name : Xproto.atom;
+    primary : bool;
+    automatic : bool;
+    x : i16;
+    y : i16;
+    width : u16;
+    height : u16;
+    width_in_millimeters : u32;
+    height_in_millimeters : u32;
+    outputs : output list;
+  }
+  [@@deriving sexp]
+
+  type lease_notify = {
+    timestamp : Xproto.timestamp;
+    window : Xproto.window;
+    lease : lease;
+    created : u8;
+  }
+  [@@deriving sexp]
 end
 
 module Sync = struct
@@ -1006,6 +1325,22 @@ module Sync = struct
     let (delta : t) = of_int64 (Int64.shift_right 1L 4)
     let (events : t) = of_int64 (Int64.shift_right 1L 5)
   end
+
+  type int64 = { hi : i32; lo : u32 } [@@deriving sexp]
+
+  type systemcounter = { counter : counter; resolution : int64; name : string }
+  [@@deriving sexp]
+
+  type trigger = {
+    counter : counter;
+    wait_type : Valuetype_enum.t;
+    wait_value : int64;
+    test_type : Testtype_enum.t;
+  }
+  [@@deriving sexp]
+
+  type waitcondition = { trigger : trigger; event_threshold : int64 }
+  [@@deriving sexp]
 end
 
 module Present = struct
@@ -1030,6 +1365,7 @@ module Present = struct
     type t = [ `Copy | `Flip | `Skip | `Suboptimal_copy ] [@@deriving sexp]
   end
 
+  type notify = { window : Xproto.window; serial : u32 } [@@deriving sexp]
   type event = xid [@@deriving sexp]
 end
 
@@ -1042,6 +1378,23 @@ module Record = struct
   end
 
   type context = xid [@@deriving sexp]
+  type range8 = { first : u8; last : u8 } [@@deriving sexp]
+  type range16 = { first : u16; last : u16 } [@@deriving sexp]
+  type ext_range = { major : range8; minor : range16 } [@@deriving sexp]
+
+  type range = {
+    core_requests : range8;
+    core_replies : range8;
+    ext_requests : ext_range;
+    ext_replies : ext_range;
+    delivered_events : range8;
+    device_events : range8;
+    errors : range8;
+    client_started : bool;
+    client_died : bool;
+  }
+  [@@deriving sexp]
+
   type element_header = u8 [@@deriving sexp]
 
   module H_type_mask = struct
@@ -1058,6 +1411,9 @@ module Record = struct
     type t = [ `Current_clients | `Future_clients | `All_clients ]
     [@@deriving sexp]
   end
+
+  type client_info = { client_resource : client_spec; ranges : range list }
+  [@@deriving sexp]
 end
 
 module Res = struct
@@ -1068,12 +1424,37 @@ module Res = struct
     let query_name = "X-Resource"
   end
 
+  type client = { resource_base : u32; resource_mask : u32 } [@@deriving sexp]
+  type type_ = { resource_type : Xproto.atom; count : u32 } [@@deriving sexp]
+
   module Client_id_mask = struct
     include Mask
 
     let (client_xid : t) = of_int64 (Int64.shift_right 1L 0)
     let (local_client_pid : t) = of_int64 (Int64.shift_right 1L 1)
   end
+
+  type client_id_spec = { client : u32; mask : Client_id_mask.t }
+  [@@deriving sexp]
+
+  type client_id_value = { spec : client_id_spec; value : u32 list }
+  [@@deriving sexp]
+
+  type resource_id_spec = { resource : u32; type_ : u32 } [@@deriving sexp]
+
+  type resource_size_spec = {
+    spec : resource_id_spec;
+    bytes : u32;
+    ref_count : u32;
+    use_count : u32;
+  }
+  [@@deriving sexp]
+
+  type resource_size_value = {
+    size : resource_size_spec;
+    cross_references : resource_size_spec list;
+  }
+  [@@deriving sexp]
 end
 
 module Screensaver = struct
@@ -1127,6 +1508,9 @@ module Xf86dri = struct
     let version = (4, 1)
     let query_name = "XFree86-DRI"
   end
+
+  type drm_clip_rect = { x1 : i16; y1 : i16; x2 : i16; x3 : i16 }
+  [@@deriving sexp]
 end
 
 module Xf86vidmode = struct
@@ -1170,6 +1554,22 @@ module Xf86vidmode = struct
     let (read : t) = of_int64 (Int64.shift_right 1L 0)
     let (write : t) = of_int64 (Int64.shift_right 1L 1)
   end
+
+  type mode_info = {
+    dotclock : dotclock;
+    hdisplay : u16;
+    hsyncstart : u16;
+    hsyncend : u16;
+    htotal : u16;
+    hskew : u32;
+    vdisplay : u16;
+    vsyncstart : u16;
+    vsyncend : u16;
+    vtotal : u16;
+    flags : Mode_flag_mask.t;
+    privsize : u32;
+  }
+  [@@deriving sexp]
 end
 
 module Xinerama = struct
@@ -1179,6 +1579,9 @@ module Xinerama = struct
     let version = (1, 1)
     let query_name = "XINERAMA"
   end
+
+  type screen_info = { x_org : i16; y_org : i16; width : u16; height : u16 }
+  [@@deriving sexp]
 end
 
 module Xinput = struct
@@ -1193,6 +1596,7 @@ module Xinput = struct
   type key_code = u8 [@@deriving sexp]
   type device_id = u16 [@@deriving sexp]
   type fp1616 = i32 [@@deriving sexp]
+  type fp3232 = { integral : i32; frac : u32 } [@@deriving sexp]
 
   module Device_use_enum = struct
     type t =
@@ -1214,11 +1618,58 @@ module Xinput = struct
     type t = [ `Relative | `Absolute ] [@@deriving sexp]
   end
 
+  type device_info = {
+    device_type : Xproto.atom;
+    device_id : u8;
+    num_class_info : u8;
+    device_use : Device_use_enum.t;
+  }
+  [@@deriving sexp]
+
+  type key_info = {
+    class_id : Input_class_enum.t;
+    len : u8;
+    min_keycode : key_code;
+    max_keycode : key_code;
+    num_keys : u16;
+  }
+  [@@deriving sexp]
+
+  type button_info = {
+    class_id : Input_class_enum.t;
+    len : u8;
+    num_buttons : u16;
+  }
+  [@@deriving sexp]
+
+  type axis_info = { resolution : u32; minimum : i32; maximum : i32 }
+  [@@deriving sexp]
+
+  type valuator_info = {
+    class_id : Input_class_enum.t;
+    len : u8;
+    mode : Valuator_mode_enum.t;
+    motion_size : u32;
+    axes : axis_info list;
+  }
+  [@@deriving sexp]
+
+  type input_info = { len : u8; info : input_class_variant } [@@deriving sexp]
+  type device_name = string [@@deriving sexp]
   type event_type_base = u8 [@@deriving sexp]
+
+  type input_class_info = {
+    class_id : Input_class_enum.t;
+    event_type_base : event_type_base;
+  }
+  [@@deriving sexp]
 
   module Propagate_mode_enum = struct
     type t = [ `Add_to_list | `Delete_from_list ] [@@deriving sexp]
   end
+
+  type device_time_coord = { time : Xproto.timestamp; axisvalues : i32 list }
+  [@@deriving sexp]
 
   module Modifier_device_enum = struct
     type t = [ `Use_x_keyboard ] [@@deriving sexp]
@@ -1240,6 +1691,143 @@ module Xinput = struct
     [@@deriving sexp]
   end
 
+  type kbd_feedback_state = {
+    class_id : Feedback_class_enum.t;
+    feedback_id : u8;
+    len : u16;
+    pitch : u16;
+    duration : u16;
+    led_mask : u32;
+    led_values : u32;
+    global_auto_repeat : bool;
+    click : u8;
+    percent : u8;
+    auto_repeats : u8 list;
+  }
+  [@@deriving sexp]
+
+  type ptr_feedback_state = {
+    class_id : Feedback_class_enum.t;
+    feedback_id : u8;
+    len : u16;
+    accel_num : u16;
+    accel_denom : u16;
+    threshold : u16;
+  }
+  [@@deriving sexp]
+
+  type integer_feedback_state = {
+    class_id : Feedback_class_enum.t;
+    feedback_id : u8;
+    len : u16;
+    resolution : u32;
+    min_value : i32;
+    max_value : i32;
+  }
+  [@@deriving sexp]
+
+  type string_feedback_state = {
+    class_id : Feedback_class_enum.t;
+    feedback_id : u8;
+    len : u16;
+    max_symbols : u16;
+    keysyms : Xproto.keysym list;
+  }
+  [@@deriving sexp]
+
+  type bell_feedback_state = {
+    class_id : Feedback_class_enum.t;
+    feedback_id : u8;
+    len : u16;
+    percent : u8;
+    pitch : u16;
+    duration : u16;
+  }
+  [@@deriving sexp]
+
+  type led_feedback_state = {
+    class_id : Feedback_class_enum.t;
+    feedback_id : u8;
+    len : u16;
+    led_mask : u32;
+    led_values : u32;
+  }
+  [@@deriving sexp]
+
+  type feedback_state = {
+    feedback_id : u8;
+    len : u16;
+    data : feedback_class_variant;
+  }
+  [@@deriving sexp]
+
+  type kbd_feedback_ctl = {
+    class_id : Feedback_class_enum.t;
+    feedback_id : u8;
+    len : u16;
+    key : key_code;
+    auto_repeat_mode : u8;
+    key_click_percent : i8;
+    bell_percent : i8;
+    bell_pitch : i16;
+    bell_duration : i16;
+    led_mask : u32;
+    led_values : u32;
+  }
+  [@@deriving sexp]
+
+  type ptr_feedback_ctl = {
+    class_id : Feedback_class_enum.t;
+    feedback_id : u8;
+    len : u16;
+    num : i16;
+    denom : i16;
+    threshold : i16;
+  }
+  [@@deriving sexp]
+
+  type integer_feedback_ctl = {
+    class_id : Feedback_class_enum.t;
+    feedback_id : u8;
+    len : u16;
+    int_to_display : i32;
+  }
+  [@@deriving sexp]
+
+  type string_feedback_ctl = {
+    class_id : Feedback_class_enum.t;
+    feedback_id : u8;
+    len : u16;
+    keysyms : Xproto.keysym list;
+  }
+  [@@deriving sexp]
+
+  type bell_feedback_ctl = {
+    class_id : Feedback_class_enum.t;
+    feedback_id : u8;
+    len : u16;
+    percent : i8;
+    pitch : i16;
+    duration : i16;
+  }
+  [@@deriving sexp]
+
+  type led_feedback_ctl = {
+    class_id : Feedback_class_enum.t;
+    feedback_id : u8;
+    len : u16;
+    led_mask : u32;
+    led_values : u32;
+  }
+  [@@deriving sexp]
+
+  type feedback_ctl = {
+    feedback_id : u8;
+    len : u16;
+    data : feedback_class_variant;
+  }
+  [@@deriving sexp]
+
   module Change_feedback_control_mask = struct
     include Mask
 
@@ -1258,6 +1846,22 @@ module Xinput = struct
     let (threshold : t) = of_int64 (Int64.shift_right 1L 2)
   end
 
+  type key_state = {
+    class_id : Input_class_enum.t;
+    len : u8;
+    num_keys : u8;
+    keys : u8 list;
+  }
+  [@@deriving sexp]
+
+  type button_state = {
+    class_id : Input_class_enum.t;
+    len : u8;
+    num_buttons : u8;
+    buttons : u8 list;
+  }
+  [@@deriving sexp]
+
   module Valuator_state_mode_mask = struct
     include Mask
 
@@ -1265,10 +1869,124 @@ module Xinput = struct
     let (out_of_proximity : t) = of_int64 (Int64.shift_right 1L 1)
   end
 
+  type valuator_state = {
+    class_id : Input_class_enum.t;
+    len : u8;
+    mode : Valuator_state_mode_mask.t;
+    valuators : i32 list;
+  }
+  [@@deriving sexp]
+
+  type input_state = { len : u8; data : input_class_variant } [@@deriving sexp]
+
   module Device_control_enum = struct
     type t = [ `Resolution | `Abs_calib | `Core | `Enable | `Abs_area ]
     [@@deriving sexp]
   end
+
+  type device_resolution_state = {
+    control_id : Device_control_enum.t;
+    len : u16;
+    resolution_values : u32 list;
+    resolution_min : u32 list;
+    resolution_max : u32 list;
+  }
+  [@@deriving sexp]
+
+  type device_abs_calib_state = {
+    control_id : Device_control_enum.t;
+    len : u16;
+    min_x : i32;
+    max_x : i32;
+    min_y : i32;
+    max_y : i32;
+    flip_x : u32;
+    flip_y : u32;
+    rotation : u32;
+    button_threshold : u32;
+  }
+  [@@deriving sexp]
+
+  type device_abs_area_state = {
+    control_id : Device_control_enum.t;
+    len : u16;
+    offset_x : u32;
+    offset_y : u32;
+    width : u32;
+    height : u32;
+    screen : u32;
+    following : u32;
+  }
+  [@@deriving sexp]
+
+  type device_core_state = {
+    control_id : Device_control_enum.t;
+    len : u16;
+    status : u8;
+    iscore : u8;
+  }
+  [@@deriving sexp]
+
+  type device_enable_state = {
+    control_id : Device_control_enum.t;
+    len : u16;
+    enable : u8;
+  }
+  [@@deriving sexp]
+
+  type device_state = { len : u16; data : device_control_variant }
+  [@@deriving sexp]
+
+  type device_resolution_ctl = {
+    control_id : Device_control_enum.t;
+    len : u16;
+    first_valuator : u8;
+    resolution_values : u32 list;
+  }
+  [@@deriving sexp]
+
+  type device_abs_calib_ctl = {
+    control_id : Device_control_enum.t;
+    len : u16;
+    min_x : i32;
+    max_x : i32;
+    min_y : i32;
+    max_y : i32;
+    flip_x : u32;
+    flip_y : u32;
+    rotation : u32;
+    button_threshold : u32;
+  }
+  [@@deriving sexp]
+
+  type device_abs_area_ctrl = {
+    control_id : Device_control_enum.t;
+    len : u16;
+    offset_x : u32;
+    offset_y : u32;
+    width : i32;
+    height : i32;
+    screen : i32;
+    following : u32;
+  }
+  [@@deriving sexp]
+
+  type device_core_ctrl = {
+    control_id : Device_control_enum.t;
+    len : u16;
+    status : u8;
+  }
+  [@@deriving sexp]
+
+  type device_enable_ctrl = {
+    control_id : Device_control_enum.t;
+    len : u16;
+    enable : u8;
+  }
+  [@@deriving sexp]
+
+  type device_ctl = { len : u16; data : device_control_variant }
+  [@@deriving sexp]
 
   module Property_format_enum = struct
     type t = [ `D8_bits | `D16_bits | `D32_bits ] [@@deriving sexp]
@@ -1278,6 +1996,17 @@ module Xinput = struct
     type t = [ `All | `All_master ] [@@deriving sexp]
   end
 
+  type group_info = { base : u8; latched : u8; locked : u8; effective : u8 }
+  [@@deriving sexp]
+
+  type modifier_info = {
+    base : u32;
+    latched : u32;
+    locked : u32;
+    effective : u32;
+  }
+  [@@deriving sexp]
+
   module Hierarchy_change_type_enum = struct
     type t = [ `Add_master | `Remove_master | `Attach_slave | `Detach_slave ]
     [@@deriving sexp]
@@ -1286,6 +2015,43 @@ module Xinput = struct
   module Change_mode_enum = struct
     type t = [ `Attach | `Float ] [@@deriving sexp]
   end
+
+  type add_master = {
+    type_ : Hierarchy_change_type_enum.t;
+    len : u16;
+    send_core : bool;
+    enable : bool;
+    name : string;
+  }
+  [@@deriving sexp]
+
+  type remove_master = {
+    type_ : Hierarchy_change_type_enum.t;
+    len : u16;
+    deviceid : [ Device_enum.t | device_id alt ];
+    return_mode : Change_mode_enum.t;
+    return_pointer : [ Device_enum.t | device_id alt ];
+    return_keyboard : [ Device_enum.t | device_id alt ];
+  }
+  [@@deriving sexp]
+
+  type attach_slave = {
+    type_ : Hierarchy_change_type_enum.t;
+    len : u16;
+    deviceid : [ Device_enum.t | device_id alt ];
+    master : [ Device_enum.t | device_id alt ];
+  }
+  [@@deriving sexp]
+
+  type detach_slave = {
+    type_ : Hierarchy_change_type_enum.t;
+    len : u16;
+    deviceid : [ Device_enum.t | device_id alt ];
+  }
+  [@@deriving sexp]
+
+  type hierarchy_change = { len : u16; data : hierarchy_change_type_variant }
+  [@@deriving sexp]
 
   module Xi_event_mask = struct
     include Mask
@@ -1318,6 +2084,12 @@ module Xinput = struct
     let (barrier_leave : t) = of_int64 (Int64.shift_right 1L 26)
   end
 
+  type event_mask = {
+    deviceid : [ Device_enum.t | device_id alt ];
+    mask : Xi_event_mask.t list;
+  }
+  [@@deriving sexp]
+
   module Device_class_type_enum = struct
     type t = [ `Key | `Button | `Valuator | `Scroll | `Touch ] [@@deriving sexp]
   end
@@ -1346,6 +2118,74 @@ module Xinput = struct
   module Touch_mode_enum = struct
     type t = [ `Direct | `Dependent ] [@@deriving sexp]
   end
+
+  type button_class = {
+    type_ : Device_class_type_enum.t;
+    len : u16;
+    sourceid : device_id;
+    state : u32 list;
+    labels : Xproto.atom list;
+  }
+  [@@deriving sexp]
+
+  type key_class = {
+    type_ : Device_class_type_enum.t;
+    len : u16;
+    sourceid : device_id;
+    keys : u32 list;
+  }
+  [@@deriving sexp]
+
+  type scroll_class = {
+    type_ : Device_class_type_enum.t;
+    len : u16;
+    sourceid : device_id;
+    number : u16;
+    scroll_type : Scroll_type_enum.t;
+    flags : Scroll_flags_mask.t;
+    increment : fp3232;
+  }
+  [@@deriving sexp]
+
+  type touch_class = {
+    type_ : Device_class_type_enum.t;
+    len : u16;
+    sourceid : device_id;
+    mode : Touch_mode_enum.t;
+    num_touches : u8;
+  }
+  [@@deriving sexp]
+
+  type valuator_class = {
+    type_ : Device_class_type_enum.t;
+    len : u16;
+    sourceid : device_id;
+    number : u16;
+    label : Xproto.atom;
+    min : fp3232;
+    max : fp3232;
+    value : fp3232;
+    resolution : u32;
+    mode : Valuator_mode_enum.t;
+  }
+  [@@deriving sexp]
+
+  type device_class = {
+    len : u16;
+    sourceid : device_id;
+    data : device_class_type_variant;
+  }
+  [@@deriving sexp]
+
+  type xi_device_info = {
+    deviceid : [ Device_enum.t | device_id alt ];
+    type_ : Device_type_enum.t;
+    attachment : [ Device_enum.t | device_id alt ];
+    enabled : bool;
+    name : string;
+    classes : device_class list;
+  }
+  [@@deriving sexp]
 
   module Grab_owner_enum = struct
     type t = [ `No_owner | `Owner ] [@@deriving sexp]
@@ -1378,6 +2218,19 @@ module Xinput = struct
 
     let (any : t) = of_int64 (Int64.shift_right 1L 31)
   end
+
+  type grab_modifier_info = {
+    modifiers : Modifier_mask.t;
+    status : Xinput.Grab_status_enum.t;
+  }
+  [@@deriving sexp]
+
+  type barrier_release_pointer_info = {
+    deviceid : device_id;
+    barrier : Xfixes.barrier;
+    eventid : u32;
+  }
+  [@@deriving sexp]
 
   module More_events_mask = struct
     include Mask
@@ -1463,6 +2316,15 @@ module Xinput = struct
     let (device_disabled : t) = of_int64 (Int64.shift_right 1L 7)
   end
 
+  type hierarchy_info = {
+    deviceid : [ Device_enum.t | device_id alt ];
+    attachment : [ Device_enum.t | device_id alt ];
+    type_ : Device_type_enum.t;
+    enabled : bool;
+    flags : Hierarchy_mask.t;
+  }
+  [@@deriving sexp]
+
   module Property_flag_enum = struct
     type t = [ `Deleted | `Created | `Modified ] [@@deriving sexp]
   end
@@ -1495,6 +2357,7 @@ module Xprint = struct
   end
 
   type string8 = char [@@deriving sexp]
+  type printer = { name : string; description : string } [@@deriving sexp]
   type pcontext = xid [@@deriving sexp]
 
   module Get_doc_enum = struct
@@ -1532,6 +2395,13 @@ module Xselinux = struct
     let version = (1, 0)
     let query_name = "SELinux"
   end
+
+  type list_item = {
+    name : Xproto.atom;
+    object_context : string;
+    data_context : string;
+  }
+  [@@deriving sexp]
 end
 
 module Xtest = struct
@@ -1602,6 +2472,71 @@ module Xv = struct
       | `Bad_alloc ]
     [@@deriving sexp]
   end
+
+  type rational = { numerator : i32; denominator : i32 } [@@deriving sexp]
+  type format = { visual : Xproto.visualid; depth : u8 } [@@deriving sexp]
+
+  type adaptor_info = {
+    base_id : port;
+    num_ports : u16;
+    type_ : Type_mask.t;
+    name : string;
+    formats : format list;
+  }
+  [@@deriving sexp]
+
+  type encoding_info = {
+    encoding : encoding;
+    width : u16;
+    height : u16;
+    rate : rational;
+    name : string;
+  }
+  [@@deriving sexp]
+
+  type image = {
+    id : u32;
+    width : u16;
+    height : u16;
+    pitches : u32 list;
+    offsets : u32 list;
+    data : u8 list;
+  }
+  [@@deriving sexp]
+
+  type attribute_info = {
+    flags : Attribute_flag_mask.t;
+    min : i32;
+    max : i32;
+    name : string;
+  }
+  [@@deriving sexp]
+
+  type image_format_info = {
+    id : u32;
+    type_ : Image_format_info_type_enum.t;
+    byte_order : Xv.Image_order_enum.t;
+    guid : u8 list;
+    bpp : u8;
+    num_planes : u8;
+    depth : u8;
+    red_mask : u32;
+    green_mask : u32;
+    blue_mask : u32;
+    format : Image_format_info_format_enum.t;
+    y_sample_bits : u32;
+    u_sample_bits : u32;
+    v_sample_bits : u32;
+    vhorz_y_period : u32;
+    vhorz_u_period : u32;
+    vhorz_v_period : u32;
+    vvert_y_period : u32;
+    vvert_u_period : u32;
+    vvert_v_period : u32;
+    vcomp_order : u8 list;
+    vscanline_order : Scanline_order_enum.t;
+  }
+  [@@deriving sexp]
 end
 
 module Xvmc = struct
@@ -1615,4 +2550,17 @@ module Xvmc = struct
   type context = xid [@@deriving sexp]
   type surface = xid [@@deriving sexp]
   type subpicture = xid [@@deriving sexp]
+
+  type surface_info = {
+    id : surface;
+    chroma_format : u16;
+    pad0 : u16;
+    max_width : u16;
+    max_height : u16;
+    subpicture_max_width : u16;
+    subpicture_max_height : u16;
+    mc_type : u32;
+    flags : u32;
+  }
+  [@@deriving sexp]
 end

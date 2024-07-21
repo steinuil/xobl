@@ -169,7 +169,8 @@ module Type = struct
         let type_ = t_type ~ctx ~loc ft_type in
         let enum = t_module_ident ~suffix:"enum" ~ctx ~loc enum "t" in
         [%type: [ [%t enum] | [%t type_] alt ]]
-    | _ -> failwith "a"
+    | Some (Allowed_alt_mask mask) ->
+        t_module_ident ~suffix:"mask" ~ctx ~loc mask "t"
 
   let td_type ?prefix ?suffix ~loc name typ =
     let name = Ident.snake ?prefix ?suffix name |> with_loc ~loc in
@@ -184,6 +185,59 @@ module Type = struct
   let stri_td ~loc td =
     let decl = { td with ptype_attributes = [ a_deriving_sexp ~loc ] } in
     Ast_helper.Str.type_ ~loc Recursive [ decl ]
+
+  let t_list_type ~ctx ~loc = function
+    | {
+        ft_type = Type_ref ({ id_module = "xproto"; id_name = "CHAR2B" }, None);
+        ft_allowed = None;
+      } ->
+        t_id ~loc "utf16_string"
+    | t -> (
+        match primitive_of_type t.ft_type with
+        | Some Char | Some Void -> t_id ~loc "string"
+        | Some _ | None -> [%type: [%t t_field_type ~ctx ~loc t] list])
+
+  let t_visible_field ~ctx ~loc = function
+    | Field { type_; _ } -> t_field_type ~ctx ~loc type_
+    | Field_list { type_; _ } | Field_list_simple { type_; _ } ->
+        t_list_type ~ctx ~loc type_
+    | Field_variant { variant; _ } ->
+        t_ident ~suffix:"variant" ~ctx ~loc variant
+    | Field_optional { type_; _ } ->
+        [%type: [%t t_field_type ~ctx ~loc type_] option]
+    | ( Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _
+      | Field_optional_mask _ ) as f ->
+        Format.ksprintf unexpected "field is not visible:\n%s" (show_field f)
+
+  let t_fields ~ctx ~loc fields =
+    match visible_fields fields with
+    | [] -> `Type [%type: unit]
+    | [ field ] ->
+        let typ = t_visible_field ~ctx ~loc field in
+        `Type typ
+    | fields ->
+        let fields =
+          ListLabels.map fields ~f:(fun field ->
+              let name =
+                name_of_field field |> Option.get |> Ident.snake
+                |> with_loc ~loc
+              in
+              let typ = t_visible_field ~ctx ~loc field in
+              Ast_helper.Type.field ~loc name typ)
+        in
+        `Label_declarations fields
+
+  let td_record ?prefix ?suffix ~ctx ~loc name fields =
+    match t_fields ~ctx ~loc fields with
+    | `Type typ -> td_type ?prefix ?suffix ~loc name typ
+    | `Label_declarations fields ->
+        let name = Ident.snake ?prefix ?suffix name |> with_loc ~loc in
+        Ast_helper.Type.mk ~loc ~kind:(Ptype_record fields) name
+
+  let stri_struct ~ctx ~loc = function
+    | Struct { name; fields; _ } ->
+        td_record ~ctx ~loc name fields |> stri_td ~loc |> Option.some
+    | _ -> None
 
   let stri_module ?suffix ~loc name body =
     let name = Ident.caml ?suffix name in
@@ -228,9 +282,10 @@ module Type = struct
     let type_decl =
       td_type_declaration ~ctx ~loc decl |> Option.map (stri_td ~loc)
     in
+    let struct_decl = stri_struct ~ctx ~loc decl in
     let enum_decl = stri_enum ~loc decl in
     let mask_decl = stri_mask ~loc decl in
-    List.filter_map Fun.id [ type_decl; enum_decl; mask_decl ]
+    List.filter_map Fun.id [ type_decl; struct_decl; enum_decl; mask_decl ]
 
   let stri_module ~loc module_ =
     let declarations, ctx =
