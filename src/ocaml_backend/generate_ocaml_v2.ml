@@ -81,12 +81,23 @@ let lid ?prefix ?suffix ?parent ~loc name =
   in
   with_loc ~loc txt
 
-let lid_caml ?parent ~loc name =
-  let name = Ident.caml name in
+let lid_caml ?prefix ?suffix ?parent ~loc name =
+  let name = Ident.caml ?prefix ?suffix name in
   let txt =
     match parent with
     | Some parent -> Ldot (Lident parent, name)
     | None -> Lident name
+  in
+  with_loc ~loc txt
+
+let lid_module_ident ?prefix ?suffix ~ctx:(Cm current_module) ~loc
+    { id_module; id_name } name =
+  let module_name = Ident.caml ?prefix ?suffix id_name in
+  let txt =
+    if current_module = id_module then Ldot (Lident module_name, name)
+    else
+      let parent = Ident.caml current_module in
+      Ldot (Ldot (Lident parent, module_name), name)
   in
   with_loc ~loc txt
 
@@ -107,6 +118,10 @@ let t_ident ?prefix ?suffix ~ctx:(Cm current_module) ~loc { id_module; id_name }
     =
   if current_module = id_module then t_id ?prefix ?suffix ~loc id_name
   else t_id ?prefix ?suffix ~parent:(Ident.caml id_module) ~loc id_name
+
+let t_module_ident ?prefix ?suffix ~ctx ~loc ident name =
+  let lid = lid_module_ident ?prefix ?suffix ~ctx ~loc ident name in
+  Ast_helper.Typ.constr ~loc lid []
 
 let p_id ?prefix ?suffix ~loc name =
   let ident = Ident.snake ~sanitize:"_" ?prefix ?suffix name |> with_loc ~loc in
@@ -147,7 +162,8 @@ module Type = struct
     match ft_allowed with
     | None -> t_type ~ctx ~loc ft_type
     | Some (Allowed_enum enum) -> t_ident ~suffix:"enum" ~ctx ~loc enum
-    (* | Some (Allowed_mask mask) -> t_ident ~suffix:"mask" ~ctx ~loc mask *)
+    | Some (Allowed_mask mask) ->
+        t_module_ident ~suffix:"mask" ~ctx ~loc mask "t"
     | Some (Allowed_alt_enum enum) ->
         let type_ = t_type ~ctx ~loc ft_type in
         let enum = t_ident ~suffix:"enum" ~ctx ~loc enum in
@@ -168,7 +184,20 @@ module Type = struct
     let decl = { td with ptype_attributes = [ a_deriving_sexp ~loc ] } in
     Ast_helper.Str.type_ ~loc Recursive [ decl ]
 
-  let stri_enum ~loc = function
+  let rf_enum_item ~loc (name, _) =
+    let name = Ident.caml name |> with_loc ~loc in
+    Ast_helper.Rf.mk ~loc (Rtag (name, true, []))
+
+  let t_enum_items ~loc items =
+    Ast_helper.Typ.variant ~loc (List.map (rf_enum_item ~loc) items) Closed None
+
+  let td_enum ~loc = function
+    | Enum { name; items } ->
+        td_type ~suffix:"enum" ~loc name (t_enum_items ~loc items)
+        |> Option.some
+    | _ -> None
+
+  let stri_mask ~loc = function
     | Mask { name; items; additional_values = Additional_values [] } ->
         let name = Ident.caml ~suffix:"mask" name in
         let body =
@@ -188,8 +217,9 @@ module Type = struct
     let type_decl =
       td_type_declaration ~ctx ~loc decl |> Option.map (stri_td ~loc)
     in
-    let enum_decl = stri_enum ~loc decl in
-    Option.to_list type_decl @ Option.to_list enum_decl
+    let enum_decl = td_enum ~loc decl |> Option.map (stri_td ~loc) in
+    let mask_decl = stri_mask ~loc decl in
+    List.filter_map Fun.id [ type_decl; enum_decl; mask_decl ]
 
   let stri_module ~loc module_ =
     let declarations, ctx =
