@@ -105,21 +105,23 @@ module OCaml = struct
       "with";
     ]
 
-  let sanitize_numbers name =
-    if name.[0] >= '0' && name.[0] <= '9' then "D" ^ name else name
+  let sanitize_numbers char name =
+    if name.[0] >= '0' && name.[0] <= '9' then char ^ name else name
 
-  let snake ?prefix ?suffix name =
+  let snake ?(sanitize = "d") ?prefix ?suffix name =
     (match (prefix, suffix) with
     | Some prefix, Some suffix -> prefix ^ "_" ^ snake name ^ "_" ^ suffix
     | Some prefix, None -> prefix ^ "_" ^ snake name
-    | None, Some suffix when String.ends_with ~suffix (snake name) ->
+    | None, Some suffix
+      when String.ends_with ~suffix:("_" ^ suffix) (snake name) ->
         let name = snake name in
         if List.mem name ocaml_reserved then name ^ "_" else name
     | None, Some suffix -> snake name ^ "_" ^ suffix
     | None, None ->
         let name = snake name in
         if List.mem name ocaml_reserved then name ^ "_" else name)
-    |> sanitize_numbers
+    |> sanitize_numbers sanitize
 
-  let caml name = caml name |> sanitize_numbers
+  let caml ?sanitize ?prefix ?suffix name =
+    snake ?sanitize ?prefix ?suffix name |> String.capitalize_ascii
 end

@@ -1,0 +1,764 @@
+module Bigreq = struct
+  module Meta = struct
+    type t = [ `BigRequests ]
+
+    let version = (0, 0)
+    let query_name = "BIG-REQUESTS"
+  end
+end
+
+module Xproto = struct
+  type window = xid [@@deriving sexp]
+  type pixmap = xid [@@deriving sexp]
+  type cursor = xid [@@deriving sexp]
+  type font = xid [@@deriving sexp]
+  type gcontext = xid [@@deriving sexp]
+  type colormap = xid [@@deriving sexp]
+  type atom = xid [@@deriving sexp]
+  type drawable = xid [@@deriving sexp]
+  type fontable = xid [@@deriving sexp]
+  type bool32 = u32 [@@deriving sexp]
+  type visualid = u32 [@@deriving sexp]
+  type timestamp = u32 [@@deriving sexp]
+  type keysym = u32 [@@deriving sexp]
+  type keycode = u8 [@@deriving sexp]
+  type keycode32 = u32 [@@deriving sexp]
+  type button = u8 [@@deriving sexp]
+
+  module Mod_mask = struct
+    include Mask
+
+    let (shift : t) = of_int64 (Int64.shift_right 1L 0)
+    let (lock : t) = of_int64 (Int64.shift_right 1L 1)
+    let (control : t) = of_int64 (Int64.shift_right 1L 2)
+    let (_1 : t) = of_int64 (Int64.shift_right 1L 3)
+    let (_2 : t) = of_int64 (Int64.shift_right 1L 4)
+    let (_3 : t) = of_int64 (Int64.shift_right 1L 5)
+    let (_4 : t) = of_int64 (Int64.shift_right 1L 6)
+    let (_5 : t) = of_int64 (Int64.shift_right 1L 7)
+    let (any : t) = of_int64 (Int64.shift_right 1L 15)
+  end
+
+  module Key_but_mask = struct
+    include Mask
+
+    let (shift : t) = of_int64 (Int64.shift_right 1L 0)
+    let (lock : t) = of_int64 (Int64.shift_right 1L 1)
+    let (control : t) = of_int64 (Int64.shift_right 1L 2)
+    let (mod1 : t) = of_int64 (Int64.shift_right 1L 3)
+    let (mod2 : t) = of_int64 (Int64.shift_right 1L 4)
+    let (mod3 : t) = of_int64 (Int64.shift_right 1L 5)
+    let (mod4 : t) = of_int64 (Int64.shift_right 1L 6)
+    let (mod5 : t) = of_int64 (Int64.shift_right 1L 7)
+    let (button1 : t) = of_int64 (Int64.shift_right 1L 8)
+    let (button2 : t) = of_int64 (Int64.shift_right 1L 9)
+    let (button3 : t) = of_int64 (Int64.shift_right 1L 10)
+    let (button4 : t) = of_int64 (Int64.shift_right 1L 11)
+    let (button5 : t) = of_int64 (Int64.shift_right 1L 12)
+  end
+
+  module Button_mask = struct
+    include Mask
+
+    let (_1 : t) = of_int64 (Int64.shift_right 1L 8)
+    let (_2 : t) = of_int64 (Int64.shift_right 1L 9)
+    let (_3 : t) = of_int64 (Int64.shift_right 1L 10)
+    let (_4 : t) = of_int64 (Int64.shift_right 1L 11)
+    let (_5 : t) = of_int64 (Int64.shift_right 1L 12)
+    let (any : t) = of_int64 (Int64.shift_right 1L 15)
+  end
+
+  module Config_window_mask = struct
+    include Mask
+
+    let (x : t) = of_int64 (Int64.shift_right 1L 0)
+    let (y : t) = of_int64 (Int64.shift_right 1L 1)
+    let (width : t) = of_int64 (Int64.shift_right 1L 2)
+    let (height : t) = of_int64 (Int64.shift_right 1L 3)
+    let (border_width : t) = of_int64 (Int64.shift_right 1L 4)
+    let (sibling : t) = of_int64 (Int64.shift_right 1L 5)
+    let (stack_mode : t) = of_int64 (Int64.shift_right 1L 6)
+  end
+
+  module Cw_mask = struct
+    include Mask
+
+    let (back_pixmap : t) = of_int64 (Int64.shift_right 1L 0)
+    let (back_pixel : t) = of_int64 (Int64.shift_right 1L 1)
+    let (border_pixmap : t) = of_int64 (Int64.shift_right 1L 2)
+    let (border_pixel : t) = of_int64 (Int64.shift_right 1L 3)
+    let (bit_gravity : t) = of_int64 (Int64.shift_right 1L 4)
+    let (win_gravity : t) = of_int64 (Int64.shift_right 1L 5)
+    let (backing_store : t) = of_int64 (Int64.shift_right 1L 6)
+    let (backing_planes : t) = of_int64 (Int64.shift_right 1L 7)
+    let (backing_pixel : t) = of_int64 (Int64.shift_right 1L 8)
+    let (override_redirect : t) = of_int64 (Int64.shift_right 1L 9)
+    let (save_under : t) = of_int64 (Int64.shift_right 1L 10)
+    let (event_mask : t) = of_int64 (Int64.shift_right 1L 11)
+    let (dont_propagate : t) = of_int64 (Int64.shift_right 1L 12)
+    let (colormap : t) = of_int64 (Int64.shift_right 1L 13)
+    let (cursor : t) = of_int64 (Int64.shift_right 1L 14)
+  end
+
+  module Gc_mask = struct
+    include Mask
+
+    let (function_ : t) = of_int64 (Int64.shift_right 1L 0)
+    let (plane_mask : t) = of_int64 (Int64.shift_right 1L 1)
+    let (foreground : t) = of_int64 (Int64.shift_right 1L 2)
+    let (background : t) = of_int64 (Int64.shift_right 1L 3)
+    let (line_width : t) = of_int64 (Int64.shift_right 1L 4)
+    let (line_style : t) = of_int64 (Int64.shift_right 1L 5)
+    let (cap_style : t) = of_int64 (Int64.shift_right 1L 6)
+    let (join_style : t) = of_int64 (Int64.shift_right 1L 7)
+    let (fill_style : t) = of_int64 (Int64.shift_right 1L 8)
+    let (fill_rule : t) = of_int64 (Int64.shift_right 1L 9)
+    let (tile : t) = of_int64 (Int64.shift_right 1L 10)
+    let (stipple : t) = of_int64 (Int64.shift_right 1L 11)
+    let (tile_stipple_origin_x : t) = of_int64 (Int64.shift_right 1L 12)
+    let (tile_stipple_origin_y : t) = of_int64 (Int64.shift_right 1L 13)
+    let (font : t) = of_int64 (Int64.shift_right 1L 14)
+    let (subwindow_mode : t) = of_int64 (Int64.shift_right 1L 15)
+    let (graphics_exposures : t) = of_int64 (Int64.shift_right 1L 16)
+    let (clip_origin_x : t) = of_int64 (Int64.shift_right 1L 17)
+    let (clip_origin_y : t) = of_int64 (Int64.shift_right 1L 18)
+    let (clip_mask : t) = of_int64 (Int64.shift_right 1L 19)
+    let (dash_offset : t) = of_int64 (Int64.shift_right 1L 20)
+    let (dash_list : t) = of_int64 (Int64.shift_right 1L 21)
+    let (arc_mode : t) = of_int64 (Int64.shift_right 1L 22)
+  end
+
+  module Color_flag_mask = struct
+    include Mask
+
+    let (red : t) = of_int64 (Int64.shift_right 1L 0)
+    let (green : t) = of_int64 (Int64.shift_right 1L 1)
+    let (blue : t) = of_int64 (Int64.shift_right 1L 2)
+  end
+
+  module Kb_mask = struct
+    include Mask
+
+    let (key_click_percent : t) = of_int64 (Int64.shift_right 1L 0)
+    let (bell_percent : t) = of_int64 (Int64.shift_right 1L 1)
+    let (bell_pitch : t) = of_int64 (Int64.shift_right 1L 2)
+    let (bell_duration : t) = of_int64 (Int64.shift_right 1L 3)
+    let (led : t) = of_int64 (Int64.shift_right 1L 4)
+    let (led_mode : t) = of_int64 (Int64.shift_right 1L 5)
+    let (key : t) = of_int64 (Int64.shift_right 1L 6)
+    let (auto_repeat_mode : t) = of_int64 (Int64.shift_right 1L 7)
+  end
+end
+
+module Render = struct
+  module Meta = struct
+    type t = [ `Render ]
+
+    let version = (0, 11)
+    let query_name = "RENDER"
+  end
+
+  module Cp_mask = struct
+    include Mask
+
+    let (repeat : t) = of_int64 (Int64.shift_right 1L 0)
+    let (alpha_map : t) = of_int64 (Int64.shift_right 1L 1)
+    let (alpha_x_origin : t) = of_int64 (Int64.shift_right 1L 2)
+    let (alpha_y_origin : t) = of_int64 (Int64.shift_right 1L 3)
+    let (clip_x_origin : t) = of_int64 (Int64.shift_right 1L 4)
+    let (clip_y_origin : t) = of_int64 (Int64.shift_right 1L 5)
+    let (clip_mask : t) = of_int64 (Int64.shift_right 1L 6)
+    let (graphics_exposure : t) = of_int64 (Int64.shift_right 1L 7)
+    let (subwindow_mode : t) = of_int64 (Int64.shift_right 1L 8)
+    let (poly_edge : t) = of_int64 (Int64.shift_right 1L 9)
+    let (poly_mode : t) = of_int64 (Int64.shift_right 1L 10)
+    let (dither : t) = of_int64 (Int64.shift_right 1L 11)
+    let (component_alpha : t) = of_int64 (Int64.shift_right 1L 12)
+  end
+
+  type glyph = u32 [@@deriving sexp]
+  type glyphset = xid [@@deriving sexp]
+  type picture = xid [@@deriving sexp]
+  type pictformat = xid [@@deriving sexp]
+  type fixed = i32 [@@deriving sexp]
+end
+
+module Shape = struct
+  module Meta = struct
+    type t = [ `Shape ]
+
+    let version = (1, 1)
+    let query_name = "SHAPE"
+  end
+
+  type op = u8 [@@deriving sexp]
+  type kind = u8 [@@deriving sexp]
+end
+
+module Xfixes = struct
+  module Meta = struct
+    type t = [ `XFixes ]
+
+    let version = (5, 0)
+    let query_name = "XFIXES"
+  end
+
+  module Selection_event_mask = struct
+    include Mask
+
+    let (set_selection_owner : t) = of_int64 (Int64.shift_right 1L 0)
+    let (selection_window_destroy : t) = of_int64 (Int64.shift_right 1L 1)
+    let (selection_client_close : t) = of_int64 (Int64.shift_right 1L 2)
+  end
+
+  module Cursor_notify_mask = struct
+    include Mask
+
+    let (display_cursor : t) = of_int64 (Int64.shift_right 1L 0)
+  end
+
+  type region = xid [@@deriving sexp]
+  type barrier = xid [@@deriving sexp]
+
+  module Barrier_directions_mask = struct
+    include Mask
+
+    let (positive_x : t) = of_int64 (Int64.shift_right 1L 0)
+    let (positive_y : t) = of_int64 (Int64.shift_right 1L 1)
+    let (negative_x : t) = of_int64 (Int64.shift_right 1L 2)
+    let (negative_y : t) = of_int64 (Int64.shift_right 1L 3)
+  end
+end
+
+module Composite = struct
+  module Meta = struct
+    type t = [ `Composite ]
+
+    let version = (0, 4)
+    let query_name = "Composite"
+  end
+end
+
+module Damage = struct
+  module Meta = struct
+    type t = [ `Damage ]
+
+    let version = (1, 1)
+    let query_name = "DAMAGE"
+  end
+
+  type damage = xid [@@deriving sexp]
+end
+
+module Dpms = struct
+  module Meta = struct
+    type t = [ `DPMS ]
+
+    let version = (0, 0)
+    let query_name = "DPMS"
+  end
+end
+
+module Dri2 = struct
+  module Meta = struct
+    type t = [ `DRI2 ]
+
+    let version = (1, 4)
+    let query_name = "DRI2"
+  end
+end
+
+module Dri3 = struct
+  module Meta = struct
+    type t = [ `DRI3 ]
+
+    let version = (1, 2)
+    let query_name = "DRI3"
+  end
+end
+
+module Ge = struct
+  module Meta = struct
+    type t = [ `GenericEvent ]
+
+    let version = (1, 0)
+    let query_name = "Generic Event Extension"
+  end
+end
+
+module Glx = struct
+  module Meta = struct
+    type t = [ `Glx ]
+
+    let version = (1, 4)
+    let query_name = "GLX"
+  end
+
+  type pixmap = xid [@@deriving sexp]
+  type context = xid [@@deriving sexp]
+  type pbuffer = xid [@@deriving sexp]
+  type window = xid [@@deriving sexp]
+  type fbconfig = xid [@@deriving sexp]
+  type drawable = xid [@@deriving sexp]
+  type float32 = float [@@deriving sexp]
+  type float64 = double [@@deriving sexp]
+  type bool32 = u32 [@@deriving sexp]
+  type context_tag = u32 [@@deriving sexp]
+end
+
+module Randr = struct
+  module Meta = struct
+    type t = [ `RandR ]
+
+    let version = (1, 6)
+    let query_name = "RANDR"
+  end
+
+  type mode = xid [@@deriving sexp]
+  type crtc = xid [@@deriving sexp]
+  type output = xid [@@deriving sexp]
+  type provider = xid [@@deriving sexp]
+  type lease = xid [@@deriving sexp]
+
+  module Rotation_mask = struct
+    include Mask
+
+    let (rotate_0 : t) = of_int64 (Int64.shift_right 1L 0)
+    let (rotate_90 : t) = of_int64 (Int64.shift_right 1L 1)
+    let (rotate_180 : t) = of_int64 (Int64.shift_right 1L 2)
+    let (rotate_270 : t) = of_int64 (Int64.shift_right 1L 3)
+    let (reflect_x : t) = of_int64 (Int64.shift_right 1L 4)
+    let (reflect_y : t) = of_int64 (Int64.shift_right 1L 5)
+  end
+
+  module Notify_mask = struct
+    include Mask
+
+    let (screen_change : t) = of_int64 (Int64.shift_right 1L 0)
+    let (crtc_change : t) = of_int64 (Int64.shift_right 1L 1)
+    let (output_change : t) = of_int64 (Int64.shift_right 1L 2)
+    let (output_property : t) = of_int64 (Int64.shift_right 1L 3)
+    let (provider_change : t) = of_int64 (Int64.shift_right 1L 4)
+    let (provider_property : t) = of_int64 (Int64.shift_right 1L 5)
+    let (resource_change : t) = of_int64 (Int64.shift_right 1L 6)
+    let (lease : t) = of_int64 (Int64.shift_right 1L 7)
+  end
+
+  module Mode_flag_mask = struct
+    include Mask
+
+    let (hsync_positive : t) = of_int64 (Int64.shift_right 1L 0)
+    let (hsync_negative : t) = of_int64 (Int64.shift_right 1L 1)
+    let (vsync_positive : t) = of_int64 (Int64.shift_right 1L 2)
+    let (vsync_negative : t) = of_int64 (Int64.shift_right 1L 3)
+    let (interlace : t) = of_int64 (Int64.shift_right 1L 4)
+    let (double_scan : t) = of_int64 (Int64.shift_right 1L 5)
+    let (csync : t) = of_int64 (Int64.shift_right 1L 6)
+    let (csync_positive : t) = of_int64 (Int64.shift_right 1L 7)
+    let (csync_negative : t) = of_int64 (Int64.shift_right 1L 8)
+    let (hskew_present : t) = of_int64 (Int64.shift_right 1L 9)
+    let (bcast : t) = of_int64 (Int64.shift_right 1L 10)
+    let (pixel_multiplex : t) = of_int64 (Int64.shift_right 1L 11)
+    let (double_clock : t) = of_int64 (Int64.shift_right 1L 12)
+    let (halve_clock : t) = of_int64 (Int64.shift_right 1L 13)
+  end
+
+  module Transform_mask = struct
+    include Mask
+
+    let (unit : t) = of_int64 (Int64.shift_right 1L 0)
+    let (scale_up : t) = of_int64 (Int64.shift_right 1L 1)
+    let (scale_down : t) = of_int64 (Int64.shift_right 1L 2)
+    let (projective : t) = of_int64 (Int64.shift_right 1L 3)
+  end
+
+  module Provider_capability_mask = struct
+    include Mask
+
+    let (source_output : t) = of_int64 (Int64.shift_right 1L 0)
+    let (sink_output : t) = of_int64 (Int64.shift_right 1L 1)
+    let (source_offload : t) = of_int64 (Int64.shift_right 1L 2)
+    let (sink_offload : t) = of_int64 (Int64.shift_right 1L 3)
+  end
+end
+
+module Sync = struct
+  module Meta = struct
+    type t = [ `Sync ]
+
+    let version = (3, 1)
+    let query_name = "SYNC"
+  end
+
+  type alarm = xid [@@deriving sexp]
+  type counter = xid [@@deriving sexp]
+  type fence = xid [@@deriving sexp]
+
+  module Ca_mask = struct
+    include Mask
+
+    let (counter : t) = of_int64 (Int64.shift_right 1L 0)
+    let (value_type : t) = of_int64 (Int64.shift_right 1L 1)
+    let (value : t) = of_int64 (Int64.shift_right 1L 2)
+    let (test_type : t) = of_int64 (Int64.shift_right 1L 3)
+    let (delta : t) = of_int64 (Int64.shift_right 1L 4)
+    let (events : t) = of_int64 (Int64.shift_right 1L 5)
+  end
+end
+
+module Present = struct
+  module Meta = struct
+    type t = [ `Present ]
+
+    let version = (1, 2)
+    let query_name = "Present"
+  end
+
+  type event = xid [@@deriving sexp]
+end
+
+module Record = struct
+  module Meta = struct
+    type t = [ `Record ]
+
+    let version = (1, 13)
+    let query_name = "RECORD"
+  end
+
+  type context = xid [@@deriving sexp]
+  type element_header = u8 [@@deriving sexp]
+
+  module H_type_mask = struct
+    include Mask
+
+    let (from_server_time : t) = of_int64 (Int64.shift_right 1L 0)
+    let (from_client_time : t) = of_int64 (Int64.shift_right 1L 1)
+    let (from_client_sequence : t) = of_int64 (Int64.shift_right 1L 2)
+  end
+
+  type client_spec = u32 [@@deriving sexp]
+end
+
+module Res = struct
+  module Meta = struct
+    type t = [ `Res ]
+
+    let version = (1, 2)
+    let query_name = "X-Resource"
+  end
+
+  module Client_id_mask = struct
+    include Mask
+
+    let (client_xid : t) = of_int64 (Int64.shift_right 1L 0)
+    let (local_client_pid : t) = of_int64 (Int64.shift_right 1L 1)
+  end
+end
+
+module Screensaver = struct
+  module Meta = struct
+    type t = [ `ScreenSaver ]
+
+    let version = (1, 1)
+    let query_name = "MIT-SCREEN-SAVER"
+  end
+
+  module Event_mask = struct
+    include Mask
+
+    let (notify_mask : t) = of_int64 (Int64.shift_right 1L 0)
+    let (cycle_mask : t) = of_int64 (Int64.shift_right 1L 1)
+  end
+end
+
+module Shm = struct
+  module Meta = struct
+    type t = [ `Shm ]
+
+    let version = (1, 2)
+    let query_name = "MIT-SHM"
+  end
+
+  type seg = xid [@@deriving sexp]
+end
+
+module Xc_misc = struct
+  module Meta = struct
+    type t = [ `XCMisc ]
+
+    let version = (1, 1)
+    let query_name = "XC-MISC"
+  end
+end
+
+module Xf86dri = struct
+  module Meta = struct
+    type t = [ `XF86Dri ]
+
+    let version = (4, 1)
+    let query_name = "XFree86-DRI"
+  end
+end
+
+module Xf86vidmode = struct
+  module Meta = struct
+    type t = [ `XF86VidMode ]
+
+    let version = (2, 2)
+    let query_name = "XFree86-VidModeExtension"
+  end
+
+  type syncrange = u32 [@@deriving sexp]
+  type dotclock = u32 [@@deriving sexp]
+
+  module Mode_flag_mask = struct
+    include Mask
+
+    let (positive_h_sync : t) = of_int64 (Int64.shift_right 1L 0)
+    let (negative_h_sync : t) = of_int64 (Int64.shift_right 1L 1)
+    let (positive_v_sync : t) = of_int64 (Int64.shift_right 1L 2)
+    let (negative_v_sync : t) = of_int64 (Int64.shift_right 1L 3)
+    let (interlace : t) = of_int64 (Int64.shift_right 1L 4)
+    let (composite_sync : t) = of_int64 (Int64.shift_right 1L 5)
+    let (positive_c_sync : t) = of_int64 (Int64.shift_right 1L 6)
+    let (negative_c_sync : t) = of_int64 (Int64.shift_right 1L 7)
+    let (h_skew : t) = of_int64 (Int64.shift_right 1L 8)
+    let (broadcast : t) = of_int64 (Int64.shift_right 1L 9)
+    let (pixmux : t) = of_int64 (Int64.shift_right 1L 10)
+    let (double_clock : t) = of_int64 (Int64.shift_right 1L 11)
+    let (half_clock : t) = of_int64 (Int64.shift_right 1L 12)
+  end
+
+  module Clock_flag_mask = struct
+    include Mask
+
+    let (programable : t) = of_int64 (Int64.shift_right 1L 0)
+  end
+
+  module Permission_mask = struct
+    include Mask
+
+    let (read : t) = of_int64 (Int64.shift_right 1L 0)
+    let (write : t) = of_int64 (Int64.shift_right 1L 1)
+  end
+end
+
+module Xinerama = struct
+  module Meta = struct
+    type t = [ `Xinerama ]
+
+    let version = (1, 1)
+    let query_name = "XINERAMA"
+  end
+end
+
+module Xinput = struct
+  module Meta = struct
+    type t = [ `Input ]
+
+    let version = (2, 3)
+    let query_name = "XInputExtension"
+  end
+
+  type event_class = u32 [@@deriving sexp]
+  type key_code = u8 [@@deriving sexp]
+  type device_id = u16 [@@deriving sexp]
+  type fp1616 = i32 [@@deriving sexp]
+  type event_type_base = u8 [@@deriving sexp]
+
+  module Change_feedback_control_mask = struct
+    include Mask
+
+    let (key_click_percent : t) = of_int64 (Int64.shift_right 1L 0)
+    let (percent : t) = of_int64 (Int64.shift_right 1L 1)
+    let (pitch : t) = of_int64 (Int64.shift_right 1L 2)
+    let (duration : t) = of_int64 (Int64.shift_right 1L 3)
+    let (led : t) = of_int64 (Int64.shift_right 1L 4)
+    let (led_mode : t) = of_int64 (Int64.shift_right 1L 5)
+    let (key : t) = of_int64 (Int64.shift_right 1L 6)
+    let (auto_repeat_mode : t) = of_int64 (Int64.shift_right 1L 7)
+    let (string : t) = of_int64 (Int64.shift_right 1L 0)
+    let (integer : t) = of_int64 (Int64.shift_right 1L 0)
+    let (accel_num : t) = of_int64 (Int64.shift_right 1L 0)
+    let (accel_denom : t) = of_int64 (Int64.shift_right 1L 1)
+    let (threshold : t) = of_int64 (Int64.shift_right 1L 2)
+  end
+
+  module Valuator_state_mode_mask = struct
+    include Mask
+
+    let (device_mode_absolute : t) = of_int64 (Int64.shift_right 1L 0)
+    let (out_of_proximity : t) = of_int64 (Int64.shift_right 1L 1)
+  end
+
+  module Xi_event_mask = struct
+    include Mask
+
+    let (device_changed : t) = of_int64 (Int64.shift_right 1L 1)
+    let (key_press : t) = of_int64 (Int64.shift_right 1L 2)
+    let (key_release : t) = of_int64 (Int64.shift_right 1L 3)
+    let (button_press : t) = of_int64 (Int64.shift_right 1L 4)
+    let (button_release : t) = of_int64 (Int64.shift_right 1L 5)
+    let (motion : t) = of_int64 (Int64.shift_right 1L 6)
+    let (enter : t) = of_int64 (Int64.shift_right 1L 7)
+    let (leave : t) = of_int64 (Int64.shift_right 1L 8)
+    let (focus_in : t) = of_int64 (Int64.shift_right 1L 9)
+    let (focus_out : t) = of_int64 (Int64.shift_right 1L 10)
+    let (hierarchy : t) = of_int64 (Int64.shift_right 1L 11)
+    let (property : t) = of_int64 (Int64.shift_right 1L 12)
+    let (raw_key_press : t) = of_int64 (Int64.shift_right 1L 13)
+    let (raw_key_release : t) = of_int64 (Int64.shift_right 1L 14)
+    let (raw_button_press : t) = of_int64 (Int64.shift_right 1L 15)
+    let (raw_button_release : t) = of_int64 (Int64.shift_right 1L 16)
+    let (raw_motion : t) = of_int64 (Int64.shift_right 1L 17)
+    let (touch_begin : t) = of_int64 (Int64.shift_right 1L 18)
+    let (touch_update : t) = of_int64 (Int64.shift_right 1L 19)
+    let (touch_end : t) = of_int64 (Int64.shift_right 1L 20)
+    let (touch_ownership : t) = of_int64 (Int64.shift_right 1L 21)
+    let (raw_touch_begin : t) = of_int64 (Int64.shift_right 1L 22)
+    let (raw_touch_update : t) = of_int64 (Int64.shift_right 1L 23)
+    let (raw_touch_end : t) = of_int64 (Int64.shift_right 1L 24)
+    let (barrier_hit : t) = of_int64 (Int64.shift_right 1L 25)
+    let (barrier_leave : t) = of_int64 (Int64.shift_right 1L 26)
+  end
+
+  module Scroll_flags_mask = struct
+    include Mask
+
+    let (no_emulation : t) = of_int64 (Int64.shift_right 1L 0)
+    let (preferred : t) = of_int64 (Int64.shift_right 1L 1)
+  end
+
+  module Modifier_mask = struct
+    include Mask
+
+    let (any : t) = of_int64 (Int64.shift_right 1L 31)
+  end
+
+  module More_events_mask = struct
+    include Mask
+
+    let (more_events : t) = of_int64 (Int64.shift_right 1L 7)
+  end
+
+  module Classes_reported_mask = struct
+    include Mask
+
+    let (out_of_proximity : t) = of_int64 (Int64.shift_right 1L 7)
+    let (device_mode_absolute : t) = of_int64 (Int64.shift_right 1L 6)
+    let (reporting_valuators : t) = of_int64 (Int64.shift_right 1L 2)
+    let (reporting_buttons : t) = of_int64 (Int64.shift_right 1L 1)
+    let (reporting_keys : t) = of_int64 (Int64.shift_right 1L 0)
+  end
+
+  module Key_event_flags_mask = struct
+    include Mask
+
+    let (key_repeat : t) = of_int64 (Int64.shift_right 1L 16)
+  end
+
+  module Pointer_event_flags_mask = struct
+    include Mask
+
+    let (pointer_emulated : t) = of_int64 (Int64.shift_right 1L 16)
+  end
+
+  module Hierarchy_mask = struct
+    include Mask
+
+    let (master_added : t) = of_int64 (Int64.shift_right 1L 0)
+    let (master_removed : t) = of_int64 (Int64.shift_right 1L 1)
+    let (slave_added : t) = of_int64 (Int64.shift_right 1L 2)
+    let (slave_removed : t) = of_int64 (Int64.shift_right 1L 3)
+    let (slave_attached : t) = of_int64 (Int64.shift_right 1L 4)
+    let (slave_detached : t) = of_int64 (Int64.shift_right 1L 5)
+    let (device_enabled : t) = of_int64 (Int64.shift_right 1L 6)
+    let (device_disabled : t) = of_int64 (Int64.shift_right 1L 7)
+  end
+
+  module Touch_event_flags_mask = struct
+    include Mask
+
+    let (touch_pending_end : t) = of_int64 (Int64.shift_right 1L 16)
+    let (touch_emulating_pointer : t) = of_int64 (Int64.shift_right 1L 17)
+  end
+
+  module Barrier_flags_mask = struct
+    include Mask
+
+    let (pointer_released : t) = of_int64 (Int64.shift_right 1L 0)
+    let (device_is_grabbed : t) = of_int64 (Int64.shift_right 1L 1)
+  end
+end
+
+module Xprint = struct
+  module Meta = struct
+    type t = [ `XPrint ]
+
+    let version = (1, 0)
+    let query_name = "XpExtension"
+  end
+
+  type string8 = char [@@deriving sexp]
+  type pcontext = xid [@@deriving sexp]
+end
+
+module Xselinux = struct
+  module Meta = struct
+    type t = [ `SELinux ]
+
+    let version = (1, 0)
+    let query_name = "SELinux"
+  end
+end
+
+module Xtest = struct
+  module Meta = struct
+    type t = [ `Test ]
+
+    let version = (2, 2)
+    let query_name = "XTEST"
+  end
+end
+
+module Xv = struct
+  module Meta = struct
+    type t = [ `Xv ]
+
+    let version = (2, 2)
+    let query_name = "XVideo"
+  end
+
+  type port = xid [@@deriving sexp]
+  type encoding = xid [@@deriving sexp]
+
+  module Type_mask = struct
+    include Mask
+
+    let (input_mask : t) = of_int64 (Int64.shift_right 1L 0)
+    let (output_mask : t) = of_int64 (Int64.shift_right 1L 1)
+    let (video_mask : t) = of_int64 (Int64.shift_right 1L 2)
+    let (still_mask : t) = of_int64 (Int64.shift_right 1L 3)
+    let (image_mask : t) = of_int64 (Int64.shift_right 1L 4)
+  end
+
+  module Attribute_flag_mask = struct
+    include Mask
+
+    let (gettable : t) = of_int64 (Int64.shift_right 1L 0)
+    let (settable : t) = of_int64 (Int64.shift_right 1L 1)
+  end
+end
+
+module Xvmc = struct
+  module Meta = struct
+    type t = [ `XvMC ]
+
+    let version = (1, 1)
+    let query_name = "XVideo-MotionCompensation"
+  end
+
+  type context = xid [@@deriving sexp]
+  type surface = xid [@@deriving sexp]
+  type subpicture = xid [@@deriving sexp]
+end
