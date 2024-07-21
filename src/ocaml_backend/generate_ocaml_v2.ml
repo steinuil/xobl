@@ -205,7 +205,7 @@ module Type = struct
     | Field_list { type_; _ } | Field_list_simple { type_; _ } ->
         t_list_type ~ctx ~loc type_
     | Field_variant { variant; _ } ->
-        t_ident ~suffix:"variant" ~ctx ~loc variant
+        t_module_ident ~suffix:"union" ~ctx ~loc variant "t"
     | Field_optional { type_; _ } ->
         [%type: [%t t_field_type ~ctx ~loc type_] option]
     | ( Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _

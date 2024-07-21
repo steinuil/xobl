@@ -1680,7 +1680,7 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
-  type input_info = { len : u8; info : input_class_variant } [@@deriving sexp]
+  type input_info = { len : u8; info : Input_class_union.t } [@@deriving sexp]
   type device_name = string [@@deriving sexp]
   type event_type_base = u8 [@@deriving sexp]
 
@@ -1783,7 +1783,7 @@ module Xinput = struct
   type feedback_state = {
     feedback_id : u8;
     len : u16;
-    data : feedback_class_variant;
+    data : Feedback_class_union.t;
   }
   [@@deriving sexp]
 
@@ -1850,7 +1850,7 @@ module Xinput = struct
   type feedback_ctl = {
     feedback_id : u8;
     len : u16;
-    data : feedback_class_variant;
+    data : Feedback_class_union.t;
   }
   [@@deriving sexp]
 
@@ -1903,7 +1903,7 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
-  type input_state = { len : u8; data : input_class_variant } [@@deriving sexp]
+  type input_state = { len : u8; data : Input_class_union.t } [@@deriving sexp]
 
   module Device_control_enum = struct
     type t = [ `Resolution | `Abs_calib | `Core | `Enable | `Abs_area ]
@@ -1960,7 +1960,7 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
-  type device_state = { len : u16; data : device_control_variant }
+  type device_state = { len : u16; data : Device_control_union.t }
   [@@deriving sexp]
 
   type device_resolution_ctl = {
@@ -2011,7 +2011,7 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
-  type device_ctl = { len : u16; data : device_control_variant }
+  type device_ctl = { len : u16; data : Device_control_union.t }
   [@@deriving sexp]
 
   module Property_format_enum = struct
@@ -2076,7 +2076,7 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
-  type hierarchy_change = { len : u16; data : hierarchy_change_type_variant }
+  type hierarchy_change = { len : u16; data : Hierarchy_change_type_union.t }
   [@@deriving sexp]
 
   module Xi_event_mask = struct
@@ -2199,7 +2199,7 @@ module Xinput = struct
   type device_class = {
     len : u16;
     sourceid : device_id;
-    data : device_class_type_variant;
+    data : Device_class_type_union.t;
   }
   [@@deriving sexp]
 
