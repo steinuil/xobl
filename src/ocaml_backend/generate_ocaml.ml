@@ -134,9 +134,10 @@ module Type = struct
     | { ft_type; ft_allowed = None } -> t_type ~ctx ~loc ft_type
     | { ft_type = _; ft_allowed = Some (Allowed_enum enum) } ->
         t_ident ~suffix:"enum" ~ctx ~loc enum
-    | { ft_type = _; ft_allowed = Some (Allowed_alt_enum enum) } ->
+    | { ft_type; ft_allowed = Some (Allowed_alt_enum enum) } ->
+        let type_ = t_type ~ctx ~loc ft_type in
         let enum = t_ident ~suffix:"enum" ~ctx ~loc enum in
-        [%type: [ [%t enum] | custom ]]
+        [%type: [ [%t enum] | [%t type_] custom ]]
     | { ft_type = _; ft_allowed = Some (Allowed_mask mask) } ->
         t_ident ~suffix:"mask" ~ctx ~loc mask
     (* TODO use this?
@@ -584,7 +585,7 @@ module Decode = struct
       @ [ Ast_helper.Exp.case (Ast_helper.Pat.any ()) [%expr `Custom n] ]
     in
     let body = Ast_helper.Exp.match_ ~loc (e_id ~loc "n") items in
-    [%expr fun n : [ [%t type_] | custom ] -> [%e body]]
+    [%expr fun n : [ [%t type_] | int custom ] -> [%e body]]
 
   let e_variant ~ctx ~loc name items external_params =
     let type_ = t_id ~suffix:"variant" ~loc name in
@@ -594,7 +595,6 @@ module Decode = struct
             Ast_helper.Exp.construct ~loc (lid_caml ~loc vi_name)
               (Some (e_result_fields_record ~loc vi_fields))
           in
-
           Ast_helper.Exp.case
             (p_int ~loc (Int64.to_int vi_tag))
             (e_fields ~ctx ~loc vi_fields result))

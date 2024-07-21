@@ -129,7 +129,7 @@ module Xproto = struct
     | `Direct_color ]
   [@@deriving sexp]
 
-  let visual_class_enum_of_int n : [ visual_class_enum | custom ] =
+  let visual_class_enum_of_int n : [ visual_class_enum | int custom ] =
     match n with
     | 0 -> `Static_gray
     | 1 -> `Gray_scale
@@ -215,7 +215,7 @@ module Xproto = struct
   type backing_store_enum = [ `Not_useful | `When_mapped | `Always ]
   [@@deriving sexp]
 
-  let backing_store_enum_of_int n : [ backing_store_enum | custom ] =
+  let backing_store_enum_of_int n : [ backing_store_enum | int custom ] =
     match n with
     | 0 -> `Not_useful
     | 1 -> `When_mapped
@@ -350,7 +350,7 @@ module Xproto = struct
 
   type image_order_enum = [ `Lsb_first | `Msb_first ] [@@deriving sexp]
 
-  let image_order_enum_of_int n : [ image_order_enum | custom ] =
+  let image_order_enum_of_int n : [ image_order_enum | int custom ] =
     match n with 0 -> `Lsb_first | 1 -> `Msb_first | _ -> `Custom n
 
   type setup = {
@@ -454,7 +454,7 @@ module Xproto = struct
 
   type window_enum = [ `None ] [@@deriving sexp]
 
-  let window_enum_of_int n : [ window_enum | custom ] =
+  let window_enum_of_int n : [ window_enum | int custom ] =
     match n with 0 -> `None | _ -> `Custom n
 
   type key_press_event = {
@@ -462,7 +462,7 @@ module Xproto = struct
     time : timestamp;
     root : window;
     event : window;
-    child : [ window_enum | custom ];
+    child : [ window_enum | window custom ];
     root_x : i16;
     root_y : i16;
     event_x : i16;
@@ -519,7 +519,7 @@ module Xproto = struct
     time : timestamp;
     root : window;
     event : window;
-    child : [ window_enum | custom ];
+    child : [ window_enum | window custom ];
     root_x : i16;
     root_y : i16;
     event_x : i16;
@@ -570,7 +570,7 @@ module Xproto = struct
 
   type motion_enum = [ `Normal | `Hint ] [@@deriving sexp]
 
-  let motion_enum_of_int n : [ motion_enum | custom ] =
+  let motion_enum_of_int n : [ motion_enum | int custom ] =
     match n with 0 -> `Normal | 1 -> `Hint | _ -> `Custom n
 
   type motion_notify_event = {
@@ -578,7 +578,7 @@ module Xproto = struct
     time : timestamp;
     root : window;
     event : window;
-    child : [ window_enum | custom ];
+    child : [ window_enum | window custom ];
     root_x : i16;
     root_y : i16;
     event_x : i16;
@@ -638,7 +638,7 @@ module Xproto = struct
     | `None ]
   [@@deriving sexp]
 
-  let notify_detail_enum_of_int n : [ notify_detail_enum | custom ] =
+  let notify_detail_enum_of_int n : [ notify_detail_enum | int custom ] =
     match n with
     | 0 -> `Ancestor
     | 1 -> `Virtual
@@ -653,7 +653,7 @@ module Xproto = struct
   type notify_mode_enum = [ `Normal | `Grab | `Ungrab | `While_grabbed ]
   [@@deriving sexp]
 
-  let notify_mode_enum_of_int n : [ notify_mode_enum | custom ] =
+  let notify_mode_enum_of_int n : [ notify_mode_enum | int custom ] =
     match n with
     | 0 -> `Normal
     | 1 -> `Grab
@@ -666,7 +666,7 @@ module Xproto = struct
     time : timestamp;
     root : window;
     event : window;
-    child : [ window_enum | custom ];
+    child : [ window_enum | window custom ];
     root_x : i16;
     root_y : i16;
     event_x : i16;
@@ -835,7 +835,7 @@ module Xproto = struct
   type visibility_enum = [ `Unobscured | `Partially_obscured | `Fully_obscured ]
   [@@deriving sexp]
 
-  let visibility_enum_of_int n : [ visibility_enum | custom ] =
+  let visibility_enum_of_int n : [ visibility_enum | int custom ] =
     match n with
     | 0 -> `Unobscured
     | 1 -> `Partially_obscured
@@ -967,7 +967,7 @@ module Xproto = struct
   type configure_notify_event = {
     event : window;
     window : window;
-    above_sibling : [ window_enum | custom ];
+    above_sibling : [ window_enum | window custom ];
     x : i16;
     y : i16;
     width : u16;
@@ -1008,7 +1008,7 @@ module Xproto = struct
   type stack_mode_enum = [ `Above | `Below | `Top_if | `Bottom_if | `Opposite ]
   [@@deriving sexp]
 
-  let stack_mode_enum_of_int n : [ stack_mode_enum | custom ] =
+  let stack_mode_enum_of_int n : [ stack_mode_enum | int custom ] =
     match n with
     | 0 -> `Above
     | 1 -> `Below
@@ -1025,7 +1025,7 @@ module Xproto = struct
     stack_mode : stack_mode_enum;
     parent : window;
     window : window;
-    sibling : [ window_enum | custom ];
+    sibling : [ window_enum | window custom ];
     x : i16;
     y : i16;
     width : u16;
@@ -1103,7 +1103,7 @@ module Xproto = struct
 
   type place_enum = [ `On_top | `On_bottom ] [@@deriving sexp]
 
-  let place_enum_of_int n : [ place_enum | custom ] =
+  let place_enum_of_int n : [ place_enum | int custom ] =
     match n with 0 -> `On_top | 1 -> `On_bottom | _ -> `Custom n
 
   type circulate_notify_event = {
@@ -1134,7 +1134,7 @@ module Xproto = struct
 
   type property_enum = [ `New_value | `Delete ] [@@deriving sexp]
 
-  let property_enum_of_int n : [ property_enum | custom ] =
+  let property_enum_of_int n : [ property_enum | int custom ] =
     match n with 0 -> `New_value | 1 -> `Delete | _ -> `Custom n
 
   type property_notify_event = {
@@ -1178,7 +1178,7 @@ module Xproto = struct
 
   type time_enum = [ `Current_time ] [@@deriving sexp]
 
-  let time_enum_of_int n : [ time_enum | custom ] =
+  let time_enum_of_int n : [ time_enum | int custom ] =
     match n with 0 -> `Current_time | _ -> `Custom n
 
   type atom_enum =
@@ -1254,7 +1254,7 @@ module Xproto = struct
     | `Wm_transient_for ]
   [@@deriving sexp]
 
-  let atom_enum_of_int n : [ atom_enum | custom ] =
+  let atom_enum_of_int n : [ atom_enum | int custom ] =
     match n with
     | 0 -> `None
     | 0 -> `Any
@@ -1329,12 +1329,12 @@ module Xproto = struct
     | _ -> `Custom n
 
   type selection_request_event = {
-    time : [ time_enum | custom ];
+    time : [ time_enum | timestamp custom ];
     owner : window;
     requestor : window;
     selection : atom;
     target : atom;
-    property : [ atom_enum | custom ];
+    property : [ atom_enum | atom custom ];
   }
   [@@deriving sexp]
 
@@ -1355,11 +1355,11 @@ module Xproto = struct
     { time; owner; requestor; selection; target; property }
 
   type selection_notify_event = {
-    time : [ time_enum | custom ];
+    time : [ time_enum | timestamp custom ];
     requestor : window;
     selection : atom;
     target : atom;
-    property : [ atom_enum | custom ];
+    property : [ atom_enum | atom custom ];
   }
   [@@deriving sexp]
 
@@ -1380,17 +1380,17 @@ module Xproto = struct
 
   type colormap_state_enum = [ `Uninstalled | `Installed ] [@@deriving sexp]
 
-  let colormap_state_enum_of_int n : [ colormap_state_enum | custom ] =
+  let colormap_state_enum_of_int n : [ colormap_state_enum | int custom ] =
     match n with 0 -> `Uninstalled | 1 -> `Installed | _ -> `Custom n
 
   type colormap_enum = [ `None ] [@@deriving sexp]
 
-  let colormap_enum_of_int n : [ colormap_enum | custom ] =
+  let colormap_enum_of_int n : [ colormap_enum | int custom ] =
     match n with 0 -> `None | _ -> `Custom n
 
   type colormap_notify_event = {
     window : window;
-    colormap : [ colormap_enum | custom ];
+    colormap : [ colormap_enum | colormap custom ];
     new_ : bool;
     state : colormap_state_enum;
   }
@@ -1417,7 +1417,7 @@ module Xproto = struct
   [@@deriving sexp]
 
   let client_message_data_format_enum_of_int n :
-      [ client_message_data_format_enum | custom ] =
+      [ client_message_data_format_enum | int custom ] =
     match n with 8 -> `Data8 | 16 -> `Data16 | 32 -> `Data32 | _ -> `Custom n
 
   type client_message_data_format_variant =
@@ -1459,7 +1459,7 @@ module Xproto = struct
 
   type mapping_enum = [ `Modifier | `Keyboard | `Pointer ] [@@deriving sexp]
 
-  let mapping_enum_of_int n : [ mapping_enum | custom ] =
+  let mapping_enum_of_int n : [ mapping_enum | int custom ] =
     match n with
     | 0 -> `Modifier
     | 1 -> `Keyboard
@@ -1572,7 +1572,7 @@ module Xproto = struct
   type window_class_enum = [ `Copy_from_parent | `Input_output | `Input_only ]
   [@@deriving sexp]
 
-  let window_class_enum_of_int n : [ window_class_enum | custom ] =
+  let window_class_enum_of_int n : [ window_class_enum | int custom ] =
     match n with
     | 0 -> `Copy_from_parent
     | 1 -> `Input_output
@@ -1600,7 +1600,7 @@ module Xproto = struct
 
   type back_pixmap_enum = [ `None | `Parent_relative ] [@@deriving sexp]
 
-  let back_pixmap_enum_of_int n : [ back_pixmap_enum | custom ] =
+  let back_pixmap_enum_of_int n : [ back_pixmap_enum | int custom ] =
     match n with 0 -> `None | 1 -> `Parent_relative | _ -> `Custom n
 
   type gravity_enum =
@@ -1618,7 +1618,7 @@ module Xproto = struct
     | `Static ]
   [@@deriving sexp]
 
-  let gravity_enum_of_int n : [ gravity_enum | custom ] =
+  let gravity_enum_of_int n : [ gravity_enum | int custom ] =
     match n with
     | 0 -> `Bit_forget
     | 0 -> `Win_unmap
@@ -1636,18 +1636,18 @@ module Xproto = struct
 
   type pixmap_enum = [ `None ] [@@deriving sexp]
 
-  let pixmap_enum_of_int n : [ pixmap_enum | custom ] =
+  let pixmap_enum_of_int n : [ pixmap_enum | int custom ] =
     match n with 0 -> `None | _ -> `Custom n
 
   type cursor_enum = [ `None ] [@@deriving sexp]
 
-  let cursor_enum_of_int n : [ cursor_enum | custom ] =
+  let cursor_enum_of_int n : [ cursor_enum | int custom ] =
     match n with 0 -> `None | _ -> `Custom n
 
   type map_state_enum = [ `Unmapped | `Unviewable | `Viewable ]
   [@@deriving sexp]
 
-  let map_state_enum_of_int n : [ map_state_enum | custom ] =
+  let map_state_enum_of_int n : [ map_state_enum | int custom ] =
     match n with
     | 0 -> `Unmapped
     | 1 -> `Unviewable
@@ -1666,7 +1666,7 @@ module Xproto = struct
     map_is_installed : bool;
     map_state : map_state_enum;
     override_redirect : bool;
-    colormap : [ colormap_enum | custom ];
+    colormap : [ colormap_enum | colormap custom ];
     all_event_masks : event_mask;
     your_event_mask : event_mask;
     do_not_propagate_mask : event_mask;
@@ -1742,12 +1742,12 @@ module Xproto = struct
 
   type set_mode_enum = [ `Insert | `Delete ] [@@deriving sexp]
 
-  let set_mode_enum_of_int n : [ set_mode_enum | custom ] =
+  let set_mode_enum_of_int n : [ set_mode_enum | int custom ] =
     match n with 0 -> `Insert | 1 -> `Delete | _ -> `Custom n
 
   type circulate_enum = [ `Raise_lowest | `Lower_highest ] [@@deriving sexp]
 
-  let circulate_enum_of_int n : [ circulate_enum | custom ] =
+  let circulate_enum_of_int n : [ circulate_enum | int custom ] =
     match n with 0 -> `Raise_lowest | 1 -> `Lower_highest | _ -> `Custom n
 
   type get_geometry_reply = {
@@ -1778,7 +1778,7 @@ module Xproto = struct
 
   type query_tree_reply = {
     root : window;
-    parent : [ window_enum | custom ];
+    parent : [ window_enum | window custom ];
     children : window list;
   }
   [@@deriving sexp]
@@ -1796,7 +1796,7 @@ module Xproto = struct
     ignore length;
     { root; parent; children }
 
-  type intern_atom_reply = [ atom_enum | custom ] [@@deriving sexp]
+  type intern_atom_reply = [ atom_enum | atom custom ] [@@deriving sexp]
 
   let decode_intern_atom_reply buf : intern_atom_reply =
     Decode.pad buf 4;
@@ -1818,12 +1818,13 @@ module Xproto = struct
 
   type prop_mode_enum = [ `Replace | `Prepend | `Append ] [@@deriving sexp]
 
-  let prop_mode_enum_of_int n : [ prop_mode_enum | custom ] =
+  let prop_mode_enum_of_int n : [ prop_mode_enum | int custom ] =
     match n with 0 -> `Replace | 1 -> `Prepend | 2 -> `Append | _ -> `Custom n
 
   type get_property_type_enum = [ `Any ] [@@deriving sexp]
 
-  let get_property_type_enum_of_int n : [ get_property_type_enum | custom ] =
+  let get_property_type_enum_of_int n : [ get_property_type_enum | int custom ]
+      =
     match n with 0 -> `Any | _ -> `Custom n
 
   type get_property_reply = {
@@ -1859,7 +1860,8 @@ module Xproto = struct
     ignore length;
     atoms
 
-  type get_selection_owner_reply = [ window_enum | custom ] [@@deriving sexp]
+  type get_selection_owner_reply = [ window_enum | window custom ]
+  [@@deriving sexp]
 
   let decode_get_selection_owner_reply buf : get_selection_owner_reply =
     Decode.pad buf 4;
@@ -1873,19 +1875,19 @@ module Xproto = struct
   type send_event_dest_enum = [ `Pointer_window | `Item_focus ]
   [@@deriving sexp]
 
-  let send_event_dest_enum_of_int n : [ send_event_dest_enum | custom ] =
+  let send_event_dest_enum_of_int n : [ send_event_dest_enum | int custom ] =
     match n with 0 -> `Pointer_window | 1 -> `Item_focus | _ -> `Custom n
 
   type grab_mode_enum = [ `Sync | `Async ] [@@deriving sexp]
 
-  let grab_mode_enum_of_int n : [ grab_mode_enum | custom ] =
+  let grab_mode_enum_of_int n : [ grab_mode_enum | int custom ] =
     match n with 0 -> `Sync | 1 -> `Async | _ -> `Custom n
 
   type grab_status_enum =
     [ `Success | `Already_grabbed | `Invalid_time | `Not_viewable | `Frozen ]
   [@@deriving sexp]
 
-  let grab_status_enum_of_int n : [ grab_status_enum | custom ] =
+  let grab_status_enum_of_int n : [ grab_status_enum | int custom ] =
     match n with
     | 0 -> `Success
     | 1 -> `Already_grabbed
@@ -1911,7 +1913,7 @@ module Xproto = struct
   type button_index_enum = [ `Any | `D1 | `D2 | `D3 | `D4 | `D5 ]
   [@@deriving sexp]
 
-  let button_index_enum_of_int n : [ button_index_enum | custom ] =
+  let button_index_enum_of_int n : [ button_index_enum | int custom ] =
     match n with
     | 0 -> `Any
     | 1 -> `D1
@@ -1937,7 +1939,7 @@ module Xproto = struct
 
   type grab_enum = [ `Any ] [@@deriving sexp]
 
-  let grab_enum_of_int n : [ grab_enum | custom ] =
+  let grab_enum_of_int n : [ grab_enum | int custom ] =
     match n with 0 -> `Any | _ -> `Custom n
 
   type allow_enum =
@@ -1951,7 +1953,7 @@ module Xproto = struct
     | `Sync_both ]
   [@@deriving sexp]
 
-  let allow_enum_of_int n : [ allow_enum | custom ] =
+  let allow_enum_of_int n : [ allow_enum | int custom ] =
     match n with
     | 0 -> `Async_pointer
     | 1 -> `Sync_pointer
@@ -1966,7 +1968,7 @@ module Xproto = struct
   type query_pointer_reply = {
     same_screen : bool;
     root : window;
-    child : [ window_enum | custom ];
+    child : [ window_enum | window custom ];
     root_x : i16;
     root_y : i16;
     win_x : i16;
@@ -2016,7 +2018,7 @@ module Xproto = struct
 
   type translate_coordinates_reply = {
     same_screen : bool;
-    child : [ window_enum | custom ];
+    child : [ window_enum | window custom ];
     dst_x : i16;
     dst_y : i16;
   }
@@ -2038,7 +2040,7 @@ module Xproto = struct
   type input_focus_enum = [ `None | `Pointer_root | `Parent | `Follow_keyboard ]
   [@@deriving sexp]
 
-  let input_focus_enum_of_int n : [ input_focus_enum | custom ] =
+  let input_focus_enum_of_int n : [ input_focus_enum | int custom ] =
     match n with
     | 0 -> `None
     | 1 -> `Pointer_root
@@ -2048,7 +2050,7 @@ module Xproto = struct
 
   type get_input_focus_reply = {
     revert_to : input_focus_enum;
-    focus : [ input_focus_enum | custom ];
+    focus : [ input_focus_enum | window custom ];
   }
   [@@deriving sexp]
 
@@ -2078,7 +2080,7 @@ module Xproto = struct
 
   type font_draw_enum = [ `Left_to_right | `Right_to_left ] [@@deriving sexp]
 
-  let font_draw_enum_of_int n : [ font_draw_enum | custom ] =
+  let font_draw_enum_of_int n : [ font_draw_enum | int custom ] =
     match n with 0 -> `Left_to_right | 1 -> `Right_to_left | _ -> `Custom n
 
   type fontprop = { name : atom; value : u32 } [@@deriving sexp]
@@ -2355,7 +2357,7 @@ module Xproto = struct
     | `Set ]
   [@@deriving sexp]
 
-  let gx_enum_of_int n : [ gx_enum | custom ] =
+  let gx_enum_of_int n : [ gx_enum | int custom ] =
     match n with
     | 0 -> `Clear
     | 1 -> `And
@@ -2378,7 +2380,7 @@ module Xproto = struct
   type line_style_enum = [ `Solid | `On_off_dash | `Double_dash ]
   [@@deriving sexp]
 
-  let line_style_enum_of_int n : [ line_style_enum | custom ] =
+  let line_style_enum_of_int n : [ line_style_enum | int custom ] =
     match n with
     | 0 -> `Solid
     | 1 -> `On_off_dash
@@ -2388,7 +2390,7 @@ module Xproto = struct
   type cap_style_enum = [ `Not_last | `Butt | `Round | `Projecting ]
   [@@deriving sexp]
 
-  let cap_style_enum_of_int n : [ cap_style_enum | custom ] =
+  let cap_style_enum_of_int n : [ cap_style_enum | int custom ] =
     match n with
     | 0 -> `Not_last
     | 1 -> `Butt
@@ -2398,13 +2400,13 @@ module Xproto = struct
 
   type join_style_enum = [ `Miter | `Round | `Bevel ] [@@deriving sexp]
 
-  let join_style_enum_of_int n : [ join_style_enum | custom ] =
+  let join_style_enum_of_int n : [ join_style_enum | int custom ] =
     match n with 0 -> `Miter | 1 -> `Round | 2 -> `Bevel | _ -> `Custom n
 
   type fill_style_enum = [ `Solid | `Tiled | `Stippled | `Opaque_stippled ]
   [@@deriving sexp]
 
-  let fill_style_enum_of_int n : [ fill_style_enum | custom ] =
+  let fill_style_enum_of_int n : [ fill_style_enum | int custom ] =
     match n with
     | 0 -> `Solid
     | 1 -> `Tiled
@@ -2414,13 +2416,13 @@ module Xproto = struct
 
   type fill_rule_enum = [ `Even_odd | `Winding ] [@@deriving sexp]
 
-  let fill_rule_enum_of_int n : [ fill_rule_enum | custom ] =
+  let fill_rule_enum_of_int n : [ fill_rule_enum | int custom ] =
     match n with 0 -> `Even_odd | 1 -> `Winding | _ -> `Custom n
 
   type subwindow_mode_enum = [ `Clip_by_children | `Include_inferiors ]
   [@@deriving sexp]
 
-  let subwindow_mode_enum_of_int n : [ subwindow_mode_enum | custom ] =
+  let subwindow_mode_enum_of_int n : [ subwindow_mode_enum | int custom ] =
     match n with
     | 0 -> `Clip_by_children
     | 1 -> `Include_inferiors
@@ -2428,18 +2430,18 @@ module Xproto = struct
 
   type arc_mode_enum = [ `Chord | `Pie_slice ] [@@deriving sexp]
 
-  let arc_mode_enum_of_int n : [ arc_mode_enum | custom ] =
+  let arc_mode_enum_of_int n : [ arc_mode_enum | int custom ] =
     match n with 0 -> `Chord | 1 -> `Pie_slice | _ -> `Custom n
 
   type font_enum = [ `None ] [@@deriving sexp]
 
-  let font_enum_of_int n : [ font_enum | custom ] =
+  let font_enum_of_int n : [ font_enum | int custom ] =
     match n with 0 -> `None | _ -> `Custom n
 
   type clip_ordering_enum = [ `Unsorted | `Y_sorted | `Yx_sorted | `Yx_banded ]
   [@@deriving sexp]
 
-  let clip_ordering_enum_of_int n : [ clip_ordering_enum | custom ] =
+  let clip_ordering_enum_of_int n : [ clip_ordering_enum | int custom ] =
     match n with
     | 0 -> `Unsorted
     | 1 -> `Y_sorted
@@ -2449,7 +2451,7 @@ module Xproto = struct
 
   type coord_mode_enum = [ `Origin | `Previous ] [@@deriving sexp]
 
-  let coord_mode_enum_of_int n : [ coord_mode_enum | custom ] =
+  let coord_mode_enum_of_int n : [ coord_mode_enum | int custom ] =
     match n with 0 -> `Origin | 1 -> `Previous | _ -> `Custom n
 
   type segment = { x1 : i16; y1 : i16; x2 : i16; y2 : i16 } [@@deriving sexp]
@@ -2463,7 +2465,7 @@ module Xproto = struct
 
   type poly_shape_enum = [ `Complex | `Nonconvex | `Convex ] [@@deriving sexp]
 
-  let poly_shape_enum_of_int n : [ poly_shape_enum | custom ] =
+  let poly_shape_enum_of_int n : [ poly_shape_enum | int custom ] =
     match n with
     | 0 -> `Complex
     | 1 -> `Nonconvex
@@ -2473,7 +2475,7 @@ module Xproto = struct
   type image_format_enum = [ `Xy_bitmap | `Xy_pixmap | `Z_pixmap ]
   [@@deriving sexp]
 
-  let image_format_enum_of_int n : [ image_format_enum | custom ] =
+  let image_format_enum_of_int n : [ image_format_enum | int custom ] =
     match n with
     | 0 -> `Xy_bitmap
     | 1 -> `Xy_pixmap
@@ -2496,7 +2498,7 @@ module Xproto = struct
 
   type colormap_alloc_enum = [ `None | `All ] [@@deriving sexp]
 
-  let colormap_alloc_enum_of_int n : [ colormap_alloc_enum | custom ] =
+  let colormap_alloc_enum_of_int n : [ colormap_alloc_enum | int custom ] =
     match n with 0 -> `None | 1 -> `All | _ -> `Custom n
 
   type list_installed_colormaps_reply = colormap list [@@deriving sexp]
@@ -2667,7 +2669,7 @@ module Xproto = struct
     [ `Largest_cursor | `Fastest_tile | `Fastest_stipple ]
   [@@deriving sexp]
 
-  let query_shape_of_enum_of_int n : [ query_shape_of_enum | custom ] =
+  let query_shape_of_enum_of_int n : [ query_shape_of_enum | int custom ] =
     match n with
     | 0 -> `Largest_cursor
     | 1 -> `Fastest_tile
@@ -2744,12 +2746,12 @@ module Xproto = struct
 
   type led_mode_enum = [ `Off | `On ] [@@deriving sexp]
 
-  let led_mode_enum_of_int n : [ led_mode_enum | custom ] =
+  let led_mode_enum_of_int n : [ led_mode_enum | int custom ] =
     match n with 0 -> `Off | 1 -> `On | _ -> `Custom n
 
   type auto_repeat_mode_enum = [ `Off | `On | `Default ] [@@deriving sexp]
 
-  let auto_repeat_mode_enum_of_int n : [ auto_repeat_mode_enum | custom ] =
+  let auto_repeat_mode_enum_of_int n : [ auto_repeat_mode_enum | int custom ] =
     match n with 0 -> `Off | 1 -> `On | 2 -> `Default | _ -> `Custom n
 
   type get_keyboard_control_reply = {
@@ -2810,7 +2812,7 @@ module Xproto = struct
   type blanking_enum = [ `Not_preferred | `Preferred | `Default ]
   [@@deriving sexp]
 
-  let blanking_enum_of_int n : [ blanking_enum | custom ] =
+  let blanking_enum_of_int n : [ blanking_enum | int custom ] =
     match n with
     | 0 -> `Not_preferred
     | 1 -> `Preferred
@@ -2819,7 +2821,7 @@ module Xproto = struct
 
   type exposures_enum = [ `Not_allowed | `Allowed | `Default ] [@@deriving sexp]
 
-  let exposures_enum_of_int n : [ exposures_enum | custom ] =
+  let exposures_enum_of_int n : [ exposures_enum | int custom ] =
     match n with
     | 0 -> `Not_allowed
     | 1 -> `Allowed
@@ -2855,14 +2857,14 @@ module Xproto = struct
 
   type host_mode_enum = [ `Insert | `Delete ] [@@deriving sexp]
 
-  let host_mode_enum_of_int n : [ host_mode_enum | custom ] =
+  let host_mode_enum_of_int n : [ host_mode_enum | int custom ] =
     match n with 0 -> `Insert | 1 -> `Delete | _ -> `Custom n
 
   type family_enum =
     [ `Internet | `Decnet | `Chaos | `Server_interpreted | `Internet6 ]
   [@@deriving sexp]
 
-  let family_enum_of_int n : [ family_enum | custom ] =
+  let family_enum_of_int n : [ family_enum | int custom ] =
     match n with
     | 0 -> `Internet
     | 1 -> `Decnet
@@ -2887,7 +2889,7 @@ module Xproto = struct
 
   type access_control_enum = [ `Disable | `Enable ] [@@deriving sexp]
 
-  let access_control_enum_of_int n : [ access_control_enum | custom ] =
+  let access_control_enum_of_int n : [ access_control_enum | int custom ] =
     match n with 0 -> `Disable | 1 -> `Enable | _ -> `Custom n
 
   type list_hosts_reply = { mode : access_control_enum; hosts : host list }
@@ -2911,7 +2913,7 @@ module Xproto = struct
   type close_down_enum = [ `Destroy_all | `Retain_permanent | `Retain_temporary ]
   [@@deriving sexp]
 
-  let close_down_enum_of_int n : [ close_down_enum | custom ] =
+  let close_down_enum_of_int n : [ close_down_enum | int custom ] =
     match n with
     | 0 -> `Destroy_all
     | 1 -> `Retain_permanent
@@ -2920,17 +2922,17 @@ module Xproto = struct
 
   type kill_enum = [ `All_temporary ] [@@deriving sexp]
 
-  let kill_enum_of_int n : [ kill_enum | custom ] =
+  let kill_enum_of_int n : [ kill_enum | int custom ] =
     match n with 0 -> `All_temporary | _ -> `Custom n
 
   type screen_saver_enum = [ `Reset | `Active ] [@@deriving sexp]
 
-  let screen_saver_enum_of_int n : [ screen_saver_enum | custom ] =
+  let screen_saver_enum_of_int n : [ screen_saver_enum | int custom ] =
     match n with 0 -> `Reset | 1 -> `Active | _ -> `Custom n
 
   type mapping_status_enum = [ `Success | `Busy | `Failure ] [@@deriving sexp]
 
-  let mapping_status_enum_of_int n : [ mapping_status_enum | custom ] =
+  let mapping_status_enum_of_int n : [ mapping_status_enum | int custom ] =
     match n with 0 -> `Success | 1 -> `Busy | 2 -> `Failure | _ -> `Custom n
 
   type set_pointer_mapping_reply = mapping_status_enum [@@deriving sexp]
@@ -2963,7 +2965,7 @@ module Xproto = struct
     [ `Shift | `Lock | `Control | `D1 | `D2 | `D3 | `D4 | `D5 ]
   [@@deriving sexp]
 
-  let map_index_enum_of_int n : [ map_index_enum | custom ] =
+  let map_index_enum_of_int n : [ map_index_enum | int custom ] =
     match n with
     | 0 -> `Shift
     | 1 -> `Lock
@@ -3008,12 +3010,12 @@ end
 module Render = struct
   type pict_type_enum = [ `Indexed | `Direct ] [@@deriving sexp]
 
-  let pict_type_enum_of_int n : [ pict_type_enum | custom ] =
+  let pict_type_enum_of_int n : [ pict_type_enum | int custom ] =
     match n with 0 -> `Indexed | 1 -> `Direct | _ -> `Custom n
 
   type picture_enum = [ `None ] [@@deriving sexp]
 
-  let picture_enum_of_int n : [ picture_enum | custom ] =
+  let picture_enum_of_int n : [ picture_enum | int custom ] =
     match n with 0 -> `None | _ -> `Custom n
 
   type pict_op_enum =
@@ -3072,7 +3074,7 @@ module Render = struct
     | `Hsl_luminosity ]
   [@@deriving sexp]
 
-  let pict_op_enum_of_int n : [ pict_op_enum | custom ] =
+  let pict_op_enum_of_int n : [ pict_op_enum | int custom ] =
     match n with
     | 0 -> `Clear
     | 1 -> `Src
@@ -3131,12 +3133,12 @@ module Render = struct
 
   type poly_edge_enum = [ `Sharp | `Smooth ] [@@deriving sexp]
 
-  let poly_edge_enum_of_int n : [ poly_edge_enum | custom ] =
+  let poly_edge_enum_of_int n : [ poly_edge_enum | int custom ] =
     match n with 0 -> `Sharp | 1 -> `Smooth | _ -> `Custom n
 
   type poly_mode_enum = [ `Precise | `Imprecise ] [@@deriving sexp]
 
-  let poly_mode_enum_of_int n : [ poly_mode_enum | custom ] =
+  let poly_mode_enum_of_int n : [ poly_mode_enum | int custom ] =
     match n with 0 -> `Precise | 1 -> `Imprecise | _ -> `Custom n
 
   type cp_mask =
@@ -3165,7 +3167,7 @@ module Render = struct
     | `None ]
   [@@deriving sexp]
 
-  let sub_pixel_enum_of_int n : [ sub_pixel_enum | custom ] =
+  let sub_pixel_enum_of_int n : [ sub_pixel_enum | int custom ] =
     match n with
     | 0 -> `Unknown
     | 1 -> `Horizontal_rgb
@@ -3177,7 +3179,7 @@ module Render = struct
 
   type repeat_enum = [ `None | `Normal | `Pad | `Reflect ] [@@deriving sexp]
 
-  let repeat_enum_of_int n : [ repeat_enum | custom ] =
+  let repeat_enum_of_int n : [ repeat_enum | int custom ] =
     match n with
     | 0 -> `None
     | 1 -> `Normal
@@ -3529,7 +3531,7 @@ module Shape = struct
   type so_enum = [ `Set | `Union | `Intersect | `Subtract | `Invert ]
   [@@deriving sexp]
 
-  let so_enum_of_int n : [ so_enum | custom ] =
+  let so_enum_of_int n : [ so_enum | int custom ] =
     match n with
     | 0 -> `Set
     | 1 -> `Union
@@ -3540,7 +3542,7 @@ module Shape = struct
 
   type sk_enum = [ `Bounding | `Clip | `Input ] [@@deriving sexp]
 
-  let sk_enum_of_int n : [ sk_enum | custom ] =
+  let sk_enum_of_int n : [ sk_enum | int custom ] =
     match n with 0 -> `Bounding | 1 -> `Clip | 2 -> `Input | _ -> `Custom n
 
   type notify_event = {
@@ -3686,17 +3688,17 @@ module Xfixes = struct
 
   type save_set_mode_enum = [ `Insert | `Delete ] [@@deriving sexp]
 
-  let save_set_mode_enum_of_int n : [ save_set_mode_enum | custom ] =
+  let save_set_mode_enum_of_int n : [ save_set_mode_enum | int custom ] =
     match n with 0 -> `Insert | 1 -> `Delete | _ -> `Custom n
 
   type save_set_target_enum = [ `Nearest | `Root ] [@@deriving sexp]
 
-  let save_set_target_enum_of_int n : [ save_set_target_enum | custom ] =
+  let save_set_target_enum_of_int n : [ save_set_target_enum | int custom ] =
     match n with 0 -> `Nearest | 1 -> `Root | _ -> `Custom n
 
   type save_set_mapping_enum = [ `Map | `Unmap ] [@@deriving sexp]
 
-  let save_set_mapping_enum_of_int n : [ save_set_mapping_enum | custom ] =
+  let save_set_mapping_enum_of_int n : [ save_set_mapping_enum | int custom ] =
     match n with 0 -> `Map | 1 -> `Unmap | _ -> `Custom n
 
   type selection_event_enum =
@@ -3705,7 +3707,7 @@ module Xfixes = struct
     | `Selection_client_close ]
   [@@deriving sexp]
 
-  let selection_event_enum_of_int n : [ selection_event_enum | custom ] =
+  let selection_event_enum_of_int n : [ selection_event_enum | int custom ] =
     match n with
     | 0 -> `Set_selection_owner
     | 1 -> `Selection_window_destroy
@@ -3749,7 +3751,7 @@ module Xfixes = struct
 
   type cursor_notify_enum = [ `Display_cursor ] [@@deriving sexp]
 
-  let cursor_notify_enum_of_int n : [ cursor_notify_enum | custom ] =
+  let cursor_notify_enum_of_int n : [ cursor_notify_enum | int custom ] =
     match n with 0 -> `Display_cursor | _ -> `Custom n
 
   type cursor_notify_mask = [ `Display_cursor ] list [@@deriving sexp]
@@ -3759,7 +3761,7 @@ module Xfixes = struct
     window : Xproto.window;
     cursor_serial : u32;
     timestamp : Xproto.timestamp;
-    name : [ Xproto.atom_enum | custom ];
+    name : [ Xproto.atom_enum | Xproto.atom custom ];
   }
   [@@deriving sexp]
 
@@ -3821,7 +3823,7 @@ module Xfixes = struct
 
   type region_enum = [ `None ] [@@deriving sexp]
 
-  let region_enum_of_int n : [ region_enum | custom ] =
+  let region_enum_of_int n : [ region_enum | int custom ] =
     match n with 0 -> `None | _ -> `Custom n
 
   type fetch_region_reply = {
@@ -3842,7 +3844,7 @@ module Xfixes = struct
     { extents; rectangles }
 
   type get_cursor_name_reply = {
-    atom : [ Xproto.atom_enum | custom ];
+    atom : [ Xproto.atom_enum | Xproto.atom custom ];
     name : string;
   }
   [@@deriving sexp]
@@ -3867,7 +3869,7 @@ module Xfixes = struct
     xhot : u16;
     yhot : u16;
     cursor_serial : u32;
-    cursor_atom : [ Xproto.atom_enum | custom ];
+    cursor_atom : [ Xproto.atom_enum | Xproto.atom custom ];
     cursor_image : u32 list;
     name : string;
   }
@@ -3919,7 +3921,7 @@ end
 module Composite = struct
   type redirect_enum = [ `Automatic | `Manual ] [@@deriving sexp]
 
-  let redirect_enum_of_int n : [ redirect_enum | custom ] =
+  let redirect_enum_of_int n : [ redirect_enum | int custom ] =
     match n with 0 -> `Automatic | 1 -> `Manual | _ -> `Custom n
 
   type query_version_reply = { major_version : u32; minor_version : u32 }
@@ -3954,7 +3956,7 @@ module Damage = struct
     [ `Raw_rectangles | `Delta_rectangles | `Bounding_box | `Non_empty ]
   [@@deriving sexp]
 
-  let report_level_enum_of_int n : [ report_level_enum | custom ] =
+  let report_level_enum_of_int n : [ report_level_enum | int custom ] =
     match n with
     | 0 -> `Raw_rectangles
     | 1 -> `Delta_rectangles
@@ -4050,7 +4052,7 @@ module Dpms = struct
 
   type dpms_mode_enum = [ `On | `Standby | `Suspend | `Off ] [@@deriving sexp]
 
-  let dpms_mode_enum_of_int n : [ dpms_mode_enum | custom ] =
+  let dpms_mode_enum_of_int n : [ dpms_mode_enum | int custom ] =
     match n with
     | 0 -> `On
     | 1 -> `Standby
@@ -4090,7 +4092,7 @@ module Dri2 = struct
     | `Buffer_hiz ]
   [@@deriving sexp]
 
-  let attachment_enum_of_int n : [ attachment_enum | custom ] =
+  let attachment_enum_of_int n : [ attachment_enum | int custom ] =
     match n with
     | 0 -> `Buffer_front_left
     | 1 -> `Buffer_back_left
@@ -4107,13 +4109,13 @@ module Dri2 = struct
 
   type driver_type_enum = [ `Dri | `Vdpau ] [@@deriving sexp]
 
-  let driver_type_enum_of_int n : [ driver_type_enum | custom ] =
+  let driver_type_enum_of_int n : [ driver_type_enum | int custom ] =
     match n with 0 -> `Dri | 1 -> `Vdpau | _ -> `Custom n
 
   type event_type_enum = [ `Exchange_complete | `Blit_complete | `Flip_complete ]
   [@@deriving sexp]
 
-  let event_type_enum_of_int n : [ event_type_enum | custom ] =
+  let event_type_enum_of_int n : [ event_type_enum | int custom ] =
     match n with
     | 1 -> `Exchange_complete
     | 2 -> `Blit_complete
@@ -4674,12 +4676,12 @@ module Glx = struct
 
   type pbcet_enum = [ `Damaged | `Saved ] [@@deriving sexp]
 
-  let pbcet_enum_of_int n : [ pbcet_enum | custom ] =
+  let pbcet_enum_of_int n : [ pbcet_enum | int custom ] =
     match n with 32791 -> `Damaged | 32792 -> `Saved | _ -> `Custom n
 
   type pbcdt_enum = [ `Window | `Pbuffer ] [@@deriving sexp]
 
-  let pbcdt_enum_of_int n : [ pbcdt_enum | custom ] =
+  let pbcdt_enum_of_int n : [ pbcdt_enum | int custom ] =
     match n with 32793 -> `Window | 32794 -> `Pbuffer | _ -> `Custom n
 
   type make_current_reply = context_tag [@@deriving sexp]
@@ -4872,7 +4874,7 @@ module Glx = struct
 
   type rm_enum = [ `Gl_render | `Gl_feedback | `Gl_select ] [@@deriving sexp]
 
-  let rm_enum_of_int n : [ rm_enum | custom ] =
+  let rm_enum_of_int n : [ rm_enum | int custom ] =
     match n with
     | 7168 -> `Gl_render
     | 7169 -> `Gl_feedback
@@ -5677,7 +5679,7 @@ module Randr = struct
     [ `Success | `Invalid_config_time | `Invalid_time | `Failed ]
   [@@deriving sexp]
 
-  let set_config_enum_of_int n : [ set_config_enum | custom ] =
+  let set_config_enum_of_int n : [ set_config_enum | int custom ] =
     match n with
     | 0 -> `Success
     | 1 -> `Invalid_config_time
@@ -5893,7 +5895,7 @@ module Randr = struct
   type connection_enum = [ `Connected | `Disconnected | `Unknown ]
   [@@deriving sexp]
 
-  let connection_enum_of_int n : [ connection_enum | custom ] =
+  let connection_enum_of_int n : [ connection_enum | int custom ] =
     match n with
     | 0 -> `Connected
     | 1 -> `Disconnected
@@ -5996,7 +5998,7 @@ module Randr = struct
 
   type get_output_property_reply = {
     format : u8;
-    type_ : [ Xproto.atom_enum | custom ];
+    type_ : [ Xproto.atom_enum | Xproto.atom custom ];
     bytes_after : u32;
     num_items : u32;
     data : byte list;
@@ -6480,7 +6482,7 @@ module Randr = struct
     | `Lease ]
   [@@deriving sexp]
 
-  let notify_enum_of_int n : [ notify_enum | custom ] =
+  let notify_enum_of_int n : [ notify_enum | int custom ] =
     match n with
     | 0 -> `Crtc_change
     | 1 -> `Output_change
@@ -6771,7 +6773,7 @@ module Sync = struct
 
   type alarmstate_enum = [ `Active | `Inactive | `Destroyed ] [@@deriving sexp]
 
-  let alarmstate_enum_of_int n : [ alarmstate_enum | custom ] =
+  let alarmstate_enum_of_int n : [ alarmstate_enum | int custom ] =
     match n with
     | 0 -> `Active
     | 1 -> `Inactive
@@ -6793,7 +6795,7 @@ module Sync = struct
     | `Negative_comparison ]
   [@@deriving sexp]
 
-  let testtype_enum_of_int n : [ testtype_enum | custom ] =
+  let testtype_enum_of_int n : [ testtype_enum | int custom ] =
     match n with
     | 0 -> `Positive_transition
     | 1 -> `Negative_transition
@@ -6803,7 +6805,7 @@ module Sync = struct
 
   type valuetype_enum = [ `Absolute | `Relative ] [@@deriving sexp]
 
-  let valuetype_enum_of_int n : [ valuetype_enum | custom ] =
+  let valuetype_enum_of_int n : [ valuetype_enum | int custom ] =
     match n with 0 -> `Absolute | 1 -> `Relative | _ -> `Custom n
 
   type ca_mask =
@@ -7013,7 +7015,7 @@ module Present = struct
     [ `Configure_notify | `Complete_notify | `Idle_notify | `Redirect_notify ]
   [@@deriving sexp]
 
-  let event_enum_of_int n : [ event_enum | custom ] =
+  let event_enum_of_int n : [ event_enum | int custom ] =
     match n with
     | 0 -> `Configure_notify
     | 1 -> `Complete_notify
@@ -7032,13 +7034,13 @@ module Present = struct
   type capability_mask = [ `Async | `Fence | `Ust ] list [@@deriving sexp]
   type complete_kind_enum = [ `Pixmap | `Notify_msc ] [@@deriving sexp]
 
-  let complete_kind_enum_of_int n : [ complete_kind_enum | custom ] =
+  let complete_kind_enum_of_int n : [ complete_kind_enum | int custom ] =
     match n with 0 -> `Pixmap | 1 -> `Notify_msc | _ -> `Custom n
 
   type complete_mode_enum = [ `Copy | `Flip | `Skip | `Suboptimal_copy ]
   [@@deriving sexp]
 
-  let complete_mode_enum_of_int n : [ complete_mode_enum | custom ] =
+  let complete_mode_enum_of_int n : [ complete_mode_enum | int custom ] =
     match n with
     | 0 -> `Copy
     | 1 -> `Flip
@@ -7295,7 +7297,7 @@ module Record = struct
   type cs_enum = [ `Current_clients | `Future_clients | `All_clients ]
   [@@deriving sexp]
 
-  let cs_enum_of_int n : [ cs_enum | custom ] =
+  let cs_enum_of_int n : [ cs_enum | int custom ] =
     match n with
     | 1 -> `Current_clients
     | 2 -> `Future_clients
@@ -7536,7 +7538,7 @@ end
 module Screensaver = struct
   type kind_enum = [ `Blanked | `Internal | `External ] [@@deriving sexp]
 
-  let kind_enum_of_int n : [ kind_enum | custom ] =
+  let kind_enum_of_int n : [ kind_enum | int custom ] =
     match n with
     | 0 -> `Blanked
     | 1 -> `Internal
@@ -7546,7 +7548,7 @@ module Screensaver = struct
   type event_mask = [ `Notify_mask | `Cycle_mask ] list [@@deriving sexp]
   type state_enum = [ `Off | `On | `Cycle | `Disabled ] [@@deriving sexp]
 
-  let state_enum_of_int n : [ state_enum | custom ] =
+  let state_enum_of_int n : [ state_enum | int custom ] =
     match n with
     | 0 -> `Off
     | 1 -> `On
@@ -8390,7 +8392,7 @@ module Xinput = struct
     | `Is_x_extension_pointer ]
   [@@deriving sexp]
 
-  let device_use_enum_of_int n : [ device_use_enum | custom ] =
+  let device_use_enum_of_int n : [ device_use_enum | int custom ] =
     match n with
     | 0 -> `Is_x_pointer
     | 1 -> `Is_x_keyboard
@@ -8403,7 +8405,7 @@ module Xinput = struct
     [ `Key | `Button | `Valuator | `Feedback | `Proximity | `Focus | `Other ]
   [@@deriving sexp]
 
-  let input_class_enum_of_int n : [ input_class_enum | custom ] =
+  let input_class_enum_of_int n : [ input_class_enum | int custom ] =
     match n with
     | 0 -> `Key
     | 1 -> `Button
@@ -8416,7 +8418,7 @@ module Xinput = struct
 
   type valuator_mode_enum = [ `Relative | `Absolute ] [@@deriving sexp]
 
-  let valuator_mode_enum_of_int n : [ valuator_mode_enum | custom ] =
+  let valuator_mode_enum_of_int n : [ valuator_mode_enum | int custom ] =
     match n with 0 -> `Relative | 1 -> `Absolute | _ -> `Custom n
 
   type device_info = {
@@ -8676,7 +8678,7 @@ module Xinput = struct
   type propagate_mode_enum = [ `Add_to_list | `Delete_from_list ]
   [@@deriving sexp]
 
-  let propagate_mode_enum_of_int n : [ propagate_mode_enum | custom ] =
+  let propagate_mode_enum_of_int n : [ propagate_mode_enum | int custom ] =
     match n with 0 -> `Add_to_list | 1 -> `Delete_from_list | _ -> `Custom n
 
   type get_device_dont_propagate_list_reply = {
@@ -8795,7 +8797,7 @@ module Xinput = struct
 
   type modifier_device_enum = [ `Use_x_keyboard ] [@@deriving sexp]
 
-  let modifier_device_enum_of_int n : [ modifier_device_enum | custom ] =
+  let modifier_device_enum_of_int n : [ modifier_device_enum | int custom ] =
     match n with 255 -> `Use_x_keyboard | _ -> `Custom n
 
   type device_input_mode_enum =
@@ -8807,7 +8809,8 @@ module Xinput = struct
     | `Sync_all ]
   [@@deriving sexp]
 
-  let device_input_mode_enum_of_int n : [ device_input_mode_enum | custom ] =
+  let device_input_mode_enum_of_int n : [ device_input_mode_enum | int custom ]
+      =
     match n with
     | 0 -> `Async_this_device
     | 1 -> `Sync_this_device
@@ -8819,7 +8822,7 @@ module Xinput = struct
 
   type get_device_focus_reply = {
     xi_reply_type : u8;
-    focus : [ Xproto.input_focus_enum | custom ];
+    focus : [ Xproto.input_focus_enum | Xproto.window custom ];
     time : Xproto.timestamp;
     revert_to : Xproto.input_focus_enum;
   }
@@ -8849,7 +8852,7 @@ module Xinput = struct
     [ `Keyboard | `Pointer | `String | `Integer | `Led | `Bell ]
   [@@deriving sexp]
 
-  let feedback_class_enum_of_int n : [ feedback_class_enum | custom ] =
+  let feedback_class_enum_of_int n : [ feedback_class_enum | int custom ] =
     match n with
     | 0 -> `Keyboard
     | 1 -> `Pointer
@@ -9524,7 +9527,7 @@ module Xinput = struct
     [ `Resolution | `Abs_calib | `Core | `Enable | `Abs_area ]
   [@@deriving sexp]
 
-  let device_control_enum_of_int n : [ device_control_enum | custom ] =
+  let device_control_enum_of_int n : [ device_control_enum | int custom ] =
     match n with
     | 1 -> `Resolution
     | 2 -> `Abs_calib
@@ -9759,7 +9762,7 @@ module Xinput = struct
 
   type get_device_control_reply = {
     xi_reply_type : u8;
-    status : [ Xproto.grab_status_enum | custom ];
+    status : [ Xproto.grab_status_enum | u8 custom ];
     control : device_state;
   }
   [@@deriving sexp]
@@ -9916,7 +9919,7 @@ module Xinput = struct
 
   type change_device_control_reply = {
     xi_reply_type : u8;
-    status : [ Xproto.grab_status_enum | custom ];
+    status : [ Xproto.grab_status_enum | u8 custom ];
   }
   [@@deriving sexp]
 
@@ -9952,7 +9955,7 @@ module Xinput = struct
   type property_format_enum = [ `D8_bits | `D16_bits | `D32_bits ]
   [@@deriving sexp]
 
-  let property_format_enum_of_int n : [ property_format_enum | custom ] =
+  let property_format_enum_of_int n : [ property_format_enum | int custom ] =
     match n with
     | 8 -> `D8_bits
     | 16 -> `D16_bits
@@ -10007,7 +10010,7 @@ module Xinput = struct
 
   type device_enum = [ `All | `All_master ] [@@deriving sexp]
 
-  let device_enum_of_int n : [ device_enum | custom ] =
+  let device_enum_of_int n : [ device_enum | int custom ] =
     match n with 0 -> `All | 1 -> `All_master | _ -> `Custom n
 
   type group_info = { base : u8; latched : u8; locked : u8; effective : u8 }
@@ -10083,7 +10086,7 @@ module Xinput = struct
   [@@deriving sexp]
 
   let hierarchy_change_type_enum_of_int n :
-      [ hierarchy_change_type_enum | custom ] =
+      [ hierarchy_change_type_enum | int custom ] =
     match n with
     | 1 -> `Add_master
     | 2 -> `Remove_master
@@ -10093,7 +10096,7 @@ module Xinput = struct
 
   type change_mode_enum = [ `Attach | `Float ] [@@deriving sexp]
 
-  let change_mode_enum_of_int n : [ change_mode_enum | custom ] =
+  let change_mode_enum_of_int n : [ change_mode_enum | int custom ] =
     match n with 1 -> `Attach | 2 -> `Float | _ -> `Custom n
 
   type add_master = {
@@ -10122,10 +10125,10 @@ module Xinput = struct
   type remove_master = {
     type_ : hierarchy_change_type_enum;
     len : u16;
-    deviceid : [ device_enum | custom ];
+    deviceid : [ device_enum | device_id custom ];
     return_mode : change_mode_enum;
-    return_pointer : [ device_enum | custom ];
-    return_keyboard : [ device_enum | custom ];
+    return_pointer : [ device_enum | device_id custom ];
+    return_keyboard : [ device_enum | device_id custom ];
   }
   [@@deriving sexp]
 
@@ -10156,8 +10159,8 @@ module Xinput = struct
   type attach_slave = {
     type_ : hierarchy_change_type_enum;
     len : u16;
-    deviceid : [ device_enum | custom ];
-    master : [ device_enum | custom ];
+    deviceid : [ device_enum | device_id custom ];
+    master : [ device_enum | device_id custom ];
   }
   [@@deriving sexp]
 
@@ -10179,7 +10182,7 @@ module Xinput = struct
   type detach_slave = {
     type_ : hierarchy_change_type_enum;
     len : u16;
-    deviceid : [ device_enum | custom ];
+    deviceid : [ device_enum | device_id custom ];
   }
   [@@deriving sexp]
 
@@ -10199,16 +10202,16 @@ module Xinput = struct
   type hierarchy_change_type_variant =
     | Add_master of { send_core : bool; enable : bool; name : string }
     | Remove_master of {
-        deviceid : [ device_enum | custom ];
+        deviceid : [ device_enum | device_id custom ];
         return_mode : change_mode_enum;
-        return_pointer : [ device_enum | custom ];
-        return_keyboard : [ device_enum | custom ];
+        return_pointer : [ device_enum | device_id custom ];
+        return_keyboard : [ device_enum | device_id custom ];
       }
     | Attach_slave of {
-        deviceid : [ device_enum | custom ];
-        master : [ device_enum | custom ];
+        deviceid : [ device_enum | device_id custom ];
+        master : [ device_enum | device_id custom ];
       }
-    | Detach_slave of [ device_enum | custom ]
+    | Detach_slave of [ device_enum | device_id custom ]
   [@@deriving sexp]
 
   let decode_hierarchy_change_type_variant buf ~tag :
@@ -10264,7 +10267,7 @@ module Xinput = struct
 
   type xi_get_client_pointer_reply = {
     set : bool;
-    deviceid : [ device_enum | custom ];
+    deviceid : [ device_enum | device_id custom ];
   }
   [@@deriving sexp]
 
@@ -10311,7 +10314,7 @@ module Xinput = struct
   [@@deriving sexp]
 
   type event_mask = {
-    deviceid : [ device_enum | custom ];
+    deviceid : [ device_enum | device_id custom ];
     mask : xi_event_mask list;
   }
   [@@deriving sexp]
@@ -10343,7 +10346,8 @@ module Xinput = struct
   type device_class_type_enum = [ `Key | `Button | `Valuator | `Scroll | `Touch ]
   [@@deriving sexp]
 
-  let device_class_type_enum_of_int n : [ device_class_type_enum | custom ] =
+  let device_class_type_enum_of_int n : [ device_class_type_enum | int custom ]
+      =
     match n with
     | 0 -> `Key
     | 1 -> `Button
@@ -10360,7 +10364,7 @@ module Xinput = struct
     | `Floating_slave ]
   [@@deriving sexp]
 
-  let device_type_enum_of_int n : [ device_type_enum | custom ] =
+  let device_type_enum_of_int n : [ device_type_enum | int custom ] =
     match n with
     | 1 -> `Master_pointer
     | 2 -> `Master_keyboard
@@ -10372,12 +10376,12 @@ module Xinput = struct
   type scroll_flags_mask = [ `No_emulation | `Preferred ] list [@@deriving sexp]
   type scroll_type_enum = [ `Vertical | `Horizontal ] [@@deriving sexp]
 
-  let scroll_type_enum_of_int n : [ scroll_type_enum | custom ] =
+  let scroll_type_enum_of_int n : [ scroll_type_enum | int custom ] =
     match n with 1 -> `Vertical | 2 -> `Horizontal | _ -> `Custom n
 
   type touch_mode_enum = [ `Direct | `Dependent ] [@@deriving sexp]
 
-  let touch_mode_enum_of_int n : [ touch_mode_enum | custom ] =
+  let touch_mode_enum_of_int n : [ touch_mode_enum | int custom ] =
     match n with 1 -> `Direct | 2 -> `Dependent | _ -> `Custom n
 
   type button_class = {
@@ -10604,9 +10608,9 @@ module Xinput = struct
     { len; sourceid; data }
 
   type xi_device_info = {
-    deviceid : [ device_enum | custom ];
+    deviceid : [ device_enum | device_id custom ];
     type_ : device_type_enum;
-    attachment : [ device_enum | custom ];
+    attachment : [ device_enum | device_id custom ];
     enabled : bool;
     name : string;
     classes : device_class list;
@@ -10659,7 +10663,7 @@ module Xinput = struct
 
   type grab_owner_enum = [ `No_owner | `Owner ] [@@deriving sexp]
 
-  let grab_owner_enum_of_int n : [ grab_owner_enum | custom ] =
+  let grab_owner_enum_of_int n : [ grab_owner_enum | int custom ] =
     match n with 0 -> `No_owner | 1 -> `Owner | _ -> `Custom n
 
   type xi_grab_device_reply = Xproto.grab_status_enum [@@deriving sexp]
@@ -10687,7 +10691,7 @@ module Xinput = struct
     | `Reject_touch ]
   [@@deriving sexp]
 
-  let event_mode_enum_of_int n : [ event_mode_enum | custom ] =
+  let event_mode_enum_of_int n : [ event_mode_enum | int custom ] =
     match n with
     | 0 -> `Async_device
     | 1 -> `Sync_device
@@ -10701,14 +10705,14 @@ module Xinput = struct
 
   type grab_mode22_enum = [ `Sync | `Async | `Touch ] [@@deriving sexp]
 
-  let grab_mode22_enum_of_int n : [ grab_mode22_enum | custom ] =
+  let grab_mode22_enum_of_int n : [ grab_mode22_enum | int custom ] =
     match n with 0 -> `Sync | 1 -> `Async | 2 -> `Touch | _ -> `Custom n
 
   type grab_type_enum =
     [ `Button | `Keycode | `Enter | `Focus_in | `Touch_begin ]
   [@@deriving sexp]
 
-  let grab_type_enum_of_int n : [ grab_type_enum | custom ] =
+  let grab_type_enum_of_int n : [ grab_type_enum | int custom ] =
     match n with
     | 0 -> `Button
     | 1 -> `Keycode
@@ -10836,7 +10840,7 @@ module Xinput = struct
     time : Xproto.timestamp;
     root : Xproto.window;
     event : Xproto.window;
-    child : [ Xproto.window_enum | custom ];
+    child : [ Xproto.window_enum | Xproto.window custom ];
     root_x : i16;
     root_y : i16;
     event_x : i16;
@@ -11029,7 +11033,7 @@ module Xinput = struct
 
   type change_device_enum = [ `New_pointer | `New_keyboard ] [@@deriving sexp]
 
-  let change_device_enum_of_int n : [ change_device_enum | custom ] =
+  let change_device_enum_of_int n : [ change_device_enum | int custom ] =
     match n with 0 -> `New_pointer | 1 -> `New_keyboard | _ -> `Custom n
 
   type change_device_notify_event = {
@@ -11100,7 +11104,7 @@ module Xinput = struct
     | `Control_changed ]
   [@@deriving sexp]
 
-  let device_change_enum_of_int n : [ device_change_enum | custom ] =
+  let device_change_enum_of_int n : [ device_change_enum | int custom ] =
     match n with
     | 0 -> `Added
     | 1 -> `Removed
@@ -11159,13 +11163,13 @@ module Xinput = struct
 
   type change_reason_enum = [ `Slave_switch | `Device_change ] [@@deriving sexp]
 
-  let change_reason_enum_of_int n : [ change_reason_enum | custom ] =
+  let change_reason_enum_of_int n : [ change_reason_enum | int custom ] =
     match n with 1 -> `Slave_switch | 2 -> `Device_change | _ -> `Custom n
 
   type device_changed_event = {
-    deviceid : [ device_enum | custom ];
-    time : [ Xproto.time_enum | custom ];
-    sourceid : [ device_enum | custom ];
+    deviceid : [ device_enum | device_id custom ];
+    time : [ Xproto.time_enum | Xproto.timestamp custom ];
+    sourceid : [ device_enum | device_id custom ];
     reason : change_reason_enum;
     classes : device_class list;
   }
@@ -11201,8 +11205,8 @@ module Xinput = struct
   type key_event_flags_mask = [ `Key_repeat ] list [@@deriving sexp]
 
   type key_press_event = {
-    deviceid : [ device_enum | custom ];
-    time : [ Xproto.time_enum | custom ];
+    deviceid : [ device_enum | device_id custom ];
+    time : [ Xproto.time_enum | Xproto.timestamp custom ];
     detail : u32;
     root : Xproto.window;
     event : Xproto.window;
@@ -11211,7 +11215,7 @@ module Xinput = struct
     root_y : fp1616;
     event_x : fp1616;
     event_y : fp1616;
-    sourceid : [ device_enum | custom ];
+    sourceid : [ device_enum | device_id custom ];
     flags : key_event_flags_mask;
     mods : modifier_info;
     group : group_info;
@@ -11289,8 +11293,8 @@ module Xinput = struct
   type pointer_event_flags_mask = [ `Pointer_emulated ] list [@@deriving sexp]
 
   type button_press_event = {
-    deviceid : [ device_enum | custom ];
-    time : [ Xproto.time_enum | custom ];
+    deviceid : [ device_enum | device_id custom ];
+    time : [ Xproto.time_enum | Xproto.timestamp custom ];
     detail : u32;
     root : Xproto.window;
     event : Xproto.window;
@@ -11299,7 +11303,7 @@ module Xinput = struct
     root_y : fp1616;
     event_x : fp1616;
     event_y : fp1616;
-    sourceid : [ device_enum | custom ];
+    sourceid : [ device_enum | device_id custom ];
     flags : pointer_event_flags_mask;
     mods : modifier_info;
     group : group_info;
@@ -11388,7 +11392,7 @@ module Xinput = struct
     | `Passive_ungrab ]
   [@@deriving sexp]
 
-  let notify_mode_enum_of_int n : [ notify_mode_enum | custom ] =
+  let notify_mode_enum_of_int n : [ notify_mode_enum | int custom ] =
     match n with
     | 0 -> `Normal
     | 1 -> `Grab
@@ -11409,7 +11413,7 @@ module Xinput = struct
     | `None ]
   [@@deriving sexp]
 
-  let notify_detail_enum_of_int n : [ notify_detail_enum | custom ] =
+  let notify_detail_enum_of_int n : [ notify_detail_enum | int custom ] =
     match n with
     | 0 -> `Ancestor
     | 1 -> `Virtual
@@ -11422,9 +11426,9 @@ module Xinput = struct
     | _ -> `Custom n
 
   type enter_event = {
-    deviceid : [ device_enum | custom ];
-    time : [ Xproto.time_enum | custom ];
-    sourceid : [ device_enum | custom ];
+    deviceid : [ device_enum | device_id custom ];
+    time : [ Xproto.time_enum | Xproto.timestamp custom ];
+    sourceid : [ device_enum | device_id custom ];
     mode : notify_mode_enum;
     detail : notify_detail_enum;
     root : Xproto.window;
@@ -11525,8 +11529,8 @@ module Xinput = struct
   [@@deriving sexp]
 
   type hierarchy_info = {
-    deviceid : [ device_enum | custom ];
-    attachment : [ device_enum | custom ];
+    deviceid : [ device_enum | device_id custom ];
+    attachment : [ device_enum | device_id custom ];
     type_ : device_type_enum;
     enabled : bool;
     flags : hierarchy_mask;
@@ -11553,8 +11557,8 @@ module Xinput = struct
     { deviceid; attachment; type_; enabled; flags }
 
   type hierarchy_event = {
-    deviceid : [ device_enum | custom ];
-    time : [ Xproto.time_enum | custom ];
+    deviceid : [ device_enum | device_id custom ];
+    time : [ Xproto.time_enum | Xproto.timestamp custom ];
     flags : hierarchy_mask;
     infos : hierarchy_info list;
   }
@@ -11583,7 +11587,7 @@ module Xinput = struct
   type property_flag_enum = [ `Deleted | `Created | `Modified ]
   [@@deriving sexp]
 
-  let property_flag_enum_of_int n : [ property_flag_enum | custom ] =
+  let property_flag_enum_of_int n : [ property_flag_enum | int custom ] =
     match n with
     | 0 -> `Deleted
     | 1 -> `Created
@@ -11591,8 +11595,8 @@ module Xinput = struct
     | _ -> `Custom n
 
   type property_event = {
-    deviceid : [ device_enum | custom ];
-    time : [ Xproto.time_enum | custom ];
+    deviceid : [ device_enum | device_id custom ];
+    time : [ Xproto.time_enum | Xproto.timestamp custom ];
     property : Xproto.atom;
     what : property_flag_enum;
   }
@@ -11620,8 +11624,8 @@ module Xinput = struct
     { deviceid; time; property; what }
 
   type raw_key_press_event = {
-    deviceid : [ device_enum | custom ];
-    time : [ Xproto.time_enum | custom ];
+    deviceid : [ device_enum | device_id custom ];
+    time : [ Xproto.time_enum | Xproto.timestamp custom ];
     detail : u32;
     sourceid : device_id;
     flags : key_event_flags_mask;
@@ -11683,8 +11687,8 @@ module Xinput = struct
   let decode_raw_key_release_event = decode_raw_key_press_event
 
   type raw_button_press_event = {
-    deviceid : [ device_enum | custom ];
-    time : [ Xproto.time_enum | custom ];
+    deviceid : [ device_enum | device_id custom ];
+    time : [ Xproto.time_enum | Xproto.timestamp custom ];
     detail : u32;
     sourceid : device_id;
     flags : pointer_event_flags_mask;
@@ -11755,8 +11759,8 @@ module Xinput = struct
   [@@deriving sexp]
 
   type touch_begin_event = {
-    deviceid : [ device_enum | custom ];
-    time : [ Xproto.time_enum | custom ];
+    deviceid : [ device_enum | device_id custom ];
+    time : [ Xproto.time_enum | Xproto.timestamp custom ];
     detail : u32;
     root : Xproto.window;
     event : Xproto.window;
@@ -11765,7 +11769,7 @@ module Xinput = struct
     root_y : fp1616;
     event_x : fp1616;
     event_y : fp1616;
-    sourceid : [ device_enum | custom ];
+    sourceid : [ device_enum | device_id custom ];
     flags : touch_event_flags_mask;
     mods : modifier_info;
     group : group_info;
@@ -11847,17 +11851,17 @@ module Xinput = struct
   type touch_ownership_flags_enum = [ `None ] [@@deriving sexp]
 
   let touch_ownership_flags_enum_of_int n :
-      [ touch_ownership_flags_enum | custom ] =
+      [ touch_ownership_flags_enum | int custom ] =
     match n with 0 -> `None | _ -> `Custom n
 
   type touch_ownership_event = {
-    deviceid : [ device_enum | custom ];
-    time : [ Xproto.time_enum | custom ];
+    deviceid : [ device_enum | device_id custom ];
+    time : [ Xproto.time_enum | Xproto.timestamp custom ];
     touchid : u32;
     root : Xproto.window;
     event : Xproto.window;
     child : Xproto.window;
-    sourceid : [ device_enum | custom ];
+    sourceid : [ device_enum | device_id custom ];
     flags : touch_ownership_flags_enum;
   }
   [@@deriving sexp]
@@ -11891,8 +11895,8 @@ module Xinput = struct
     { deviceid; time; touchid; root; event; child; sourceid; flags }
 
   type raw_touch_begin_event = {
-    deviceid : [ device_enum | custom ];
-    time : [ Xproto.time_enum | custom ];
+    deviceid : [ device_enum | device_id custom ];
+    time : [ Xproto.time_enum | Xproto.timestamp custom ];
     detail : u32;
     sourceid : device_id;
     flags : touch_event_flags_mask;
@@ -11961,15 +11965,15 @@ module Xinput = struct
   [@@deriving sexp]
 
   type barrier_hit_event = {
-    deviceid : [ device_enum | custom ];
-    time : [ Xproto.time_enum | custom ];
+    deviceid : [ device_enum | device_id custom ];
+    time : [ Xproto.time_enum | Xproto.timestamp custom ];
     eventid : u32;
     root : Xproto.window;
     event : Xproto.window;
     barrier : Xfixes.barrier;
     dtime : u32;
     flags : barrier_flags_mask;
-    sourceid : [ device_enum | custom ];
+    sourceid : [ device_enum | device_id custom ];
     root_x : fp1616;
     root_y : fp1616;
     dx : fp3232;
@@ -12088,7 +12092,7 @@ module Xprint = struct
 
   type get_doc_enum = [ `Finished | `Second_consumer ] [@@deriving sexp]
 
-  let get_doc_enum_of_int n : [ get_doc_enum | custom ] =
+  let get_doc_enum_of_int n : [ get_doc_enum | int custom ] =
     match n with 0 -> `Finished | 1 -> `Second_consumer | _ -> `Custom n
 
   type ev_mask = [ `Print_mask | `Attribute_mask ] list [@@deriving sexp]
@@ -12102,7 +12106,7 @@ module Xprint = struct
     | `End_page_notify ]
   [@@deriving sexp]
 
-  let detail_enum_of_int n : [ detail_enum | custom ] =
+  let detail_enum_of_int n : [ detail_enum | int custom ] =
     match n with
     | 1 -> `Start_job_notify
     | 2 -> `End_job_notify
@@ -12122,7 +12126,7 @@ module Xprint = struct
     | `Spooler_attr ]
   [@@deriving sexp]
 
-  let attr_enum_of_int n : [ attr_enum | custom ] =
+  let attr_enum_of_int n : [ attr_enum | int custom ] =
     match n with
     | 1 -> `Job_attr
     | 2 -> `Doc_attr
@@ -12549,7 +12553,7 @@ module Xtest = struct
 
   type cursor_enum = [ `None | `Current ] [@@deriving sexp]
 
-  let cursor_enum_of_int n : [ cursor_enum | custom ] =
+  let cursor_enum_of_int n : [ cursor_enum | int custom ] =
     match n with 0 -> `None | 1 -> `Current | _ -> `Custom n
 
   type compare_cursor_reply = bool [@@deriving sexp]
@@ -12580,13 +12584,13 @@ module Xv = struct
   type image_format_info_type_enum = [ `Rgb | `Yuv ] [@@deriving sexp]
 
   let image_format_info_type_enum_of_int n :
-      [ image_format_info_type_enum | custom ] =
+      [ image_format_info_type_enum | int custom ] =
     match n with 0 -> `Rgb | 1 -> `Yuv | _ -> `Custom n
 
   type image_format_info_format_enum = [ `Packed | `Planar ] [@@deriving sexp]
 
   let image_format_info_format_enum_of_int n :
-      [ image_format_info_format_enum | custom ] =
+      [ image_format_info_format_enum | int custom ] =
     match n with 0 -> `Packed | 1 -> `Planar | _ -> `Custom n
 
   type attribute_flag_mask = [ `Gettable | `Settable ] list [@@deriving sexp]
@@ -12595,8 +12599,8 @@ module Xv = struct
     [ `Started | `Stopped | `Busy | `Preempted | `Hard_error ]
   [@@deriving sexp]
 
-  let video_notify_reason_enum_of_int n : [ video_notify_reason_enum | custom ]
-      =
+  let video_notify_reason_enum_of_int n :
+      [ video_notify_reason_enum | int custom ] =
     match n with
     | 0 -> `Started
     | 1 -> `Stopped
@@ -12608,7 +12612,7 @@ module Xv = struct
   type scanline_order_enum = [ `Top_to_bottom | `Bottom_to_top ]
   [@@deriving sexp]
 
-  let scanline_order_enum_of_int n : [ scanline_order_enum | custom ] =
+  let scanline_order_enum_of_int n : [ scanline_order_enum | int custom ] =
     match n with 0 -> `Top_to_bottom | 1 -> `Bottom_to_top | _ -> `Custom n
 
   type grab_port_status_enum =
@@ -12620,7 +12624,7 @@ module Xv = struct
     | `Bad_alloc ]
   [@@deriving sexp]
 
-  let grab_port_status_enum_of_int n : [ grab_port_status_enum | custom ] =
+  let grab_port_status_enum_of_int n : [ grab_port_status_enum | int custom ] =
     match n with
     | 0 -> `Success
     | 1 -> `Bad_extension

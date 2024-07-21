@@ -21,4 +21,4 @@ type xid = Xid of i32 [@@deriving sexp]
 (** A string where characters are two bytes *)
 type utf16_string = Utf16_string of string [@@deriving sexp]
 
-type custom = [ `Custom of int ] [@@deriving sexp]
+type 'a custom = [ `Custom of 'a ] [@@deriving sexp]
