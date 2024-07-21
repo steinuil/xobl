@@ -140,10 +140,6 @@ module Type = struct
         [%type: [ [%t enum] | [%t type_] custom ]]
     | { ft_type = _; ft_allowed = Some (Allowed_mask mask) } ->
         t_ident ~suffix:"mask" ~ctx ~loc mask
-    (* TODO use this?
-       | { ft_type = _; ft_allowed = Some (Allowed_alt_enum enum) } ->
-           [%type: [ [%t t_ident ~suffix:"enum" ~ctx ~loc enum] | `Custom of int ]]
-    *)
     | { ft_type; ft_allowed = Some (Allowed_alt_mask mask) } ->
         [%type:
           ( [%t t_ident ~suffix:"mask" ~ctx ~loc mask],
