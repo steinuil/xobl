@@ -1082,6 +1082,32 @@ module Glx = struct
     type t = [ `Window | `Pbuffer ] [@@deriving sexp]
   end
 
+  module Gc_mask = struct
+    include Mask
+
+    let (gl_current_bit : t) = of_int64 (Int64.shift_right 1L 0)
+    let (gl_point_bit : t) = of_int64 (Int64.shift_right 1L 1)
+    let (gl_line_bit : t) = of_int64 (Int64.shift_right 1L 2)
+    let (gl_polygon_bit : t) = of_int64 (Int64.shift_right 1L 3)
+    let (gl_polygon_stipple_bit : t) = of_int64 (Int64.shift_right 1L 4)
+    let (gl_pixel_mode_bit : t) = of_int64 (Int64.shift_right 1L 5)
+    let (gl_lighting_bit : t) = of_int64 (Int64.shift_right 1L 6)
+    let (gl_fog_bit : t) = of_int64 (Int64.shift_right 1L 7)
+    let (gl_depth_buffer_bit : t) = of_int64 (Int64.shift_right 1L 8)
+    let (gl_accum_buffer_bit : t) = of_int64 (Int64.shift_right 1L 9)
+    let (gl_stencil_buffer_bit : t) = of_int64 (Int64.shift_right 1L 10)
+    let (gl_viewport_bit : t) = of_int64 (Int64.shift_right 1L 11)
+    let (gl_transform_bit : t) = of_int64 (Int64.shift_right 1L 12)
+    let (gl_enable_bit : t) = of_int64 (Int64.shift_right 1L 13)
+    let (gl_color_buffer_bit : t) = of_int64 (Int64.shift_right 1L 14)
+    let (gl_hint_bit : t) = of_int64 (Int64.shift_right 1L 15)
+    let (gl_eval_bit : t) = of_int64 (Int64.shift_right 1L 16)
+    let (gl_list_bit : t) = of_int64 (Int64.shift_right 1L 17)
+    let (gl_texture_bit : t) = of_int64 (Int64.shift_right 1L 18)
+    let (gl_scissor_bit : t) = of_int64 (Int64.shift_right 1L 19)
+    let (gl_all_attrib_bits : t) = of_int64 16777215L
+  end
+
   module Rm_enum = struct
     type t = [ `Gl_render | `Gl_feedback | `Gl_select ] [@@deriving sexp]
   end

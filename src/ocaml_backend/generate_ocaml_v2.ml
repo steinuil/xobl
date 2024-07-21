@@ -67,6 +67,9 @@ let prim_to_string = function
 let e_int ?loc ?suffix int =
   Ast_helper.Exp.constant ?loc (Ast_helper.Const.int ?suffix int)
 
+let e_int64 ?loc ?suffix int =
+  Ast_helper.Exp.constant ?loc (Ast_helper.Const.int64 ?suffix int)
+
 let e_str ~loc str =
   Ast_helper.Exp.constant ~loc (Ast_helper.Const.string ~loc str)
 
@@ -267,14 +270,21 @@ module Type = struct
     | _ -> None
 
   let stri_mask ~loc = function
-    | Mask { name; items; additional_values = Additional_values [] } ->
-        let body =
+    | Mask { name; items; additional_values = Additional_values values } ->
+        let items =
           ListLabels.map items ~f:(fun (name, value) ->
               [%stri
                 let [%p p_id ~loc name] : t =
                   of_int64 (Int64.shift_right 1L [%e e_int ~loc value])])
         in
-        stri_module ~loc ~suffix:"mask" name ([%stri include Mask] :: body)
+        let values =
+          ListLabels.map values ~f:(fun (name, value) ->
+              [%stri
+                let [%p p_id ~loc name] : t =
+                  of_int64 [%e e_int64 ~suffix:'L' ~loc value]])
+        in
+        stri_module ~loc ~suffix:"mask" name
+          (([%stri include Mask] :: items) @ values)
         |> Option.some
     | _ -> None
 
