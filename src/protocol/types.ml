@@ -21,10 +21,4 @@ type xid = Xid of i32 [@@deriving sexp]
 (** A string where characters are two bytes *)
 type utf16_string = Utf16_string of string [@@deriving sexp]
 
-(* module Mask (T : sig
-     type prim
-   end) : sig
-     type t
-   end = struct
-     type t = T.prim
-   end *)
+type alt_enum = [ `Custom of int ]
