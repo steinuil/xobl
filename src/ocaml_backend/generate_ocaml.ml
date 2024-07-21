@@ -136,7 +136,7 @@ module Type = struct
         t_ident ~suffix:"enum" ~ctx ~loc enum
     | { ft_type = _; ft_allowed = Some (Allowed_alt_enum enum) } ->
         let enum = t_ident ~suffix:"enum" ~ctx ~loc enum in
-        [%type: [ [%t enum] | alt_enum ]]
+        [%type: [ [%t enum] | custom ]]
     | { ft_type = _; ft_allowed = Some (Allowed_mask mask) } ->
         t_ident ~suffix:"mask" ~ctx ~loc mask
     (* TODO use this?
@@ -584,7 +584,7 @@ module Decode = struct
       @ [ Ast_helper.Exp.case (Ast_helper.Pat.any ()) [%expr `Custom n] ]
     in
     let body = Ast_helper.Exp.match_ ~loc (e_id ~loc "n") items in
-    [%expr fun n : [ [%t type_] | alt_enum ] -> [%e body]]
+    [%expr fun n : [ [%t type_] | custom ] -> [%e body]]
 
   let e_variant ~ctx ~loc name items external_params =
     let type_ = t_id ~suffix:"variant" ~loc name in
