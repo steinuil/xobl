@@ -5,6 +5,8 @@ module Bigreq = struct
     let version = (0, 0)
     let query_name = "BIG-REQUESTS"
   end
+
+  type enable_reply = u32 [@@deriving sexp]
 end
 
 module Xproto = struct
@@ -388,6 +390,25 @@ module Xproto = struct
     type t = [ `Unmapped | `Unviewable | `Viewable ] [@@deriving sexp]
   end
 
+  type get_window_attributes_reply = {
+    backing_store : Backing_store_enum.t;
+    visual : visualid;
+    class_ : Window_class_enum.t;
+    bit_gravity : Gravity_enum.t;
+    win_gravity : Gravity_enum.t;
+    backing_planes : u32;
+    backing_pixel : u32;
+    save_under : bool;
+    map_is_installed : bool;
+    map_state : Map_state_enum.t;
+    override_redirect : bool;
+    colormap : [ Colormap_enum.t | colormap alt ];
+    all_event_masks : Event_mask.t;
+    your_event_mask : Event_mask.t;
+    do_not_propagate_mask : Event_mask.t;
+  }
+  [@@deriving sexp]
+
   module Set_mode_enum = struct
     type t = [ `Insert | `Delete ] [@@deriving sexp]
   end
@@ -396,6 +417,27 @@ module Xproto = struct
     type t = [ `Raise_lowest | `Lower_highest ] [@@deriving sexp]
   end
 
+  type get_geometry_reply = {
+    depth : u8;
+    root : window;
+    x : i16;
+    y : i16;
+    width : u16;
+    height : u16;
+    border_width : u16;
+  }
+  [@@deriving sexp]
+
+  type query_tree_reply = {
+    root : window;
+    parent : [ Window_enum.t | window alt ];
+    children : window list;
+  }
+  [@@deriving sexp]
+
+  type intern_atom_reply = [ Atom_enum.t | atom alt ] [@@deriving sexp]
+  type get_atom_name_reply = string [@@deriving sexp]
+
   module Prop_mode_enum = struct
     type t = [ `Replace | `Prepend | `Append ] [@@deriving sexp]
   end
@@ -403,6 +445,20 @@ module Xproto = struct
   module Get_property_type_enum = struct
     type t = [ `Any ] [@@deriving sexp]
   end
+
+  type get_property_reply = {
+    format : u8;
+    type_ : atom;
+    bytes_after : u32;
+    value_len : u32;
+    value : string;
+  }
+  [@@deriving sexp]
+
+  type list_properties_reply = atom list [@@deriving sexp]
+
+  type get_selection_owner_reply = [ Window_enum.t | window alt ]
+  [@@deriving sexp]
 
   module Send_event_dest_enum = struct
     type t = [ `Pointer_window | `Item_focus ] [@@deriving sexp]
@@ -418,9 +474,13 @@ module Xproto = struct
     [@@deriving sexp]
   end
 
+  type grab_pointer_reply = Grab_status_enum.t [@@deriving sexp]
+
   module Button_index_enum = struct
     type t = [ `Any | `D1 | `D2 | `D3 | `D4 | `D5 ] [@@deriving sexp]
   end
+
+  type grab_keyboard_reply = Grab_status_enum.t [@@deriving sexp]
 
   module Grab_enum = struct
     type t = [ `Any ] [@@deriving sexp]
@@ -439,12 +499,41 @@ module Xproto = struct
     [@@deriving sexp]
   end
 
+  type query_pointer_reply = {
+    same_screen : bool;
+    root : window;
+    child : [ Window_enum.t | window alt ];
+    root_x : i16;
+    root_y : i16;
+    win_x : i16;
+    win_y : i16;
+    mask : Key_but_mask.t;
+  }
+  [@@deriving sexp]
+
   type timecoord = { time : timestamp; x : i16; y : i16 } [@@deriving sexp]
+  type get_motion_events_reply = timecoord list [@@deriving sexp]
+
+  type translate_coordinates_reply = {
+    same_screen : bool;
+    child : [ Window_enum.t | window alt ];
+    dst_x : i16;
+    dst_y : i16;
+  }
+  [@@deriving sexp]
 
   module Input_focus_enum = struct
     type t = [ `None | `Pointer_root | `Parent | `Follow_keyboard ]
     [@@deriving sexp]
   end
+
+  type get_input_focus_reply = {
+    revert_to : Input_focus_enum.t;
+    focus : [ Input_focus_enum.t | window alt ];
+  }
+  [@@deriving sexp]
+
+  type query_keymap_reply = u8 list [@@deriving sexp]
 
   module Font_draw_enum = struct
     type t = [ `Left_to_right | `Right_to_left ] [@@deriving sexp]
@@ -462,7 +551,57 @@ module Xproto = struct
   }
   [@@deriving sexp]
 
+  type query_font_reply = {
+    min_bounds : charinfo;
+    max_bounds : charinfo;
+    min_char_or_byte2 : u16;
+    max_char_or_byte2 : u16;
+    default_char : u16;
+    draw_direction : Font_draw_enum.t;
+    min_byte1 : u8;
+    max_byte1 : u8;
+    all_chars_exist : bool;
+    font_ascent : i16;
+    font_descent : i16;
+    properties : fontprop list;
+    char_infos : charinfo list;
+  }
+  [@@deriving sexp]
+
+  type query_text_extents_reply = {
+    draw_direction : Font_draw_enum.t;
+    font_ascent : i16;
+    font_descent : i16;
+    overall_ascent : i16;
+    overall_descent : i16;
+    overall_width : i32;
+    overall_left : i32;
+    overall_right : i32;
+  }
+  [@@deriving sexp]
+
   type str = string [@@deriving sexp]
+  type list_fonts_reply = str list [@@deriving sexp]
+
+  type list_fonts_with_info_reply = {
+    min_bounds : charinfo;
+    max_bounds : charinfo;
+    min_char_or_byte2 : u16;
+    max_char_or_byte2 : u16;
+    default_char : u16;
+    draw_direction : Font_draw_enum.t;
+    min_byte1 : u8;
+    max_byte1 : u8;
+    all_chars_exist : bool;
+    font_ascent : i16;
+    font_descent : i16;
+    replies_hint : u32;
+    properties : fontprop list;
+    name : string;
+  }
+  [@@deriving sexp]
+
+  type get_font_path_reply = str list [@@deriving sexp]
 
   module Gc_mask = struct
     include Mask
@@ -565,9 +704,39 @@ module Xproto = struct
     type t = [ `Xy_bitmap | `Xy_pixmap | `Z_pixmap ] [@@deriving sexp]
   end
 
+  type get_image_reply = { depth : u8; visual : visualid; data : byte list }
+  [@@deriving sexp]
+
   module Colormap_alloc_enum = struct
     type t = [ `None | `All ] [@@deriving sexp]
   end
+
+  type list_installed_colormaps_reply = colormap list [@@deriving sexp]
+
+  type alloc_color_reply = { red : u16; green : u16; blue : u16; pixel : u32 }
+  [@@deriving sexp]
+
+  type alloc_named_color_reply = {
+    pixel : u32;
+    exact_red : u16;
+    exact_green : u16;
+    exact_blue : u16;
+    visual_red : u16;
+    visual_green : u16;
+    visual_blue : u16;
+  }
+  [@@deriving sexp]
+
+  type alloc_color_cells_reply = { pixels : u32 list; masks : u32 list }
+  [@@deriving sexp]
+
+  type alloc_color_planes_reply = {
+    red_mask : u32;
+    green_mask : u32;
+    blue_mask : u32;
+    pixels : u32 list;
+  }
+  [@@deriving sexp]
 
   module Color_flag_mask = struct
     include Mask
@@ -587,11 +756,40 @@ module Xproto = struct
   [@@deriving sexp]
 
   type rgb = { red : u16; green : u16; blue : u16 } [@@deriving sexp]
+  type query_colors_reply = rgb list [@@deriving sexp]
+
+  type lookup_color_reply = {
+    exact_red : u16;
+    exact_green : u16;
+    exact_blue : u16;
+    visual_red : u16;
+    visual_green : u16;
+    visual_blue : u16;
+  }
+  [@@deriving sexp]
 
   module Query_shape_of_enum = struct
     type t = [ `Largest_cursor | `Fastest_tile | `Fastest_stipple ]
     [@@deriving sexp]
   end
+
+  type query_best_size_reply = { width : u16; height : u16 } [@@deriving sexp]
+
+  type query_extension_reply = {
+    present : bool;
+    major_opcode : u8;
+    first_event : u8;
+    first_error : u8;
+  }
+  [@@deriving sexp]
+
+  type list_extensions_reply = str list [@@deriving sexp]
+
+  type get_keyboard_mapping_reply = {
+    keysyms_per_keycode : byte;
+    keysyms : keysym list;
+  }
+  [@@deriving sexp]
 
   module Kb_mask = struct
     include Mask
@@ -614,6 +812,24 @@ module Xproto = struct
     type t = [ `Off | `On | `Default ] [@@deriving sexp]
   end
 
+  type get_keyboard_control_reply = {
+    global_auto_repeat : Auto_repeat_mode_enum.t;
+    led_mask : u32;
+    key_click_percent : u8;
+    bell_percent : u8;
+    bell_pitch : u16;
+    bell_duration : u16;
+    auto_repeats : u8 list;
+  }
+  [@@deriving sexp]
+
+  type get_pointer_control_reply = {
+    acceleration_numerator : u16;
+    acceleration_denominator : u16;
+    threshold : u16;
+  }
+  [@@deriving sexp]
+
   module Blanking_enum = struct
     type t = [ `Not_preferred | `Preferred | `Default ] [@@deriving sexp]
   end
@@ -621,6 +837,14 @@ module Xproto = struct
   module Exposures_enum = struct
     type t = [ `Not_allowed | `Allowed | `Default ] [@@deriving sexp]
   end
+
+  type get_screen_saver_reply = {
+    timeout : u16;
+    interval : u16;
+    prefer_blanking : Blanking_enum.t;
+    allow_exposures : Exposures_enum.t;
+  }
+  [@@deriving sexp]
 
   module Host_mode_enum = struct
     type t = [ `Insert | `Delete ] [@@deriving sexp]
@@ -636,6 +860,9 @@ module Xproto = struct
   module Access_control_enum = struct
     type t = [ `Disable | `Enable ] [@@deriving sexp]
   end
+
+  type list_hosts_reply = { mode : Access_control_enum.t; hosts : host list }
+  [@@deriving sexp]
 
   module Close_down_enum = struct
     type t = [ `Destroy_all | `Retain_permanent | `Retain_temporary ]
@@ -654,10 +881,16 @@ module Xproto = struct
     type t = [ `Success | `Busy | `Failure ] [@@deriving sexp]
   end
 
+  type set_pointer_mapping_reply = Mapping_status_enum.t [@@deriving sexp]
+  type get_pointer_mapping_reply = u8 list [@@deriving sexp]
+
   module Map_index_enum = struct
     type t = [ `Shift | `Lock | `Control | `D1 | `D2 | `D3 | `D4 | `D5 ]
     [@@deriving sexp]
   end
+
+  type set_modifier_mapping_reply = Mapping_status_enum.t [@@deriving sexp]
+  type get_modifier_mapping_reply = keycode list [@@deriving sexp]
 end
 
 module Render = struct
@@ -846,6 +1079,20 @@ module Render = struct
   }
   [@@deriving sexp]
 
+  type query_version_reply = { major_version : u32; minor_version : u32 }
+  [@@deriving sexp]
+
+  type query_pict_formats_reply = {
+    num_depths : u32;
+    num_visuals : u32;
+    formats : pictforminfo list;
+    screens : pictscreen list;
+    subpixels : Sub_pixel_enum.t list;
+  }
+  [@@deriving sexp]
+
+  type query_pict_index_values_reply = indexvalue list [@@deriving sexp]
+
   type transform = {
     matrix11 : fixed;
     matrix12 : fixed;
@@ -857,6 +1104,9 @@ module Render = struct
     matrix32 : fixed;
     matrix33 : fixed;
   }
+  [@@deriving sexp]
+
+  type query_filters_reply = { aliases : u16 list; filters : Xproto.str list }
   [@@deriving sexp]
 
   type animcursorelt = { cursor : Xproto.cursor; delay : u32 } [@@deriving sexp]
@@ -883,6 +1133,31 @@ module Shape = struct
   module Sk_enum = struct
     type t = [ `Bounding | `Clip | `Input ] [@@deriving sexp]
   end
+
+  type query_version_reply = { major_version : u16; minor_version : u16 }
+  [@@deriving sexp]
+
+  type query_extents_reply = {
+    bounding_shaped : bool;
+    clip_shaped : bool;
+    bounding_shape_extents_x : i16;
+    bounding_shape_extents_y : i16;
+    bounding_shape_extents_width : u16;
+    bounding_shape_extents_height : u16;
+    clip_shape_extents_x : i16;
+    clip_shape_extents_y : i16;
+    clip_shape_extents_width : u16;
+    clip_shape_extents_height : u16;
+  }
+  [@@deriving sexp]
+
+  type input_selected_reply = bool [@@deriving sexp]
+
+  type get_rectangles_reply = {
+    ordering : Xproto.Clip_ordering_enum.t;
+    rectangles : Xproto.rectangle list;
+  }
+  [@@deriving sexp]
 end
 
 module Xfixes = struct
@@ -892,6 +1167,9 @@ module Xfixes = struct
     let version = (5, 0)
     let query_name = "XFIXES"
   end
+
+  type query_version_reply = { major_version : u32; minor_version : u32 }
+  [@@deriving sexp]
 
   module Save_set_mode_enum = struct
     type t = [ `Insert | `Delete ] [@@deriving sexp]
@@ -931,11 +1209,49 @@ module Xfixes = struct
     let (display_cursor : t) = of_int64 (Int64.shift_right 1L 0)
   end
 
+  type get_cursor_image_reply = {
+    x : i16;
+    y : i16;
+    width : u16;
+    height : u16;
+    xhot : u16;
+    yhot : u16;
+    cursor_serial : u32;
+    cursor_image : u32 list;
+  }
+  [@@deriving sexp]
+
   type region = xid [@@deriving sexp]
 
   module Region_enum = struct
     type t = [ `None ] [@@deriving sexp]
   end
+
+  type fetch_region_reply = {
+    extents : Xproto.rectangle;
+    rectangles : Xproto.rectangle list;
+  }
+  [@@deriving sexp]
+
+  type get_cursor_name_reply = {
+    atom : [ Xproto.Atom_enum.t | Xproto.atom alt ];
+    name : string;
+  }
+  [@@deriving sexp]
+
+  type get_cursor_image_and_name_reply = {
+    x : i16;
+    y : i16;
+    width : u16;
+    height : u16;
+    xhot : u16;
+    yhot : u16;
+    cursor_serial : u32;
+    cursor_atom : [ Xproto.Atom_enum.t | Xproto.atom alt ];
+    cursor_image : u32 list;
+    name : string;
+  }
+  [@@deriving sexp]
 
   type barrier = xid [@@deriving sexp]
 
@@ -960,6 +1276,11 @@ module Composite = struct
   module Redirect_enum = struct
     type t = [ `Automatic | `Manual ] [@@deriving sexp]
   end
+
+  type query_version_reply = { major_version : u32; minor_version : u32 }
+  [@@deriving sexp]
+
+  type get_overlay_window_reply = Xproto.window [@@deriving sexp]
 end
 
 module Damage = struct
@@ -976,6 +1297,9 @@ module Damage = struct
     type t = [ `Raw_rectangles | `Delta_rectangles | `Bounding_box | `Non_empty ]
     [@@deriving sexp]
   end
+
+  type query_version_reply = { major_version : u32; minor_version : u32 }
+  [@@deriving sexp]
 end
 
 module Dpms = struct
@@ -986,9 +1310,27 @@ module Dpms = struct
     let query_name = "DPMS"
   end
 
+  type get_version_reply = {
+    server_major_version : u16;
+    server_minor_version : u16;
+  }
+  [@@deriving sexp]
+
+  type capable_reply = bool [@@deriving sexp]
+
+  type get_timeouts_reply = {
+    standby_timeout : u16;
+    suspend_timeout : u16;
+    off_timeout : u16;
+  }
+  [@@deriving sexp]
+
   module Dpms_mode_enum = struct
     type t = [ `On | `Standby | `Suspend | `Off ] [@@deriving sexp]
   end
+
+  type info_reply = { power_level : Dpms_mode_enum.t; state : bool }
+  [@@deriving sexp]
 end
 
 module Dri2 = struct
@@ -1035,6 +1377,73 @@ module Dri2 = struct
 
   type attach_format = { attachment : Attachment_enum.t; format : u32 }
   [@@deriving sexp]
+
+  type query_version_reply = { major_version : u32; minor_version : u32 }
+  [@@deriving sexp]
+
+  type connect_reply = {
+    driver_name : string;
+    alignment_pad : string;
+    device_name : string;
+  }
+  [@@deriving sexp]
+
+  type authenticate_reply = u32 [@@deriving sexp]
+
+  type get_buffers_reply = {
+    width : u32;
+    height : u32;
+    buffers : dri2_buffer list;
+  }
+  [@@deriving sexp]
+
+  type copy_region_reply = unit [@@deriving sexp]
+
+  type get_buffers_with_format_reply = {
+    width : u32;
+    height : u32;
+    buffers : dri2_buffer list;
+  }
+  [@@deriving sexp]
+
+  type swap_buffers_reply = { swap_hi : u32; swap_lo : u32 } [@@deriving sexp]
+
+  type get_msc_reply = {
+    ust_hi : u32;
+    ust_lo : u32;
+    msc_hi : u32;
+    msc_lo : u32;
+    sbc_hi : u32;
+    sbc_lo : u32;
+  }
+  [@@deriving sexp]
+
+  type wait_msc_reply = {
+    ust_hi : u32;
+    ust_lo : u32;
+    msc_hi : u32;
+    msc_lo : u32;
+    sbc_hi : u32;
+    sbc_lo : u32;
+  }
+  [@@deriving sexp]
+
+  type wait_sbc_reply = {
+    ust_hi : u32;
+    ust_lo : u32;
+    msc_hi : u32;
+    msc_lo : u32;
+    sbc_hi : u32;
+    sbc_lo : u32;
+  }
+  [@@deriving sexp]
+
+  type get_param_reply = {
+    is_param_recognized : bool;
+    value_hi : u32;
+    value_lo : u32;
+  }
+  [@@deriving sexp]
 end
 
 module Dri3 = struct
@@ -1044,6 +1453,44 @@ module Dri3 = struct
     let version = (1, 2)
     let query_name = "DRI3"
   end
+
+  type query_version_reply = { major_version : u32; minor_version : u32 }
+  [@@deriving sexp]
+
+  type open_reply = { nfd : u8; device_fd : file_descr } [@@deriving sexp]
+
+  type buffer_from_pixmap_reply = {
+    nfd : u8;
+    size : u32;
+    width : u16;
+    height : u16;
+    stride : u16;
+    depth : u8;
+    bpp : u8;
+    pixmap_fd : file_descr;
+  }
+  [@@deriving sexp]
+
+  type fd_from_fence_reply = { nfd : u8; fence_fd : file_descr }
+  [@@deriving sexp]
+
+  type get_supported_modifiers_reply = {
+    window_modifiers : u64 list;
+    screen_modifiers : u64 list;
+  }
+  [@@deriving sexp]
+
+  type buffers_from_pixmap_reply = {
+    width : u16;
+    height : u16;
+    modifier : u64;
+    depth : u8;
+    bpp : u8;
+    strides : u32 list;
+    offsets : u32 list;
+    buffers : file_descr list;
+  }
+  [@@deriving sexp]
 end
 
 module Ge = struct
@@ -1053,6 +1500,9 @@ module Ge = struct
     let version = (1, 0)
     let query_name = "Generic Event Extension"
   end
+
+  type query_version_reply = { major_version : u16; minor_version : u16 }
+  [@@deriving sexp]
 end
 
 module Glx = struct
@@ -1082,6 +1532,12 @@ module Glx = struct
     type t = [ `Window | `Pbuffer ] [@@deriving sexp]
   end
 
+  type make_current_reply = context_tag [@@deriving sexp]
+  type is_direct_reply = bool [@@deriving sexp]
+
+  type query_version_reply = { major_version : u32; minor_version : u32 }
+  [@@deriving sexp]
+
   module Gc_mask = struct
     include Mask
 
@@ -1108,9 +1564,200 @@ module Glx = struct
     let (gl_all_attrib_bits : t) = of_int64 16777215L
   end
 
+  type get_visual_configs_reply = {
+    num_visuals : u32;
+    num_properties : u32;
+    property_list : u32 list;
+  }
+  [@@deriving sexp]
+
+  type vendor_private_with_reply = {
+    retval : u32;
+    data1 : byte list;
+    data2 : byte list;
+  }
+  [@@deriving sexp]
+
+  type query_extensions_string_reply = u32 [@@deriving sexp]
+  type query_server_string_reply = string [@@deriving sexp]
+
+  type get_fb_configs_reply = {
+    num_f_b_configs : u32;
+    num_properties : u32;
+    property_list : u32 list;
+  }
+  [@@deriving sexp]
+
+  type query_context_reply = u32 list [@@deriving sexp]
+  type make_context_current_reply = context_tag [@@deriving sexp]
+  type get_drawable_attributes_reply = u32 list [@@deriving sexp]
+  type gen_lists_reply = u32 [@@deriving sexp]
+
+  type render_mode_reply = { ret_val : u32; new_mode : u32; data : u32 list }
+  [@@deriving sexp]
+
   module Rm_enum = struct
     type t = [ `Gl_render | `Gl_feedback | `Gl_select ] [@@deriving sexp]
   end
+
+  type finish_reply = unit [@@deriving sexp]
+  type read_pixels_reply = byte list [@@deriving sexp]
+  type get_booleanv_reply = { datum : bool; data : bool list } [@@deriving sexp]
+  type get_clip_plane_reply = float64 list [@@deriving sexp]
+
+  type get_doublev_reply = { datum : float64; data : float64 list }
+  [@@deriving sexp]
+
+  type get_error_reply = i32 [@@deriving sexp]
+
+  type get_floatv_reply = { datum : float32; data : float32 list }
+  [@@deriving sexp]
+
+  type get_integerv_reply = { datum : i32; data : i32 list } [@@deriving sexp]
+
+  type get_lightfv_reply = { datum : float32; data : float32 list }
+  [@@deriving sexp]
+
+  type get_lightiv_reply = { datum : i32; data : i32 list } [@@deriving sexp]
+
+  type get_mapdv_reply = { datum : float64; data : float64 list }
+  [@@deriving sexp]
+
+  type get_mapfv_reply = { datum : float32; data : float32 list }
+  [@@deriving sexp]
+
+  type get_mapiv_reply = { datum : i32; data : i32 list } [@@deriving sexp]
+
+  type get_materialfv_reply = { datum : float32; data : float32 list }
+  [@@deriving sexp]
+
+  type get_materialiv_reply = { datum : i32; data : i32 list } [@@deriving sexp]
+
+  type get_pixel_mapfv_reply = { datum : float32; data : float32 list }
+  [@@deriving sexp]
+
+  type get_pixel_mapuiv_reply = { datum : u32; data : u32 list }
+  [@@deriving sexp]
+
+  type get_pixel_mapusv_reply = { datum : u16; data : u16 list }
+  [@@deriving sexp]
+
+  type get_polygon_stipple_reply = byte list [@@deriving sexp]
+  type get_string_reply = string [@@deriving sexp]
+
+  type get_tex_envfv_reply = { datum : float32; data : float32 list }
+  [@@deriving sexp]
+
+  type get_tex_enviv_reply = { datum : i32; data : i32 list } [@@deriving sexp]
+
+  type get_tex_gendv_reply = { datum : float64; data : float64 list }
+  [@@deriving sexp]
+
+  type get_tex_genfv_reply = { datum : float32; data : float32 list }
+  [@@deriving sexp]
+
+  type get_tex_geniv_reply = { datum : i32; data : i32 list } [@@deriving sexp]
+
+  type get_tex_image_reply = {
+    width : i32;
+    height : i32;
+    depth : i32;
+    data : byte list;
+  }
+  [@@deriving sexp]
+
+  type get_tex_parameterfv_reply = { datum : float32; data : float32 list }
+  [@@deriving sexp]
+
+  type get_tex_parameteriv_reply = { datum : i32; data : i32 list }
+  [@@deriving sexp]
+
+  type get_tex_level_parameterfv_reply = {
+    datum : float32;
+    data : float32 list;
+  }
+  [@@deriving sexp]
+
+  type get_tex_level_parameteriv_reply = { datum : i32; data : i32 list }
+  [@@deriving sexp]
+
+  type is_enabled_reply = bool32 [@@deriving sexp]
+  type is_list_reply = bool32 [@@deriving sexp]
+
+  type are_textures_resident_reply = { ret_val : bool32; data : bool list }
+  [@@deriving sexp]
+
+  type gen_textures_reply = u32 list [@@deriving sexp]
+  type is_texture_reply = bool32 [@@deriving sexp]
+
+  type get_color_table_reply = { width : i32; data : byte list }
+  [@@deriving sexp]
+
+  type get_color_table_parameterfv_reply = {
+    datum : float32;
+    data : float32 list;
+  }
+  [@@deriving sexp]
+
+  type get_color_table_parameteriv_reply = { datum : i32; data : i32 list }
+  [@@deriving sexp]
+
+  type get_convolution_filter_reply = {
+    width : i32;
+    height : i32;
+    data : byte list;
+  }
+  [@@deriving sexp]
+
+  type get_convolution_parameterfv_reply = {
+    datum : float32;
+    data : float32 list;
+  }
+  [@@deriving sexp]
+
+  type get_convolution_parameteriv_reply = { datum : i32; data : i32 list }
+  [@@deriving sexp]
+
+  type get_separable_filter_reply = {
+    row_w : i32;
+    col_h : i32;
+    rows_and_cols : byte list;
+  }
+  [@@deriving sexp]
+
+  type get_histogram_reply = { width : i32; data : byte list } [@@deriving sexp]
+
+  type get_histogram_parameterfv_reply = {
+    datum : float32;
+    data : float32 list;
+  }
+  [@@deriving sexp]
+
+  type get_histogram_parameteriv_reply = { datum : i32; data : i32 list }
+  [@@deriving sexp]
+
+  type get_minmax_reply = byte list [@@deriving sexp]
+
+  type get_minmax_parameterfv_reply = { datum : float32; data : float32 list }
+  [@@deriving sexp]
+
+  type get_minmax_parameteriv_reply = { datum : i32; data : i32 list }
+  [@@deriving sexp]
+
+  type get_compressed_tex_image_arb_reply = { size : i32; data : byte list }
+  [@@deriving sexp]
+
+  type gen_queries_arb_reply = u32 list [@@deriving sexp]
+  type is_query_arb_reply = bool32 [@@deriving sexp]
+
+  type get_queryiv_arb_reply = { datum : i32; data : i32 list }
+  [@@deriving sexp]
+
+  type get_query_objectiv_arb_reply = { datum : i32; data : i32 list }
+  [@@deriving sexp]
+
+  type get_query_objectuiv_arb_reply = { datum : u32; data : u32 list }
+  [@@deriving sexp]
 end
 
 module Randr = struct
@@ -1143,10 +1790,22 @@ module Randr = struct
 
   type refresh_rates = u16 list [@@deriving sexp]
 
+  type query_version_reply = { major_version : u32; minor_version : u32 }
+  [@@deriving sexp]
+
   module Set_config_enum = struct
     type t = [ `Success | `Invalid_config_time | `Invalid_time | `Failed ]
     [@@deriving sexp]
   end
+
+  type set_screen_config_reply = {
+    status : Set_config_enum.t;
+    new_timestamp : Xproto.timestamp;
+    config_timestamp : Xproto.timestamp;
+    root : Xproto.window;
+    subpixel_order : Render.Sub_pixel_enum.t;
+  }
+  [@@deriving sexp]
 
   module Notify_mask = struct
     include Mask
@@ -1160,6 +1819,28 @@ module Randr = struct
     let (resource_change : t) = of_int64 (Int64.shift_right 1L 6)
     let (lease : t) = of_int64 (Int64.shift_right 1L 7)
   end
+
+  type get_screen_info_reply = {
+    rotations : Rotation_mask.t;
+    root : Xproto.window;
+    timestamp : Xproto.timestamp;
+    config_timestamp : Xproto.timestamp;
+    size_id : u16;
+    rotation : Rotation_mask.t;
+    rate : u16;
+    n_info : u16;
+    sizes : screen_size list;
+    rates : refresh_rates list;
+  }
+  [@@deriving sexp]
+
+  type get_screen_size_range_reply = {
+    min_width : u16;
+    min_height : u16;
+    max_width : u16;
+    max_height : u16;
+  }
+  [@@deriving sexp]
 
   module Mode_flag_mask = struct
     include Mask
@@ -1197,9 +1878,96 @@ module Randr = struct
   }
   [@@deriving sexp]
 
+  type get_screen_resources_reply = {
+    timestamp : Xproto.timestamp;
+    config_timestamp : Xproto.timestamp;
+    crtcs : crtc list;
+    outputs : output list;
+    modes : mode_info list;
+    names : byte list;
+  }
+  [@@deriving sexp]
+
   module Connection_enum = struct
     type t = [ `Connected | `Disconnected | `Unknown ] [@@deriving sexp]
   end
+
+  type get_output_info_reply = {
+    status : Set_config_enum.t;
+    timestamp : Xproto.timestamp;
+    crtc : crtc;
+    mm_width : u32;
+    mm_height : u32;
+    connection : Connection_enum.t;
+    subpixel_order : Render.Sub_pixel_enum.t;
+    num_preferred : u16;
+    crtcs : crtc list;
+    modes : mode list;
+    clones : output list;
+    name : byte list;
+  }
+  [@@deriving sexp]
+
+  type list_output_properties_reply = Xproto.atom list [@@deriving sexp]
+
+  type query_output_property_reply = {
+    pending : bool;
+    range : bool;
+    immutable : bool;
+    valid_values : i32 list;
+  }
+  [@@deriving sexp]
+
+  type get_output_property_reply = {
+    format : u8;
+    type_ : [ Xproto.Atom_enum.t | Xproto.atom alt ];
+    bytes_after : u32;
+    num_items : u32;
+    data : byte list;
+  }
+  [@@deriving sexp]
+
+  type create_mode_reply = mode [@@deriving sexp]
+
+  type get_crtc_info_reply = {
+    status : Set_config_enum.t;
+    timestamp : Xproto.timestamp;
+    x : i16;
+    y : i16;
+    width : u16;
+    height : u16;
+    mode : mode;
+    rotation : Rotation_mask.t;
+    rotations : Rotation_mask.t;
+    outputs : output list;
+    possible : output list;
+  }
+  [@@deriving sexp]
+
+  type set_crtc_config_reply = {
+    status : Set_config_enum.t;
+    timestamp : Xproto.timestamp;
+  }
+  [@@deriving sexp]
+
+  type get_crtc_gamma_size_reply = u16 [@@deriving sexp]
+
+  type get_crtc_gamma_reply = {
+    red : u16 list;
+    green : u16 list;
+    blue : u16 list;
+  }
+  [@@deriving sexp]
+
+  type get_screen_resources_current_reply = {
+    timestamp : Xproto.timestamp;
+    config_timestamp : Xproto.timestamp;
+    crtcs : crtc list;
+    outputs : output list;
+    modes : mode_info list;
+    names : byte list;
+  }
+  [@@deriving sexp]
 
   module Transform_mask = struct
     include Mask
@@ -1210,6 +1978,49 @@ module Randr = struct
     let (projective : t) = of_int64 (Int64.shift_right 1L 3)
   end
 
+  type get_crtc_transform_reply = {
+    pending_transform : Render.transform;
+    has_transforms : bool;
+    current_transform : Render.transform;
+    pending_filter_name : string;
+    pending_params : Render.fixed list;
+    current_filter_name : string;
+    current_params : Render.fixed list;
+  }
+  [@@deriving sexp]
+
+  type get_panning_reply = {
+    status : Set_config_enum.t;
+    timestamp : Xproto.timestamp;
+    left : u16;
+    top : u16;
+    width : u16;
+    height : u16;
+    track_left : u16;
+    track_top : u16;
+    track_width : u16;
+    track_height : u16;
+    border_left : i16;
+    border_top : i16;
+    border_right : i16;
+    border_bottom : i16;
+  }
+  [@@deriving sexp]
+
+  type set_panning_reply = {
+    status : Set_config_enum.t;
+    timestamp : Xproto.timestamp;
+  }
+  [@@deriving sexp]
+
+  type get_output_primary_reply = output [@@deriving sexp]
+
+  type get_providers_reply = {
+    timestamp : Xproto.timestamp;
+    providers : provider list;
+  }
+  [@@deriving sexp]
+
   module Provider_capability_mask = struct
     include Mask
 
@@ -1218,6 +2029,37 @@ module Randr = struct
     let (source_offload : t) = of_int64 (Int64.shift_right 1L 2)
     let (sink_offload : t) = of_int64 (Int64.shift_right 1L 3)
   end
+
+  type get_provider_info_reply = {
+    status : u8;
+    timestamp : Xproto.timestamp;
+    capabilities : Provider_capability_mask.t;
+    crtcs : crtc list;
+    outputs : output list;
+    associated_providers : provider list;
+    associated_capability : u32 list;
+    name : string;
+  }
+  [@@deriving sexp]
+
+  type list_provider_properties_reply = Xproto.atom list [@@deriving sexp]
+
+  type query_provider_property_reply = {
+    pending : bool;
+    range : bool;
+    immutable : bool;
+    valid_values : i32 list;
+  }
+  [@@deriving sexp]
+
+  type get_provider_property_reply = {
+    format : u8;
+    type_ : Xproto.atom;
+    bytes_after : u32;
+    num_items : u32;
+    data : string;
+  }
+  [@@deriving sexp]
 
   module Notify_enum = struct
     type t =
@@ -1253,7 +2095,7 @@ module Randr = struct
     mode : mode;
     rotation : Rotation_mask.t;
     connection : Connection_enum.t;
-    subpixel_order : Randr.Sub_pixel_enum.t;
+    subpixel_order : Render.Sub_pixel_enum.t;
   }
   [@@deriving sexp]
 
@@ -1262,7 +2104,7 @@ module Randr = struct
     output : output;
     atom : Xproto.atom;
     timestamp : Xproto.timestamp;
-    status : Randr.Property_enum.t;
+    status : Xproto.Property_enum.t;
   }
   [@@deriving sexp]
 
@@ -1300,6 +2142,16 @@ module Randr = struct
     height_in_millimeters : u32;
     outputs : output list;
   }
+  [@@deriving sexp]
+
+  type get_monitors_reply = {
+    timestamp : Xproto.timestamp;
+    n_outputs : u32;
+    monitors : monitor_info list;
+  }
+  [@@deriving sexp]
+
+  type create_lease_reply = { nfd : u8; master_fd : file_descr }
   [@@deriving sexp]
 
   type lease_notify = {
@@ -1367,6 +2219,23 @@ module Sync = struct
 
   type waitcondition = { trigger : trigger; event_threshold : int64 }
   [@@deriving sexp]
+
+  type initialize_reply = { major_version : u8; minor_version : u8 }
+  [@@deriving sexp]
+
+  type list_system_counters_reply = systemcounter list [@@deriving sexp]
+  type query_counter_reply = int64 [@@deriving sexp]
+
+  type query_alarm_reply = {
+    trigger : trigger;
+    delta : int64;
+    events : bool;
+    state : Alarmstate_enum.t;
+  }
+  [@@deriving sexp]
+
+  type get_priority_reply = i32 [@@deriving sexp]
+  type query_fence_reply = bool [@@deriving sexp]
 end
 
 module Present = struct
@@ -1392,7 +2261,12 @@ module Present = struct
   end
 
   type notify = { window : Xproto.window; serial : u32 } [@@deriving sexp]
+
+  type query_version_reply = { major_version : u32; minor_version : u32 }
+  [@@deriving sexp]
+
   type event = xid [@@deriving sexp]
+  type query_capabilities_reply = u32 [@@deriving sexp]
 end
 
 module Record = struct
@@ -1440,6 +2314,27 @@ module Record = struct
 
   type client_info = { client_resource : client_spec; ranges : range list }
   [@@deriving sexp]
+
+  type query_version_reply = { major_version : u16; minor_version : u16 }
+  [@@deriving sexp]
+
+  type get_context_reply = {
+    enabled : bool;
+    element_header : element_header;
+    intercepted_clients : client_info list;
+  }
+  [@@deriving sexp]
+
+  type enable_context_reply = {
+    category : u8;
+    element_header : element_header;
+    client_swapped : bool;
+    xid_base : u32;
+    server_time : u32;
+    rec_sequence_num : u32;
+    data : byte list;
+  }
+  [@@deriving sexp]
 end
 
 module Res = struct
@@ -1481,6 +2376,18 @@ module Res = struct
     cross_references : resource_size_spec list;
   }
   [@@deriving sexp]
+
+  type query_version_reply = { server_major : u16; server_minor : u16 }
+  [@@deriving sexp]
+
+  type query_clients_reply = client list [@@deriving sexp]
+  type query_client_resources_reply = type_ list [@@deriving sexp]
+
+  type query_client_pixmap_bytes_reply = { bytes : u32; bytes_overflow : u32 }
+  [@@deriving sexp]
+
+  type query_client_ids_reply = client_id_value list [@@deriving sexp]
+  type query_resource_bytes_reply = resource_size_value list [@@deriving sexp]
 end
 
 module Screensaver = struct
@@ -1505,6 +2412,22 @@ module Screensaver = struct
   module State_enum = struct
     type t = [ `Off | `On | `Cycle | `Disabled ] [@@deriving sexp]
   end
+
+  type query_version_reply = {
+    server_major_version : u16;
+    server_minor_version : u16;
+  }
+  [@@deriving sexp]
+
+  type query_info_reply = {
+    state : u8;
+    saver_window : Xproto.window;
+    ms_until_server : u32;
+    ms_since_user_input : u32;
+    event_mask : u32;
+    kind : Kind_enum.t;
+  }
+  [@@deriving sexp]
 end
 
 module Shm = struct
@@ -1516,6 +2439,22 @@ module Shm = struct
   end
 
   type seg = xid [@@deriving sexp]
+
+  type query_version_reply = {
+    shared_pixmaps : bool;
+    major_version : u16;
+    minor_version : u16;
+    uid : u16;
+    gid : u16;
+    pixmap_format : u8;
+  }
+  [@@deriving sexp]
+
+  type get_image_reply = { depth : u8; visual : Xproto.visualid; size : u32 }
+  [@@deriving sexp]
+
+  type create_segment_reply = { nfd : u8; shm_fd : file_descr }
+  [@@deriving sexp]
 end
 
 module Xc_misc = struct
@@ -1525,6 +2464,15 @@ module Xc_misc = struct
     let version = (1, 1)
     let query_name = "XC-MISC"
   end
+
+  type get_version_reply = {
+    server_major_version : u16;
+    server_minor_version : u16;
+  }
+  [@@deriving sexp]
+
+  type get_xid_range_reply = { start_id : u32; count : u32 } [@@deriving sexp]
+  type get_xid_list_reply = u32 list [@@deriving sexp]
 end
 
 module Xf86dri = struct
@@ -1537,6 +2485,59 @@ module Xf86dri = struct
 
   type drm_clip_rect = { x1 : i16; y1 : i16; x2 : i16; x3 : i16 }
   [@@deriving sexp]
+
+  type query_version_reply = {
+    dri_major_version : u16;
+    dri_minor_version : u16;
+    dri_minor_patch : u32;
+  }
+  [@@deriving sexp]
+
+  type query_direct_rendering_capable_reply = bool [@@deriving sexp]
+
+  type open_connection_reply = {
+    sarea_handle_low : u32;
+    sarea_handle_high : u32;
+    bus_id : string;
+  }
+  [@@deriving sexp]
+
+  type get_client_driver_name_reply = {
+    client_driver_major_version : u32;
+    client_driver_minor_version : u32;
+    client_driver_patch_version : u32;
+    client_driver_name : string;
+  }
+  [@@deriving sexp]
+
+  type create_context_reply = u32 [@@deriving sexp]
+  type create_drawable_reply = u32 [@@deriving sexp]
+
+  type get_drawable_info_reply = {
+    drawable_table_index : u32;
+    drawable_table_stamp : u32;
+    drawable_origin_x : i16;
+    drawable_origin_y : i16;
+    drawable_size_w : i16;
+    drawable_size_h : i16;
+    back_x : i16;
+    back_y : i16;
+    clip_rects : drm_clip_rect list;
+    back_clip_rects : drm_clip_rect list;
+  }
+  [@@deriving sexp]
+
+  type get_device_info_reply = {
+    framebuffer_handle_low : u32;
+    framebuffer_handle_high : u32;
+    framebuffer_origin_offset : u32;
+    framebuffer_size : u32;
+    framebuffer_stride : u32;
+    device_private : u32 list;
+  }
+  [@@deriving sexp]
+
+  type auth_connection_reply = u32 [@@deriving sexp]
 end
 
 module Xf86vidmode = struct
@@ -1596,6 +2597,60 @@ module Xf86vidmode = struct
     privsize : u32;
   }
   [@@deriving sexp]
+
+  type query_version_reply = { major_version : u16; minor_version : u16 }
+  [@@deriving sexp]
+
+  type get_mode_line_reply = {
+    dotclock : dotclock;
+    hdisplay : u16;
+    hsyncstart : u16;
+    hsyncend : u16;
+    htotal : u16;
+    hskew : u16;
+    vdisplay : u16;
+    vsyncstart : u16;
+    vsyncend : u16;
+    vtotal : u16;
+    flags : Mode_flag_mask.t;
+    private_ : u8 list;
+  }
+  [@@deriving sexp]
+
+  type get_monitor_reply = {
+    hsync : syncrange list;
+    vsync : syncrange list;
+    vendor : string;
+    alignment_pad : string;
+    model : string;
+  }
+  [@@deriving sexp]
+
+  type get_all_mode_lines_reply = mode_info list [@@deriving sexp]
+  type validate_mode_line_reply = u32 [@@deriving sexp]
+  type get_view_port_reply = { x : u32; y : u32 } [@@deriving sexp]
+
+  type get_dot_clocks_reply = {
+    flags : Clock_flag_mask.t;
+    clocks : u32;
+    maxclocks : u32;
+    clock : u32 list;
+  }
+  [@@deriving sexp]
+
+  type get_gamma_reply = { red : u32; green : u32; blue : u32 }
+  [@@deriving sexp]
+
+  type get_gamma_ramp_reply = {
+    size : u16;
+    red : u16 list;
+    green : u16 list;
+    blue : u16 list;
+  }
+  [@@deriving sexp]
+
+  type get_gamma_ramp_size_reply = u16 [@@deriving sexp]
+  type get_permissions_reply = Permission_mask.t [@@deriving sexp]
 end
 
 module Xinerama = struct
@@ -1608,6 +2663,25 @@ module Xinerama = struct
 
   type screen_info = { x_org : i16; y_org : i16; width : u16; height : u16 }
   [@@deriving sexp]
+
+  type query_version_reply = { major : u16; minor : u16 } [@@deriving sexp]
+
+  type get_state_reply = { state : byte; window : Xproto.window }
+  [@@deriving sexp]
+
+  type get_screen_count_reply = { screen_count : byte; window : Xproto.window }
+  [@@deriving sexp]
+
+  type get_screen_size_reply = {
+    width : u32;
+    height : u32;
+    window : Xproto.window;
+    screen : u32;
+  }
+  [@@deriving sexp]
+
+  type is_active_reply = u32 [@@deriving sexp]
+  type query_screens_reply = screen_info list [@@deriving sexp]
 end
 
 module Xinput = struct
@@ -1623,6 +2697,14 @@ module Xinput = struct
   type device_id = u16 [@@deriving sexp]
   type fp1616 = i32 [@@deriving sexp]
   type fp3232 = { integral : i32; frac : u32 } [@@deriving sexp]
+
+  type get_extension_version_reply = {
+    xi_reply_type : u8;
+    server_major : u16;
+    server_minor : u16;
+    present : bool;
+  }
+  [@@deriving sexp]
 
   module Device_use_enum = struct
     type t =
@@ -1682,6 +2764,15 @@ module Xinput = struct
 
   type input_info = { len : u8; info : Input_class_union.t } [@@deriving sexp]
   type device_name = string [@@deriving sexp]
+
+  type list_input_devices_reply = {
+    xi_reply_type : u8;
+    devices : device_info list;
+    infos : input_info list;
+    names : Xproto.str list;
+  }
+  [@@deriving sexp]
+
   type event_type_base = u8 [@@deriving sexp]
 
   type input_class_info = {
@@ -1690,11 +2781,62 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
+  type open_device_reply = {
+    xi_reply_type : u8;
+    class_info : input_class_info list;
+  }
+  [@@deriving sexp]
+
+  type set_device_mode_reply = {
+    xi_reply_type : u8;
+    status : Xproto.Grab_status_enum.t;
+  }
+  [@@deriving sexp]
+
+  type get_selected_extension_events_reply = {
+    xi_reply_type : u8;
+    this_classes : event_class list;
+    all_classes : event_class list;
+  }
+  [@@deriving sexp]
+
   module Propagate_mode_enum = struct
     type t = [ `Add_to_list | `Delete_from_list ] [@@deriving sexp]
   end
 
+  type get_device_dont_propagate_list_reply = {
+    xi_reply_type : u8;
+    classes : event_class list;
+  }
+  [@@deriving sexp]
+
   type device_time_coord = { time : Xproto.timestamp; axisvalues : i32 list }
+  [@@deriving sexp]
+
+  type get_device_motion_events_reply = {
+    xi_reply_type : u8;
+    num_axes : u8;
+    device_mode : Valuator_mode_enum.t;
+    events : device_time_coord list;
+  }
+  [@@deriving sexp]
+
+  type change_keyboard_device_reply = {
+    xi_reply_type : u8;
+    status : Xproto.Grab_status_enum.t;
+  }
+  [@@deriving sexp]
+
+  type change_pointer_device_reply = {
+    xi_reply_type : u8;
+    status : Xproto.Grab_status_enum.t;
+  }
+  [@@deriving sexp]
+
+  type grab_device_reply = {
+    xi_reply_type : u8;
+    status : Xproto.Grab_status_enum.t;
+  }
   [@@deriving sexp]
 
   module Modifier_device_enum = struct
@@ -1711,6 +2853,14 @@ module Xinput = struct
       | `Sync_all ]
     [@@deriving sexp]
   end
+
+  type get_device_focus_reply = {
+    xi_reply_type : u8;
+    focus : [ Xproto.Input_focus_enum.t | Xproto.window alt ];
+    time : Xproto.timestamp;
+    revert_to : Xproto.Input_focus_enum.t;
+  }
+  [@@deriving sexp]
 
   module Feedback_class_enum = struct
     type t = [ `Keyboard | `Pointer | `String | `Integer | `Led | `Bell ]
@@ -1784,6 +2934,12 @@ module Xinput = struct
     feedback_id : u8;
     len : u16;
     data : Feedback_class_union.t;
+  }
+  [@@deriving sexp]
+
+  type get_feedback_control_reply = {
+    xi_reply_type : u8;
+    feedbacks : feedback_state list;
   }
   [@@deriving sexp]
 
@@ -1872,6 +3028,34 @@ module Xinput = struct
     let (threshold : t) = of_int64 (Int64.shift_right 1L 2)
   end
 
+  type get_device_key_mapping_reply = {
+    xi_reply_type : u8;
+    keysyms_per_keycode : u8;
+    keysyms : Xproto.keysym list;
+  }
+  [@@deriving sexp]
+
+  type get_device_modifier_mapping_reply = {
+    xi_reply_type : u8;
+    keymaps : u8 list;
+  }
+  [@@deriving sexp]
+
+  type set_device_modifier_mapping_reply = {
+    xi_reply_type : u8;
+    status : Xproto.Mapping_status_enum.t;
+  }
+  [@@deriving sexp]
+
+  type get_device_button_mapping_reply = { xi_reply_type : u8; map : u8 list }
+  [@@deriving sexp]
+
+  type set_device_button_mapping_reply = {
+    xi_reply_type : u8;
+    status : Xproto.Mapping_status_enum.t;
+  }
+  [@@deriving sexp]
+
   type key_state = {
     class_id : Input_class_enum.t;
     len : u8;
@@ -1904,6 +3088,18 @@ module Xinput = struct
   [@@deriving sexp]
 
   type input_state = { len : u8; data : Input_class_union.t } [@@deriving sexp]
+
+  type query_device_state_reply = {
+    xi_reply_type : u8;
+    classes : input_state list;
+  }
+  [@@deriving sexp]
+
+  type set_device_valuators_reply = {
+    xi_reply_type : u8;
+    status : Xproto.Grab_status_enum.t;
+  }
+  [@@deriving sexp]
 
   module Device_control_enum = struct
     type t = [ `Resolution | `Abs_calib | `Core | `Enable | `Abs_area ]
@@ -1963,6 +3159,13 @@ module Xinput = struct
   type device_state = { len : u16; data : Device_control_union.t }
   [@@deriving sexp]
 
+  type get_device_control_reply = {
+    xi_reply_type : u8;
+    status : [ Xproto.Grab_status_enum.t | u8 alt ];
+    control : device_state;
+  }
+  [@@deriving sexp]
+
   type device_resolution_ctl = {
     control_id : Device_control_enum.t;
     len : u16;
@@ -2014,9 +3217,31 @@ module Xinput = struct
   type device_ctl = { len : u16; data : Device_control_union.t }
   [@@deriving sexp]
 
+  type change_device_control_reply = {
+    xi_reply_type : u8;
+    status : [ Xproto.Grab_status_enum.t | u8 alt ];
+  }
+  [@@deriving sexp]
+
+  type list_device_properties_reply = {
+    xi_reply_type : u8;
+    atoms : Xproto.atom list;
+  }
+  [@@deriving sexp]
+
   module Property_format_enum = struct
     type t = [ `D8_bits | `D16_bits | `D32_bits ] [@@deriving sexp]
   end
+
+  type get_device_property_reply = {
+    xi_reply_type : u8;
+    type_ : Xproto.atom;
+    bytes_after : u32;
+    num_items : u32;
+    device_id : u8;
+    items : Property_format_union.t;
+  }
+  [@@deriving sexp]
 
   module Device_enum = struct
     type t = [ `All | `All_master ] [@@deriving sexp]
@@ -2030,6 +3255,20 @@ module Xinput = struct
     latched : u32;
     locked : u32;
     effective : u32;
+  }
+  [@@deriving sexp]
+
+  type xi_query_pointer_reply = {
+    root : Xproto.window;
+    child : Xproto.window;
+    root_x : fp1616;
+    root_y : fp1616;
+    win_x : fp1616;
+    win_y : fp1616;
+    same_screen : bool;
+    mods : modifier_info;
+    group : group_info;
+    buttons : u32 list;
   }
   [@@deriving sexp]
 
@@ -2079,6 +3318,12 @@ module Xinput = struct
   type hierarchy_change = { len : u16; data : Hierarchy_change_type_union.t }
   [@@deriving sexp]
 
+  type xi_get_client_pointer_reply = {
+    set : bool;
+    deviceid : [ Device_enum.t | device_id alt ];
+  }
+  [@@deriving sexp]
+
   module Xi_event_mask = struct
     include Mask
 
@@ -2114,6 +3359,9 @@ module Xinput = struct
     deviceid : [ Device_enum.t | device_id alt ];
     mask : Xi_event_mask.t list;
   }
+  [@@deriving sexp]
+
+  type xi_query_version_reply = { major_version : u16; minor_version : u16 }
   [@@deriving sexp]
 
   module Device_class_type_enum = struct
@@ -2213,9 +3461,14 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
+  type xi_query_device_reply = xi_device_info list [@@deriving sexp]
+  type xi_get_focus_reply = Xproto.window [@@deriving sexp]
+
   module Grab_owner_enum = struct
     type t = [ `No_owner | `Owner ] [@@deriving sexp]
   end
+
+  type xi_grab_device_reply = Xproto.Grab_status_enum.t [@@deriving sexp]
 
   module Event_mode_enum = struct
     type t =
@@ -2247,9 +3500,22 @@ module Xinput = struct
 
   type grab_modifier_info = {
     modifiers : Modifier_mask.t;
-    status : Xinput.Grab_status_enum.t;
+    status : Xproto.Grab_status_enum.t;
   }
   [@@deriving sexp]
+
+  type xi_passive_grab_device_reply = grab_modifier_info list [@@deriving sexp]
+  type xi_list_properties_reply = Xproto.atom list [@@deriving sexp]
+
+  type xi_get_property_reply = {
+    type_ : Xproto.atom;
+    bytes_after : u32;
+    num_items : u32;
+    items : Property_format_union.t;
+  }
+  [@@deriving sexp]
+
+  type xi_get_selected_events_reply = event_mask list [@@deriving sexp]
 
   type barrier_release_pointer_info = {
     deviceid : device_id;
@@ -2412,6 +3678,46 @@ module Xprint = struct
       | `Spooler_attr ]
     [@@deriving sexp]
   end
+
+  type print_query_version_reply = { major_version : u16; minor_version : u16 }
+  [@@deriving sexp]
+
+  type print_get_printer_list_reply = printer list [@@deriving sexp]
+  type print_get_context_reply = u32 [@@deriving sexp]
+  type print_get_screen_of_context_reply = Xproto.window [@@deriving sexp]
+
+  type print_get_document_data_reply = {
+    status_code : u32;
+    finished_flag : u32;
+    data : byte list;
+  }
+  [@@deriving sexp]
+
+  type print_input_selected_reply = { event_mask : u32; all_events_mask : u32 }
+  [@@deriving sexp]
+
+  type print_get_attributes_reply = string [@@deriving sexp]
+  type print_get_one_attributes_reply = string [@@deriving sexp]
+
+  type print_get_page_dimensions_reply = {
+    width : u16;
+    height : u16;
+    offset_x : u16;
+    offset_y : u16;
+    reproducible_width : u16;
+    reproducible_height : u16;
+  }
+  [@@deriving sexp]
+
+  type print_query_screens_reply = Xproto.window list [@@deriving sexp]
+
+  type print_set_image_resolution_reply = {
+    status : bool;
+    previous_resolutions : u16;
+  }
+  [@@deriving sexp]
+
+  type print_get_image_resolution_reply = u16 [@@deriving sexp]
 end
 
 module Xselinux = struct
@@ -2422,12 +3728,32 @@ module Xselinux = struct
     let query_name = "SELinux"
   end
 
+  type query_version_reply = { server_major : u16; server_minor : u16 }
+  [@@deriving sexp]
+
+  type get_device_create_context_reply = string [@@deriving sexp]
+  type get_device_context_reply = string [@@deriving sexp]
+  type get_window_create_context_reply = string [@@deriving sexp]
+  type get_window_context_reply = string [@@deriving sexp]
+
   type list_item = {
     name : Xproto.atom;
     object_context : string;
     data_context : string;
   }
   [@@deriving sexp]
+
+  type get_property_create_context_reply = string [@@deriving sexp]
+  type get_property_use_context_reply = string [@@deriving sexp]
+  type get_property_context_reply = string [@@deriving sexp]
+  type get_property_data_context_reply = string [@@deriving sexp]
+  type list_properties_reply = list_item list [@@deriving sexp]
+  type get_selection_create_context_reply = string [@@deriving sexp]
+  type get_selection_use_context_reply = string [@@deriving sexp]
+  type get_selection_context_reply = string [@@deriving sexp]
+  type get_selection_data_context_reply = string [@@deriving sexp]
+  type list_selections_reply = list_item list [@@deriving sexp]
+  type get_client_context_reply = string [@@deriving sexp]
 end
 
 module Xtest = struct
@@ -2438,9 +3764,14 @@ module Xtest = struct
     let query_name = "XTEST"
   end
 
+  type get_version_reply = { major_version : u8; minor_version : u16 }
+  [@@deriving sexp]
+
   module Cursor_enum = struct
     type t = [ `None | `Current ] [@@deriving sexp]
   end
+
+  type compare_cursor_reply = bool [@@deriving sexp]
 end
 
 module Xv = struct
@@ -2541,7 +3872,7 @@ module Xv = struct
   type image_format_info = {
     id : u32;
     type_ : Image_format_info_type_enum.t;
-    byte_order : Xv.Image_order_enum.t;
+    byte_order : Xproto.Image_order_enum.t;
     guid : u8 list;
     bpp : u8;
     num_planes : u8;
@@ -2561,6 +3892,33 @@ module Xv = struct
     vvert_v_period : u32;
     vcomp_order : u8 list;
     vscanline_order : Scanline_order_enum.t;
+  }
+  [@@deriving sexp]
+
+  type query_extension_reply = { major : u16; minor : u16 } [@@deriving sexp]
+  type query_adaptors_reply = adaptor_info list [@@deriving sexp]
+  type query_encodings_reply = encoding_info list [@@deriving sexp]
+  type grab_port_reply = Grab_port_status_enum.t [@@deriving sexp]
+
+  type query_best_size_reply = { actual_width : u16; actual_height : u16 }
+  [@@deriving sexp]
+
+  type get_port_attribute_reply = i32 [@@deriving sexp]
+
+  type query_port_attributes_reply = {
+    text_size : u32;
+    attributes : attribute_info list;
+  }
+  [@@deriving sexp]
+
+  type list_image_formats_reply = image_format_info list [@@deriving sexp]
+
+  type query_image_attributes_reply = {
+    data_size : u32;
+    width : u16;
+    height : u16;
+    pitches : u32 list;
+    offsets : u32 list;
   }
   [@@deriving sexp]
 end
@@ -2589,4 +3947,29 @@ module Xvmc = struct
     flags : u32;
   }
   [@@deriving sexp]
+
+  type query_version_reply = { major : u32; minor : u32 } [@@deriving sexp]
+  type list_surface_types_reply = surface_info list [@@deriving sexp]
+
+  type create_context_reply = {
+    width_actual : u16;
+    height_actual : u16;
+    flags_return : u32;
+    priv_data : u32 list;
+  }
+  [@@deriving sexp]
+
+  type create_surface_reply = u32 list [@@deriving sexp]
+
+  type create_subpicture_reply = {
+    width_actual : u16;
+    height_actual : u16;
+    num_palette_entries : u16;
+    entry_bytes : u16;
+    component_order : u8 list;
+    priv_data : u32 list;
+  }
+  [@@deriving sexp]
+
+  type list_subpicture_types_reply = Xv.image_format_info list [@@deriving sexp]
 end

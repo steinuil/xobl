@@ -99,7 +99,7 @@ let lid_module_ident ?prefix ?suffix ~ctx:(Cm current_module) ~loc
   let txt =
     if current_module = id_module then Ldot (Lident module_name, name)
     else
-      let parent = Ident.caml current_module in
+      let parent = Ident.caml id_module in
       Ldot (Ldot (Lident parent, module_name), name)
   in
   with_loc ~loc txt
@@ -237,9 +237,12 @@ module Type = struct
         let name = Ident.snake ?prefix ?suffix name |> with_loc ~loc in
         Ast_helper.Type.mk ~loc ~kind:(Ptype_record fields) name
 
-  let stri_struct ~ctx ~loc = function
+  let stri_record ~ctx ~loc = function
     | Struct { name; fields; _ } ->
         td_record ~ctx ~loc name fields |> stri_td ~loc |> Option.some
+    | Request { name; reply = Some fields; _ } ->
+        td_record ~suffix:"reply" ~ctx ~loc name fields
+        |> stri_td ~loc |> Option.some
     | _ -> None
 
   let stri_module ?suffix ~loc name body =
@@ -292,10 +295,10 @@ module Type = struct
     let type_decl =
       td_type_declaration ~ctx ~loc decl |> Option.map (stri_td ~loc)
     in
-    let struct_decl = stri_struct ~ctx ~loc decl in
+    let record_decl = stri_record ~ctx ~loc decl in
     let enum_decl = stri_enum ~loc decl in
     let mask_decl = stri_mask ~loc decl in
-    List.filter_map Fun.id [ type_decl; struct_decl; enum_decl; mask_decl ]
+    List.filter_map Fun.id [ type_decl; record_decl; enum_decl; mask_decl ]
 
   let stri_module ~loc module_ =
     let declarations, ctx =
