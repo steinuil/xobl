@@ -456,9 +456,55 @@ module Type = struct
   let str_event_structs ~ctx ~loc decls =
     List.filter_map (stri_event_struct ~ctx ~loc) decls
 
+  let al_field = function
+    | Field { name; _ }
+    | Field_list { name; _ }
+    | Field_list_simple { name; _ }
+    | Field_variant { name; _ } ->
+        let name = Ident.snake name in
+        Labelled name
+    | Field_optional { name; _ } ->
+        let name = Ident.snake name in
+        Optional name
+    | ( Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _
+      | Field_optional_mask _ ) as f ->
+        Format.ksprintf unexpected "field is not visible:\n%s" (show_field f)
+
+  let e_make_request ~loc fields =
+    match visible_fields fields with
+    | [] -> [%expr fun () : request -> ()]
+    | [ field ] ->
+        let name = name_of_field field |> Option.get |> Ident.snake in
+        [%expr fun [%p p_id ~loc name] : request -> [%e e_id ~loc name]]
+    | fields ->
+        let body =
+          let fields =
+            List.map
+              (fun field ->
+                let name = name_of_field field |> Option.get in
+                (lid ~loc name, e_id ~loc name))
+              fields
+          in
+          Ast_helper.Exp.record ~loc fields None
+        in
+        let init =
+          let no_optional_fields =
+            List.for_all
+              (function Field_optional _ -> false | _ -> true)
+              fields
+          in
+          if no_optional_fields then [%expr ([%e body] : request)]
+          else [%expr fun () : request -> [%e body]]
+        in
+        ListLabels.fold_right fields ~init ~f:(fun field expr ->
+            let name = name_of_field field |> Option.get |> Ident.snake in
+            let arg = al_field field in
+            Ast_helper.Exp.fun_ ~loc arg None (p_id ~loc name) expr)
+
   let stri_request ~ctx ~loc = function
     | Request { name; fields; reply; opcode; _ } ->
         let request = stri_record ~ctx ~loc "request" fields in
+        let make = e_make_request ~loc fields in
         let reply =
           Option.map (stri_record ~ctx ~loc "reply") reply |> Option.to_list
         in
@@ -467,7 +513,9 @@ module Type = struct
             let name = [%e e_str ~loc name]
             let opcode = [%e e_int ~loc opcode]
 
-            [%%i request]]
+            [%%i request]
+
+            let make = [%e make]]
           @ reply
         in
         stri_module ~loc name body |> Option.some
