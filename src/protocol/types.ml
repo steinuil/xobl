@@ -47,3 +47,10 @@ module type Event = sig
   val name : string
   val number : int
 end
+
+module type Error = sig
+  type t
+
+  val name : string
+  val number : int
+end

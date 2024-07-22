@@ -11,12 +11,6 @@ let[@inline] pad buf bytes = buf.pos <- buf.pos + bytes
 let[@inline] align buf size =
   buf.pos <- buf.pos + ((buf.pos - buf.start) mod size)
 
-(* let%test "align when it is already aligned" =
-   let b = Buf.of_bytes (Bytes.of_string "abcd") in
-   b.pos <- 4;
-   align b 4;
-   b.pos = 4 *)
-
 let[@inline] decode f buf ~size =
   let v = f buf.buf buf.pos in
   pad buf size;
@@ -57,8 +51,6 @@ let list ~item ~len buf =
       loop (v :: ls) (len - 1)
   in
   loop [] len
-
-(* let[@inline] identity x = x *)
 
 (* let decode_enum :
         't.
