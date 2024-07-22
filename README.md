@@ -8,8 +8,8 @@ The X11 OCaml Bindings Library. A Pure OCaml implementation of the X11 protocol.
   - [ ] GetProperty reply: remove value_len. It's left in because the length field is calculated using both value_len and format.
   - [ ] prune unused enums and masks after converting them to variants and optional fields.
   - [ ] I disabled warning 11 in the ocaml backend because of some questionable enums that include 0 for more than one case. We should fix those enums.
-    - xproto.GRAVITY should really be split into two enums like this: https://x.org/releases/X11R7.7/doc/xproto/x11protocol.html#Encoding::Common_Types
-    - Atom_enum is not really an enum, it's just a list of constants + None and Any. It should be turned into another kind of type.
+    - [x] xproto.GRAVITY should really be split into two enums like this: https://x.org/releases/X11R7.7/doc/xproto/x11protocol.html#Encoding::Common_Types
+    - [ ] Atom_enum is not really an enum, it's just a list of constants + None and Any. It should be turned into another kind of type.
 - Bindings
   - [ ] come up with a better API for sending multiple requests at once.
     - how do we encode stuff which needs a reply?
