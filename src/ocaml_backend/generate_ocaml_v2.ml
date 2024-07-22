@@ -472,10 +472,10 @@ module Type = struct
 
   let e_make_request ~loc fields =
     match visible_fields fields with
-    | [] -> [%expr fun () : request -> ()]
+    | [] -> [%expr fun f () -> f (() : request)]
     | [ field ] ->
         let name = name_of_field field |> Option.get |> Ident.snake in
-        [%expr fun [%p p_id ~loc name] : request -> [%e e_id ~loc name]]
+        [%expr fun f [%p p_id ~loc name] -> f ([%e e_id ~loc name] : request)]
     | fields ->
         let body =
           let fields =
@@ -493,13 +493,16 @@ module Type = struct
               (function Field_optional _ -> false | _ -> true)
               fields
           in
-          if no_optional_fields then [%expr ([%e body] : request)]
-          else [%expr fun () : request -> [%e body]]
+          if no_optional_fields then [%expr f ([%e body] : request)]
+          else [%expr fun () -> f ([%e body] : request)]
         in
-        ListLabels.fold_right fields ~init ~f:(fun field expr ->
-            let name = name_of_field field |> Option.get |> Ident.snake in
-            let arg = al_field field in
-            Ast_helper.Exp.fun_ ~loc arg None (p_id ~loc name) expr)
+        let make =
+          ListLabels.fold_right fields ~init ~f:(fun field expr ->
+              let name = name_of_field field |> Option.get |> Ident.snake in
+              let arg = al_field field in
+              Ast_helper.Exp.fun_ ~loc arg None (p_id ~loc name) expr)
+        in
+        [%expr fun f -> [%e make]]
 
   let stri_request ~ctx ~loc = function
     | Request { name; fields; reply; opcode; _ } ->
@@ -515,7 +518,7 @@ module Type = struct
 
             [%%i request]
 
-            let make = [%e make]]
+            let with_request = [%e make]]
           @ reply
         in
         stri_module ~loc name body |> Option.some
