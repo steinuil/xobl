@@ -749,10 +749,9 @@ module Xproto = struct
     let to_int : [< t ] -> int = function `None -> 0 | `Parent_relative -> 1
   end
 
-  module Gravity_enum = struct
+  module Bit_gravity_enum = struct
     type t =
       [ `Bit_forget
-      | `Win_unmap
       | `North_west
       | `North
       | `North_east
@@ -767,7 +766,6 @@ module Xproto = struct
 
     let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Bit_forget
-      | 0 -> `Win_unmap
       | 1 -> `North_west
       | 2 -> `North
       | 3 -> `North_east
@@ -782,6 +780,48 @@ module Xproto = struct
 
     let to_int : [< t ] -> int = function
       | `Bit_forget -> 0
+      | `North_west -> 1
+      | `North -> 2
+      | `North_east -> 3
+      | `West -> 4
+      | `Center -> 5
+      | `East -> 6
+      | `South_west -> 7
+      | `South -> 8
+      | `South_east -> 9
+      | `Static -> 10
+  end
+
+  module Win_gravity_enum = struct
+    type t =
+      [ `Win_unmap
+      | `North_west
+      | `North
+      | `North_east
+      | `West
+      | `Center
+      | `East
+      | `South_west
+      | `South
+      | `South_east
+      | `Static ]
+    [@@deriving sexp]
+
+    let of_int : int -> [ t | `Alt ] = function
+      | 0 -> `Win_unmap
+      | 1 -> `North_west
+      | 2 -> `North
+      | 3 -> `North_east
+      | 4 -> `West
+      | 5 -> `Center
+      | 6 -> `East
+      | 7 -> `South_west
+      | 8 -> `South
+      | 9 -> `South_east
+      | 10 -> `Static
+      | _ -> `Alt
+
+    let to_int : [< t ] -> int = function
       | `Win_unmap -> 0
       | `North_west -> 1
       | `North -> 2
@@ -2105,8 +2145,8 @@ module Xproto = struct
       background_pixel : u32 option;
       border_pixmap : [ Pixmap_enum.t | pixmap alt ] option;
       border_pixel : u32 option;
-      bit_gravity : Gravity_enum.t option;
-      win_gravity : Gravity_enum.t option;
+      bit_gravity : Bit_gravity_enum.t option;
+      win_gravity : Win_gravity_enum.t option;
       backing_store : Backing_store_enum.t option;
       backing_planes : u32 option;
       backing_pixel : u32 option;
@@ -2165,8 +2205,8 @@ module Xproto = struct
       background_pixel : u32 option;
       border_pixmap : [ Pixmap_enum.t | pixmap alt ] option;
       border_pixel : u32 option;
-      bit_gravity : Gravity_enum.t option;
-      win_gravity : Gravity_enum.t option;
+      bit_gravity : Bit_gravity_enum.t option;
+      win_gravity : Win_gravity_enum.t option;
       backing_store : Backing_store_enum.t option;
       backing_planes : u32 option;
       backing_pixel : u32 option;
@@ -2218,8 +2258,8 @@ module Xproto = struct
         backing_store : Backing_store_enum.t;
         visual : visualid;
         class_ : Window_class_enum.t;
-        bit_gravity : Gravity_enum.t;
-        win_gravity : Gravity_enum.t;
+        bit_gravity : Bit_gravity_enum.t;
+        win_gravity : Win_gravity_enum.t;
         backing_planes : u32;
         backing_pixel : u32;
         save_under : bool;
@@ -11187,8 +11227,8 @@ module Screensaver = struct
       background_pixel : u32 option;
       border_pixmap : [ Xproto.Pixmap_enum.t | Xproto.pixmap alt ] option;
       border_pixel : u32 option;
-      bit_gravity : Xproto.Gravity_enum.t option;
-      win_gravity : Xproto.Gravity_enum.t option;
+      bit_gravity : Xproto.Bit_gravity_enum.t option;
+      win_gravity : Xproto.Win_gravity_enum.t option;
       backing_store : Xproto.Backing_store_enum.t option;
       backing_planes : u32 option;
       backing_pixel : u32 option;

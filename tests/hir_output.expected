@@ -1079,11 +1079,14 @@
      (DontPropagate 12) (Colormap 13) (Cursor 14)))
    (additional_values (Additional_values ())))
   (Enum (name BackPixmap) (items ((None 0) (ParentRelative 1))))
-  (Enum (name Gravity)
+  (Enum (name BitGravity)
    (items
-    ((BitForget 0) (WinUnmap 0) (NorthWest 1) (North 2) (NorthEast 3)
-     (West 4) (Center 5) (East 6) (SouthWest 7) (South 8) (SouthEast 9)
-     (Static 10))))
+    ((BitForget 0) (NorthWest 1) (North 2) (NorthEast 3) (West 4) (Center 5)
+     (East 6) (SouthWest 7) (South 8) (SouthEast 9) (Static 10))))
+  (Enum (name WinGravity)
+   (items
+    ((WinUnmap 0) (NorthWest 1) (North 2) (NorthEast 3) (West 4) (Center 5)
+     (East 6) (SouthWest 7) (South 8) (SouthEast 9) (Static 10))))
   (Enum (name Pixmap) (items ((None 0))))
   (Enum (name Cursor) (items ((None 0))))
   (Request (name CreateWindow) (opcode 1) (combine_adjacent true)
@@ -1141,11 +1144,13 @@
      (Field_optional (name bit_gravity) (mask value_mask) (bit 4)
       (type_
        ((ft_type (Type_primitive Card32))
-        (ft_allowed ((Allowed_enum ((id_module xproto) (id_name Gravity))))))))
+        (ft_allowed
+         ((Allowed_enum ((id_module xproto) (id_name BitGravity))))))))
      (Field_optional (name win_gravity) (mask value_mask) (bit 5)
       (type_
        ((ft_type (Type_primitive Card32))
-        (ft_allowed ((Allowed_enum ((id_module xproto) (id_name Gravity))))))))
+        (ft_allowed
+         ((Allowed_enum ((id_module xproto) (id_name WinGravity))))))))
      (Field_optional (name backing_store) (mask value_mask) (bit 6)
       (type_
        ((ft_type (Type_primitive Card32))
@@ -1215,11 +1220,13 @@
      (Field_optional (name bit_gravity) (mask value_mask) (bit 4)
       (type_
        ((ft_type (Type_primitive Card32))
-        (ft_allowed ((Allowed_enum ((id_module xproto) (id_name Gravity))))))))
+        (ft_allowed
+         ((Allowed_enum ((id_module xproto) (id_name BitGravity))))))))
      (Field_optional (name win_gravity) (mask value_mask) (bit 5)
       (type_
        ((ft_type (Type_primitive Card32))
-        (ft_allowed ((Allowed_enum ((id_module xproto) (id_name Gravity))))))))
+        (ft_allowed
+         ((Allowed_enum ((id_module xproto) (id_name WinGravity))))))))
      (Field_optional (name backing_store) (mask value_mask) (bit 6)
       (type_
        ((ft_type (Type_primitive Card32))
@@ -1285,11 +1292,13 @@
       (Field (name bit_gravity)
        (type_
         ((ft_type (Type_primitive Card8))
-         (ft_allowed ((Allowed_enum ((id_module xproto) (id_name Gravity))))))))
+         (ft_allowed
+          ((Allowed_enum ((id_module xproto) (id_name BitGravity))))))))
       (Field (name win_gravity)
        (type_
         ((ft_type (Type_primitive Card8))
-         (ft_allowed ((Allowed_enum ((id_module xproto) (id_name Gravity))))))))
+         (ft_allowed
+          ((Allowed_enum ((id_module xproto) (id_name WinGravity))))))))
       (Field (name backing_planes)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field (name backing_pixel)
@@ -11309,11 +11318,13 @@
       (Field_optional (name bit_gravity) (mask value_mask) (bit 4)
        (type_
         ((ft_type (Type_primitive Card32))
-         (ft_allowed ((Allowed_enum ((id_module xproto) (id_name Gravity))))))))
+         (ft_allowed
+          ((Allowed_enum ((id_module xproto) (id_name BitGravity))))))))
       (Field_optional (name win_gravity) (mask value_mask) (bit 5)
        (type_
         ((ft_type (Type_primitive Card32))
-         (ft_allowed ((Allowed_enum ((id_module xproto) (id_name Gravity))))))))
+         (ft_allowed
+          ((Allowed_enum ((id_module xproto) (id_name WinGravity))))))))
       (Field_optional (name backing_store) (mask value_mask) (bit 6)
        (type_
         ((ft_type (Type_primitive Card32))
