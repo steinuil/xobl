@@ -16451,7 +16451,8 @@
       (Field_list_simple (name events)
        (type_
         ((ft_type (Type_ref ((id_module xinput) (id_name EventForSend)) ()))
-         (ft_allowed ())))
+         (ft_allowed
+          ((Allowed_enum ((id_module xinput) (id_name EventForSend)))))))
        (length num_events))
       (Field_list_simple (name classes)
        (type_

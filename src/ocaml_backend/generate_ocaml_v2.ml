@@ -205,8 +205,9 @@ module Type = struct
     | Field_list { type_; _ } | Field_list_simple { type_; _ } ->
         t_list_type ~ctx ~loc type_
     | Field_variant { variant; _ } -> t_module_ident ~ctx ~loc variant "t"
-    | Field_optional { name; _ } ->
-        Format.ksprintf unexpected "optional field in type declaration: %s" name
+    | Field_optional { type_; _ } ->
+        let t = t_field_type ~ctx ~loc type_ in
+        [%type: [%t t] option]
     | ( Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _
       | Field_optional_mask _ ) as f ->
         Format.ksprintf unexpected "field is not visible:\n%s" (show_field f)
@@ -456,14 +457,17 @@ module Type = struct
     List.filter_map (stri_event_struct ~ctx ~loc) decls
 
   let stri_request ~ctx ~loc = function
-    | Request { name; reply; opcode; _ } ->
+    | Request { name; fields; reply; opcode; _ } ->
+        let request = stri_record ~ctx ~loc "request" fields in
         let reply =
           Option.map (stri_record ~ctx ~loc "reply") reply |> Option.to_list
         in
         let body =
           [%str
             let name = [%e e_str ~loc name]
-            let opcode = [%e e_int ~loc opcode]]
+            let opcode = [%e e_int ~loc opcode]
+
+            [%%i request]]
           @ reply
         in
         stri_module ~loc name body |> Option.some

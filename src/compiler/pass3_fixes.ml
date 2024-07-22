@@ -53,6 +53,37 @@ let fix_dri2_attachments_length = function
       Parsetree.Request { name; fields; opcode; combine_adjacent; reply; doc }
   | item -> item
 
+let fix_xinput_event_struct = function
+  | Parsetree.Request
+      {
+        name = "SendExtensionEvent" as name;
+        fields;
+        opcode;
+        combine_adjacent;
+        reply;
+        doc;
+      } ->
+      let fields =
+        fields
+        |> List.map (function
+             | Parsetree.Field_list
+                 {
+                   name = "events";
+                   type_ =
+                     { ft_type = Type_ref t as ft_type; ft_allowed = None };
+                   length;
+                 } ->
+                 Parsetree.Field_list
+                   {
+                     name = "events";
+                     type_ = { ft_type; ft_allowed = Some (Allowed_enum t) };
+                     length;
+                   }
+             | f -> f)
+      in
+      Parsetree.Request { name; fields; opcode; combine_adjacent; reply; doc }
+  | item -> item
+
 let fix_declaration_order fixes decls =
   List.fold_left
     (fun decls (enum_name, before) ->
@@ -108,7 +139,10 @@ let special_cases = function
         version;
         declarations;
       } ->
-      let declarations = List.map fix_xinput_modifier_mask declarations in
+      let declarations =
+        List.map fix_xinput_modifier_mask declarations
+        |> List.map fix_xinput_event_struct
+      in
       Parsetree.Extension
         {
           name;
