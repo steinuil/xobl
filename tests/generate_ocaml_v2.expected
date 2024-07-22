@@ -90,14 +90,14 @@ module Xproto = struct
       | `Direct_color ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Static_gray
       | 1 -> `Gray_scale
       | 2 -> `Static_color
       | 3 -> `Pseudo_color
       | 4 -> `True_color
       | 5 -> `Direct_color
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Static_gray -> 0
@@ -155,11 +155,11 @@ module Xproto = struct
   module Backing_store_enum = struct
     type t = [ `Not_useful | `When_mapped | `Always ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Not_useful
       | 1 -> `When_mapped
       | 2 -> `Always
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Not_useful -> 0
@@ -210,10 +210,10 @@ module Xproto = struct
   module Image_order_enum = struct
     type t = [ `Lsb_first | `Msb_first ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Lsb_first
       | 1 -> `Msb_first
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Lsb_first -> 0 | `Msb_first -> 1
   end
@@ -275,7 +275,7 @@ module Xproto = struct
   module Window_enum = struct
     type t = [ `None ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function 0 -> `None | n -> `Alt n
+    let of_int : int -> [ t | `Alt ] = function 0 -> `None | _ -> `Alt
     let to_int : [< t ] -> int = function `None -> 0
   end
 
@@ -293,10 +293,10 @@ module Xproto = struct
   module Motion_enum = struct
     type t = [ `Normal | `Hint ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Normal
       | 1 -> `Hint
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Normal -> 0 | `Hint -> 1
   end
@@ -313,7 +313,7 @@ module Xproto = struct
       | `None ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Ancestor
       | 1 -> `Virtual_
       | 2 -> `Inferior
@@ -322,7 +322,7 @@ module Xproto = struct
       | 5 -> `Pointer
       | 6 -> `Pointer_root
       | 7 -> `None
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Ancestor -> 0
@@ -338,12 +338,12 @@ module Xproto = struct
   module Notify_mode_enum = struct
     type t = [ `Normal | `Grab | `Ungrab | `While_grabbed ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Normal
       | 1 -> `Grab
       | 2 -> `Ungrab
       | 3 -> `While_grabbed
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Normal -> 0
@@ -356,11 +356,11 @@ module Xproto = struct
     type t = [ `Unobscured | `Partially_obscured | `Fully_obscured ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Unobscured
       | 1 -> `Partially_obscured
       | 2 -> `Fully_obscured
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Unobscured -> 0
@@ -372,13 +372,13 @@ module Xproto = struct
     type t = [ `Above | `Below | `Top_if | `Bottom_if | `Opposite ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Above
       | 1 -> `Below
       | 2 -> `Top_if
       | 3 -> `Bottom_if
       | 4 -> `Opposite
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Above -> 0
@@ -403,10 +403,10 @@ module Xproto = struct
   module Place_enum = struct
     type t = [ `On_top | `On_bottom ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `On_top
       | 1 -> `On_bottom
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `On_top -> 0 | `On_bottom -> 1
   end
@@ -414,10 +414,10 @@ module Xproto = struct
   module Property_enum = struct
     type t = [ `New_value | `Delete ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `New_value
       | 1 -> `Delete
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `New_value -> 0 | `Delete -> 1
   end
@@ -425,10 +425,7 @@ module Xproto = struct
   module Time_enum = struct
     type t = [ `Current_time ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
-      | 0 -> `Current_time
-      | n -> `Alt n
-
+    let of_int : int -> [ t | `Alt ] = function 0 -> `Current_time | _ -> `Alt
     let to_int : [< t ] -> int = function `Current_time -> 0
   end
 
@@ -506,7 +503,7 @@ module Xproto = struct
       | `Wm_transient_for ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `None
       | 0 -> `Any
       | 1 -> `Primary
@@ -577,7 +574,7 @@ module Xproto = struct
       | 66 -> `Cap_height
       | 67 -> `Wm_class
       | 68 -> `Wm_transient_for
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `None -> 0
@@ -655,10 +652,10 @@ module Xproto = struct
   module Colormap_state_enum = struct
     type t = [ `Uninstalled | `Installed ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Uninstalled
       | 1 -> `Installed
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Uninstalled -> 0 | `Installed -> 1
   end
@@ -666,18 +663,18 @@ module Xproto = struct
   module Colormap_enum = struct
     type t = [ `None ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function 0 -> `None | n -> `Alt n
+    let of_int : int -> [ t | `Alt ] = function 0 -> `None | _ -> `Alt
     let to_int : [< t ] -> int = function `None -> 0
   end
 
   module Client_message_data_format_enum = struct
     type t = [ `Data8 | `Data16 | `Data32 ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 8 -> `Data8
       | 16 -> `Data16
       | 32 -> `Data32
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Data8 -> 8
@@ -693,11 +690,11 @@ module Xproto = struct
   module Mapping_enum = struct
     type t = [ `Modifier | `Keyboard | `Pointer ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Modifier
       | 1 -> `Keyboard
       | 2 -> `Pointer
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Modifier -> 0
@@ -709,11 +706,11 @@ module Xproto = struct
     type t = [ `Copy_from_parent | `Input_output | `Input_only ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Copy_from_parent
       | 1 -> `Input_output
       | 2 -> `Input_only
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Copy_from_parent -> 0
@@ -744,10 +741,10 @@ module Xproto = struct
   module Back_pixmap_enum = struct
     type t = [ `None | `Parent_relative ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `None
       | 1 -> `Parent_relative
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `None -> 0 | `Parent_relative -> 1
   end
@@ -768,7 +765,7 @@ module Xproto = struct
       | `Static ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Bit_forget
       | 0 -> `Win_unmap
       | 1 -> `North_west
@@ -781,7 +778,7 @@ module Xproto = struct
       | 8 -> `South
       | 9 -> `South_east
       | 10 -> `Static
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Bit_forget -> 0
@@ -801,25 +798,25 @@ module Xproto = struct
   module Pixmap_enum = struct
     type t = [ `None ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function 0 -> `None | n -> `Alt n
+    let of_int : int -> [ t | `Alt ] = function 0 -> `None | _ -> `Alt
     let to_int : [< t ] -> int = function `None -> 0
   end
 
   module Cursor_enum = struct
     type t = [ `None ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function 0 -> `None | n -> `Alt n
+    let of_int : int -> [ t | `Alt ] = function 0 -> `None | _ -> `Alt
     let to_int : [< t ] -> int = function `None -> 0
   end
 
   module Map_state_enum = struct
     type t = [ `Unmapped | `Unviewable | `Viewable ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Unmapped
       | 1 -> `Unviewable
       | 2 -> `Viewable
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Unmapped -> 0
@@ -830,10 +827,10 @@ module Xproto = struct
   module Set_mode_enum = struct
     type t = [ `Insert | `Delete ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Insert
       | 1 -> `Delete
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Insert -> 0 | `Delete -> 1
   end
@@ -841,10 +838,10 @@ module Xproto = struct
   module Circulate_enum = struct
     type t = [ `Raise_lowest | `Lower_highest ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Raise_lowest
       | 1 -> `Lower_highest
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Raise_lowest -> 0
@@ -854,11 +851,11 @@ module Xproto = struct
   module Prop_mode_enum = struct
     type t = [ `Replace | `Prepend | `Append ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Replace
       | 1 -> `Prepend
       | 2 -> `Append
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Replace -> 0
@@ -869,17 +866,17 @@ module Xproto = struct
   module Get_property_type_enum = struct
     type t = [ `Any ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function 0 -> `Any | n -> `Alt n
+    let of_int : int -> [ t | `Alt ] = function 0 -> `Any | _ -> `Alt
     let to_int : [< t ] -> int = function `Any -> 0
   end
 
   module Send_event_dest_enum = struct
     type t = [ `Pointer_window | `Item_focus ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Pointer_window
       | 1 -> `Item_focus
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Pointer_window -> 0
@@ -889,10 +886,10 @@ module Xproto = struct
   module Grab_mode_enum = struct
     type t = [ `Sync | `Async ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Sync
       | 1 -> `Async
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Sync -> 0 | `Async -> 1
   end
@@ -902,13 +899,13 @@ module Xproto = struct
       [ `Success | `Already_grabbed | `Invalid_time | `Not_viewable | `Frozen ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Success
       | 1 -> `Already_grabbed
       | 2 -> `Invalid_time
       | 3 -> `Not_viewable
       | 4 -> `Frozen
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Success -> 0
@@ -921,14 +918,14 @@ module Xproto = struct
   module Button_index_enum = struct
     type t = [ `Any | `D1 | `D2 | `D3 | `D4 | `D5 ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Any
       | 1 -> `D1
       | 2 -> `D2
       | 3 -> `D3
       | 4 -> `D4
       | 5 -> `D5
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Any -> 0
@@ -942,7 +939,7 @@ module Xproto = struct
   module Grab_enum = struct
     type t = [ `Any ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function 0 -> `Any | n -> `Alt n
+    let of_int : int -> [ t | `Alt ] = function 0 -> `Any | _ -> `Alt
     let to_int : [< t ] -> int = function `Any -> 0
   end
 
@@ -958,7 +955,7 @@ module Xproto = struct
       | `Sync_both ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Async_pointer
       | 1 -> `Sync_pointer
       | 2 -> `Replay_pointer
@@ -967,7 +964,7 @@ module Xproto = struct
       | 5 -> `Replay_keyboard
       | 6 -> `Async_both
       | 7 -> `Sync_both
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Async_pointer -> 0
@@ -986,12 +983,12 @@ module Xproto = struct
     type t = [ `None | `Pointer_root | `Parent | `Follow_keyboard ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `None
       | 1 -> `Pointer_root
       | 2 -> `Parent
       | 3 -> `Follow_keyboard
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `None -> 0
@@ -1003,10 +1000,10 @@ module Xproto = struct
   module Font_draw_enum = struct
     type t = [ `Left_to_right | `Right_to_left ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Left_to_right
       | 1 -> `Right_to_left
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Left_to_right -> 0
@@ -1075,7 +1072,7 @@ module Xproto = struct
       | `Set ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Clear
       | 1 -> `And_
       | 2 -> `And_reverse
@@ -1092,7 +1089,7 @@ module Xproto = struct
       | 13 -> `Or_inverted
       | 14 -> `Nand
       | 15 -> `Set
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Clear -> 0
@@ -1116,11 +1113,11 @@ module Xproto = struct
   module Line_style_enum = struct
     type t = [ `Solid | `On_off_dash | `Double_dash ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Solid
       | 1 -> `On_off_dash
       | 2 -> `Double_dash
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Solid -> 0
@@ -1131,12 +1128,12 @@ module Xproto = struct
   module Cap_style_enum = struct
     type t = [ `Not_last | `Butt | `Round | `Projecting ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Not_last
       | 1 -> `Butt
       | 2 -> `Round
       | 3 -> `Projecting
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Not_last -> 0
@@ -1148,11 +1145,11 @@ module Xproto = struct
   module Join_style_enum = struct
     type t = [ `Miter | `Round | `Bevel ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Miter
       | 1 -> `Round
       | 2 -> `Bevel
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Miter -> 0
@@ -1164,12 +1161,12 @@ module Xproto = struct
     type t = [ `Solid | `Tiled | `Stippled | `Opaque_stippled ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Solid
       | 1 -> `Tiled
       | 2 -> `Stippled
       | 3 -> `Opaque_stippled
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Solid -> 0
@@ -1181,10 +1178,10 @@ module Xproto = struct
   module Fill_rule_enum = struct
     type t = [ `Even_odd | `Winding ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Even_odd
       | 1 -> `Winding
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Even_odd -> 0 | `Winding -> 1
   end
@@ -1192,10 +1189,10 @@ module Xproto = struct
   module Subwindow_mode_enum = struct
     type t = [ `Clip_by_children | `Include_inferiors ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Clip_by_children
       | 1 -> `Include_inferiors
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Clip_by_children -> 0
@@ -1205,10 +1202,10 @@ module Xproto = struct
   module Arc_mode_enum = struct
     type t = [ `Chord | `Pie_slice ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Chord
       | 1 -> `Pie_slice
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Chord -> 0 | `Pie_slice -> 1
   end
@@ -1216,7 +1213,7 @@ module Xproto = struct
   module Font_enum = struct
     type t = [ `None ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function 0 -> `None | n -> `Alt n
+    let of_int : int -> [ t | `Alt ] = function 0 -> `None | _ -> `Alt
     let to_int : [< t ] -> int = function `None -> 0
   end
 
@@ -1224,12 +1221,12 @@ module Xproto = struct
     type t = [ `Unsorted | `Y_sorted | `Yx_sorted | `Yx_banded ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Unsorted
       | 1 -> `Y_sorted
       | 2 -> `Yx_sorted
       | 3 -> `Yx_banded
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Unsorted -> 0
@@ -1241,10 +1238,10 @@ module Xproto = struct
   module Coord_mode_enum = struct
     type t = [ `Origin | `Previous ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Origin
       | 1 -> `Previous
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Origin -> 0 | `Previous -> 1
   end
@@ -1254,11 +1251,11 @@ module Xproto = struct
   module Poly_shape_enum = struct
     type t = [ `Complex | `Nonconvex | `Convex ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Complex
       | 1 -> `Nonconvex
       | 2 -> `Convex
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Complex -> 0
@@ -1269,11 +1266,11 @@ module Xproto = struct
   module Image_format_enum = struct
     type t = [ `Xy_bitmap | `Xy_pixmap | `Z_pixmap ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Xy_bitmap
       | 1 -> `Xy_pixmap
       | 2 -> `Z_pixmap
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Xy_bitmap -> 0
@@ -1284,10 +1281,10 @@ module Xproto = struct
   module Colormap_alloc_enum = struct
     type t = [ `None | `All ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `None
       | 1 -> `All
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `None -> 0 | `All -> 1
   end
@@ -1315,11 +1312,11 @@ module Xproto = struct
     type t = [ `Largest_cursor | `Fastest_tile | `Fastest_stipple ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Largest_cursor
       | 1 -> `Fastest_tile
       | 2 -> `Fastest_stipple
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Largest_cursor -> 0
@@ -1343,10 +1340,10 @@ module Xproto = struct
   module Led_mode_enum = struct
     type t = [ `Off | `On ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Off
       | 1 -> `On
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Off -> 0 | `On -> 1
   end
@@ -1354,11 +1351,11 @@ module Xproto = struct
   module Auto_repeat_mode_enum = struct
     type t = [ `Off | `On | `Default ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Off
       | 1 -> `On
       | 2 -> `Default
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Off -> 0 | `On -> 1 | `Default -> 2
   end
@@ -1366,11 +1363,11 @@ module Xproto = struct
   module Blanking_enum = struct
     type t = [ `Not_preferred | `Preferred | `Default ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Not_preferred
       | 1 -> `Preferred
       | 2 -> `Default
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Not_preferred -> 0
@@ -1381,11 +1378,11 @@ module Xproto = struct
   module Exposures_enum = struct
     type t = [ `Not_allowed | `Allowed | `Default ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Not_allowed
       | 1 -> `Allowed
       | 2 -> `Default
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Not_allowed -> 0
@@ -1396,10 +1393,10 @@ module Xproto = struct
   module Host_mode_enum = struct
     type t = [ `Insert | `Delete ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Insert
       | 1 -> `Delete
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Insert -> 0 | `Delete -> 1
   end
@@ -1408,13 +1405,13 @@ module Xproto = struct
     type t = [ `Internet | `Decnet | `Chaos | `Server_interpreted | `Internet6 ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Internet
       | 1 -> `Decnet
       | 2 -> `Chaos
       | 5 -> `Server_interpreted
       | 6 -> `Internet6
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Internet -> 0
@@ -1429,10 +1426,10 @@ module Xproto = struct
   module Access_control_enum = struct
     type t = [ `Disable | `Enable ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Disable
       | 1 -> `Enable
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Disable -> 0 | `Enable -> 1
   end
@@ -1441,11 +1438,11 @@ module Xproto = struct
     type t = [ `Destroy_all | `Retain_permanent | `Retain_temporary ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Destroy_all
       | 1 -> `Retain_permanent
       | 2 -> `Retain_temporary
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Destroy_all -> 0
@@ -1456,9 +1453,9 @@ module Xproto = struct
   module Kill_enum = struct
     type t = [ `All_temporary ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `All_temporary
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `All_temporary -> 0
   end
@@ -1466,10 +1463,10 @@ module Xproto = struct
   module Screen_saver_enum = struct
     type t = [ `Reset | `Active ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Reset
       | 1 -> `Active
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Reset -> 0 | `Active -> 1
   end
@@ -1477,11 +1474,11 @@ module Xproto = struct
   module Mapping_status_enum = struct
     type t = [ `Success | `Busy | `Failure ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Success
       | 1 -> `Busy
       | 2 -> `Failure
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Success -> 0
@@ -1493,7 +1490,7 @@ module Xproto = struct
     type t = [ `Shift | `Lock | `Control | `D1 | `D2 | `D3 | `D4 | `D5 ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Shift
       | 1 -> `Lock
       | 2 -> `Control
@@ -1502,7 +1499,7 @@ module Xproto = struct
       | 5 -> `D3
       | 6 -> `D4
       | 7 -> `D5
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Shift -> 0
@@ -4267,10 +4264,10 @@ module Render = struct
   module Pict_type_enum = struct
     type t = [ `Indexed | `Direct ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Indexed
       | 1 -> `Direct
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Indexed -> 0 | `Direct -> 1
   end
@@ -4278,7 +4275,7 @@ module Render = struct
   module Picture_enum = struct
     type t = [ `None ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function 0 -> `None | n -> `Alt n
+    let of_int : int -> [ t | `Alt ] = function 0 -> `None | _ -> `Alt
     let to_int : [< t ] -> int = function `None -> 0
   end
 
@@ -4339,7 +4336,7 @@ module Render = struct
       | `Hsl_luminosity ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Clear
       | 1 -> `Src
       | 2 -> `Dst
@@ -4393,7 +4390,7 @@ module Render = struct
       | 60 -> `Hsl_saturation
       | 61 -> `Hsl_color
       | 62 -> `Hsl_luminosity
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Clear -> 0
@@ -4454,10 +4451,10 @@ module Render = struct
   module Poly_edge_enum = struct
     type t = [ `Sharp | `Smooth ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Sharp
       | 1 -> `Smooth
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Sharp -> 0 | `Smooth -> 1
   end
@@ -4465,10 +4462,10 @@ module Render = struct
   module Poly_mode_enum = struct
     type t = [ `Precise | `Imprecise ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Precise
       | 1 -> `Imprecise
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Precise -> 0 | `Imprecise -> 1
   end
@@ -4501,14 +4498,14 @@ module Render = struct
       | `None ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Unknown
       | 1 -> `Horizontal_rgb
       | 2 -> `Horizontal_bgr
       | 3 -> `Vertical_rgb
       | 4 -> `Vertical_bgr
       | 5 -> `None
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Unknown -> 0
@@ -4522,12 +4519,12 @@ module Render = struct
   module Repeat_enum = struct
     type t = [ `None | `Normal | `Pad | `Reflect ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `None
       | 1 -> `Normal
       | 2 -> `Pad
       | 3 -> `Reflect
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `None -> 0
@@ -5241,13 +5238,13 @@ module Shape = struct
     type t = [ `Set | `Union | `Intersect | `Subtract | `Invert ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Set
       | 1 -> `Union
       | 2 -> `Intersect
       | 3 -> `Subtract
       | 4 -> `Invert
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Set -> 0
@@ -5260,11 +5257,11 @@ module Shape = struct
   module Sk_enum = struct
     type t = [ `Bounding | `Clip | `Input ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Bounding
       | 1 -> `Clip
       | 2 -> `Input
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Bounding -> 0
@@ -5502,10 +5499,10 @@ module Xfixes = struct
   module Save_set_mode_enum = struct
     type t = [ `Insert | `Delete ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Insert
       | 1 -> `Delete
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Insert -> 0 | `Delete -> 1
   end
@@ -5513,10 +5510,10 @@ module Xfixes = struct
   module Save_set_target_enum = struct
     type t = [ `Nearest | `Root ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Nearest
       | 1 -> `Root
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Nearest -> 0 | `Root -> 1
   end
@@ -5524,10 +5521,10 @@ module Xfixes = struct
   module Save_set_mapping_enum = struct
     type t = [ `Map | `Unmap ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Map
       | 1 -> `Unmap
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Map -> 0 | `Unmap -> 1
   end
@@ -5539,11 +5536,11 @@ module Xfixes = struct
       | `Selection_client_close ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Set_selection_owner
       | 1 -> `Selection_window_destroy
       | 2 -> `Selection_client_close
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Set_selection_owner -> 0
@@ -5562,9 +5559,9 @@ module Xfixes = struct
   module Cursor_notify_enum = struct
     type t = [ `Display_cursor ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Display_cursor
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Display_cursor -> 0
   end
@@ -5580,7 +5577,7 @@ module Xfixes = struct
   module Region_enum = struct
     type t = [ `None ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function 0 -> `None | n -> `Alt n
+    let of_int : int -> [ t | `Alt ] = function 0 -> `None | _ -> `Alt
     let to_int : [< t ] -> int = function `None -> 0
   end
 
@@ -6083,10 +6080,10 @@ module Composite = struct
   module Redirect_enum = struct
     type t = [ `Automatic | `Manual ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Automatic
       | 1 -> `Manual
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Automatic -> 0 | `Manual -> 1
   end
@@ -6219,12 +6216,12 @@ module Damage = struct
     type t = [ `Raw_rectangles | `Delta_rectangles | `Bounding_box | `Non_empty ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Raw_rectangles
       | 1 -> `Delta_rectangles
       | 2 -> `Bounding_box
       | 3 -> `Non_empty
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Raw_rectangles -> 0
@@ -6347,12 +6344,12 @@ module Dpms = struct
   module Dpms_mode_enum = struct
     type t = [ `On | `Standby | `Suspend | `Off ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `On
       | 1 -> `Standby
       | 2 -> `Suspend
       | 3 -> `Off
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `On -> 0
@@ -6500,7 +6497,7 @@ module Dri2 = struct
       | `Buffer_hiz ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Buffer_front_left
       | 1 -> `Buffer_back_left
       | 2 -> `Buffer_front_right
@@ -6512,7 +6509,7 @@ module Dri2 = struct
       | 8 -> `Buffer_fake_front_right
       | 9 -> `Buffer_depth_stencil
       | 10 -> `Buffer_hiz
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Buffer_front_left -> 0
@@ -6531,10 +6528,10 @@ module Dri2 = struct
   module Driver_type_enum = struct
     type t = [ `Dri | `Vdpau ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Dri
       | 1 -> `Vdpau
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Dri -> 0 | `Vdpau -> 1
   end
@@ -6543,11 +6540,11 @@ module Dri2 = struct
     type t = [ `Exchange_complete | `Blit_complete | `Flip_complete ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 1 -> `Exchange_complete
       | 2 -> `Blit_complete
       | 3 -> `Flip_complete
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Exchange_complete -> 1
@@ -7154,10 +7151,10 @@ module Glx = struct
   module Pbcet_enum = struct
     type t = [ `Damaged | `Saved ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 32791 -> `Damaged
       | 32792 -> `Saved
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Damaged -> 32791 | `Saved -> 32792
   end
@@ -7165,10 +7162,10 @@ module Glx = struct
   module Pbcdt_enum = struct
     type t = [ `Window | `Pbuffer ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 32793 -> `Window
       | 32794 -> `Pbuffer
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Window -> 32793 | `Pbuffer -> 32794
   end
@@ -7202,11 +7199,11 @@ module Glx = struct
   module Rm_enum = struct
     type t = [ `Gl_render | `Gl_feedback | `Gl_select ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 7168 -> `Gl_render
       | 7169 -> `Gl_feedback
       | 7170 -> `Gl_select
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Gl_render -> 7168
@@ -8909,12 +8906,12 @@ module Randr = struct
     type t = [ `Success | `Invalid_config_time | `Invalid_time | `Failed ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Success
       | 1 -> `Invalid_config_time
       | 2 -> `Invalid_time
       | 3 -> `Failed
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Success -> 0
@@ -8975,11 +8972,11 @@ module Randr = struct
   module Connection_enum = struct
     type t = [ `Connected | `Disconnected | `Unknown ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Connected
       | 1 -> `Disconnected
       | 2 -> `Unknown
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Connected -> 0
@@ -9016,7 +9013,7 @@ module Randr = struct
       | `Lease ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Crtc_change
       | 1 -> `Output_change
       | 2 -> `Output_property
@@ -9024,7 +9021,7 @@ module Randr = struct
       | 4 -> `Provider_property
       | 5 -> `Resource_change
       | 6 -> `Lease
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Crtc_change -> 0
@@ -10044,11 +10041,11 @@ module Sync = struct
   module Alarmstate_enum = struct
     type t = [ `Active | `Inactive | `Destroyed ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Active
       | 1 -> `Inactive
       | 2 -> `Destroyed
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Active -> 0
@@ -10067,12 +10064,12 @@ module Sync = struct
       | `Negative_comparison ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Positive_transition
       | 1 -> `Negative_transition
       | 2 -> `Positive_comparison
       | 3 -> `Negative_comparison
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Positive_transition -> 0
@@ -10084,10 +10081,10 @@ module Sync = struct
   module Valuetype_enum = struct
     type t = [ `Absolute | `Relative ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Absolute
       | 1 -> `Relative
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Absolute -> 0 | `Relative -> 1
   end
@@ -10436,12 +10433,12 @@ module Present = struct
       [ `Configure_notify | `Complete_notify | `Idle_notify | `Redirect_notify ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Configure_notify
       | 1 -> `Complete_notify
       | 2 -> `Idle_notify
       | 3 -> `Redirect_notify
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Configure_notify -> 0
@@ -10482,10 +10479,10 @@ module Present = struct
   module Complete_kind_enum = struct
     type t = [ `Pixmap | `Notify_msc ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Pixmap
       | 1 -> `Notify_msc
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Pixmap -> 0 | `Notify_msc -> 1
   end
@@ -10493,12 +10490,12 @@ module Present = struct
   module Complete_mode_enum = struct
     type t = [ `Copy | `Flip | `Skip | `Suboptimal_copy ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Copy
       | 1 -> `Flip
       | 2 -> `Skip
       | 3 -> `Suboptimal_copy
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Copy -> 0
@@ -10764,11 +10761,11 @@ module Record = struct
     type t = [ `Current_clients | `Future_clients | `All_clients ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 1 -> `Current_clients
       | 2 -> `Future_clients
       | 3 -> `All_clients
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Current_clients -> 1
@@ -11065,11 +11062,11 @@ module Screensaver = struct
   module Kind_enum = struct
     type t = [ `Blanked | `Internal | `External_ ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Blanked
       | 1 -> `Internal
       | 2 -> `External_
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Blanked -> 0
@@ -11087,12 +11084,12 @@ module Screensaver = struct
   module State_enum = struct
     type t = [ `Off | `On | `Cycle | `Disabled ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Off
       | 1 -> `On
       | 2 -> `Cycle
       | 3 -> `Disabled
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Off -> 0
@@ -11552,10 +11549,10 @@ module Xevie = struct
   module Datatype_enum = struct
     type t = [ `Unmodified | `Modified ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Unmodified
       | 1 -> `Modified
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Unmodified -> 0 | `Modified -> 1
   end
@@ -12582,13 +12579,13 @@ module Xinput = struct
       | `Is_x_extension_pointer ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Is_x_pointer
       | 1 -> `Is_x_keyboard
       | 2 -> `Is_x_extension_device
       | 3 -> `Is_x_extension_keyboard
       | 4 -> `Is_x_extension_pointer
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Is_x_pointer -> 0
@@ -12603,7 +12600,7 @@ module Xinput = struct
       [ `Key | `Button | `Valuator | `Feedback | `Proximity | `Focus | `Other ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Key
       | 1 -> `Button
       | 2 -> `Valuator
@@ -12611,7 +12608,7 @@ module Xinput = struct
       | 4 -> `Proximity
       | 5 -> `Focus
       | 6 -> `Other
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Key -> 0
@@ -12626,10 +12623,10 @@ module Xinput = struct
   module Valuator_mode_enum = struct
     type t = [ `Relative | `Absolute ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Relative
       | 1 -> `Absolute
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Relative -> 0 | `Absolute -> 1
   end
@@ -12702,10 +12699,10 @@ module Xinput = struct
   module Propagate_mode_enum = struct
     type t = [ `Add_to_list | `Delete_from_list ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Add_to_list
       | 1 -> `Delete_from_list
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Add_to_list -> 0
@@ -12718,9 +12715,9 @@ module Xinput = struct
   module Modifier_device_enum = struct
     type t = [ `Use_x_keyboard ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 255 -> `Use_x_keyboard
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Use_x_keyboard -> 255
   end
@@ -12735,14 +12732,14 @@ module Xinput = struct
       | `Sync_all ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Async_this_device
       | 1 -> `Sync_this_device
       | 2 -> `Replay_this_device
       | 3 -> `Async_other_devices
       | 4 -> `Async_all
       | 5 -> `Sync_all
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Async_this_device -> 0
@@ -12757,14 +12754,14 @@ module Xinput = struct
     type t = [ `Keyboard | `Pointer | `String | `Integer | `Led | `Bell ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Keyboard
       | 1 -> `Pointer
       | 2 -> `String
       | 3 -> `Integer
       | 4 -> `Led
       | 5 -> `Bell
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Keyboard -> 0
@@ -12994,13 +12991,13 @@ module Xinput = struct
     type t = [ `Resolution | `Abs_calib | `Core | `Enable | `Abs_area ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 1 -> `Resolution
       | 2 -> `Abs_calib
       | 3 -> `Core
       | 4 -> `Enable
       | 5 -> `Abs_area
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Resolution -> 1
@@ -13156,11 +13153,11 @@ module Xinput = struct
   module Property_format_enum = struct
     type t = [ `D8_bits | `D16_bits | `D32_bits ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 8 -> `D8_bits
       | 16 -> `D16_bits
       | 32 -> `D32_bits
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `D8_bits -> 8
@@ -13179,10 +13176,10 @@ module Xinput = struct
   module Device_enum = struct
     type t = [ `All | `All_master ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `All
       | 1 -> `All_master
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `All -> 0 | `All_master -> 1
   end
@@ -13202,12 +13199,12 @@ module Xinput = struct
     type t = [ `Add_master | `Remove_master | `Attach_slave | `Detach_slave ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 1 -> `Add_master
       | 2 -> `Remove_master
       | 3 -> `Attach_slave
       | 4 -> `Detach_slave
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Add_master -> 1
@@ -13219,10 +13216,10 @@ module Xinput = struct
   module Change_mode_enum = struct
     type t = [ `Attach | `Float ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 1 -> `Attach
       | 2 -> `Float
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Attach -> 1 | `Float -> 2
   end
@@ -13330,13 +13327,13 @@ module Xinput = struct
   module Device_class_type_enum = struct
     type t = [ `Key | `Button | `Valuator | `Scroll | `Touch ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Key
       | 1 -> `Button
       | 2 -> `Valuator
       | 3 -> `Scroll
       | 8 -> `Touch
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Key -> 0
@@ -13355,13 +13352,13 @@ module Xinput = struct
       | `Floating_slave ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 1 -> `Master_pointer
       | 2 -> `Master_keyboard
       | 3 -> `Slave_pointer
       | 4 -> `Slave_keyboard
       | 5 -> `Floating_slave
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Master_pointer -> 1
@@ -13381,10 +13378,10 @@ module Xinput = struct
   module Scroll_type_enum = struct
     type t = [ `Vertical | `Horizontal ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 1 -> `Vertical
       | 2 -> `Horizontal
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Vertical -> 1 | `Horizontal -> 2
   end
@@ -13392,10 +13389,10 @@ module Xinput = struct
   module Touch_mode_enum = struct
     type t = [ `Direct | `Dependent ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 1 -> `Direct
       | 2 -> `Dependent
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Direct -> 1 | `Dependent -> 2
   end
@@ -13506,10 +13503,10 @@ module Xinput = struct
   module Grab_owner_enum = struct
     type t = [ `No_owner | `Owner ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `No_owner
       | 1 -> `Owner
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `No_owner -> 0 | `Owner -> 1
   end
@@ -13526,7 +13523,7 @@ module Xinput = struct
       | `Reject_touch ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Async_device
       | 1 -> `Sync_device
       | 2 -> `Replay_device
@@ -13535,7 +13532,7 @@ module Xinput = struct
       | 5 -> `Sync_pair
       | 6 -> `Accept_touch
       | 7 -> `Reject_touch
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Async_device -> 0
@@ -13551,11 +13548,11 @@ module Xinput = struct
   module Grab_mode22_enum = struct
     type t = [ `Sync | `Async | `Touch ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Sync
       | 1 -> `Async
       | 2 -> `Touch
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Sync -> 0
@@ -13567,13 +13564,13 @@ module Xinput = struct
     type t = [ `Button | `Keycode | `Enter | `Focus_in | `Touch_begin ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Button
       | 1 -> `Keycode
       | 2 -> `Enter
       | 3 -> `Focus_in
       | 4 -> `Touch_begin
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Button -> 0
@@ -13621,10 +13618,10 @@ module Xinput = struct
   module Change_device_enum = struct
     type t = [ `New_pointer | `New_keyboard ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `New_pointer
       | 1 -> `New_keyboard
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `New_pointer -> 0
@@ -13641,14 +13638,14 @@ module Xinput = struct
       | `Control_changed ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Added
       | 1 -> `Removed
       | 2 -> `Enabled
       | 3 -> `Disabled
       | 4 -> `Unrecoverable
       | 5 -> `Control_changed
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Added -> 0
@@ -13662,10 +13659,10 @@ module Xinput = struct
   module Change_reason_enum = struct
     type t = [ `Slave_switch | `Device_change ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 1 -> `Slave_switch
       | 2 -> `Device_change
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Slave_switch -> 1
@@ -13694,14 +13691,14 @@ module Xinput = struct
       | `Passive_ungrab ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Normal
       | 1 -> `Grab
       | 2 -> `Ungrab
       | 3 -> `While_grabbed
       | 4 -> `Passive_grab
       | 5 -> `Passive_ungrab
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Normal -> 0
@@ -13724,7 +13721,7 @@ module Xinput = struct
       | `None ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Ancestor
       | 1 -> `Virtual_
       | 2 -> `Inferior
@@ -13733,7 +13730,7 @@ module Xinput = struct
       | 5 -> `Pointer
       | 6 -> `Pointer_root
       | 7 -> `None
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Ancestor -> 0
@@ -13771,11 +13768,11 @@ module Xinput = struct
   module Property_flag_enum = struct
     type t = [ `Deleted | `Created | `Modified ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Deleted
       | 1 -> `Created
       | 2 -> `Modified
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Deleted -> 0
@@ -13793,7 +13790,7 @@ module Xinput = struct
   module Touch_ownership_flags_enum = struct
     type t = [ `None ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function 0 -> `None | n -> `Alt n
+    let of_int : int -> [ t | `Alt ] = function 0 -> `None | _ -> `Alt
     let to_int : [< t ] -> int = function `None -> 0
   end
 
@@ -15554,10 +15551,10 @@ module Xprint = struct
   module Get_doc_enum = struct
     type t = [ `Finished | `Second_consumer ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Finished
       | 1 -> `Second_consumer
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Finished -> 0
@@ -15582,14 +15579,14 @@ module Xprint = struct
       | `End_page_notify ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 1 -> `Start_job_notify
       | 2 -> `End_job_notify
       | 3 -> `Start_doc_notify
       | 4 -> `End_doc_notify
       | 5 -> `Start_page_notify
       | 6 -> `End_page_notify
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Start_job_notify -> 1
@@ -15611,7 +15608,7 @@ module Xprint = struct
       | `Spooler_attr ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 1 -> `Job_attr
       | 2 -> `Doc_attr
       | 3 -> `Page_attr
@@ -15619,7 +15616,7 @@ module Xprint = struct
       | 5 -> `Server_attr
       | 6 -> `Medium_attr
       | 7 -> `Spooler_attr
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Job_attr -> 1
@@ -16296,10 +16293,10 @@ module Xtest = struct
   module Cursor_enum = struct
     type t = [ `None | `Current ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `None
       | 1 -> `Current
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `None -> 0 | `Current -> 1
   end
@@ -16401,10 +16398,10 @@ module Xv = struct
   module Image_format_info_type_enum = struct
     type t = [ `Rgb | `Yuv ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Rgb
       | 1 -> `Yuv
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Rgb -> 0 | `Yuv -> 1
   end
@@ -16412,10 +16409,10 @@ module Xv = struct
   module Image_format_info_format_enum = struct
     type t = [ `Packed | `Planar ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Packed
       | 1 -> `Planar
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function `Packed -> 0 | `Planar -> 1
   end
@@ -16431,13 +16428,13 @@ module Xv = struct
     type t = [ `Started | `Stopped | `Busy | `Preempted | `Hard_error ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Started
       | 1 -> `Stopped
       | 2 -> `Busy
       | 3 -> `Preempted
       | 4 -> `Hard_error
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Started -> 0
@@ -16450,10 +16447,10 @@ module Xv = struct
   module Scanline_order_enum = struct
     type t = [ `Top_to_bottom | `Bottom_to_top ] [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Top_to_bottom
       | 1 -> `Bottom_to_top
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Top_to_bottom -> 0
@@ -16470,14 +16467,14 @@ module Xv = struct
       | `Bad_alloc ]
     [@@deriving sexp]
 
-    let of_int : int -> [ t | int alt ] = function
+    let of_int : int -> [ t | `Alt ] = function
       | 0 -> `Success
       | 1 -> `Bad_extension
       | 2 -> `Already_grabbed
       | 3 -> `Invalid_time
       | 4 -> `Bad_reply
       | 5 -> `Bad_alloc
-      | n -> `Alt n
+      | _ -> `Alt
 
     let to_int : [< t ] -> int = function
       | `Success -> 0

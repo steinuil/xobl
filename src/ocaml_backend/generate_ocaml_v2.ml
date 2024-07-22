@@ -276,9 +276,9 @@ module Type = struct
                   (p_int ~loc (Int64.to_int value))
                   (e_variant ~loc name))
           in
-          let default = Exp.case [%pat? n] [%expr `Alt n] in
+          let default = Exp.case [%pat? _] [%expr `Alt] in
           let body = Exp.function_ ~loc (cases @ [ default ]) in
-          [%stri let of_int : int -> [ t | int alt ] = [%e body]]
+          [%stri let of_int : int -> [ t | `Alt ] = [%e body]]
         in
         let to_int =
           let cases =
