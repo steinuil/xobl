@@ -6,46 +6,6 @@
  (deps
   (glob_files ../xml-xcb/*.xml)))
 
-;(executable
-; (name generate_output)
-; (modules generate_output)
-; (libraries xobl.compiler))
-
-;(rule
-; (deps
-;  (glob_files ../xml-xcb/*.xml))
-; (action
-;  (with-stdout-to
-;   generate_output.output
-;   (pipe-stdout
-;    (run ./generate_output.exe)
-;    (run ocamlformat - --impl)))))
-
-;(rule
-; (alias runtest)
-; (action
-;  (diff generate_output.expected generate_output.output)))
-
-; (executable
-;  (name generate_ocaml_ast)
-;  (modules generate_ocaml_ast)
-;  (libraries xobl.compiler xobl.ocaml_backend))
-
-; (rule
-;  (deps
-;   (glob_files ../xml-xcb/*.xml))
-;  (action
-;   (with-stdout-to
-;    generate_ocaml_ast.output
-;    (pipe-stdout
-;     (run ./generate_ocaml_ast.exe)
-;     (run ocamlformat - --impl)))))
-
-; (rule
-;  (alias runtest)
-;  (action
-;   (diff generate_ocaml_ast.expected generate_ocaml_ast.output)))
-
  (executable
   (name generate_ocaml_v2)
   (modules generate_ocaml_v2)

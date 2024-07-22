@@ -10213,6 +10213,102 @@ module Xc_misc = struct
   end
 end
 
+module Xevie = struct
+  module Meta = struct
+    type t = [ `Xevie ]
+
+    let version = (1, 0)
+    let query_name = "XEVIE"
+  end
+
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
+
+  module Datatype_enum = struct
+    type t = [ `Unmodified | `Modified ] [@@deriving sexp]
+  end
+
+  type event = unit [@@deriving sexp]
+
+  module Event = struct
+    type t = [] [@@deriving sexp]
+  end
+
+  module Error = struct
+    type t = [] [@@deriving sexp]
+  end
+
+  module Query_version = struct
+    let name = "QueryVersion"
+    let opcode = 0
+
+    type t = { client_major_version : u16; client_minor_version : u16 }
+    [@@deriving sexp]
+
+    let with_request f ~client_major_version ~client_minor_version =
+      f ({ client_major_version; client_minor_version } : t)
+
+    module Reply = struct
+      type t = { server_major_version : u16; server_minor_version : u16 }
+      [@@deriving sexp]
+    end
+  end
+
+  module Start = struct
+    let name = "Start"
+    let opcode = 1
+
+    type t = u32 [@@deriving sexp]
+
+    let with_request f screen = f (screen : t)
+
+    module Reply = struct
+      type t = unit [@@deriving sexp]
+    end
+  end
+
+  module End_ = struct
+    let name = "End"
+    let opcode = 2
+
+    type t = u32 [@@deriving sexp]
+
+    let with_request f cmap = f (cmap : t)
+
+    module Reply = struct
+      type t = unit [@@deriving sexp]
+    end
+  end
+
+  module Send = struct
+    let name = "Send"
+    let opcode = 3
+
+    type t = { event : event; data_type : u32 } [@@deriving sexp]
+
+    let with_request f ~event ~data_type = f ({ event; data_type } : t)
+
+    module Reply = struct
+      type t = unit [@@deriving sexp]
+    end
+  end
+
+  module Select_input = struct
+    let name = "SelectInput"
+    let opcode = 4
+
+    type t = u32 [@@deriving sexp]
+
+    let with_request f event_mask = f (event_mask : t)
+
+    module Reply = struct
+      type t = unit [@@deriving sexp]
+    end
+  end
+end
+
 module Xf86dri = struct
   module Meta = struct
     type t = [ `XF86Dri ]
