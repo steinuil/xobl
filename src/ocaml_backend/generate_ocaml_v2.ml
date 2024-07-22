@@ -278,7 +278,8 @@ module Type = struct
           ListLabels.map items ~f:(fun (name, value) ->
               [%stri
                 let [%p p_id ~loc name] : t =
-                  of_int64 (Int64.shift_right 1L [%e e_int ~loc value])])
+                  of_int32
+                    (Optint.shift_right_logical Optint.one [%e e_int ~loc value])])
         in
         let values =
           match additional_values with
@@ -286,8 +287,9 @@ module Type = struct
               ListLabels.map values ~f:(fun (name, value) ->
                   [%stri
                     let [%p p_id ~loc name] : t =
-                      of_int64 [%e e_int64 ~suffix:'L' ~loc value]])
-          | None_value -> [%str let none : t = of_int64 0L]
+                      of_int32
+                        (Optint.of_int [%e e_int ~loc (Int64.to_int value)])])
+          | None_value -> [%str let none : t = of_int32 Optint.zero]
         in
         stri_module ~loc ~suffix:"mask" name
           (([%stri include Mask] :: items) @ values)

@@ -32,21 +32,23 @@ type utf16_string = Utf16_string of string [@@deriving sexp]
 type 'a alt = [ `Alt of 'a ] [@@deriving sexp]
 
 module Mask : sig
-  type t = private int64
+  type t = private Optint.t
 
   val ( & ) : t -> t -> bool
   val ( || ) : t -> t -> t
-  val of_int64 : int64 -> t
-  val to_int64 : t -> int64
+  val of_int32 : Optint.t -> t
+  val to_int32 : t -> Optint.t
   val sexp_of_t : t -> Sexplib0.Sexp.t
   val t_of_sexp : Sexplib0.Sexp.t -> t
 end = struct
-  type t = int64 [@@deriving sexp]
+  type t = Optint.t
 
-  let ( & ) a b = Int64.logand a b <> 0L
-  let ( || ) = Int64.logor
-  let of_int64 = Fun.id
-  let to_int64 = Fun.id
+  let ( & ) a b = Optint.logand a b <> Optint.zero
+  let ( || ) = Optint.logor
+  let of_int32 = Fun.id
+  let to_int32 = Fun.id
+  let sexp_of_t n = Optint.to_unsigned_int32 n |> sexp_of_int32
+  let t_of_sexp n = int32_of_sexp n |> Optint.of_unsigned_int32
 end
 
 module type Event = sig

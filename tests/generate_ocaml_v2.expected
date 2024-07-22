@@ -101,32 +101,70 @@ module Xproto = struct
   module Event_mask = struct
     include Mask
 
-    let (key_press : t) = of_int64 (Int64.shift_right 1L 0)
-    let (key_release : t) = of_int64 (Int64.shift_right 1L 1)
-    let (button_press : t) = of_int64 (Int64.shift_right 1L 2)
-    let (button_release : t) = of_int64 (Int64.shift_right 1L 3)
-    let (enter_window : t) = of_int64 (Int64.shift_right 1L 4)
-    let (leave_window : t) = of_int64 (Int64.shift_right 1L 5)
-    let (pointer_motion : t) = of_int64 (Int64.shift_right 1L 6)
-    let (pointer_motion_hint : t) = of_int64 (Int64.shift_right 1L 7)
-    let (button1_motion : t) = of_int64 (Int64.shift_right 1L 8)
-    let (button2_motion : t) = of_int64 (Int64.shift_right 1L 9)
-    let (button3_motion : t) = of_int64 (Int64.shift_right 1L 10)
-    let (button4_motion : t) = of_int64 (Int64.shift_right 1L 11)
-    let (button5_motion : t) = of_int64 (Int64.shift_right 1L 12)
-    let (button_motion : t) = of_int64 (Int64.shift_right 1L 13)
-    let (keymap_state : t) = of_int64 (Int64.shift_right 1L 14)
-    let (exposure : t) = of_int64 (Int64.shift_right 1L 15)
-    let (visibility_change : t) = of_int64 (Int64.shift_right 1L 16)
-    let (structure_notify : t) = of_int64 (Int64.shift_right 1L 17)
-    let (resize_redirect : t) = of_int64 (Int64.shift_right 1L 18)
-    let (substructure_notify : t) = of_int64 (Int64.shift_right 1L 19)
-    let (substructure_redirect : t) = of_int64 (Int64.shift_right 1L 20)
-    let (focus_change : t) = of_int64 (Int64.shift_right 1L 21)
-    let (property_change : t) = of_int64 (Int64.shift_right 1L 22)
-    let (color_map_change : t) = of_int64 (Int64.shift_right 1L 23)
-    let (owner_grab_button : t) = of_int64 (Int64.shift_right 1L 24)
-    let none : t = of_int64 0L
+    let (key_press : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (key_release : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (button_press : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+
+    let (button_release : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 3)
+
+    let (enter_window : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
+    let (leave_window : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
+
+    let (pointer_motion : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 6)
+
+    let (pointer_motion_hint : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 7)
+
+    let (button1_motion : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 8)
+
+    let (button2_motion : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 9)
+
+    let (button3_motion : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 10)
+
+    let (button4_motion : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 11)
+
+    let (button5_motion : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 12)
+
+    let (button_motion : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 13)
+
+    let (keymap_state : t) = of_int32 (Optint.shift_right_logical Optint.one 14)
+    let (exposure : t) = of_int32 (Optint.shift_right_logical Optint.one 15)
+
+    let (visibility_change : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 16)
+
+    let (structure_notify : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 17)
+
+    let (resize_redirect : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 18)
+
+    let (substructure_notify : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 19)
+
+    let (substructure_redirect : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 20)
+
+    let (focus_change : t) = of_int32 (Optint.shift_right_logical Optint.one 21)
+
+    let (property_change : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 22)
+
+    let (color_map_change : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 23)
+
+    let (owner_grab_button : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 24)
+
+    let none : t = of_int32 Optint.zero
   end
 
   module Backing_store_enum = struct
@@ -202,33 +240,33 @@ module Xproto = struct
   module Mod_mask = struct
     include Mask
 
-    let (shift : t) = of_int64 (Int64.shift_right 1L 0)
-    let (lock : t) = of_int64 (Int64.shift_right 1L 1)
-    let (control : t) = of_int64 (Int64.shift_right 1L 2)
-    let (_1 : t) = of_int64 (Int64.shift_right 1L 3)
-    let (_2 : t) = of_int64 (Int64.shift_right 1L 4)
-    let (_3 : t) = of_int64 (Int64.shift_right 1L 5)
-    let (_4 : t) = of_int64 (Int64.shift_right 1L 6)
-    let (_5 : t) = of_int64 (Int64.shift_right 1L 7)
-    let (any : t) = of_int64 (Int64.shift_right 1L 15)
+    let (shift : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (lock : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (control : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (_1 : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
+    let (_2 : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
+    let (_3 : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
+    let (_4 : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
+    let (_5 : t) = of_int32 (Optint.shift_right_logical Optint.one 7)
+    let (any : t) = of_int32 (Optint.shift_right_logical Optint.one 15)
   end
 
   module Key_but_mask = struct
     include Mask
 
-    let (shift : t) = of_int64 (Int64.shift_right 1L 0)
-    let (lock : t) = of_int64 (Int64.shift_right 1L 1)
-    let (control : t) = of_int64 (Int64.shift_right 1L 2)
-    let (mod1 : t) = of_int64 (Int64.shift_right 1L 3)
-    let (mod2 : t) = of_int64 (Int64.shift_right 1L 4)
-    let (mod3 : t) = of_int64 (Int64.shift_right 1L 5)
-    let (mod4 : t) = of_int64 (Int64.shift_right 1L 6)
-    let (mod5 : t) = of_int64 (Int64.shift_right 1L 7)
-    let (button1 : t) = of_int64 (Int64.shift_right 1L 8)
-    let (button2 : t) = of_int64 (Int64.shift_right 1L 9)
-    let (button3 : t) = of_int64 (Int64.shift_right 1L 10)
-    let (button4 : t) = of_int64 (Int64.shift_right 1L 11)
-    let (button5 : t) = of_int64 (Int64.shift_right 1L 12)
+    let (shift : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (lock : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (control : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (mod1 : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
+    let (mod2 : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
+    let (mod3 : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
+    let (mod4 : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
+    let (mod5 : t) = of_int32 (Optint.shift_right_logical Optint.one 7)
+    let (button1 : t) = of_int32 (Optint.shift_right_logical Optint.one 8)
+    let (button2 : t) = of_int32 (Optint.shift_right_logical Optint.one 9)
+    let (button3 : t) = of_int32 (Optint.shift_right_logical Optint.one 10)
+    let (button4 : t) = of_int32 (Optint.shift_right_logical Optint.one 11)
+    let (button5 : t) = of_int32 (Optint.shift_right_logical Optint.one 12)
   end
 
   module Window_enum = struct
@@ -238,12 +276,12 @@ module Xproto = struct
   module Button_mask = struct
     include Mask
 
-    let (_1 : t) = of_int64 (Int64.shift_right 1L 8)
-    let (_2 : t) = of_int64 (Int64.shift_right 1L 9)
-    let (_3 : t) = of_int64 (Int64.shift_right 1L 10)
-    let (_4 : t) = of_int64 (Int64.shift_right 1L 11)
-    let (_5 : t) = of_int64 (Int64.shift_right 1L 12)
-    let (any : t) = of_int64 (Int64.shift_right 1L 15)
+    let (_1 : t) = of_int32 (Optint.shift_right_logical Optint.one 8)
+    let (_2 : t) = of_int32 (Optint.shift_right_logical Optint.one 9)
+    let (_3 : t) = of_int32 (Optint.shift_right_logical Optint.one 10)
+    let (_4 : t) = of_int32 (Optint.shift_right_logical Optint.one 11)
+    let (_5 : t) = of_int32 (Optint.shift_right_logical Optint.one 12)
+    let (any : t) = of_int32 (Optint.shift_right_logical Optint.one 15)
   end
 
   module Motion_enum = struct
@@ -280,13 +318,13 @@ module Xproto = struct
   module Config_window_mask = struct
     include Mask
 
-    let (x : t) = of_int64 (Int64.shift_right 1L 0)
-    let (y : t) = of_int64 (Int64.shift_right 1L 1)
-    let (width : t) = of_int64 (Int64.shift_right 1L 2)
-    let (height : t) = of_int64 (Int64.shift_right 1L 3)
-    let (border_width : t) = of_int64 (Int64.shift_right 1L 4)
-    let (sibling : t) = of_int64 (Int64.shift_right 1L 5)
-    let (stack_mode : t) = of_int64 (Int64.shift_right 1L 6)
+    let (x : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (y : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (width : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (height : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
+    let (border_width : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
+    let (sibling : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
+    let (stack_mode : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
   end
 
   module Place_enum = struct
@@ -405,21 +443,30 @@ module Xproto = struct
   module Cw_mask = struct
     include Mask
 
-    let (back_pixmap : t) = of_int64 (Int64.shift_right 1L 0)
-    let (back_pixel : t) = of_int64 (Int64.shift_right 1L 1)
-    let (border_pixmap : t) = of_int64 (Int64.shift_right 1L 2)
-    let (border_pixel : t) = of_int64 (Int64.shift_right 1L 3)
-    let (bit_gravity : t) = of_int64 (Int64.shift_right 1L 4)
-    let (win_gravity : t) = of_int64 (Int64.shift_right 1L 5)
-    let (backing_store : t) = of_int64 (Int64.shift_right 1L 6)
-    let (backing_planes : t) = of_int64 (Int64.shift_right 1L 7)
-    let (backing_pixel : t) = of_int64 (Int64.shift_right 1L 8)
-    let (override_redirect : t) = of_int64 (Int64.shift_right 1L 9)
-    let (save_under : t) = of_int64 (Int64.shift_right 1L 10)
-    let (event_mask : t) = of_int64 (Int64.shift_right 1L 11)
-    let (dont_propagate : t) = of_int64 (Int64.shift_right 1L 12)
-    let (colormap : t) = of_int64 (Int64.shift_right 1L 13)
-    let (cursor : t) = of_int64 (Int64.shift_right 1L 14)
+    let (back_pixmap : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (back_pixel : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (border_pixmap : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (border_pixel : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
+    let (bit_gravity : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
+    let (win_gravity : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
+    let (backing_store : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
+
+    let (backing_planes : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 7)
+
+    let (backing_pixel : t) = of_int32 (Optint.shift_right_logical Optint.one 8)
+
+    let (override_redirect : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 9)
+
+    let (save_under : t) = of_int32 (Optint.shift_right_logical Optint.one 10)
+    let (event_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 11)
+
+    let (dont_propagate : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 12)
+
+    let (colormap : t) = of_int32 (Optint.shift_right_logical Optint.one 13)
+    let (cursor : t) = of_int32 (Optint.shift_right_logical Optint.one 14)
   end
 
   module Back_pixmap_enum = struct
@@ -534,29 +581,43 @@ module Xproto = struct
   module Gc_mask = struct
     include Mask
 
-    let (function_ : t) = of_int64 (Int64.shift_right 1L 0)
-    let (plane_mask : t) = of_int64 (Int64.shift_right 1L 1)
-    let (foreground : t) = of_int64 (Int64.shift_right 1L 2)
-    let (background : t) = of_int64 (Int64.shift_right 1L 3)
-    let (line_width : t) = of_int64 (Int64.shift_right 1L 4)
-    let (line_style : t) = of_int64 (Int64.shift_right 1L 5)
-    let (cap_style : t) = of_int64 (Int64.shift_right 1L 6)
-    let (join_style : t) = of_int64 (Int64.shift_right 1L 7)
-    let (fill_style : t) = of_int64 (Int64.shift_right 1L 8)
-    let (fill_rule : t) = of_int64 (Int64.shift_right 1L 9)
-    let (tile : t) = of_int64 (Int64.shift_right 1L 10)
-    let (stipple : t) = of_int64 (Int64.shift_right 1L 11)
-    let (tile_stipple_origin_x : t) = of_int64 (Int64.shift_right 1L 12)
-    let (tile_stipple_origin_y : t) = of_int64 (Int64.shift_right 1L 13)
-    let (font : t) = of_int64 (Int64.shift_right 1L 14)
-    let (subwindow_mode : t) = of_int64 (Int64.shift_right 1L 15)
-    let (graphics_exposures : t) = of_int64 (Int64.shift_right 1L 16)
-    let (clip_origin_x : t) = of_int64 (Int64.shift_right 1L 17)
-    let (clip_origin_y : t) = of_int64 (Int64.shift_right 1L 18)
-    let (clip_mask : t) = of_int64 (Int64.shift_right 1L 19)
-    let (dash_offset : t) = of_int64 (Int64.shift_right 1L 20)
-    let (dash_list : t) = of_int64 (Int64.shift_right 1L 21)
-    let (arc_mode : t) = of_int64 (Int64.shift_right 1L 22)
+    let (function_ : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (plane_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (foreground : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (background : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
+    let (line_width : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
+    let (line_style : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
+    let (cap_style : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
+    let (join_style : t) = of_int32 (Optint.shift_right_logical Optint.one 7)
+    let (fill_style : t) = of_int32 (Optint.shift_right_logical Optint.one 8)
+    let (fill_rule : t) = of_int32 (Optint.shift_right_logical Optint.one 9)
+    let (tile : t) = of_int32 (Optint.shift_right_logical Optint.one 10)
+    let (stipple : t) = of_int32 (Optint.shift_right_logical Optint.one 11)
+
+    let (tile_stipple_origin_x : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 12)
+
+    let (tile_stipple_origin_y : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 13)
+
+    let (font : t) = of_int32 (Optint.shift_right_logical Optint.one 14)
+
+    let (subwindow_mode : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 15)
+
+    let (graphics_exposures : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 16)
+
+    let (clip_origin_x : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 17)
+
+    let (clip_origin_y : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 18)
+
+    let (clip_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 19)
+    let (dash_offset : t) = of_int32 (Optint.shift_right_logical Optint.one 20)
+    let (dash_list : t) = of_int32 (Optint.shift_right_logical Optint.one 21)
+    let (arc_mode : t) = of_int32 (Optint.shift_right_logical Optint.one 22)
   end
 
   module Gx_enum = struct
@@ -639,9 +700,9 @@ module Xproto = struct
   module Color_flag_mask = struct
     include Mask
 
-    let (red : t) = of_int64 (Int64.shift_right 1L 0)
-    let (green : t) = of_int64 (Int64.shift_right 1L 1)
-    let (blue : t) = of_int64 (Int64.shift_right 1L 2)
+    let (red : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (green : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (blue : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
   end
 
   type coloritem = {
@@ -663,14 +724,18 @@ module Xproto = struct
   module Kb_mask = struct
     include Mask
 
-    let (key_click_percent : t) = of_int64 (Int64.shift_right 1L 0)
-    let (bell_percent : t) = of_int64 (Int64.shift_right 1L 1)
-    let (bell_pitch : t) = of_int64 (Int64.shift_right 1L 2)
-    let (bell_duration : t) = of_int64 (Int64.shift_right 1L 3)
-    let (led : t) = of_int64 (Int64.shift_right 1L 4)
-    let (led_mode : t) = of_int64 (Int64.shift_right 1L 5)
-    let (key : t) = of_int64 (Int64.shift_right 1L 6)
-    let (auto_repeat_mode : t) = of_int64 (Int64.shift_right 1L 7)
+    let (key_click_percent : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 0)
+
+    let (bell_percent : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (bell_pitch : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (bell_duration : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
+    let (led : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
+    let (led_mode : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
+    let (key : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
+
+    let (auto_repeat_mode : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 7)
   end
 
   module Led_mode_enum = struct
@@ -3549,19 +3614,31 @@ module Render = struct
   module Cp_mask = struct
     include Mask
 
-    let (repeat : t) = of_int64 (Int64.shift_right 1L 0)
-    let (alpha_map : t) = of_int64 (Int64.shift_right 1L 1)
-    let (alpha_x_origin : t) = of_int64 (Int64.shift_right 1L 2)
-    let (alpha_y_origin : t) = of_int64 (Int64.shift_right 1L 3)
-    let (clip_x_origin : t) = of_int64 (Int64.shift_right 1L 4)
-    let (clip_y_origin : t) = of_int64 (Int64.shift_right 1L 5)
-    let (clip_mask : t) = of_int64 (Int64.shift_right 1L 6)
-    let (graphics_exposure : t) = of_int64 (Int64.shift_right 1L 7)
-    let (subwindow_mode : t) = of_int64 (Int64.shift_right 1L 8)
-    let (poly_edge : t) = of_int64 (Int64.shift_right 1L 9)
-    let (poly_mode : t) = of_int64 (Int64.shift_right 1L 10)
-    let (dither : t) = of_int64 (Int64.shift_right 1L 11)
-    let (component_alpha : t) = of_int64 (Int64.shift_right 1L 12)
+    let (repeat : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (alpha_map : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+
+    let (alpha_x_origin : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 2)
+
+    let (alpha_y_origin : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 3)
+
+    let (clip_x_origin : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
+    let (clip_y_origin : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
+    let (clip_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
+
+    let (graphics_exposure : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 7)
+
+    let (subwindow_mode : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 8)
+
+    let (poly_edge : t) = of_int32 (Optint.shift_right_logical Optint.one 9)
+    let (poly_mode : t) = of_int32 (Optint.shift_right_logical Optint.one 10)
+    let (dither : t) = of_int32 (Optint.shift_right_logical Optint.one 11)
+
+    let (component_alpha : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 12)
   end
 
   module Sub_pixel_enum = struct
@@ -4533,9 +4610,14 @@ module Xfixes = struct
   module Selection_event_mask = struct
     include Mask
 
-    let (set_selection_owner : t) = of_int64 (Int64.shift_right 1L 0)
-    let (selection_window_destroy : t) = of_int64 (Int64.shift_right 1L 1)
-    let (selection_client_close : t) = of_int64 (Int64.shift_right 1L 2)
+    let (set_selection_owner : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 0)
+
+    let (selection_window_destroy : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 1)
+
+    let (selection_client_close : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 2)
   end
 
   module Cursor_notify_enum = struct
@@ -4545,7 +4627,8 @@ module Xfixes = struct
   module Cursor_notify_mask = struct
     include Mask
 
-    let (display_cursor : t) = of_int64 (Int64.shift_right 1L 0)
+    let (display_cursor : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 0)
   end
 
   type region = xid [@@deriving sexp]
@@ -4559,10 +4642,10 @@ module Xfixes = struct
   module Barrier_directions_mask = struct
     include Mask
 
-    let (positive_x : t) = of_int64 (Int64.shift_right 1L 0)
-    let (positive_y : t) = of_int64 (Int64.shift_right 1L 1)
-    let (negative_x : t) = of_int64 (Int64.shift_right 1L 2)
-    let (negative_y : t) = of_int64 (Int64.shift_right 1L 3)
+    let (positive_x : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (positive_y : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (negative_x : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (negative_y : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
   end
 
   module Event = struct
@@ -6033,27 +6116,58 @@ module Glx = struct
   module Gc_mask = struct
     include Mask
 
-    let (gl_current_bit : t) = of_int64 (Int64.shift_right 1L 0)
-    let (gl_point_bit : t) = of_int64 (Int64.shift_right 1L 1)
-    let (gl_line_bit : t) = of_int64 (Int64.shift_right 1L 2)
-    let (gl_polygon_bit : t) = of_int64 (Int64.shift_right 1L 3)
-    let (gl_polygon_stipple_bit : t) = of_int64 (Int64.shift_right 1L 4)
-    let (gl_pixel_mode_bit : t) = of_int64 (Int64.shift_right 1L 5)
-    let (gl_lighting_bit : t) = of_int64 (Int64.shift_right 1L 6)
-    let (gl_fog_bit : t) = of_int64 (Int64.shift_right 1L 7)
-    let (gl_depth_buffer_bit : t) = of_int64 (Int64.shift_right 1L 8)
-    let (gl_accum_buffer_bit : t) = of_int64 (Int64.shift_right 1L 9)
-    let (gl_stencil_buffer_bit : t) = of_int64 (Int64.shift_right 1L 10)
-    let (gl_viewport_bit : t) = of_int64 (Int64.shift_right 1L 11)
-    let (gl_transform_bit : t) = of_int64 (Int64.shift_right 1L 12)
-    let (gl_enable_bit : t) = of_int64 (Int64.shift_right 1L 13)
-    let (gl_color_buffer_bit : t) = of_int64 (Int64.shift_right 1L 14)
-    let (gl_hint_bit : t) = of_int64 (Int64.shift_right 1L 15)
-    let (gl_eval_bit : t) = of_int64 (Int64.shift_right 1L 16)
-    let (gl_list_bit : t) = of_int64 (Int64.shift_right 1L 17)
-    let (gl_texture_bit : t) = of_int64 (Int64.shift_right 1L 18)
-    let (gl_scissor_bit : t) = of_int64 (Int64.shift_right 1L 19)
-    let (gl_all_attrib_bits : t) = of_int64 16777215L
+    let (gl_current_bit : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 0)
+
+    let (gl_point_bit : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (gl_line_bit : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+
+    let (gl_polygon_bit : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 3)
+
+    let (gl_polygon_stipple_bit : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 4)
+
+    let (gl_pixel_mode_bit : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 5)
+
+    let (gl_lighting_bit : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 6)
+
+    let (gl_fog_bit : t) = of_int32 (Optint.shift_right_logical Optint.one 7)
+
+    let (gl_depth_buffer_bit : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 8)
+
+    let (gl_accum_buffer_bit : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 9)
+
+    let (gl_stencil_buffer_bit : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 10)
+
+    let (gl_viewport_bit : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 11)
+
+    let (gl_transform_bit : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 12)
+
+    let (gl_enable_bit : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 13)
+
+    let (gl_color_buffer_bit : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 14)
+
+    let (gl_hint_bit : t) = of_int32 (Optint.shift_right_logical Optint.one 15)
+    let (gl_eval_bit : t) = of_int32 (Optint.shift_right_logical Optint.one 16)
+    let (gl_list_bit : t) = of_int32 (Optint.shift_right_logical Optint.one 17)
+
+    let (gl_texture_bit : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 18)
+
+    let (gl_scissor_bit : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 19)
+
+    let (gl_all_attrib_bits : t) = of_int32 (Optint.of_int 16777215)
   end
 
   module Rm_enum = struct
@@ -7735,12 +7849,12 @@ module Randr = struct
   module Rotation_mask = struct
     include Mask
 
-    let (rotate_0 : t) = of_int64 (Int64.shift_right 1L 0)
-    let (rotate_90 : t) = of_int64 (Int64.shift_right 1L 1)
-    let (rotate_180 : t) = of_int64 (Int64.shift_right 1L 2)
-    let (rotate_270 : t) = of_int64 (Int64.shift_right 1L 3)
-    let (reflect_x : t) = of_int64 (Int64.shift_right 1L 4)
-    let (reflect_y : t) = of_int64 (Int64.shift_right 1L 5)
+    let (rotate_0 : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (rotate_90 : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (rotate_180 : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (rotate_270 : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
+    let (reflect_x : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
+    let (reflect_y : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
   end
 
   type screen_size = { width : u16; height : u16; mwidth : u16; mheight : u16 }
@@ -7756,33 +7870,58 @@ module Randr = struct
   module Notify_mask = struct
     include Mask
 
-    let (screen_change : t) = of_int64 (Int64.shift_right 1L 0)
-    let (crtc_change : t) = of_int64 (Int64.shift_right 1L 1)
-    let (output_change : t) = of_int64 (Int64.shift_right 1L 2)
-    let (output_property : t) = of_int64 (Int64.shift_right 1L 3)
-    let (provider_change : t) = of_int64 (Int64.shift_right 1L 4)
-    let (provider_property : t) = of_int64 (Int64.shift_right 1L 5)
-    let (resource_change : t) = of_int64 (Int64.shift_right 1L 6)
-    let (lease : t) = of_int64 (Int64.shift_right 1L 7)
+    let (screen_change : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (crtc_change : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (output_change : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+
+    let (output_property : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 3)
+
+    let (provider_change : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 4)
+
+    let (provider_property : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 5)
+
+    let (resource_change : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 6)
+
+    let (lease : t) = of_int32 (Optint.shift_right_logical Optint.one 7)
   end
 
   module Mode_flag_mask = struct
     include Mask
 
-    let (hsync_positive : t) = of_int64 (Int64.shift_right 1L 0)
-    let (hsync_negative : t) = of_int64 (Int64.shift_right 1L 1)
-    let (vsync_positive : t) = of_int64 (Int64.shift_right 1L 2)
-    let (vsync_negative : t) = of_int64 (Int64.shift_right 1L 3)
-    let (interlace : t) = of_int64 (Int64.shift_right 1L 4)
-    let (double_scan : t) = of_int64 (Int64.shift_right 1L 5)
-    let (csync : t) = of_int64 (Int64.shift_right 1L 6)
-    let (csync_positive : t) = of_int64 (Int64.shift_right 1L 7)
-    let (csync_negative : t) = of_int64 (Int64.shift_right 1L 8)
-    let (hskew_present : t) = of_int64 (Int64.shift_right 1L 9)
-    let (bcast : t) = of_int64 (Int64.shift_right 1L 10)
-    let (pixel_multiplex : t) = of_int64 (Int64.shift_right 1L 11)
-    let (double_clock : t) = of_int64 (Int64.shift_right 1L 12)
-    let (halve_clock : t) = of_int64 (Int64.shift_right 1L 13)
+    let (hsync_positive : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 0)
+
+    let (hsync_negative : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 1)
+
+    let (vsync_positive : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 2)
+
+    let (vsync_negative : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 3)
+
+    let (interlace : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
+    let (double_scan : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
+    let (csync : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
+
+    let (csync_positive : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 7)
+
+    let (csync_negative : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 8)
+
+    let (hskew_present : t) = of_int32 (Optint.shift_right_logical Optint.one 9)
+    let (bcast : t) = of_int32 (Optint.shift_right_logical Optint.one 10)
+
+    let (pixel_multiplex : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 11)
+
+    let (double_clock : t) = of_int32 (Optint.shift_right_logical Optint.one 12)
+    let (halve_clock : t) = of_int32 (Optint.shift_right_logical Optint.one 13)
   end
 
   type mode_info = {
@@ -7809,19 +7948,22 @@ module Randr = struct
   module Transform_mask = struct
     include Mask
 
-    let (unit : t) = of_int64 (Int64.shift_right 1L 0)
-    let (scale_up : t) = of_int64 (Int64.shift_right 1L 1)
-    let (scale_down : t) = of_int64 (Int64.shift_right 1L 2)
-    let (projective : t) = of_int64 (Int64.shift_right 1L 3)
+    let (unit : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (scale_up : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (scale_down : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (projective : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
   end
 
   module Provider_capability_mask = struct
     include Mask
 
-    let (source_output : t) = of_int64 (Int64.shift_right 1L 0)
-    let (sink_output : t) = of_int64 (Int64.shift_right 1L 1)
-    let (source_offload : t) = of_int64 (Int64.shift_right 1L 2)
-    let (sink_offload : t) = of_int64 (Int64.shift_right 1L 3)
+    let (source_output : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (sink_output : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+
+    let (source_offload : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 2)
+
+    let (sink_offload : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
   end
 
   module Notify_enum = struct
@@ -8861,12 +9003,12 @@ module Sync = struct
   module Ca_mask = struct
     include Mask
 
-    let (counter : t) = of_int64 (Int64.shift_right 1L 0)
-    let (value_type : t) = of_int64 (Int64.shift_right 1L 1)
-    let (value : t) = of_int64 (Int64.shift_right 1L 2)
-    let (test_type : t) = of_int64 (Int64.shift_right 1L 3)
-    let (delta : t) = of_int64 (Int64.shift_right 1L 4)
-    let (events : t) = of_int64 (Int64.shift_right 1L 5)
+    let (counter : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (value_type : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (value : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (test_type : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
+    let (delta : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
+    let (events : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
   end
 
   type int64 = { hi : i32; lo : u32 } [@@deriving sexp]
@@ -9203,30 +9345,37 @@ module Present = struct
   module Event_mask = struct
     include Mask
 
-    let (configure_notify : t) = of_int64 (Int64.shift_right 1L 0)
-    let (complete_notify : t) = of_int64 (Int64.shift_right 1L 1)
-    let (idle_notify : t) = of_int64 (Int64.shift_right 1L 2)
-    let (redirect_notify : t) = of_int64 (Int64.shift_right 1L 3)
-    let none : t = of_int64 0L
+    let (configure_notify : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 0)
+
+    let (complete_notify : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 1)
+
+    let (idle_notify : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+
+    let (redirect_notify : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 3)
+
+    let none : t = of_int32 Optint.zero
   end
 
   module Option_mask = struct
     include Mask
 
-    let (async : t) = of_int64 (Int64.shift_right 1L 0)
-    let (copy : t) = of_int64 (Int64.shift_right 1L 1)
-    let (ust : t) = of_int64 (Int64.shift_right 1L 2)
-    let (suboptimal : t) = of_int64 (Int64.shift_right 1L 3)
-    let none : t = of_int64 0L
+    let (async : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (copy : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (ust : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (suboptimal : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
+    let none : t = of_int32 Optint.zero
   end
 
   module Capability_mask = struct
     include Mask
 
-    let (async : t) = of_int64 (Int64.shift_right 1L 0)
-    let (fence : t) = of_int64 (Int64.shift_right 1L 1)
-    let (ust : t) = of_int64 (Int64.shift_right 1L 2)
-    let none : t = of_int64 0L
+    let (async : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (fence : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (ust : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+    let none : t = of_int32 Optint.zero
   end
 
   module Complete_kind_enum = struct
@@ -9480,9 +9629,14 @@ module Record = struct
   module H_type_mask = struct
     include Mask
 
-    let (from_server_time : t) = of_int64 (Int64.shift_right 1L 0)
-    let (from_client_time : t) = of_int64 (Int64.shift_right 1L 1)
-    let (from_client_sequence : t) = of_int64 (Int64.shift_right 1L 2)
+    let (from_server_time : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 0)
+
+    let (from_client_time : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 1)
+
+    let (from_client_sequence : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 2)
   end
 
   type client_spec = u32 [@@deriving sexp]
@@ -9645,8 +9799,10 @@ module Res = struct
   module Client_id_mask = struct
     include Mask
 
-    let (client_xid : t) = of_int64 (Int64.shift_right 1L 0)
-    let (local_client_pid : t) = of_int64 (Int64.shift_right 1L 1)
+    let (client_xid : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+
+    let (local_client_pid : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 1)
   end
 
   type client_id_spec = { client : u32; mask : Client_id_mask.t }
@@ -9779,8 +9935,8 @@ module Screensaver = struct
   module Event_mask = struct
     include Mask
 
-    let (notify_mask : t) = of_int64 (Int64.shift_right 1L 0)
-    let (cycle_mask : t) = of_int64 (Int64.shift_right 1L 1)
+    let (notify_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (cycle_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
   end
 
   module State_enum = struct
@@ -10534,32 +10690,47 @@ module Xf86vidmode = struct
   module Mode_flag_mask = struct
     include Mask
 
-    let (positive_h_sync : t) = of_int64 (Int64.shift_right 1L 0)
-    let (negative_h_sync : t) = of_int64 (Int64.shift_right 1L 1)
-    let (positive_v_sync : t) = of_int64 (Int64.shift_right 1L 2)
-    let (negative_v_sync : t) = of_int64 (Int64.shift_right 1L 3)
-    let (interlace : t) = of_int64 (Int64.shift_right 1L 4)
-    let (composite_sync : t) = of_int64 (Int64.shift_right 1L 5)
-    let (positive_c_sync : t) = of_int64 (Int64.shift_right 1L 6)
-    let (negative_c_sync : t) = of_int64 (Int64.shift_right 1L 7)
-    let (h_skew : t) = of_int64 (Int64.shift_right 1L 8)
-    let (broadcast : t) = of_int64 (Int64.shift_right 1L 9)
-    let (pixmux : t) = of_int64 (Int64.shift_right 1L 10)
-    let (double_clock : t) = of_int64 (Int64.shift_right 1L 11)
-    let (half_clock : t) = of_int64 (Int64.shift_right 1L 12)
+    let (positive_h_sync : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 0)
+
+    let (negative_h_sync : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 1)
+
+    let (positive_v_sync : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 2)
+
+    let (negative_v_sync : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 3)
+
+    let (interlace : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
+
+    let (composite_sync : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 5)
+
+    let (positive_c_sync : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 6)
+
+    let (negative_c_sync : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 7)
+
+    let (h_skew : t) = of_int32 (Optint.shift_right_logical Optint.one 8)
+    let (broadcast : t) = of_int32 (Optint.shift_right_logical Optint.one 9)
+    let (pixmux : t) = of_int32 (Optint.shift_right_logical Optint.one 10)
+    let (double_clock : t) = of_int32 (Optint.shift_right_logical Optint.one 11)
+    let (half_clock : t) = of_int32 (Optint.shift_right_logical Optint.one 12)
   end
 
   module Clock_flag_mask = struct
     include Mask
 
-    let (programable : t) = of_int64 (Int64.shift_right 1L 0)
+    let (programable : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
   end
 
   module Permission_mask = struct
     include Mask
 
-    let (read : t) = of_int64 (Int64.shift_right 1L 0)
-    let (write : t) = of_int64 (Int64.shift_right 1L 1)
+    let (read : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (write : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
   end
 
   type mode_info = {
@@ -11510,19 +11681,24 @@ module Xinput = struct
   module Change_feedback_control_mask = struct
     include Mask
 
-    let (key_click_percent : t) = of_int64 (Int64.shift_right 1L 0)
-    let (percent : t) = of_int64 (Int64.shift_right 1L 1)
-    let (pitch : t) = of_int64 (Int64.shift_right 1L 2)
-    let (duration : t) = of_int64 (Int64.shift_right 1L 3)
-    let (led : t) = of_int64 (Int64.shift_right 1L 4)
-    let (led_mode : t) = of_int64 (Int64.shift_right 1L 5)
-    let (key : t) = of_int64 (Int64.shift_right 1L 6)
-    let (auto_repeat_mode : t) = of_int64 (Int64.shift_right 1L 7)
-    let (string : t) = of_int64 (Int64.shift_right 1L 0)
-    let (integer : t) = of_int64 (Int64.shift_right 1L 0)
-    let (accel_num : t) = of_int64 (Int64.shift_right 1L 0)
-    let (accel_denom : t) = of_int64 (Int64.shift_right 1L 1)
-    let (threshold : t) = of_int64 (Int64.shift_right 1L 2)
+    let (key_click_percent : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 0)
+
+    let (percent : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (pitch : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (duration : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
+    let (led : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
+    let (led_mode : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
+    let (key : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
+
+    let (auto_repeat_mode : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 7)
+
+    let (string : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (integer : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (accel_num : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (accel_denom : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (threshold : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
   end
 
   type key_state = {
@@ -11544,8 +11720,11 @@ module Xinput = struct
   module Valuator_state_mode_mask = struct
     include Mask
 
-    let (device_mode_absolute : t) = of_int64 (Int64.shift_right 1L 0)
-    let (out_of_proximity : t) = of_int64 (Int64.shift_right 1L 1)
+    let (device_mode_absolute : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 0)
+
+    let (out_of_proximity : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 1)
   end
 
   type valuator_state = {
@@ -11808,32 +11987,57 @@ module Xinput = struct
   module Xi_event_mask = struct
     include Mask
 
-    let (device_changed : t) = of_int64 (Int64.shift_right 1L 1)
-    let (key_press : t) = of_int64 (Int64.shift_right 1L 2)
-    let (key_release : t) = of_int64 (Int64.shift_right 1L 3)
-    let (button_press : t) = of_int64 (Int64.shift_right 1L 4)
-    let (button_release : t) = of_int64 (Int64.shift_right 1L 5)
-    let (motion : t) = of_int64 (Int64.shift_right 1L 6)
-    let (enter : t) = of_int64 (Int64.shift_right 1L 7)
-    let (leave : t) = of_int64 (Int64.shift_right 1L 8)
-    let (focus_in : t) = of_int64 (Int64.shift_right 1L 9)
-    let (focus_out : t) = of_int64 (Int64.shift_right 1L 10)
-    let (hierarchy : t) = of_int64 (Int64.shift_right 1L 11)
-    let (property : t) = of_int64 (Int64.shift_right 1L 12)
-    let (raw_key_press : t) = of_int64 (Int64.shift_right 1L 13)
-    let (raw_key_release : t) = of_int64 (Int64.shift_right 1L 14)
-    let (raw_button_press : t) = of_int64 (Int64.shift_right 1L 15)
-    let (raw_button_release : t) = of_int64 (Int64.shift_right 1L 16)
-    let (raw_motion : t) = of_int64 (Int64.shift_right 1L 17)
-    let (touch_begin : t) = of_int64 (Int64.shift_right 1L 18)
-    let (touch_update : t) = of_int64 (Int64.shift_right 1L 19)
-    let (touch_end : t) = of_int64 (Int64.shift_right 1L 20)
-    let (touch_ownership : t) = of_int64 (Int64.shift_right 1L 21)
-    let (raw_touch_begin : t) = of_int64 (Int64.shift_right 1L 22)
-    let (raw_touch_update : t) = of_int64 (Int64.shift_right 1L 23)
-    let (raw_touch_end : t) = of_int64 (Int64.shift_right 1L 24)
-    let (barrier_hit : t) = of_int64 (Int64.shift_right 1L 25)
-    let (barrier_leave : t) = of_int64 (Int64.shift_right 1L 26)
+    let (device_changed : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 1)
+
+    let (key_press : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (key_release : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
+    let (button_press : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
+
+    let (button_release : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 5)
+
+    let (motion : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
+    let (enter : t) = of_int32 (Optint.shift_right_logical Optint.one 7)
+    let (leave : t) = of_int32 (Optint.shift_right_logical Optint.one 8)
+    let (focus_in : t) = of_int32 (Optint.shift_right_logical Optint.one 9)
+    let (focus_out : t) = of_int32 (Optint.shift_right_logical Optint.one 10)
+    let (hierarchy : t) = of_int32 (Optint.shift_right_logical Optint.one 11)
+    let (property : t) = of_int32 (Optint.shift_right_logical Optint.one 12)
+
+    let (raw_key_press : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 13)
+
+    let (raw_key_release : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 14)
+
+    let (raw_button_press : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 15)
+
+    let (raw_button_release : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 16)
+
+    let (raw_motion : t) = of_int32 (Optint.shift_right_logical Optint.one 17)
+    let (touch_begin : t) = of_int32 (Optint.shift_right_logical Optint.one 18)
+    let (touch_update : t) = of_int32 (Optint.shift_right_logical Optint.one 19)
+    let (touch_end : t) = of_int32 (Optint.shift_right_logical Optint.one 20)
+
+    let (touch_ownership : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 21)
+
+    let (raw_touch_begin : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 22)
+
+    let (raw_touch_update : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 23)
+
+    let (raw_touch_end : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 24)
+
+    let (barrier_hit : t) = of_int32 (Optint.shift_right_logical Optint.one 25)
+
+    let (barrier_leave : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 26)
   end
 
   type event_mask = {
@@ -11859,8 +12063,8 @@ module Xinput = struct
   module Scroll_flags_mask = struct
     include Mask
 
-    let (no_emulation : t) = of_int64 (Int64.shift_right 1L 0)
-    let (preferred : t) = of_int64 (Int64.shift_right 1L 1)
+    let (no_emulation : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (preferred : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
   end
 
   module Scroll_type_enum = struct
@@ -12003,7 +12207,7 @@ module Xinput = struct
   module Modifier_mask = struct
     include Mask
 
-    let (any : t) = of_int64 (Int64.shift_right 1L 31)
+    let (any : t) = of_int32 (Optint.shift_right_logical Optint.one 31)
   end
 
   type grab_modifier_info = {
@@ -12022,17 +12226,26 @@ module Xinput = struct
   module More_events_mask = struct
     include Mask
 
-    let (more_events : t) = of_int64 (Int64.shift_right 1L 7)
+    let (more_events : t) = of_int32 (Optint.shift_right_logical Optint.one 7)
   end
 
   module Classes_reported_mask = struct
     include Mask
 
-    let (out_of_proximity : t) = of_int64 (Int64.shift_right 1L 7)
-    let (device_mode_absolute : t) = of_int64 (Int64.shift_right 1L 6)
-    let (reporting_valuators : t) = of_int64 (Int64.shift_right 1L 2)
-    let (reporting_buttons : t) = of_int64 (Int64.shift_right 1L 1)
-    let (reporting_keys : t) = of_int64 (Int64.shift_right 1L 0)
+    let (out_of_proximity : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 7)
+
+    let (device_mode_absolute : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 6)
+
+    let (reporting_valuators : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 2)
+
+    let (reporting_buttons : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 1)
+
+    let (reporting_keys : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 0)
   end
 
   module Change_device_enum = struct
@@ -12057,13 +12270,14 @@ module Xinput = struct
   module Key_event_flags_mask = struct
     include Mask
 
-    let (key_repeat : t) = of_int64 (Int64.shift_right 1L 16)
+    let (key_repeat : t) = of_int32 (Optint.shift_right_logical Optint.one 16)
   end
 
   module Pointer_event_flags_mask = struct
     include Mask
 
-    let (pointer_emulated : t) = of_int64 (Int64.shift_right 1L 16)
+    let (pointer_emulated : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 16)
   end
 
   module Notify_mode_enum = struct
@@ -12093,14 +12307,25 @@ module Xinput = struct
   module Hierarchy_mask = struct
     include Mask
 
-    let (master_added : t) = of_int64 (Int64.shift_right 1L 0)
-    let (master_removed : t) = of_int64 (Int64.shift_right 1L 1)
-    let (slave_added : t) = of_int64 (Int64.shift_right 1L 2)
-    let (slave_removed : t) = of_int64 (Int64.shift_right 1L 3)
-    let (slave_attached : t) = of_int64 (Int64.shift_right 1L 4)
-    let (slave_detached : t) = of_int64 (Int64.shift_right 1L 5)
-    let (device_enabled : t) = of_int64 (Int64.shift_right 1L 6)
-    let (device_disabled : t) = of_int64 (Int64.shift_right 1L 7)
+    let (master_added : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+
+    let (master_removed : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 1)
+
+    let (slave_added : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (slave_removed : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
+
+    let (slave_attached : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 4)
+
+    let (slave_detached : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 5)
+
+    let (device_enabled : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 6)
+
+    let (device_disabled : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 7)
   end
 
   type hierarchy_info = {
@@ -12119,8 +12344,11 @@ module Xinput = struct
   module Touch_event_flags_mask = struct
     include Mask
 
-    let (touch_pending_end : t) = of_int64 (Int64.shift_right 1L 16)
-    let (touch_emulating_pointer : t) = of_int64 (Int64.shift_right 1L 17)
+    let (touch_pending_end : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 16)
+
+    let (touch_emulating_pointer : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 17)
   end
 
   module Touch_ownership_flags_enum = struct
@@ -12130,8 +12358,11 @@ module Xinput = struct
   module Barrier_flags_mask = struct
     include Mask
 
-    let (pointer_released : t) = of_int64 (Int64.shift_right 1L 0)
-    let (device_is_grabbed : t) = of_int64 (Int64.shift_right 1L 1)
+    let (pointer_released : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 0)
+
+    let (device_is_grabbed : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 1)
   end
 
   module Event = struct
@@ -13885,9 +14116,12 @@ module Xprint = struct
   module Ev_mask = struct
     include Mask
 
-    let (print_mask : t) = of_int64 (Int64.shift_right 1L 0)
-    let (attribute_mask : t) = of_int64 (Int64.shift_right 1L 1)
-    let none : t = of_int64 0L
+    let (print_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+
+    let (attribute_mask : t) =
+      of_int32 (Optint.shift_right_logical Optint.one 1)
+
+    let none : t = of_int32 Optint.zero
   end
 
   module Detail_enum = struct
@@ -14657,11 +14891,11 @@ module Xv = struct
   module Type_mask = struct
     include Mask
 
-    let (input_mask : t) = of_int64 (Int64.shift_right 1L 0)
-    let (output_mask : t) = of_int64 (Int64.shift_right 1L 1)
-    let (video_mask : t) = of_int64 (Int64.shift_right 1L 2)
-    let (still_mask : t) = of_int64 (Int64.shift_right 1L 3)
-    let (image_mask : t) = of_int64 (Int64.shift_right 1L 4)
+    let (input_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (output_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (video_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (still_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
+    let (image_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
   end
 
   module Image_format_info_type_enum = struct
@@ -14675,8 +14909,8 @@ module Xv = struct
   module Attribute_flag_mask = struct
     include Mask
 
-    let (gettable : t) = of_int64 (Int64.shift_right 1L 0)
-    let (settable : t) = of_int64 (Int64.shift_right 1L 1)
+    let (gettable : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (settable : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
   end
 
   module Video_notify_reason_enum = struct
