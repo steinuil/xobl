@@ -368,7 +368,7 @@ module Xproto = struct
   end
 
   module Client_message_data_format_union = struct
-    type t = Data8 of u8 list | Data16 of u16 list | Data32 of u32 list
+    type t = [ `Data8 of u8 list | `Data16 of u16 list | `Data32 of u32 list ]
     [@@deriving sexp]
   end
 
@@ -3166,13 +3166,13 @@ module Randr = struct
 
   module Notify_union = struct
     type t =
-      | Crtc_change of crtc_change
-      | Output_change of output_change
-      | Output_property of output_property
-      | Provider_change of provider_change
-      | Provider_property of provider_property
-      | Resource_change of resource_change
-      | Lease of lease_notify
+      [ `Crtc_change of crtc_change
+      | `Output_change of output_change
+      | `Output_property of output_property
+      | `Provider_change of provider_change
+      | `Provider_property of provider_property
+      | `Resource_change of resource_change
+      | `Lease of lease_notify ]
     [@@deriving sexp]
   end
 
@@ -4196,18 +4196,21 @@ module Xinput = struct
   [@@deriving sexp]
 
   module Input_class_union = struct
-    type t =
-      | Key of {
-          min_keycode : key_code;
-          max_keycode : key_code;
-          num_keys : u16;
-        }
-      | Button of u16
-      | Valuator of {
-          mode : Valuator_mode_enum.t;
-          motion_size : u32;
-          axes : axis_info list;
-        }
+    type key = {
+      min_keycode : key_code;
+      max_keycode : key_code;
+      num_keys : u16;
+    }
+    [@@deriving sexp]
+
+    type valuator = {
+      mode : Valuator_mode_enum.t;
+      motion_size : u32;
+      axes : axis_info list;
+    }
+    [@@deriving sexp]
+
+    type t = [ `Key of key | `Button of u16 | `Valuator of valuator ]
     [@@deriving sexp]
   end
 
@@ -4380,22 +4383,37 @@ module Xinput = struct
   [@@deriving sexp]
 
   module Feedback_class_union = struct
+    type keyboard = {
+      pitch : u16;
+      duration : u16;
+      led_mask : u32;
+      led_values : u32;
+      global_auto_repeat : bool;
+      click : u8;
+      percent : u8;
+      auto_repeats : u8 list;
+    }
+    [@@deriving sexp]
+
+    type pointer = { accel_num : u16; accel_denom : u16; threshold : u16 }
+    [@@deriving sexp]
+
+    type string = { max_symbols : u16; keysyms : Xproto.keysym list }
+    [@@deriving sexp]
+
+    type integer = { resolution : u32; min_value : i32; max_value : i32 }
+    [@@deriving sexp]
+
+    type led = { led_mask : u32; led_values : u32 } [@@deriving sexp]
+    type bell = { percent : u8; pitch : u16; duration : u16 } [@@deriving sexp]
+
     type t =
-      | Keyboard of {
-          pitch : u16;
-          duration : u16;
-          led_mask : u32;
-          led_values : u32;
-          global_auto_repeat : bool;
-          click : u8;
-          percent : u8;
-          auto_repeats : u8 list;
-        }
-      | Pointer of { accel_num : u16; accel_denom : u16; threshold : u16 }
-      | String of { max_symbols : u16; keysyms : Xproto.keysym list }
-      | Integer of { resolution : u32; min_value : i32; max_value : i32 }
-      | Led of { led_mask : u32; led_values : u32 }
-      | Bell of { percent : u8; pitch : u16; duration : u16 }
+      [ `Keyboard of keyboard
+      | `Pointer of pointer
+      | `String of string
+      | `Integer of integer
+      | `Led of led
+      | `Bell of bell ]
     [@@deriving sexp]
   end
 
@@ -4626,32 +4644,43 @@ module Xinput = struct
   [@@deriving sexp]
 
   module Device_control_union = struct
+    type resolution = {
+      resolution_values : u32 list;
+      resolution_min : u32 list;
+      resolution_max : u32 list;
+    }
+    [@@deriving sexp]
+
+    type abs_calib = {
+      min_x : i32;
+      max_x : i32;
+      min_y : i32;
+      max_y : i32;
+      flip_x : u32;
+      flip_y : u32;
+      rotation : u32;
+      button_threshold : u32;
+    }
+    [@@deriving sexp]
+
+    type core = { status : u8; iscore : u8 } [@@deriving sexp]
+
+    type abs_area = {
+      offset_x : u32;
+      offset_y : u32;
+      width : u32;
+      height : u32;
+      screen : u32;
+      following : u32;
+    }
+    [@@deriving sexp]
+
     type t =
-      | Resolution of {
-          resolution_values : u32 list;
-          resolution_min : u32 list;
-          resolution_max : u32 list;
-        }
-      | Abs_calib of {
-          min_x : i32;
-          max_x : i32;
-          min_y : i32;
-          max_y : i32;
-          flip_x : u32;
-          flip_y : u32;
-          rotation : u32;
-          button_threshold : u32;
-        }
-      | Core of { status : u8; iscore : u8 }
-      | Enable of u8
-      | Abs_area of {
-          offset_x : u32;
-          offset_y : u32;
-          width : u32;
-          height : u32;
-          screen : u32;
-          following : u32;
-        }
+      [ `Resolution of resolution
+      | `Abs_calib of abs_calib
+      | `Core of core
+      | `Enable of u8
+      | `Abs_area of abs_area ]
     [@@deriving sexp]
   end
 
@@ -4734,9 +4763,9 @@ module Xinput = struct
 
   module Property_format_union = struct
     type t =
-      | Property_8_bits of u8 list
-      | Property_16_bits of u16 list
-      | Property_32_bits of u32 list
+      [ `Property_8_bits of u8 list
+      | `Property_16_bits of u16 list
+      | `Property_32_bits of u32 list ]
     [@@deriving sexp]
   end
 
@@ -4823,19 +4852,28 @@ module Xinput = struct
   [@@deriving sexp]
 
   module Hierarchy_change_type_union = struct
+    type add_master = { send_core : bool; enable : bool; name : string }
+    [@@deriving sexp]
+
+    type remove_master = {
+      deviceid : [ Device_enum.t | device_id alt ];
+      return_mode : Change_mode_enum.t;
+      return_pointer : [ Device_enum.t | device_id alt ];
+      return_keyboard : [ Device_enum.t | device_id alt ];
+    }
+    [@@deriving sexp]
+
+    type attach_slave = {
+      deviceid : [ Device_enum.t | device_id alt ];
+      master : [ Device_enum.t | device_id alt ];
+    }
+    [@@deriving sexp]
+
     type t =
-      | Add_master of { send_core : bool; enable : bool; name : string }
-      | Remove_master of {
-          deviceid : [ Device_enum.t | device_id alt ];
-          return_mode : Change_mode_enum.t;
-          return_pointer : [ Device_enum.t | device_id alt ];
-          return_keyboard : [ Device_enum.t | device_id alt ];
-        }
-      | Attach_slave of {
-          deviceid : [ Device_enum.t | device_id alt ];
-          master : [ Device_enum.t | device_id alt ];
-        }
-      | Detach_slave of [ Device_enum.t | device_id alt ]
+      [ `Add_master of add_master
+      | `Remove_master of remove_master
+      | `Attach_slave of attach_slave
+      | `Detach_slave of [ Device_enum.t | device_id alt ] ]
     [@@deriving sexp]
   end
 
@@ -4969,25 +5007,37 @@ module Xinput = struct
   [@@deriving sexp]
 
   module Device_class_type_union = struct
+    type button = { state : u32 list; labels : Xproto.atom list }
+    [@@deriving sexp]
+
+    type valuator = {
+      number : u16;
+      label : Xproto.atom;
+      min : fp3232;
+      max : fp3232;
+      value : fp3232;
+      resolution : u32;
+      mode : Valuator_mode_enum.t;
+    }
+    [@@deriving sexp]
+
+    type scroll = {
+      number : u16;
+      scroll_type : Scroll_type_enum.t;
+      flags : Scroll_flags_mask.t;
+      increment : fp3232;
+    }
+    [@@deriving sexp]
+
+    type touch = { mode : Touch_mode_enum.t; num_touches : u8 }
+    [@@deriving sexp]
+
     type t =
-      | Key of u32 list
-      | Button of { state : u32 list; labels : Xproto.atom list }
-      | Valuator of {
-          number : u16;
-          label : Xproto.atom;
-          min : fp3232;
-          max : fp3232;
-          value : fp3232;
-          resolution : u32;
-          mode : Valuator_mode_enum.t;
-        }
-      | Scroll of {
-          number : u16;
-          scroll_type : Scroll_type_enum.t;
-          flags : Scroll_flags_mask.t;
-          increment : fp3232;
-        }
-      | Touch of { mode : Touch_mode_enum.t; num_touches : u8 }
+      [ `Key of u32 list
+      | `Button of button
+      | `Valuator of valuator
+      | `Scroll of scroll
+      | `Touch of touch ]
     [@@deriving sexp]
   end
 

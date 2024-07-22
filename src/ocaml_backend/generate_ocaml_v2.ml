@@ -299,24 +299,37 @@ module Type = struct
         |> Option.some
     | _ -> None
 
-  let cd_variant_item ~ctx ~loc { vi_name; vi_fields; _ } =
+  let rf_variant_item ~ctx ~loc { vi_name; vi_fields; _ } =
     (* The Property_ is a little special case. *)
     let name = Ident.caml ~sanitize:"Property_" vi_name |> with_loc ~loc in
-    let args =
+    let args, type_ =
       match t_fields ~ctx ~loc vi_fields with
-      | `Type typ -> Pcstr_tuple [ typ ]
-      | `Label_declarations fields -> Pcstr_record fields
+      | `Type typ -> (typ, None)
+      | `Label_declarations _fields ->
+          let name = Ident.snake ~sanitize:"property_" vi_name in
+          let type_ = td_record ~ctx ~loc name vi_fields in
+          let name =
+            let lid = Lident name |> with_loc ~loc in
+            Ast_helper.Typ.constr ~loc lid []
+          in
+          (name, Some (stri_td ~loc type_))
     in
-    Ast_helper.Type.constructor ~loc ~args name
+    (Ast_helper.Rf.mk ~loc (Rtag (name, true, [ args ])), type_)
 
-  let stri_variant_t ~ctx ~loc items =
-    let items = List.map (cd_variant_item ~ctx ~loc) items in
-    Ast_helper.Type.mk ~loc ~kind:(Ptype_variant items) ("t" |> with_loc ~loc)
-    |> stri_td ~loc
+  let str_variant_t ~ctx ~loc items =
+    let items, types =
+      List.map (rf_variant_item ~ctx ~loc) items |> List.split
+    in
+    let types = List.filter_map Fun.id types in
+    let variant =
+      Ast_helper.Typ.variant ~loc items Closed None
+      |> td_type ~loc "t" |> stri_td ~loc
+    in
+    types @ [ variant ]
 
   let stri_variant ~ctx ~loc = function
     | Variant { name; items; _ } ->
-        stri_module ~loc ~suffix:"union" name [ stri_variant_t ~ctx ~loc items ]
+        stri_module ~loc ~suffix:"union" name (str_variant_t ~ctx ~loc items)
         |> Option.some
     | _ -> None
 
