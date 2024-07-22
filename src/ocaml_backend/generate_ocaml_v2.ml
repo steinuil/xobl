@@ -237,12 +237,14 @@ module Type = struct
         let name = Ident.snake ?prefix ?suffix name |> with_loc ~loc in
         Ast_helper.Type.mk ~loc ~kind:(Ptype_record fields) name
 
-  let stri_record ~ctx ~loc = function
+  let stri_record ?prefix ?suffix ~ctx ~loc name fields =
+    td_record ?prefix ?suffix ~ctx ~loc name fields |> stri_td ~loc
+
+  let stri_struct ~ctx ~loc = function
     | Struct { name; fields; _ } ->
-        td_record ~ctx ~loc name fields |> stri_td ~loc |> Option.some
+        stri_record ~ctx ~loc name fields |> Option.some
     | Request { name; reply = Some fields; _ } ->
-        td_record ~suffix:"reply" ~ctx ~loc name fields
-        |> stri_td ~loc |> Option.some
+        stri_record ~suffix:"reply" ~ctx ~loc name fields |> Option.some
     | _ -> None
 
   let stri_module ?suffix ~loc name body =
@@ -295,10 +297,38 @@ module Type = struct
     let type_decl =
       td_type_declaration ~ctx ~loc decl |> Option.map (stri_td ~loc)
     in
-    let record_decl = stri_record ~ctx ~loc decl in
+    let record_decl = stri_struct ~ctx ~loc decl in
     let enum_decl = stri_enum ~loc decl in
     let mask_decl = stri_mask ~loc decl in
     List.filter_map Fun.id [ type_decl; record_decl; enum_decl; mask_decl ]
+
+  let stri_event ~ctx ~loc = function
+    | Event { name; fields; number; _ } ->
+        let t = stri_record ~ctx ~loc "t" fields in
+        let name' = [%stri let name = [%e e_str ~loc name]] in
+        let number = [%stri let number = [%e e_int ~loc number]] in
+        stri_module ~loc name [ t; name'; number ] |> Option.some
+    | _ -> None
+
+  let rf_event_type ~ctx:(Cm current_module as ctx) ~loc = function
+    | Event { name; fields = _; number = _; _ } ->
+        let typ =
+          t_module_ident ~ctx ~loc
+            { id_module = current_module; id_name = name }
+            "t"
+        in
+        let name = Ident.caml name |> with_loc ~loc in
+        Ast_helper.Rf.mk ~loc (Rtag (name, true, [ typ ])) |> Option.some
+    | _ -> None
+
+  let stri_events ~ctx ~loc decls =
+    let t =
+      let events = List.filter_map (rf_event_type ~ctx ~loc) decls in
+      let t = Ast_helper.Typ.variant ~loc events Closed None in
+      [%stri type t = [%t t]]
+    in
+    let events = List.filter_map (stri_event ~ctx ~loc) decls in
+    stri_module ~loc "event" (events @ [ t ])
 
   let stri_module ~loc module_ =
     let declarations, ctx =
@@ -308,8 +338,10 @@ module Type = struct
     in
     let ctx = Cm ctx in
     let decls = List.concat_map (stri_decl ~ctx ~loc) declarations in
+    let events = stri_events ~ctx ~loc declarations in
+    let body = decls @ [ events ] in
     match module_ with
-    | Core _declarations -> decls
+    | Core _declarations -> body
     | Extension
         {
           name;
@@ -333,5 +365,5 @@ module Type = struct
             let version = ([%e e_int major], [%e e_int minor])
             let query_name = [%e e_str ~loc query_name]
           end]
-        @ decls
+        @ body
 end

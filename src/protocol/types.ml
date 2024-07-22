@@ -38,3 +38,10 @@ end = struct
   let of_int64 = Fun.id
   let to_int64 = Fun.id
 end
+
+module type Event = sig
+  type t
+
+  val name : string
+  val number : int
+end

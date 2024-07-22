@@ -7,6 +7,10 @@ module Bigreq = struct
   end
 
   type enable_reply = u32 [@@deriving sexp]
+
+  module Event = struct
+    type t = []
+  end
 end
 
 module Xproto = struct
@@ -891,6 +895,398 @@ module Xproto = struct
 
   type set_modifier_mapping_reply = Mapping_status_enum.t [@@deriving sexp]
   type get_modifier_mapping_reply = keycode list [@@deriving sexp]
+
+  module Event = struct
+    module Key_press = struct
+      type t = {
+        detail : keycode;
+        time : timestamp;
+        root : window;
+        event : window;
+        child : [ Window_enum.t | window alt ];
+        root_x : i16;
+        root_y : i16;
+        event_x : i16;
+        event_y : i16;
+        state : Key_but_mask.t;
+        same_screen : bool;
+      }
+      [@@deriving sexp]
+
+      let name = "KeyPress"
+      let number = 2
+    end
+
+    module Button_press = struct
+      type t = {
+        detail : button;
+        time : timestamp;
+        root : window;
+        event : window;
+        child : [ Window_enum.t | window alt ];
+        root_x : i16;
+        root_y : i16;
+        event_x : i16;
+        event_y : i16;
+        state : Key_but_mask.t;
+        same_screen : bool;
+      }
+      [@@deriving sexp]
+
+      let name = "ButtonPress"
+      let number = 4
+    end
+
+    module Motion_notify = struct
+      type t = {
+        detail : Motion_enum.t;
+        time : timestamp;
+        root : window;
+        event : window;
+        child : [ Window_enum.t | window alt ];
+        root_x : i16;
+        root_y : i16;
+        event_x : i16;
+        event_y : i16;
+        state : Key_but_mask.t;
+        same_screen : bool;
+      }
+      [@@deriving sexp]
+
+      let name = "MotionNotify"
+      let number = 6
+    end
+
+    module Enter_notify = struct
+      type t = {
+        detail : Notify_detail_enum.t;
+        time : timestamp;
+        root : window;
+        event : window;
+        child : [ Window_enum.t | window alt ];
+        root_x : i16;
+        root_y : i16;
+        event_x : i16;
+        event_y : i16;
+        state : Key_but_mask.t;
+        mode : Notify_mode_enum.t;
+        same_screen_focus : byte;
+      }
+      [@@deriving sexp]
+
+      let name = "EnterNotify"
+      let number = 7
+    end
+
+    module Focus_in = struct
+      type t = {
+        detail : Notify_detail_enum.t;
+        event : window;
+        mode : Notify_mode_enum.t;
+      }
+      [@@deriving sexp]
+
+      let name = "FocusIn"
+      let number = 9
+    end
+
+    module Keymap_notify = struct
+      type t = u8 list [@@deriving sexp]
+
+      let name = "KeymapNotify"
+      let number = 11
+    end
+
+    module Expose = struct
+      type t = {
+        window : window;
+        x : u16;
+        y : u16;
+        width : u16;
+        height : u16;
+        count : u16;
+      }
+      [@@deriving sexp]
+
+      let name = "Expose"
+      let number = 12
+    end
+
+    module Graphics_exposure = struct
+      type t = {
+        drawable : drawable;
+        x : u16;
+        y : u16;
+        width : u16;
+        height : u16;
+        minor_opcode : u16;
+        count : u16;
+        major_opcode : u8;
+      }
+      [@@deriving sexp]
+
+      let name = "GraphicsExposure"
+      let number = 13
+    end
+
+    module No_exposure = struct
+      type t = { drawable : drawable; minor_opcode : u16; major_opcode : u8 }
+      [@@deriving sexp]
+
+      let name = "NoExposure"
+      let number = 14
+    end
+
+    module Visibility_notify = struct
+      type t = { window : window; state : Visibility_enum.t } [@@deriving sexp]
+
+      let name = "VisibilityNotify"
+      let number = 15
+    end
+
+    module Create_notify = struct
+      type t = {
+        parent : window;
+        window : window;
+        x : i16;
+        y : i16;
+        width : u16;
+        height : u16;
+        border_width : u16;
+        override_redirect : bool;
+      }
+      [@@deriving sexp]
+
+      let name = "CreateNotify"
+      let number = 16
+    end
+
+    module Destroy_notify = struct
+      type t = { event : window; window : window } [@@deriving sexp]
+
+      let name = "DestroyNotify"
+      let number = 17
+    end
+
+    module Unmap_notify = struct
+      type t = { event : window; window : window; from_configure : bool }
+      [@@deriving sexp]
+
+      let name = "UnmapNotify"
+      let number = 18
+    end
+
+    module Map_notify = struct
+      type t = { event : window; window : window; override_redirect : bool }
+      [@@deriving sexp]
+
+      let name = "MapNotify"
+      let number = 19
+    end
+
+    module Map_request = struct
+      type t = { parent : window; window : window } [@@deriving sexp]
+
+      let name = "MapRequest"
+      let number = 20
+    end
+
+    module Reparent_notify = struct
+      type t = {
+        event : window;
+        window : window;
+        parent : window;
+        x : i16;
+        y : i16;
+        override_redirect : bool;
+      }
+      [@@deriving sexp]
+
+      let name = "ReparentNotify"
+      let number = 21
+    end
+
+    module Configure_notify = struct
+      type t = {
+        event : window;
+        window : window;
+        above_sibling : [ Window_enum.t | window alt ];
+        x : i16;
+        y : i16;
+        width : u16;
+        height : u16;
+        border_width : u16;
+        override_redirect : bool;
+      }
+      [@@deriving sexp]
+
+      let name = "ConfigureNotify"
+      let number = 22
+    end
+
+    module Configure_request = struct
+      type t = {
+        stack_mode : Stack_mode_enum.t;
+        parent : window;
+        window : window;
+        sibling : [ Window_enum.t | window alt ];
+        x : i16;
+        y : i16;
+        width : u16;
+        height : u16;
+        border_width : u16;
+        value_mask : Config_window_mask.t;
+      }
+      [@@deriving sexp]
+
+      let name = "ConfigureRequest"
+      let number = 23
+    end
+
+    module Gravity_notify = struct
+      type t = { event : window; window : window; x : i16; y : i16 }
+      [@@deriving sexp]
+
+      let name = "GravityNotify"
+      let number = 24
+    end
+
+    module Resize_request = struct
+      type t = { window : window; width : u16; height : u16 } [@@deriving sexp]
+
+      let name = "ResizeRequest"
+      let number = 25
+    end
+
+    module Circulate_notify = struct
+      type t = { event : window; window : window; place : Place_enum.t }
+      [@@deriving sexp]
+
+      let name = "CirculateNotify"
+      let number = 26
+    end
+
+    module Property_notify = struct
+      type t = {
+        window : window;
+        atom : atom;
+        time : timestamp;
+        state : Property_enum.t;
+      }
+      [@@deriving sexp]
+
+      let name = "PropertyNotify"
+      let number = 28
+    end
+
+    module Selection_clear = struct
+      type t = { time : timestamp; owner : window; selection : atom }
+      [@@deriving sexp]
+
+      let name = "SelectionClear"
+      let number = 29
+    end
+
+    module Selection_request = struct
+      type t = {
+        time : [ Time_enum.t | timestamp alt ];
+        owner : window;
+        requestor : window;
+        selection : atom;
+        target : atom;
+        property : [ Atom_enum.t | atom alt ];
+      }
+      [@@deriving sexp]
+
+      let name = "SelectionRequest"
+      let number = 30
+    end
+
+    module Selection_notify = struct
+      type t = {
+        time : [ Time_enum.t | timestamp alt ];
+        requestor : window;
+        selection : atom;
+        target : atom;
+        property : [ Atom_enum.t | atom alt ];
+      }
+      [@@deriving sexp]
+
+      let name = "SelectionNotify"
+      let number = 31
+    end
+
+    module Colormap_notify = struct
+      type t = {
+        window : window;
+        colormap : [ Colormap_enum.t | colormap alt ];
+        new_ : bool;
+        state : Colormap_state_enum.t;
+      }
+      [@@deriving sexp]
+
+      let name = "ColormapNotify"
+      let number = 32
+    end
+
+    module Client_message = struct
+      type t = {
+        window : window;
+        type_ : atom;
+        data : Client_message_data_format_union.t;
+      }
+      [@@deriving sexp]
+
+      let name = "ClientMessage"
+      let number = 33
+    end
+
+    module Mapping_notify = struct
+      type t = { request : Mapping_enum.t; first_keycode : keycode; count : u8 }
+      [@@deriving sexp]
+
+      let name = "MappingNotify"
+      let number = 34
+    end
+
+    module Ge_generic = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "GeGeneric"
+      let number = 35
+    end
+
+    type t =
+      [ `Key_press of Key_press.t
+      | `Button_press of Button_press.t
+      | `Motion_notify of Motion_notify.t
+      | `Enter_notify of Enter_notify.t
+      | `Focus_in of Focus_in.t
+      | `Keymap_notify of Keymap_notify.t
+      | `Expose of Expose.t
+      | `Graphics_exposure of Graphics_exposure.t
+      | `No_exposure of No_exposure.t
+      | `Visibility_notify of Visibility_notify.t
+      | `Create_notify of Create_notify.t
+      | `Destroy_notify of Destroy_notify.t
+      | `Unmap_notify of Unmap_notify.t
+      | `Map_notify of Map_notify.t
+      | `Map_request of Map_request.t
+      | `Reparent_notify of Reparent_notify.t
+      | `Configure_notify of Configure_notify.t
+      | `Configure_request of Configure_request.t
+      | `Gravity_notify of Gravity_notify.t
+      | `Resize_request of Resize_request.t
+      | `Circulate_notify of Circulate_notify.t
+      | `Property_notify of Property_notify.t
+      | `Selection_clear of Selection_clear.t
+      | `Selection_request of Selection_request.t
+      | `Selection_notify of Selection_notify.t
+      | `Colormap_notify of Colormap_notify.t
+      | `Client_message of Client_message.t
+      | `Mapping_notify of Mapping_notify.t
+      | `Ge_generic of Ge_generic.t ]
+  end
 end
 
 module Render = struct
@@ -1112,6 +1508,10 @@ module Render = struct
   type animcursorelt = { cursor : Xproto.cursor; delay : u32 } [@@deriving sexp]
   type spanfix = { l : fixed; r : fixed; y : fixed } [@@deriving sexp]
   type trap = { top : spanfix; bot : spanfix } [@@deriving sexp]
+
+  module Event = struct
+    type t = []
+  end
 end
 
 module Shape = struct
@@ -1158,6 +1558,27 @@ module Shape = struct
     rectangles : Xproto.rectangle list;
   }
   [@@deriving sexp]
+
+  module Event = struct
+    module Notify = struct
+      type t = {
+        shape_kind : Sk_enum.t;
+        affected_window : Xproto.window;
+        extents_x : i16;
+        extents_y : i16;
+        extents_width : u16;
+        extents_height : u16;
+        server_time : Xproto.timestamp;
+        shaped : bool;
+      }
+      [@@deriving sexp]
+
+      let name = "Notify"
+      let number = 0
+    end
+
+    type t = [ `Notify of Notify.t ]
+  end
 end
 
 module Xfixes = struct
@@ -1263,6 +1684,41 @@ module Xfixes = struct
     let (negative_x : t) = of_int64 (Int64.shift_right 1L 2)
     let (negative_y : t) = of_int64 (Int64.shift_right 1L 3)
   end
+
+  module Event = struct
+    module Selection_notify = struct
+      type t = {
+        subtype : Selection_event_enum.t;
+        window : Xproto.window;
+        owner : Xproto.window;
+        selection : Xproto.atom;
+        timestamp : Xproto.timestamp;
+        selection_timestamp : Xproto.timestamp;
+      }
+      [@@deriving sexp]
+
+      let name = "SelectionNotify"
+      let number = 0
+    end
+
+    module Cursor_notify = struct
+      type t = {
+        subtype : Cursor_notify_enum.t;
+        window : Xproto.window;
+        cursor_serial : u32;
+        timestamp : Xproto.timestamp;
+        name : [ Xproto.Atom_enum.t | Xproto.atom alt ];
+      }
+      [@@deriving sexp]
+
+      let name = "CursorNotify"
+      let number = 1
+    end
+
+    type t =
+      [ `Selection_notify of Selection_notify.t
+      | `Cursor_notify of Cursor_notify.t ]
+  end
 end
 
 module Composite = struct
@@ -1281,6 +1737,10 @@ module Composite = struct
   [@@deriving sexp]
 
   type get_overlay_window_reply = Xproto.window [@@deriving sexp]
+
+  module Event = struct
+    type t = []
+  end
 end
 
 module Damage = struct
@@ -1300,6 +1760,25 @@ module Damage = struct
 
   type query_version_reply = { major_version : u32; minor_version : u32 }
   [@@deriving sexp]
+
+  module Event = struct
+    module Notify = struct
+      type t = {
+        level : Report_level_enum.t;
+        drawable : Xproto.drawable;
+        damage : damage;
+        timestamp : Xproto.timestamp;
+        area : Xproto.rectangle;
+        geometry : Xproto.rectangle;
+      }
+      [@@deriving sexp]
+
+      let name = "Notify"
+      let number = 0
+    end
+
+    type t = [ `Notify of Notify.t ]
+  end
 end
 
 module Dpms = struct
@@ -1331,6 +1810,10 @@ module Dpms = struct
 
   type info_reply = { power_level : Dpms_mode_enum.t; state : bool }
   [@@deriving sexp]
+
+  module Event = struct
+    type t = []
+  end
 end
 
 module Dri2 = struct
@@ -1444,6 +1927,35 @@ module Dri2 = struct
     value_lo : u32;
   }
   [@@deriving sexp]
+
+  module Event = struct
+    module Buffer_swap_complete = struct
+      type t = {
+        event_type : Event_type_enum.t;
+        drawable : Xproto.drawable;
+        ust_hi : u32;
+        ust_lo : u32;
+        msc_hi : u32;
+        msc_lo : u32;
+        sbc : u32;
+      }
+      [@@deriving sexp]
+
+      let name = "BufferSwapComplete"
+      let number = 0
+    end
+
+    module Invalidate_buffers = struct
+      type t = Xproto.drawable [@@deriving sexp]
+
+      let name = "InvalidateBuffers"
+      let number = 1
+    end
+
+    type t =
+      [ `Buffer_swap_complete of Buffer_swap_complete.t
+      | `Invalidate_buffers of Invalidate_buffers.t ]
+  end
 end
 
 module Dri3 = struct
@@ -1491,6 +2003,10 @@ module Dri3 = struct
     buffers : file_descr list;
   }
   [@@deriving sexp]
+
+  module Event = struct
+    type t = []
+  end
 end
 
 module Ge = struct
@@ -1503,6 +2019,10 @@ module Ge = struct
 
   type query_version_reply = { major_version : u16; minor_version : u16 }
   [@@deriving sexp]
+
+  module Event = struct
+    type t = []
+  end
 end
 
 module Glx = struct
@@ -1758,6 +2278,47 @@ module Glx = struct
 
   type get_query_objectuiv_arb_reply = { datum : u32; data : u32 list }
   [@@deriving sexp]
+
+  module Event = struct
+    module Pbuffer_clobber = struct
+      type t = {
+        event_type : u16;
+        draw_type : u16;
+        drawable : drawable;
+        b_mask : u32;
+        aux_buffer : u16;
+        x : u16;
+        y : u16;
+        width : u16;
+        height : u16;
+        count : u16;
+      }
+      [@@deriving sexp]
+
+      let name = "PbufferClobber"
+      let number = 0
+    end
+
+    module Buffer_swap_complete = struct
+      type t = {
+        event_type : u16;
+        drawable : drawable;
+        ust_hi : u32;
+        ust_lo : u32;
+        msc_hi : u32;
+        msc_lo : u32;
+        sbc : u32;
+      }
+      [@@deriving sexp]
+
+      let name = "BufferSwapComplete"
+      let number = 1
+    end
+
+    type t =
+      [ `Pbuffer_clobber of Pbuffer_clobber.t
+      | `Buffer_swap_complete of Buffer_swap_complete.t ]
+  end
 end
 
 module Randr = struct
@@ -2161,6 +2722,38 @@ module Randr = struct
     created : u8;
   }
   [@@deriving sexp]
+
+  module Event = struct
+    module Screen_change_notify = struct
+      type t = {
+        rotation : Rotation_mask.t;
+        timestamp : Xproto.timestamp;
+        config_timestamp : Xproto.timestamp;
+        root : Xproto.window;
+        request_window : Xproto.window;
+        size_id : u16;
+        subpixel_order : Render.Sub_pixel_enum.t;
+        width : u16;
+        height : u16;
+        mwidth : u16;
+        mheight : u16;
+      }
+      [@@deriving sexp]
+
+      let name = "ScreenChangeNotify"
+      let number = 0
+    end
+
+    module Notify = struct
+      type t = Notify_union.t [@@deriving sexp]
+
+      let name = "Notify"
+      let number = 1
+    end
+
+    type t =
+      [ `Screen_change_notify of Screen_change_notify.t | `Notify of Notify.t ]
+  end
 end
 
 module Sync = struct
@@ -2236,6 +2829,42 @@ module Sync = struct
 
   type get_priority_reply = i32 [@@deriving sexp]
   type query_fence_reply = bool [@@deriving sexp]
+
+  module Event = struct
+    module Counter_notify = struct
+      type t = {
+        kind : u8;
+        counter : counter;
+        wait_value : int64;
+        counter_value : int64;
+        timestamp : Xproto.timestamp;
+        count : u16;
+        destroyed : bool;
+      }
+      [@@deriving sexp]
+
+      let name = "CounterNotify"
+      let number = 0
+    end
+
+    module Alarm_notify = struct
+      type t = {
+        kind : u8;
+        alarm : alarm;
+        counter_value : int64;
+        alarm_value : int64;
+        timestamp : Xproto.timestamp;
+        state : Alarmstate_enum.t;
+      }
+      [@@deriving sexp]
+
+      let name = "AlarmNotify"
+      let number = 1
+    end
+
+    type t =
+      [ `Counter_notify of Counter_notify.t | `Alarm_notify of Alarm_notify.t ]
+  end
 end
 
 module Present = struct
@@ -2267,6 +2896,102 @@ module Present = struct
 
   type event = xid [@@deriving sexp]
   type query_capabilities_reply = u32 [@@deriving sexp]
+
+  module Event = struct
+    module Generic = struct
+      type t = { extension : u8; length : u32; evtype : u16; event : event }
+      [@@deriving sexp]
+
+      let name = "Generic"
+      let number = 0
+    end
+
+    module Configure_notify = struct
+      type t = {
+        event : event;
+        window : Xproto.window;
+        x : i16;
+        y : i16;
+        width : u16;
+        height : u16;
+        off_x : i16;
+        off_y : i16;
+        pixmap_width : u16;
+        pixmap_height : u16;
+        pixmap_flags : u32;
+      }
+      [@@deriving sexp]
+
+      let name = "ConfigureNotify"
+      let number = 0
+    end
+
+    module Complete_notify = struct
+      type t = {
+        kind : Complete_kind_enum.t;
+        mode : Complete_mode_enum.t;
+        event : event;
+        window : Xproto.window;
+        serial : u32;
+        ust : u64;
+        msc : u64;
+      }
+      [@@deriving sexp]
+
+      let name = "CompleteNotify"
+      let number = 1
+    end
+
+    module Idle_notify = struct
+      type t = {
+        event : event;
+        window : Xproto.window;
+        serial : u32;
+        pixmap : Xproto.pixmap;
+        idle_fence : Sync.fence;
+      }
+      [@@deriving sexp]
+
+      let name = "IdleNotify"
+      let number = 2
+    end
+
+    module Redirect_notify = struct
+      type t = {
+        update_window : bool;
+        event : event;
+        event_window : Xproto.window;
+        window : Xproto.window;
+        pixmap : Xproto.pixmap;
+        serial : u32;
+        valid_region : Xfixes.region;
+        update_region : Xfixes.region;
+        valid_rect : Xproto.rectangle;
+        update_rect : Xproto.rectangle;
+        x_off : i16;
+        y_off : i16;
+        target_crtc : Randr.crtc;
+        wait_fence : Sync.fence;
+        idle_fence : Sync.fence;
+        options : u32;
+        target_msc : u64;
+        divisor : u64;
+        remainder : u64;
+        notifies : notify list;
+      }
+      [@@deriving sexp]
+
+      let name = "RedirectNotify"
+      let number = 3
+    end
+
+    type t =
+      [ `Generic of Generic.t
+      | `Configure_notify of Configure_notify.t
+      | `Complete_notify of Complete_notify.t
+      | `Idle_notify of Idle_notify.t
+      | `Redirect_notify of Redirect_notify.t ]
+  end
 end
 
 module Record = struct
@@ -2335,6 +3060,10 @@ module Record = struct
     data : byte list;
   }
   [@@deriving sexp]
+
+  module Event = struct
+    type t = []
+  end
 end
 
 module Res = struct
@@ -2388,6 +3117,10 @@ module Res = struct
 
   type query_client_ids_reply = client_id_value list [@@deriving sexp]
   type query_resource_bytes_reply = resource_size_value list [@@deriving sexp]
+
+  module Event = struct
+    type t = []
+  end
 end
 
 module Screensaver = struct
@@ -2428,6 +3161,25 @@ module Screensaver = struct
     kind : Kind_enum.t;
   }
   [@@deriving sexp]
+
+  module Event = struct
+    module Notify = struct
+      type t = {
+        state : State_enum.t;
+        time : Xproto.timestamp;
+        root : Xproto.window;
+        window : Xproto.window;
+        kind : Kind_enum.t;
+        forced : bool;
+      }
+      [@@deriving sexp]
+
+      let name = "Notify"
+      let number = 0
+    end
+
+    type t = [ `Notify of Notify.t ]
+  end
 end
 
 module Shm = struct
@@ -2455,6 +3207,24 @@ module Shm = struct
 
   type create_segment_reply = { nfd : u8; shm_fd : file_descr }
   [@@deriving sexp]
+
+  module Event = struct
+    module Completion = struct
+      type t = {
+        drawable : Xproto.drawable;
+        minor_event : u16;
+        major_event : byte;
+        shmseg : seg;
+        offset : u32;
+      }
+      [@@deriving sexp]
+
+      let name = "Completion"
+      let number = 0
+    end
+
+    type t = [ `Completion of Completion.t ]
+  end
 end
 
 module Xc_misc = struct
@@ -2473,6 +3243,10 @@ module Xc_misc = struct
 
   type get_xid_range_reply = { start_id : u32; count : u32 } [@@deriving sexp]
   type get_xid_list_reply = u32 list [@@deriving sexp]
+
+  module Event = struct
+    type t = []
+  end
 end
 
 module Xf86dri = struct
@@ -2538,6 +3312,10 @@ module Xf86dri = struct
   [@@deriving sexp]
 
   type auth_connection_reply = u32 [@@deriving sexp]
+
+  module Event = struct
+    type t = []
+  end
 end
 
 module Xf86vidmode = struct
@@ -2651,6 +3429,10 @@ module Xf86vidmode = struct
 
   type get_gamma_ramp_size_reply = u16 [@@deriving sexp]
   type get_permissions_reply = Permission_mask.t [@@deriving sexp]
+
+  module Event = struct
+    type t = []
+  end
 end
 
 module Xinerama = struct
@@ -2682,6 +3464,10 @@ module Xinerama = struct
 
   type is_active_reply = u32 [@@deriving sexp]
   type query_screens_reply = screen_info list [@@deriving sexp]
+
+  module Event = struct
+    type t = []
+  end
 end
 
 module Xinput = struct
@@ -3638,6 +4424,401 @@ module Xinput = struct
     let (pointer_released : t) = of_int64 (Int64.shift_right 1L 0)
     let (device_is_grabbed : t) = of_int64 (Int64.shift_right 1L 1)
   end
+
+  module Event = struct
+    module Device_valuator = struct
+      type t = {
+        device_id : u8;
+        device_state : u16;
+        num_valuators : u8;
+        first_valuator : u8;
+        valuators : i32 list;
+      }
+      [@@deriving sexp]
+
+      let name = "DeviceValuator"
+      let number = 0
+    end
+
+    module Device_key_press = struct
+      type t = {
+        detail : byte;
+        time : Xproto.timestamp;
+        root : Xproto.window;
+        event : Xproto.window;
+        child : [ Xproto.Window_enum.t | Xproto.window alt ];
+        root_x : i16;
+        root_y : i16;
+        event_x : i16;
+        event_y : i16;
+        state : Xproto.Key_but_mask.t;
+        same_screen : bool;
+        device_id : More_events_mask.t;
+      }
+      [@@deriving sexp]
+
+      let name = "DeviceKeyPress"
+      let number = 1
+    end
+
+    module Device_focus_in = struct
+      type t = {
+        detail : Xproto.Notify_detail_enum.t;
+        time : Xproto.timestamp;
+        window : Xproto.window;
+        mode : Xproto.Notify_mode_enum.t;
+        device_id : u8;
+      }
+      [@@deriving sexp]
+
+      let name = "DeviceFocusIn"
+      let number = 6
+    end
+
+    module Device_state_notify = struct
+      type t = {
+        device_id : More_events_mask.t;
+        time : Xproto.timestamp;
+        num_keys : u8;
+        num_buttons : u8;
+        num_valuators : u8;
+        classes_reported : Classes_reported_mask.t;
+        buttons : u8 list;
+        keys : u8 list;
+        valuators : u32 list;
+      }
+      [@@deriving sexp]
+
+      let name = "DeviceStateNotify"
+      let number = 10
+    end
+
+    module Device_mapping_notify = struct
+      type t = {
+        device_id : byte;
+        request : Xproto.Mapping_enum.t;
+        first_keycode : key_code;
+        count : u8;
+        time : Xproto.timestamp;
+      }
+      [@@deriving sexp]
+
+      let name = "DeviceMappingNotify"
+      let number = 11
+    end
+
+    module Change_device_notify = struct
+      type t = {
+        device_id : byte;
+        time : Xproto.timestamp;
+        request : Change_device_enum.t;
+      }
+      [@@deriving sexp]
+
+      let name = "ChangeDeviceNotify"
+      let number = 12
+    end
+
+    module Device_key_state_notify = struct
+      type t = { device_id : More_events_mask.t; keys : u8 list }
+      [@@deriving sexp]
+
+      let name = "DeviceKeyStateNotify"
+      let number = 13
+    end
+
+    module Device_button_state_notify = struct
+      type t = { device_id : More_events_mask.t; buttons : u8 list }
+      [@@deriving sexp]
+
+      let name = "DeviceButtonStateNotify"
+      let number = 14
+    end
+
+    module Device_presence_notify = struct
+      type t = {
+        time : Xproto.timestamp;
+        devchange : Device_change_enum.t;
+        device_id : byte;
+        control : u16;
+      }
+      [@@deriving sexp]
+
+      let name = "DevicePresenceNotify"
+      let number = 15
+    end
+
+    module Device_property_notify = struct
+      type t = {
+        state : Xproto.Property_enum.t;
+        time : Xproto.timestamp;
+        property : Xproto.atom;
+        device_id : u8;
+      }
+      [@@deriving sexp]
+
+      let name = "DevicePropertyNotify"
+      let number = 16
+    end
+
+    module Device_changed = struct
+      type t = {
+        deviceid : [ Device_enum.t | device_id alt ];
+        time : [ Xproto.Time_enum.t | Xproto.timestamp alt ];
+        sourceid : [ Device_enum.t | device_id alt ];
+        reason : Change_reason_enum.t;
+        classes : device_class list;
+      }
+      [@@deriving sexp]
+
+      let name = "DeviceChanged"
+      let number = 1
+    end
+
+    module Key_press = struct
+      type t = {
+        deviceid : [ Device_enum.t | device_id alt ];
+        time : [ Xproto.Time_enum.t | Xproto.timestamp alt ];
+        detail : u32;
+        root : Xproto.window;
+        event : Xproto.window;
+        child : Xproto.window;
+        root_x : fp1616;
+        root_y : fp1616;
+        event_x : fp1616;
+        event_y : fp1616;
+        sourceid : [ Device_enum.t | device_id alt ];
+        flags : Key_event_flags_mask.t;
+        mods : modifier_info;
+        group : group_info;
+        button_mask : u32 list;
+        valuator_mask : u32 list;
+        axisvalues : fp3232 list;
+      }
+      [@@deriving sexp]
+
+      let name = "KeyPress"
+      let number = 2
+    end
+
+    module Button_press = struct
+      type t = {
+        deviceid : [ Device_enum.t | device_id alt ];
+        time : [ Xproto.Time_enum.t | Xproto.timestamp alt ];
+        detail : u32;
+        root : Xproto.window;
+        event : Xproto.window;
+        child : Xproto.window;
+        root_x : fp1616;
+        root_y : fp1616;
+        event_x : fp1616;
+        event_y : fp1616;
+        sourceid : [ Device_enum.t | device_id alt ];
+        flags : Pointer_event_flags_mask.t;
+        mods : modifier_info;
+        group : group_info;
+        button_mask : u32 list;
+        valuator_mask : u32 list;
+        axisvalues : fp3232 list;
+      }
+      [@@deriving sexp]
+
+      let name = "ButtonPress"
+      let number = 4
+    end
+
+    module Enter = struct
+      type t = {
+        deviceid : [ Device_enum.t | device_id alt ];
+        time : [ Xproto.Time_enum.t | Xproto.timestamp alt ];
+        sourceid : [ Device_enum.t | device_id alt ];
+        mode : Notify_mode_enum.t;
+        detail : Notify_detail_enum.t;
+        root : Xproto.window;
+        event : Xproto.window;
+        child : Xproto.window;
+        root_x : fp1616;
+        root_y : fp1616;
+        event_x : fp1616;
+        event_y : fp1616;
+        same_screen : bool;
+        focus : bool;
+        mods : modifier_info;
+        group : group_info;
+        buttons : u32 list;
+      }
+      [@@deriving sexp]
+
+      let name = "Enter"
+      let number = 7
+    end
+
+    module Hierarchy = struct
+      type t = {
+        deviceid : [ Device_enum.t | device_id alt ];
+        time : [ Xproto.Time_enum.t | Xproto.timestamp alt ];
+        flags : Hierarchy_mask.t;
+        infos : hierarchy_info list;
+      }
+      [@@deriving sexp]
+
+      let name = "Hierarchy"
+      let number = 11
+    end
+
+    module Property = struct
+      type t = {
+        deviceid : [ Device_enum.t | device_id alt ];
+        time : [ Xproto.Time_enum.t | Xproto.timestamp alt ];
+        property : Xproto.atom;
+        what : Property_flag_enum.t;
+      }
+      [@@deriving sexp]
+
+      let name = "Property"
+      let number = 12
+    end
+
+    module Raw_key_press = struct
+      type t = {
+        deviceid : [ Device_enum.t | device_id alt ];
+        time : [ Xproto.Time_enum.t | Xproto.timestamp alt ];
+        detail : u32;
+        sourceid : device_id;
+        flags : Key_event_flags_mask.t;
+        valuator_mask : u32 list;
+        axisvalues : fp3232 list;
+        axisvalues_raw : fp3232 list;
+      }
+      [@@deriving sexp]
+
+      let name = "RawKeyPress"
+      let number = 13
+    end
+
+    module Raw_button_press = struct
+      type t = {
+        deviceid : [ Device_enum.t | device_id alt ];
+        time : [ Xproto.Time_enum.t | Xproto.timestamp alt ];
+        detail : u32;
+        sourceid : device_id;
+        flags : Pointer_event_flags_mask.t;
+        valuator_mask : u32 list;
+        axisvalues : fp3232 list;
+        axisvalues_raw : fp3232 list;
+      }
+      [@@deriving sexp]
+
+      let name = "RawButtonPress"
+      let number = 15
+    end
+
+    module Touch_begin = struct
+      type t = {
+        deviceid : [ Device_enum.t | device_id alt ];
+        time : [ Xproto.Time_enum.t | Xproto.timestamp alt ];
+        detail : u32;
+        root : Xproto.window;
+        event : Xproto.window;
+        child : Xproto.window;
+        root_x : fp1616;
+        root_y : fp1616;
+        event_x : fp1616;
+        event_y : fp1616;
+        sourceid : [ Device_enum.t | device_id alt ];
+        flags : Touch_event_flags_mask.t;
+        mods : modifier_info;
+        group : group_info;
+        button_mask : u32 list;
+        valuator_mask : u32 list;
+        axisvalues : fp3232 list;
+      }
+      [@@deriving sexp]
+
+      let name = "TouchBegin"
+      let number = 18
+    end
+
+    module Touch_ownership = struct
+      type t = {
+        deviceid : [ Device_enum.t | device_id alt ];
+        time : [ Xproto.Time_enum.t | Xproto.timestamp alt ];
+        touchid : u32;
+        root : Xproto.window;
+        event : Xproto.window;
+        child : Xproto.window;
+        sourceid : [ Device_enum.t | device_id alt ];
+        flags : Touch_ownership_flags_enum.t;
+      }
+      [@@deriving sexp]
+
+      let name = "TouchOwnership"
+      let number = 21
+    end
+
+    module Raw_touch_begin = struct
+      type t = {
+        deviceid : [ Device_enum.t | device_id alt ];
+        time : [ Xproto.Time_enum.t | Xproto.timestamp alt ];
+        detail : u32;
+        sourceid : device_id;
+        flags : Touch_event_flags_mask.t;
+        valuator_mask : u32 list;
+        axisvalues : fp3232 list;
+        axisvalues_raw : fp3232 list;
+      }
+      [@@deriving sexp]
+
+      let name = "RawTouchBegin"
+      let number = 22
+    end
+
+    module Barrier_hit = struct
+      type t = {
+        deviceid : [ Device_enum.t | device_id alt ];
+        time : [ Xproto.Time_enum.t | Xproto.timestamp alt ];
+        eventid : u32;
+        root : Xproto.window;
+        event : Xproto.window;
+        barrier : Xfixes.barrier;
+        dtime : u32;
+        flags : Barrier_flags_mask.t;
+        sourceid : [ Device_enum.t | device_id alt ];
+        root_x : fp1616;
+        root_y : fp1616;
+        dx : fp3232;
+        dy : fp3232;
+      }
+      [@@deriving sexp]
+
+      let name = "BarrierHit"
+      let number = 25
+    end
+
+    type t =
+      [ `Device_valuator of Device_valuator.t
+      | `Device_key_press of Device_key_press.t
+      | `Device_focus_in of Device_focus_in.t
+      | `Device_state_notify of Device_state_notify.t
+      | `Device_mapping_notify of Device_mapping_notify.t
+      | `Change_device_notify of Change_device_notify.t
+      | `Device_key_state_notify of Device_key_state_notify.t
+      | `Device_button_state_notify of Device_button_state_notify.t
+      | `Device_presence_notify of Device_presence_notify.t
+      | `Device_property_notify of Device_property_notify.t
+      | `Device_changed of Device_changed.t
+      | `Key_press of Key_press.t
+      | `Button_press of Button_press.t
+      | `Enter of Enter.t
+      | `Hierarchy of Hierarchy.t
+      | `Property of Property.t
+      | `Raw_key_press of Raw_key_press.t
+      | `Raw_button_press of Raw_button_press.t
+      | `Touch_begin of Touch_begin.t
+      | `Touch_ownership of Touch_ownership.t
+      | `Raw_touch_begin of Raw_touch_begin.t
+      | `Barrier_hit of Barrier_hit.t ]
+  end
 end
 
 module Xprint = struct
@@ -3718,6 +4899,25 @@ module Xprint = struct
   [@@deriving sexp]
 
   type print_get_image_resolution_reply = u16 [@@deriving sexp]
+
+  module Event = struct
+    module Notify = struct
+      type t = { detail : u8; context : pcontext; cancel : bool }
+      [@@deriving sexp]
+
+      let name = "Notify"
+      let number = 0
+    end
+
+    module Attribut_notify = struct
+      type t = { detail : u8; context : pcontext } [@@deriving sexp]
+
+      let name = "AttributNotify"
+      let number = 1
+    end
+
+    type t = [ `Notify of Notify.t | `Attribut_notify of Attribut_notify.t ]
+  end
 end
 
 module Xselinux = struct
@@ -3754,6 +4954,10 @@ module Xselinux = struct
   type get_selection_data_context_reply = string [@@deriving sexp]
   type list_selections_reply = list_item list [@@deriving sexp]
   type get_client_context_reply = string [@@deriving sexp]
+
+  module Event = struct
+    type t = []
+  end
 end
 
 module Xtest = struct
@@ -3772,6 +4976,10 @@ module Xtest = struct
   end
 
   type compare_cursor_reply = bool [@@deriving sexp]
+
+  module Event = struct
+    type t = []
+  end
 end
 
 module Xv = struct
@@ -3921,6 +5129,36 @@ module Xv = struct
     offsets : u32 list;
   }
   [@@deriving sexp]
+
+  module Event = struct
+    module Video_notify = struct
+      type t = {
+        reason : Video_notify_reason_enum.t;
+        time : Xproto.timestamp;
+        drawable : Xproto.drawable;
+        port : port;
+      }
+      [@@deriving sexp]
+
+      let name = "VideoNotify"
+      let number = 0
+    end
+
+    module Port_notify = struct
+      type t = {
+        time : Xproto.timestamp;
+        port : port;
+        attribute : Xproto.atom;
+        value : i32;
+      }
+      [@@deriving sexp]
+
+      let name = "PortNotify"
+      let number = 1
+    end
+
+    type t = [ `Video_notify of Video_notify.t | `Port_notify of Port_notify.t ]
+  end
 end
 
 module Xvmc = struct
@@ -3972,4 +5210,8 @@ module Xvmc = struct
   [@@deriving sexp]
 
   type list_subpicture_types_reply = Xv.image_format_info list [@@deriving sexp]
+
+  module Event = struct
+    type t = []
+  end
 end
