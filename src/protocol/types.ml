@@ -30,8 +30,10 @@ module Mask : sig
   val ( || ) : t -> t -> t
   val of_int64 : int64 -> t
   val to_int64 : t -> int64
+  val sexp_of_t : t -> Sexplib0.Sexp.t
+  val t_of_sexp : Sexplib0.Sexp.t -> t
 end = struct
-  type t = int64
+  type t = int64 [@@deriving sexp]
 
   let ( & ) a b = Int64.logand a b <> 0L
   let ( || ) = Int64.logor

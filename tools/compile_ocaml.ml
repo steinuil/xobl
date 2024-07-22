@@ -6,42 +6,17 @@ let compile files out_dir =
            | Xobl_compiler.Hir.Core _ -> "xproto"
            | Extension { file_name; _ } -> file_name
          in
-         let name =
-           match m with
-           | Xobl_compiler.Hir.Core _ -> "xproto"
-           | Extension { file_name; _ } -> file_name
-         in
-         let declarations =
-           match m with
-           | Xobl_compiler.Hir.Core decls -> decls
-           | Extension { declarations; _ } -> declarations
-         in
-         let stri =
-           List.concat_map
-             (fun decl ->
-               let loc = !Ast_helper.default_loc in
-               let ctx = Xobl_ocaml_backend.Generate_ocaml.Cm name in
-               let x =
-                 Xobl_ocaml_backend.Generate_ocaml.Type.stri_declaration ~loc
-                   ~ctx decl
-                 |> Option.to_list
-               in
-               let decode =
-                 try
-                   Xobl_ocaml_backend.Generate_ocaml.Decode.stri_declaration
-                     ~loc ~ctx decl
-                 with Xobl_ocaml_backend.Generate_ocaml.Not_implemented _ ->
-                   []
-               in
-               x @ decode)
-             declarations
+         let str =
+           let loc = !Ast_helper.default_loc in
+           Xobl_ocaml_backend.Generate_ocaml_v2.Type.stri_module ~loc m
          in
          let out_filename = Filename.concat out_dir filename ^ ".ml" in
          Out_channel.with_open_text out_filename (fun out ->
+             Printf.fprintf out "[@@@ocaml.warning \"-12\"]\n";
+             Printf.fprintf out "open[@ocaml.warning \"-33\"] Types\n";
+             Printf.fprintf out "open[@ocaml.warning \"-33\"] Sexplib.Conv\n";
              let out = Format.formatter_of_out_channel out in
-             Format.fprintf out "open[@ocaml.warning \"-33\"] Types\n";
-             Format.fprintf out "open Sexplib.Conv\n";
-             Format.fprintf out "%a\n" Ppxlib.Pprintast.structure stri))
+             Format.fprintf out "%a\n" Ppxlib.Pprintast.structure str))
 
 let () =
   match Sys.argv |> Array.to_list |> List.tl with

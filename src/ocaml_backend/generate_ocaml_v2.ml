@@ -286,7 +286,7 @@ module Type = struct
                   [%stri
                     let [%p p_id ~loc name] : t =
                       of_int64 [%e e_int64 ~suffix:'L' ~loc value]])
-          | None_value -> [%str let none : t = 0L]
+          | None_value -> [%str let none : t = of_int64 0L]
         in
         stri_module ~loc ~suffix:"mask" name
           (([%stri include Mask] :: items) @ values)
@@ -356,7 +356,7 @@ module Type = struct
             in
             Ast_helper.Typ.constr ~loc lid []
         in
-        let t = [%stri type t = [%t event_t]] in
+        let t = [%stri type t = [%t event_t] [@@deriving sexp]] in
         let name' = [%stri let name = [%e e_str ~loc name]] in
         let number = [%stri let number = [%e e_int ~loc number]] in
         stri_module ~loc name [ t; name'; number ] |> Option.some
@@ -401,7 +401,7 @@ module Type = struct
             in
             Ast_helper.Typ.constr ~loc lid []
         in
-        let t = [%stri type t = [%t error_t]] in
+        let t = [%stri type t = [%t error_t] [@@deriving sexp]] in
         let name' = [%stri let name = [%e e_str ~loc name]] in
         let number = [%stri let number = [%e e_int ~loc number]] in
         stri_module ~loc name [ t; name'; number ] |> Option.some
