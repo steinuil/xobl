@@ -302,16 +302,33 @@ module Type = struct
     let mask_decl = stri_mask ~loc decl in
     List.filter_map Fun.id [ type_decl; record_decl; enum_decl; mask_decl ]
 
-  let stri_event ~ctx ~loc = function
+  let stri_event ~ctx:(Cm current_module as ctx) ~loc = function
     | Event { name; fields; number; _ } ->
         let t = stri_record ~ctx ~loc "t" fields in
+        let name' = [%stri let name = [%e e_str ~loc name]] in
+        let number = [%stri let number = [%e e_int ~loc number]] in
+        stri_module ~loc name [ t; name'; number ] |> Option.some
+    | Event_copy { name; event; number; _ } ->
+        let event_t =
+          if event.id_module = current_module then
+            t_ident ~ctx ~loc { id_module = event.id_name; id_name = "t" }
+          else
+            let ev = Ident.caml event.id_name in
+            let lid =
+              Ldot (Ldot (Ldot (Lident event.id_module, "Error"), ev), "t")
+              |> with_loc ~loc
+            in
+            Ast_helper.Typ.constr ~loc lid []
+        in
+
+        let t = [%stri type t = [%t event_t]] in
         let name' = [%stri let name = [%e e_str ~loc name]] in
         let number = [%stri let number = [%e e_int ~loc number]] in
         stri_module ~loc name [ t; name'; number ] |> Option.some
     | _ -> None
 
   let rf_event_type ~ctx:(Cm current_module as ctx) ~loc = function
-    | Event { name; fields = _; number = _; _ } ->
+    | Event { name; _ } | Event_copy { name; _ } ->
         let typ =
           t_module_ident ~ctx ~loc
             { id_module = current_module; id_name = name }

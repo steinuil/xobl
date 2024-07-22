@@ -921,6 +921,13 @@ module Xproto = struct
       let number = 2
     end
 
+    module Key_release = struct
+      type t = Key_press.t
+
+      let name = "KeyRelease"
+      let number = 3
+    end
+
     module Button_press = struct
       type t = {
         detail : button;
@@ -939,6 +946,13 @@ module Xproto = struct
 
       let name = "ButtonPress"
       let number = 4
+    end
+
+    module Button_release = struct
+      type t = Button_press.t
+
+      let name = "ButtonRelease"
+      let number = 5
     end
 
     module Motion_notify = struct
@@ -982,6 +996,13 @@ module Xproto = struct
       let number = 7
     end
 
+    module Leave_notify = struct
+      type t = Enter_notify.t
+
+      let name = "LeaveNotify"
+      let number = 8
+    end
+
     module Focus_in = struct
       type t = {
         detail : Notify_detail_enum.t;
@@ -992,6 +1013,13 @@ module Xproto = struct
 
       let name = "FocusIn"
       let number = 9
+    end
+
+    module Focus_out = struct
+      type t = Focus_in.t
+
+      let name = "FocusOut"
+      let number = 10
     end
 
     module Keymap_notify = struct
@@ -1170,6 +1198,13 @@ module Xproto = struct
       let number = 26
     end
 
+    module Circulate_request = struct
+      type t = Circulate_notify.t
+
+      let name = "CirculateRequest"
+      let number = 27
+    end
+
     module Property_notify = struct
       type t = {
         window : window;
@@ -1262,10 +1297,14 @@ module Xproto = struct
 
     type t =
       [ `Key_press of Key_press.t
+      | `Key_release of Key_release.t
       | `Button_press of Button_press.t
+      | `Button_release of Button_release.t
       | `Motion_notify of Motion_notify.t
       | `Enter_notify of Enter_notify.t
+      | `Leave_notify of Leave_notify.t
       | `Focus_in of Focus_in.t
+      | `Focus_out of Focus_out.t
       | `Keymap_notify of Keymap_notify.t
       | `Expose of Expose.t
       | `Graphics_exposure of Graphics_exposure.t
@@ -1282,6 +1321,7 @@ module Xproto = struct
       | `Gravity_notify of Gravity_notify.t
       | `Resize_request of Resize_request.t
       | `Circulate_notify of Circulate_notify.t
+      | `Circulate_request of Circulate_request.t
       | `Property_notify of Property_notify.t
       | `Selection_clear of Selection_clear.t
       | `Selection_request of Selection_request.t
@@ -4747,6 +4787,34 @@ module Xinput = struct
       let number = 1
     end
 
+    module Device_key_release = struct
+      type t = Device_key_press.t
+
+      let name = "DeviceKeyRelease"
+      let number = 2
+    end
+
+    module Device_button_press = struct
+      type t = Device_key_press.t
+
+      let name = "DeviceButtonPress"
+      let number = 3
+    end
+
+    module Device_button_release = struct
+      type t = Device_key_press.t
+
+      let name = "DeviceButtonRelease"
+      let number = 4
+    end
+
+    module Device_motion_notify = struct
+      type t = Device_key_press.t
+
+      let name = "DeviceMotionNotify"
+      let number = 5
+    end
+
     module Device_focus_in = struct
       type t = {
         detail : Xproto.Notify_detail_enum.t;
@@ -4759,6 +4827,27 @@ module Xinput = struct
 
       let name = "DeviceFocusIn"
       let number = 6
+    end
+
+    module Device_focus_out = struct
+      type t = Device_focus_in.t
+
+      let name = "DeviceFocusOut"
+      let number = 7
+    end
+
+    module Proximity_in = struct
+      type t = Device_key_press.t
+
+      let name = "ProximityIn"
+      let number = 8
+    end
+
+    module Proximity_out = struct
+      type t = Device_key_press.t
+
+      let name = "ProximityOut"
+      let number = 9
     end
 
     module Device_state_notify = struct
@@ -4887,6 +4976,13 @@ module Xinput = struct
       let number = 2
     end
 
+    module Key_release = struct
+      type t = Key_press.t
+
+      let name = "KeyRelease"
+      let number = 3
+    end
+
     module Button_press = struct
       type t = {
         deviceid : [ Device_enum.t | device_id alt ];
@@ -4913,6 +5009,20 @@ module Xinput = struct
       let number = 4
     end
 
+    module Button_release = struct
+      type t = Button_press.t
+
+      let name = "ButtonRelease"
+      let number = 5
+    end
+
+    module Motion = struct
+      type t = Button_press.t
+
+      let name = "Motion"
+      let number = 6
+    end
+
     module Enter = struct
       type t = {
         deviceid : [ Device_enum.t | device_id alt ];
@@ -4937,6 +5047,27 @@ module Xinput = struct
 
       let name = "Enter"
       let number = 7
+    end
+
+    module Leave = struct
+      type t = Enter.t
+
+      let name = "Leave"
+      let number = 8
+    end
+
+    module Focus_in = struct
+      type t = Enter.t
+
+      let name = "FocusIn"
+      let number = 9
+    end
+
+    module Focus_out = struct
+      type t = Enter.t
+
+      let name = "FocusOut"
+      let number = 10
     end
 
     module Hierarchy = struct
@@ -4982,6 +5113,13 @@ module Xinput = struct
       let number = 13
     end
 
+    module Raw_key_release = struct
+      type t = Raw_key_press.t
+
+      let name = "RawKeyRelease"
+      let number = 14
+    end
+
     module Raw_button_press = struct
       type t = {
         deviceid : [ Device_enum.t | device_id alt ];
@@ -4997,6 +5135,20 @@ module Xinput = struct
 
       let name = "RawButtonPress"
       let number = 15
+    end
+
+    module Raw_button_release = struct
+      type t = Raw_button_press.t
+
+      let name = "RawButtonRelease"
+      let number = 16
+    end
+
+    module Raw_motion = struct
+      type t = Raw_button_press.t
+
+      let name = "RawMotion"
+      let number = 17
     end
 
     module Touch_begin = struct
@@ -5023,6 +5175,20 @@ module Xinput = struct
 
       let name = "TouchBegin"
       let number = 18
+    end
+
+    module Touch_update = struct
+      type t = Touch_begin.t
+
+      let name = "TouchUpdate"
+      let number = 19
+    end
+
+    module Touch_end = struct
+      type t = Touch_begin.t
+
+      let name = "TouchEnd"
+      let number = 20
     end
 
     module Touch_ownership = struct
@@ -5059,6 +5225,20 @@ module Xinput = struct
       let number = 22
     end
 
+    module Raw_touch_update = struct
+      type t = Raw_touch_begin.t
+
+      let name = "RawTouchUpdate"
+      let number = 23
+    end
+
+    module Raw_touch_end = struct
+      type t = Raw_touch_begin.t
+
+      let name = "RawTouchEnd"
+      let number = 24
+    end
+
     module Barrier_hit = struct
       type t = {
         deviceid : [ Device_enum.t | device_id alt ];
@@ -5081,10 +5261,24 @@ module Xinput = struct
       let number = 25
     end
 
+    module Barrier_leave = struct
+      type t = Barrier_hit.t
+
+      let name = "BarrierLeave"
+      let number = 26
+    end
+
     type t =
       [ `Device_valuator of Device_valuator.t
       | `Device_key_press of Device_key_press.t
+      | `Device_key_release of Device_key_release.t
+      | `Device_button_press of Device_button_press.t
+      | `Device_button_release of Device_button_release.t
+      | `Device_motion_notify of Device_motion_notify.t
       | `Device_focus_in of Device_focus_in.t
+      | `Device_focus_out of Device_focus_out.t
+      | `Proximity_in of Proximity_in.t
+      | `Proximity_out of Proximity_out.t
       | `Device_state_notify of Device_state_notify.t
       | `Device_mapping_notify of Device_mapping_notify.t
       | `Change_device_notify of Change_device_notify.t
@@ -5094,16 +5288,30 @@ module Xinput = struct
       | `Device_property_notify of Device_property_notify.t
       | `Device_changed of Device_changed.t
       | `Key_press of Key_press.t
+      | `Key_release of Key_release.t
       | `Button_press of Button_press.t
+      | `Button_release of Button_release.t
+      | `Motion of Motion.t
       | `Enter of Enter.t
+      | `Leave of Leave.t
+      | `Focus_in of Focus_in.t
+      | `Focus_out of Focus_out.t
       | `Hierarchy of Hierarchy.t
       | `Property of Property.t
       | `Raw_key_press of Raw_key_press.t
+      | `Raw_key_release of Raw_key_release.t
       | `Raw_button_press of Raw_button_press.t
+      | `Raw_button_release of Raw_button_release.t
+      | `Raw_motion of Raw_motion.t
       | `Touch_begin of Touch_begin.t
+      | `Touch_update of Touch_update.t
+      | `Touch_end of Touch_end.t
       | `Touch_ownership of Touch_ownership.t
       | `Raw_touch_begin of Raw_touch_begin.t
-      | `Barrier_hit of Barrier_hit.t ]
+      | `Raw_touch_update of Raw_touch_update.t
+      | `Raw_touch_end of Raw_touch_end.t
+      | `Barrier_hit of Barrier_hit.t
+      | `Barrier_leave of Barrier_leave.t ]
     [@@deriving sexp]
   end
 
