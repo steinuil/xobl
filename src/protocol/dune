@@ -26,8 +26,9 @@
    shm.ml
    sync.ml
    xc_misc.ml
+   xevie.ml
    xf86dri.ml
-   ; xf86vidmode.ml
+   xf86vidmode.ml
    xinerama.ml
    xfixes.ml
    xinput.ml
@@ -56,6 +57,7 @@
    %{project_root}/xml-xcb/shm.xml
    %{project_root}/xml-xcb/sync.xml
    %{project_root}/xml-xcb/xc_misc.xml
+   %{project_root}/xml-xcb/xevie.xml
    %{project_root}/xml-xcb/xf86dri.xml
    %{project_root}/xml-xcb/xf86vidmode.xml
    %{project_root}/xml-xcb/xinerama.xml

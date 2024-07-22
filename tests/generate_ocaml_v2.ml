@@ -18,7 +18,7 @@ let modules =
     "shm";
     "sync";
     "xc_misc";
-    (* "xevie"; *)
+    "xevie";
     "xf86dri";
     "xf86vidmode";
     "xfixes";
