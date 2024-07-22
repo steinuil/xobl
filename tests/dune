@@ -6,10 +6,10 @@
  (deps
   (glob_files ../xml-xcb/*.xml)))
 
- (executable
-  (name generate_ocaml_v2)
-  (modules generate_ocaml_v2)
-  (libraries xobl.compiler xobl.ocaml_backend))
+(executable
+ (name generate_ocaml_v2)
+ (modules generate_ocaml_v2)
+ (libraries xobl.compiler xobl.ocaml_backend))
 
 (rule
  (deps
