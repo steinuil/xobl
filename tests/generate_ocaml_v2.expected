@@ -372,7 +372,7 @@ module Xproto = struct
     type t = [ `Data8 | `Data16 | `Data32 ] [@@deriving sexp]
   end
 
-  module Client_message_data_format_union = struct
+  module Client_message_data_format = struct
     type t = [ `Data8 of u8 list | `Data16 of u16 list | `Data32 of u32 list ]
     [@@deriving sexp]
   end
@@ -1082,7 +1082,7 @@ module Xproto = struct
       type t = {
         window : window;
         type_ : atom;
-        data : Client_message_data_format_union.t;
+        data : Client_message_data_format.t;
       }
       [@@deriving sexp]
 
@@ -4590,7 +4590,7 @@ module Randr = struct
   }
   [@@deriving sexp]
 
-  module Notify_union = struct
+  module Notify = struct
     type t =
       [ `Crtc_change of crtc_change
       | `Output_change of output_change
@@ -4624,7 +4624,7 @@ module Randr = struct
     end
 
     module Notify = struct
-      type t = Notify_union.t [@@deriving sexp]
+      type t = Notify.t [@@deriving sexp]
 
       let name = "Notify"
       let number = 1
@@ -6498,7 +6498,7 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
-  module Input_class_union = struct
+  module Input_class = struct
     type key = {
       min_keycode : key_code;
       max_keycode : key_code;
@@ -6517,7 +6517,7 @@ module Xinput = struct
     [@@deriving sexp]
   end
 
-  type input_info = { len : u8; info : Input_class_union.t } [@@deriving sexp]
+  type input_info = { len : u8; info : Input_class.t } [@@deriving sexp]
   type device_name = string [@@deriving sexp]
   type event_type_base = u8 [@@deriving sexp]
 
@@ -6617,7 +6617,7 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
-  module Feedback_class_union = struct
+  module Feedback_class = struct
     type keyboard = {
       pitch : u16;
       duration : u16;
@@ -6652,11 +6652,7 @@ module Xinput = struct
     [@@deriving sexp]
   end
 
-  type feedback_state = {
-    feedback_id : u8;
-    len : u16;
-    data : Feedback_class_union.t;
-  }
+  type feedback_state = { feedback_id : u8; len : u16; data : Feedback_class.t }
   [@@deriving sexp]
 
   type kbd_feedback_ctl = {
@@ -6719,11 +6715,7 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
-  type feedback_ctl = {
-    feedback_id : u8;
-    len : u16;
-    data : Feedback_class_union.t;
-  }
+  type feedback_ctl = { feedback_id : u8; len : u16; data : Feedback_class.t }
   [@@deriving sexp]
 
   module Change_feedback_control_mask = struct
@@ -6775,7 +6767,7 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
-  type input_state = { len : u8; data : Input_class_union.t } [@@deriving sexp]
+  type input_state = { len : u8; data : Input_class.t } [@@deriving sexp]
 
   module Device_control_enum = struct
     type t = [ `Resolution | `Abs_calib | `Core | `Enable | `Abs_area ]
@@ -6832,7 +6824,7 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
-  module Device_control_union = struct
+  module Device_control = struct
     type resolution = {
       resolution_values : u32 list;
       resolution_min : u32 list;
@@ -6873,8 +6865,7 @@ module Xinput = struct
     [@@deriving sexp]
   end
 
-  type device_state = { len : u16; data : Device_control_union.t }
-  [@@deriving sexp]
+  type device_state = { len : u16; data : Device_control.t } [@@deriving sexp]
 
   type device_resolution_ctl = {
     control_id : Device_control_enum.t;
@@ -6924,14 +6915,13 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
-  type device_ctl = { len : u16; data : Device_control_union.t }
-  [@@deriving sexp]
+  type device_ctl = { len : u16; data : Device_control.t } [@@deriving sexp]
 
   module Property_format_enum = struct
     type t = [ `D8_bits | `D16_bits | `D32_bits ] [@@deriving sexp]
   end
 
-  module Property_format_union = struct
+  module Property_format = struct
     type t =
       [ `Property_8_bits of u8 list
       | `Property_16_bits of u16 list
@@ -6997,7 +6987,7 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
-  module Hierarchy_change_type_union = struct
+  module Hierarchy_change_type = struct
     type add_master = { send_core : bool; enable : bool; name : string }
     [@@deriving sexp]
 
@@ -7023,7 +7013,7 @@ module Xinput = struct
     [@@deriving sexp]
   end
 
-  type hierarchy_change = { len : u16; data : Hierarchy_change_type_union.t }
+  type hierarchy_change = { len : u16; data : Hierarchy_change_type.t }
   [@@deriving sexp]
 
   module Xi_event_mask = struct
@@ -7143,7 +7133,7 @@ module Xinput = struct
   }
   [@@deriving sexp]
 
-  module Device_class_type_union = struct
+  module Device_class_type = struct
     type button = { state : u32 list; labels : Xproto.atom list }
     [@@deriving sexp]
 
@@ -7181,7 +7171,7 @@ module Xinput = struct
   type device_class = {
     len : u16;
     sourceid : device_id;
-    data : Device_class_type_union.t;
+    data : Device_class_type.t;
   }
   [@@deriving sexp]
 
@@ -8280,7 +8270,7 @@ module Xinput = struct
       bytes_after : u32;
       num_items : u32;
       device_id : u8;
-      items : Property_format_union.t;
+      items : Property_format.t;
     }
     [@@deriving sexp]
   end
@@ -8417,7 +8407,7 @@ module Xinput = struct
       type_ : Xproto.atom;
       bytes_after : u32;
       num_items : u32;
-      items : Property_format_union.t;
+      items : Property_format.t;
     }
     [@@deriving sexp]
   end

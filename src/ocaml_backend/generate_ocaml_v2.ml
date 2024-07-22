@@ -204,8 +204,7 @@ module Type = struct
     | Field { type_; _ } -> t_field_type ~ctx ~loc type_
     | Field_list { type_; _ } | Field_list_simple { type_; _ } ->
         t_list_type ~ctx ~loc type_
-    | Field_variant { variant; _ } ->
-        t_module_ident ~suffix:"union" ~ctx ~loc variant "t"
+    | Field_variant { variant; _ } -> t_module_ident ~ctx ~loc variant "t"
     | Field_optional { name; _ } ->
         Format.ksprintf unexpected "optional field in type declaration: %s" name
     | ( Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _
@@ -324,8 +323,7 @@ module Type = struct
 
   let stri_variant ~ctx ~loc = function
     | Variant { name; items; _ } ->
-        stri_module ~loc ~suffix:"union" name (str_variant_t ~ctx ~loc items)
-        |> Option.some
+        stri_module ~loc name (str_variant_t ~ctx ~loc items) |> Option.some
     | _ -> None
 
   let stri_decl ~ctx ~loc decl =
