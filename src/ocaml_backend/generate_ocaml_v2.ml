@@ -325,7 +325,7 @@ module Type = struct
     let t =
       let events = List.filter_map (rf_event_type ~ctx ~loc) decls in
       let t = Ast_helper.Typ.variant ~loc events Closed None in
-      [%stri type t = [%t t]]
+      [%stri type t = [%t t] [@@deriving sexp]]
     in
     let events = List.filter_map (stri_event ~ctx ~loc) decls in
     stri_module ~loc "event" (events @ [ t ])
