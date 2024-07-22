@@ -9,7 +9,11 @@ module Bigreq = struct
   type enable_reply = u32 [@@deriving sexp]
 
   module Event = struct
-    type t = []
+    type t = [] [@@deriving sexp]
+  end
+
+  module Error = struct
+    type t = [] [@@deriving sexp]
   end
 end
 
@@ -1286,6 +1290,25 @@ module Xproto = struct
       | `Client_message of Client_message.t
       | `Mapping_notify of Mapping_notify.t
       | `Ge_generic of Ge_generic.t ]
+    [@@deriving sexp]
+  end
+
+  module Error = struct
+    module Request = struct
+      type t = u32 [@@deriving sexp]
+
+      let name = "Request"
+      let number = 1
+    end
+
+    module Value = struct
+      type t = u32 [@@deriving sexp]
+
+      let name = "Value"
+      let number = 2
+    end
+
+    type t = [ `Request of Request.t | `Value of Value.t ] [@@deriving sexp]
   end
 end
 
@@ -1510,7 +1533,52 @@ module Render = struct
   type trap = { top : spanfix; bot : spanfix } [@@deriving sexp]
 
   module Event = struct
-    type t = []
+    type t = [] [@@deriving sexp]
+  end
+
+  module Error = struct
+    module Pict_format = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "PictFormat"
+      let number = 0
+    end
+
+    module Picture = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "Picture"
+      let number = 1
+    end
+
+    module Pict_op = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "PictOp"
+      let number = 2
+    end
+
+    module Glyph_set = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "GlyphSet"
+      let number = 3
+    end
+
+    module Glyph = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "Glyph"
+      let number = 4
+    end
+
+    type t =
+      [ `Pict_format of Pict_format.t
+      | `Picture of Picture.t
+      | `Pict_op of Pict_op.t
+      | `Glyph_set of Glyph_set.t
+      | `Glyph of Glyph.t ]
+    [@@deriving sexp]
   end
 end
 
@@ -1577,7 +1645,11 @@ module Shape = struct
       let number = 0
     end
 
-    type t = [ `Notify of Notify.t ]
+    type t = [ `Notify of Notify.t ] [@@deriving sexp]
+  end
+
+  module Error = struct
+    type t = [] [@@deriving sexp]
   end
 end
 
@@ -1718,6 +1790,18 @@ module Xfixes = struct
     type t =
       [ `Selection_notify of Selection_notify.t
       | `Cursor_notify of Cursor_notify.t ]
+    [@@deriving sexp]
+  end
+
+  module Error = struct
+    module Bad_region = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "BadRegion"
+      let number = 0
+    end
+
+    type t = [ `Bad_region of Bad_region.t ] [@@deriving sexp]
   end
 end
 
@@ -1739,7 +1823,11 @@ module Composite = struct
   type get_overlay_window_reply = Xproto.window [@@deriving sexp]
 
   module Event = struct
-    type t = []
+    type t = [] [@@deriving sexp]
+  end
+
+  module Error = struct
+    type t = [] [@@deriving sexp]
   end
 end
 
@@ -1777,7 +1865,18 @@ module Damage = struct
       let number = 0
     end
 
-    type t = [ `Notify of Notify.t ]
+    type t = [ `Notify of Notify.t ] [@@deriving sexp]
+  end
+
+  module Error = struct
+    module Bad_damage = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "BadDamage"
+      let number = 0
+    end
+
+    type t = [ `Bad_damage of Bad_damage.t ] [@@deriving sexp]
   end
 end
 
@@ -1812,7 +1911,11 @@ module Dpms = struct
   [@@deriving sexp]
 
   module Event = struct
-    type t = []
+    type t = [] [@@deriving sexp]
+  end
+
+  module Error = struct
+    type t = [] [@@deriving sexp]
   end
 end
 
@@ -1955,6 +2058,11 @@ module Dri2 = struct
     type t =
       [ `Buffer_swap_complete of Buffer_swap_complete.t
       | `Invalidate_buffers of Invalidate_buffers.t ]
+    [@@deriving sexp]
+  end
+
+  module Error = struct
+    type t = [] [@@deriving sexp]
   end
 end
 
@@ -2005,7 +2113,11 @@ module Dri3 = struct
   [@@deriving sexp]
 
   module Event = struct
-    type t = []
+    type t = [] [@@deriving sexp]
+  end
+
+  module Error = struct
+    type t = [] [@@deriving sexp]
   end
 end
 
@@ -2021,7 +2133,11 @@ module Ge = struct
   [@@deriving sexp]
 
   module Event = struct
-    type t = []
+    type t = [] [@@deriving sexp]
+  end
+
+  module Error = struct
+    type t = [] [@@deriving sexp]
   end
 end
 
@@ -2318,6 +2434,18 @@ module Glx = struct
     type t =
       [ `Pbuffer_clobber of Pbuffer_clobber.t
       | `Buffer_swap_complete of Buffer_swap_complete.t ]
+    [@@deriving sexp]
+  end
+
+  module Error = struct
+    module Generic = struct
+      type t = u32 [@@deriving sexp]
+
+      let name = "Generic"
+      let number = -1
+    end
+
+    type t = [ `Generic of Generic.t ] [@@deriving sexp]
   end
 end
 
@@ -2753,6 +2881,44 @@ module Randr = struct
 
     type t =
       [ `Screen_change_notify of Screen_change_notify.t | `Notify of Notify.t ]
+    [@@deriving sexp]
+  end
+
+  module Error = struct
+    module Bad_output = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "BadOutput"
+      let number = 0
+    end
+
+    module Bad_crtc = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "BadCrtc"
+      let number = 1
+    end
+
+    module Bad_mode = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "BadMode"
+      let number = 2
+    end
+
+    module Bad_provider = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "BadProvider"
+      let number = 3
+    end
+
+    type t =
+      [ `Bad_output of Bad_output.t
+      | `Bad_crtc of Bad_crtc.t
+      | `Bad_mode of Bad_mode.t
+      | `Bad_provider of Bad_provider.t ]
+    [@@deriving sexp]
   end
 end
 
@@ -2864,6 +3030,25 @@ module Sync = struct
 
     type t =
       [ `Counter_notify of Counter_notify.t | `Alarm_notify of Alarm_notify.t ]
+    [@@deriving sexp]
+  end
+
+  module Error = struct
+    module Counter = struct
+      type t = u32 [@@deriving sexp]
+
+      let name = "Counter"
+      let number = 0
+    end
+
+    module Alarm = struct
+      type t = u32 [@@deriving sexp]
+
+      let name = "Alarm"
+      let number = 1
+    end
+
+    type t = [ `Counter of Counter.t | `Alarm of Alarm.t ] [@@deriving sexp]
   end
 end
 
@@ -2991,6 +3176,11 @@ module Present = struct
       | `Complete_notify of Complete_notify.t
       | `Idle_notify of Idle_notify.t
       | `Redirect_notify of Redirect_notify.t ]
+    [@@deriving sexp]
+  end
+
+  module Error = struct
+    type t = [] [@@deriving sexp]
   end
 end
 
@@ -3062,7 +3252,18 @@ module Record = struct
   [@@deriving sexp]
 
   module Event = struct
-    type t = []
+    type t = [] [@@deriving sexp]
+  end
+
+  module Error = struct
+    module Bad_context = struct
+      type t = u32 [@@deriving sexp]
+
+      let name = "BadContext"
+      let number = 0
+    end
+
+    type t = [ `Bad_context of Bad_context.t ] [@@deriving sexp]
   end
 end
 
@@ -3119,7 +3320,11 @@ module Res = struct
   type query_resource_bytes_reply = resource_size_value list [@@deriving sexp]
 
   module Event = struct
-    type t = []
+    type t = [] [@@deriving sexp]
+  end
+
+  module Error = struct
+    type t = [] [@@deriving sexp]
   end
 end
 
@@ -3178,7 +3383,11 @@ module Screensaver = struct
       let number = 0
     end
 
-    type t = [ `Notify of Notify.t ]
+    type t = [ `Notify of Notify.t ] [@@deriving sexp]
+  end
+
+  module Error = struct
+    type t = [] [@@deriving sexp]
   end
 end
 
@@ -3223,7 +3432,11 @@ module Shm = struct
       let number = 0
     end
 
-    type t = [ `Completion of Completion.t ]
+    type t = [ `Completion of Completion.t ] [@@deriving sexp]
+  end
+
+  module Error = struct
+    type t = [] [@@deriving sexp]
   end
 end
 
@@ -3245,7 +3458,11 @@ module Xc_misc = struct
   type get_xid_list_reply = u32 list [@@deriving sexp]
 
   module Event = struct
-    type t = []
+    type t = [] [@@deriving sexp]
+  end
+
+  module Error = struct
+    type t = [] [@@deriving sexp]
   end
 end
 
@@ -3314,7 +3531,11 @@ module Xf86dri = struct
   type auth_connection_reply = u32 [@@deriving sexp]
 
   module Event = struct
-    type t = []
+    type t = [] [@@deriving sexp]
+  end
+
+  module Error = struct
+    type t = [] [@@deriving sexp]
   end
 end
 
@@ -3431,7 +3652,68 @@ module Xf86vidmode = struct
   type get_permissions_reply = Permission_mask.t [@@deriving sexp]
 
   module Event = struct
-    type t = []
+    type t = [] [@@deriving sexp]
+  end
+
+  module Error = struct
+    module Bad_clock = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "BadClock"
+      let number = 0
+    end
+
+    module Bad_h_timings = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "BadHTimings"
+      let number = 1
+    end
+
+    module Bad_v_timings = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "BadVTimings"
+      let number = 2
+    end
+
+    module Mode_unsuitable = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "ModeUnsuitable"
+      let number = 3
+    end
+
+    module Extension_disabled = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "ExtensionDisabled"
+      let number = 4
+    end
+
+    module Client_not_local = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "ClientNotLocal"
+      let number = 5
+    end
+
+    module Zoom_locked = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "ZoomLocked"
+      let number = 6
+    end
+
+    type t =
+      [ `Bad_clock of Bad_clock.t
+      | `Bad_h_timings of Bad_h_timings.t
+      | `Bad_v_timings of Bad_v_timings.t
+      | `Mode_unsuitable of Mode_unsuitable.t
+      | `Extension_disabled of Extension_disabled.t
+      | `Client_not_local of Client_not_local.t
+      | `Zoom_locked of Zoom_locked.t ]
+    [@@deriving sexp]
   end
 end
 
@@ -3466,7 +3748,11 @@ module Xinerama = struct
   type query_screens_reply = screen_info list [@@deriving sexp]
 
   module Event = struct
-    type t = []
+    type t = [] [@@deriving sexp]
+  end
+
+  module Error = struct
+    type t = [] [@@deriving sexp]
   end
 end
 
@@ -4818,6 +5104,52 @@ module Xinput = struct
       | `Touch_ownership of Touch_ownership.t
       | `Raw_touch_begin of Raw_touch_begin.t
       | `Barrier_hit of Barrier_hit.t ]
+    [@@deriving sexp]
+  end
+
+  module Error = struct
+    module Device = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "Device"
+      let number = 0
+    end
+
+    module Event = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "Event"
+      let number = 1
+    end
+
+    module Mode = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "Mode"
+      let number = 2
+    end
+
+    module Device_busy = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "DeviceBusy"
+      let number = 3
+    end
+
+    module Class_ = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "Class"
+      let number = 4
+    end
+
+    type t =
+      [ `Device of Device.t
+      | `Event of Event.t
+      | `Mode of Mode.t
+      | `Device_busy of Device_busy.t
+      | `Class_ of Class_.t ]
+    [@@deriving sexp]
   end
 end
 
@@ -4917,6 +5249,26 @@ module Xprint = struct
     end
 
     type t = [ `Notify of Notify.t | `Attribut_notify of Attribut_notify.t ]
+    [@@deriving sexp]
+  end
+
+  module Error = struct
+    module Bad_context = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "BadContext"
+      let number = 0
+    end
+
+    module Bad_sequence = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "BadSequence"
+      let number = 1
+    end
+
+    type t = [ `Bad_context of Bad_context.t | `Bad_sequence of Bad_sequence.t ]
+    [@@deriving sexp]
   end
 end
 
@@ -4956,7 +5308,11 @@ module Xselinux = struct
   type get_client_context_reply = string [@@deriving sexp]
 
   module Event = struct
-    type t = []
+    type t = [] [@@deriving sexp]
+  end
+
+  module Error = struct
+    type t = [] [@@deriving sexp]
   end
 end
 
@@ -4978,7 +5334,11 @@ module Xtest = struct
   type compare_cursor_reply = bool [@@deriving sexp]
 
   module Event = struct
-    type t = []
+    type t = [] [@@deriving sexp]
+  end
+
+  module Error = struct
+    type t = [] [@@deriving sexp]
   end
 end
 
@@ -5158,6 +5518,36 @@ module Xv = struct
     end
 
     type t = [ `Video_notify of Video_notify.t | `Port_notify of Port_notify.t ]
+    [@@deriving sexp]
+  end
+
+  module Error = struct
+    module Bad_port = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "BadPort"
+      let number = 0
+    end
+
+    module Bad_encoding = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "BadEncoding"
+      let number = 1
+    end
+
+    module Bad_control = struct
+      type t = unit [@@deriving sexp]
+
+      let name = "BadControl"
+      let number = 2
+    end
+
+    type t =
+      [ `Bad_port of Bad_port.t
+      | `Bad_encoding of Bad_encoding.t
+      | `Bad_control of Bad_control.t ]
+    [@@deriving sexp]
   end
 end
 
@@ -5212,6 +5602,10 @@ module Xvmc = struct
   type list_subpicture_types_reply = Xv.image_format_info list [@@deriving sexp]
 
   module Event = struct
-    type t = []
+    type t = [] [@@deriving sexp]
+  end
+
+  module Error = struct
+    type t = [] [@@deriving sexp]
   end
 end

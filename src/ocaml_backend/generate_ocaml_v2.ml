@@ -330,6 +330,34 @@ module Type = struct
     let events = List.filter_map (stri_event ~ctx ~loc) decls in
     stri_module ~loc "event" (events @ [ t ])
 
+  let stri_error ~ctx ~loc = function
+    | Error { name; fields; number } ->
+        let t = stri_record ~ctx ~loc "t" fields in
+        let name' = [%stri let name = [%e e_str ~loc name]] in
+        let number = [%stri let number = [%e e_int ~loc number]] in
+        stri_module ~loc name [ t; name'; number ] |> Option.some
+    | _ -> None
+
+  let rf_error_type ~ctx:(Cm current_module as ctx) ~loc = function
+    | Error { name; fields = _; number = _; _ } ->
+        let typ =
+          t_module_ident ~ctx ~loc
+            { id_module = current_module; id_name = name }
+            "t"
+        in
+        let name = Ident.caml name |> with_loc ~loc in
+        Ast_helper.Rf.mk ~loc (Rtag (name, true, [ typ ])) |> Option.some
+    | _ -> None
+
+  let stri_errors ~ctx ~loc decls =
+    let t =
+      let errors = List.filter_map (rf_error_type ~ctx ~loc) decls in
+      let t = Ast_helper.Typ.variant ~loc errors Closed None in
+      [%stri type t = [%t t] [@@deriving sexp]]
+    in
+    let errors = List.filter_map (stri_error ~ctx ~loc) decls in
+    stri_module ~loc "error" (errors @ [ t ])
+
   let stri_module ~loc module_ =
     let declarations, ctx =
       match module_ with
@@ -339,7 +367,8 @@ module Type = struct
     let ctx = Cm ctx in
     let decls = List.concat_map (stri_decl ~ctx ~loc) declarations in
     let events = stri_events ~ctx ~loc declarations in
-    let body = decls @ [ events ] in
+    let errors = stri_errors ~ctx ~loc declarations in
+    let body = decls @ [ events; errors ] in
     match module_ with
     | Core _declarations -> body
     | Extension
