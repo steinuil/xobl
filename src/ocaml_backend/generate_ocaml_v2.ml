@@ -431,6 +431,34 @@ module Type = struct
     let errors = List.filter_map (stri_error ~ctx ~loc) decls in
     stri_module ~loc "error" (errors @ [ t ])
 
+  let rf_event_struct_event ~ctx:(Cm current_module) ~loc ev_id =
+    let name = Ident.caml ev_id.id_name |> with_loc ~loc in
+    let ev = Ident.caml ev_id.id_name in
+    let typ =
+      let lid =
+        if ev_id.id_module = current_module then
+          Ldot (Ldot (Lident "Event", ev), "t")
+        else
+          let id_module = Ident.caml ev_id.id_module in
+          Ldot (Ldot (Ldot (Lident id_module, "Event"), ev), "t")
+      in
+      Ast_helper.Typ.constr ~loc (with_loc ~loc lid) []
+    in
+    Ast_helper.Rf.mk ~loc (Rtag (name, true, [ typ ]))
+
+  let stri_event_struct ~ctx ~loc = function
+    | Event_struct { name; events } ->
+        let events = List.map (rf_event_struct_event ~ctx ~loc) events in
+        let t =
+          Ast_helper.Typ.variant ~loc events Closed None
+          |> td_type ~loc "t" |> stri_td ~loc
+        in
+        stri_module ~loc ~suffix:"enum" name [ t ] |> Option.some
+    | _ -> None
+
+  let str_event_structs ~ctx ~loc decls =
+    List.filter_map (stri_event_struct ~ctx ~loc) decls
+
   let stri_module ~loc module_ =
     let declarations, ctx =
       match module_ with
@@ -441,7 +469,8 @@ module Type = struct
     let decls = List.concat_map (stri_decl ~ctx ~loc) declarations in
     let events = stri_events ~ctx ~loc declarations in
     let errors = stri_errors ~ctx ~loc declarations in
-    let body = decls @ [ events; errors ] in
+    let event_structs = str_event_structs ~ctx ~loc declarations in
+    let body = decls @ [ events ] @ event_structs @ [ errors ] in
     match module_ with
     | Core _declarations -> body
     | Extension

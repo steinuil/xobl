@@ -5800,6 +5800,28 @@ module Xinput = struct
     [@@deriving sexp]
   end
 
+  module Event_for_send_enum = struct
+    type t =
+      [ `Device_valuator of Event.Device_valuator.t
+      | `Device_key_press of Event.Device_key_press.t
+      | `Device_key_release of Event.Device_key_release.t
+      | `Device_button_press of Event.Device_button_press.t
+      | `Device_button_release of Event.Device_button_release.t
+      | `Device_motion_notify of Event.Device_motion_notify.t
+      | `Device_focus_in of Event.Device_focus_in.t
+      | `Device_focus_out of Event.Device_focus_out.t
+      | `Proximity_in of Event.Proximity_in.t
+      | `Proximity_out of Event.Proximity_out.t
+      | `Device_state_notify of Event.Device_state_notify.t
+      | `Device_mapping_notify of Event.Device_mapping_notify.t
+      | `Change_device_notify of Event.Change_device_notify.t
+      | `Device_key_state_notify of Event.Device_key_state_notify.t
+      | `Device_button_state_notify of Event.Device_button_state_notify.t
+      | `Device_presence_notify of Event.Device_presence_notify.t
+      | `Device_property_notify of Event.Device_property_notify.t ]
+    [@@deriving sexp]
+  end
+
   module Error = struct
     module Device = struct
       type t = unit [@@deriving sexp]
