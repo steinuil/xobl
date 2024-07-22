@@ -1,7 +1,7 @@
 (library
  (name xobl_protocol)
  (public_name xobl.protocol)
- (libraries sexplib)
+ (libraries sexplib optint)
  (preprocess
   (pps ppx_sexp_conv)))
 

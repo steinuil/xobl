@@ -28,4 +28,5 @@
           containers
           yojson
           ppxlib
+          optint
           ppx_deriving_yojson))
