@@ -243,8 +243,6 @@ module Type = struct
   let stri_struct ~ctx ~loc = function
     | Struct { name; fields; _ } ->
         stri_record ~ctx ~loc name fields |> Option.some
-    | Request { name; reply = Some fields; _ } ->
-        stri_record ~suffix:"reply" ~ctx ~loc name fields |> Option.some
     | _ -> None
 
   let stri_module ?suffix ~loc name body =
@@ -459,6 +457,23 @@ module Type = struct
   let str_event_structs ~ctx ~loc decls =
     List.filter_map (stri_event_struct ~ctx ~loc) decls
 
+  let stri_request ~ctx ~loc = function
+    | Request { name; reply; opcode; _ } ->
+        let reply =
+          Option.map (stri_record ~ctx ~loc "reply") reply |> Option.to_list
+        in
+        let body =
+          [%str
+            let name = [%e e_str ~loc name]
+            let opcode = [%e e_int ~loc opcode]]
+          @ reply
+        in
+        stri_module ~loc name body |> Option.some
+    | _ -> None
+
+  let str_requests ~ctx ~loc decls =
+    List.filter_map (stri_request ~ctx ~loc) decls
+
   let stri_module ~loc module_ =
     let declarations, ctx =
       match module_ with
@@ -470,7 +485,8 @@ module Type = struct
     let events = stri_events ~ctx ~loc declarations in
     let errors = stri_errors ~ctx ~loc declarations in
     let event_structs = str_event_structs ~ctx ~loc declarations in
-    let body = decls @ [ events ] @ event_structs @ [ errors ] in
+    let requests = str_requests ~ctx ~loc declarations in
+    let body = decls @ [ events ] @ event_structs @ [ errors ] @ requests in
     match module_ with
     | Core _declarations -> body
     | Extension
