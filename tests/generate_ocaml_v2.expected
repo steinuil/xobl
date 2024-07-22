@@ -77,6 +77,37 @@ module Xproto = struct
 
   type depth = { depth : u8; visuals : visualtype list } [@@deriving sexp]
 
+  module Event_mask = struct
+    include Mask
+
+    let (key_press : t) = of_int64 (Int64.shift_right 1L 0)
+    let (key_release : t) = of_int64 (Int64.shift_right 1L 1)
+    let (button_press : t) = of_int64 (Int64.shift_right 1L 2)
+    let (button_release : t) = of_int64 (Int64.shift_right 1L 3)
+    let (enter_window : t) = of_int64 (Int64.shift_right 1L 4)
+    let (leave_window : t) = of_int64 (Int64.shift_right 1L 5)
+    let (pointer_motion : t) = of_int64 (Int64.shift_right 1L 6)
+    let (pointer_motion_hint : t) = of_int64 (Int64.shift_right 1L 7)
+    let (button1_motion : t) = of_int64 (Int64.shift_right 1L 8)
+    let (button2_motion : t) = of_int64 (Int64.shift_right 1L 9)
+    let (button3_motion : t) = of_int64 (Int64.shift_right 1L 10)
+    let (button4_motion : t) = of_int64 (Int64.shift_right 1L 11)
+    let (button5_motion : t) = of_int64 (Int64.shift_right 1L 12)
+    let (button_motion : t) = of_int64 (Int64.shift_right 1L 13)
+    let (keymap_state : t) = of_int64 (Int64.shift_right 1L 14)
+    let (exposure : t) = of_int64 (Int64.shift_right 1L 15)
+    let (visibility_change : t) = of_int64 (Int64.shift_right 1L 16)
+    let (structure_notify : t) = of_int64 (Int64.shift_right 1L 17)
+    let (resize_redirect : t) = of_int64 (Int64.shift_right 1L 18)
+    let (substructure_notify : t) = of_int64 (Int64.shift_right 1L 19)
+    let (substructure_redirect : t) = of_int64 (Int64.shift_right 1L 20)
+    let (focus_change : t) = of_int64 (Int64.shift_right 1L 21)
+    let (property_change : t) = of_int64 (Int64.shift_right 1L 22)
+    let (color_map_change : t) = of_int64 (Int64.shift_right 1L 23)
+    let (owner_grab_button : t) = of_int64 (Int64.shift_right 1L 24)
+    let none : t = 0L
+  end
+
   module Backing_store_enum = struct
     type t = [ `Not_useful | `When_mapped | `Always ] [@@deriving sexp]
   end
@@ -3343,6 +3374,35 @@ module Present = struct
     [@@deriving sexp]
   end
 
+  module Event_mask = struct
+    include Mask
+
+    let (configure_notify : t) = of_int64 (Int64.shift_right 1L 0)
+    let (complete_notify : t) = of_int64 (Int64.shift_right 1L 1)
+    let (idle_notify : t) = of_int64 (Int64.shift_right 1L 2)
+    let (redirect_notify : t) = of_int64 (Int64.shift_right 1L 3)
+    let none : t = 0L
+  end
+
+  module Option_mask = struct
+    include Mask
+
+    let (async : t) = of_int64 (Int64.shift_right 1L 0)
+    let (copy : t) = of_int64 (Int64.shift_right 1L 1)
+    let (ust : t) = of_int64 (Int64.shift_right 1L 2)
+    let (suboptimal : t) = of_int64 (Int64.shift_right 1L 3)
+    let none : t = 0L
+  end
+
+  module Capability_mask = struct
+    include Mask
+
+    let (async : t) = of_int64 (Int64.shift_right 1L 0)
+    let (fence : t) = of_int64 (Int64.shift_right 1L 1)
+    let (ust : t) = of_int64 (Int64.shift_right 1L 2)
+    let none : t = 0L
+  end
+
   module Complete_kind_enum = struct
     type t = [ `Pixmap | `Notify_msc ] [@@deriving sexp]
   end
@@ -5619,6 +5679,14 @@ module Xprint = struct
 
   module Get_doc_enum = struct
     type t = [ `Finished | `Second_consumer ] [@@deriving sexp]
+  end
+
+  module Ev_mask = struct
+    include Mask
+
+    let (print_mask : t) = of_int64 (Int64.shift_right 1L 0)
+    let (attribute_mask : t) = of_int64 (Int64.shift_right 1L 1)
+    let none : t = 0L
   end
 
   module Detail_enum = struct

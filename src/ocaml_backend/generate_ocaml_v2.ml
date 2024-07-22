@@ -275,7 +275,7 @@ module Type = struct
     | _ -> None
 
   let stri_mask ~loc = function
-    | Mask { name; items; additional_values = Additional_values values } ->
+    | Mask { name; items; additional_values } ->
         let items =
           ListLabels.map items ~f:(fun (name, value) ->
               [%stri
@@ -283,10 +283,13 @@ module Type = struct
                   of_int64 (Int64.shift_right 1L [%e e_int ~loc value])])
         in
         let values =
-          ListLabels.map values ~f:(fun (name, value) ->
-              [%stri
-                let [%p p_id ~loc name] : t =
-                  of_int64 [%e e_int64 ~suffix:'L' ~loc value]])
+          match additional_values with
+          | Additional_values values ->
+              ListLabels.map values ~f:(fun (name, value) ->
+                  [%stri
+                    let [%p p_id ~loc name] : t =
+                      of_int64 [%e e_int64 ~suffix:'L' ~loc value]])
+          | None_value -> [%str let none : t = 0L]
         in
         stri_module ~loc ~suffix:"mask" name
           (([%stri include Mask] :: items) @ values)
