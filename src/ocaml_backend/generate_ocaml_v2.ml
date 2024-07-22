@@ -245,6 +245,9 @@ module Type = struct
         stri_record ~ctx ~loc name fields |> Option.some
     | Request { name; reply = Some fields; _ } ->
         stri_record ~suffix:"reply" ~ctx ~loc name fields |> Option.some
+    (* | Variant { name; items; _ } ->
+        stri_td ~loc (td_type ~loc name (t_variant ~ctx ~loc name items))
+        |> Option.some *)
     | _ -> None
 
   let stri_module ?suffix ~loc name body =
@@ -296,6 +299,27 @@ module Type = struct
         |> Option.some
     | _ -> None
 
+  let cd_variant_item ~ctx ~loc { vi_name; vi_fields; _ } =
+    (* The Property_ is a little special case. *)
+    let name = Ident.caml ~sanitize:"Property_" vi_name |> with_loc ~loc in
+    let args =
+      match t_fields ~ctx ~loc vi_fields with
+      | `Type typ -> Pcstr_tuple [ typ ]
+      | `Label_declarations fields -> Pcstr_record fields
+    in
+    Ast_helper.Type.constructor ~loc ~args name
+
+  let stri_variant_t ~ctx ~loc items =
+    let items = List.map (cd_variant_item ~ctx ~loc) items in
+    Ast_helper.Type.mk ~loc ~kind:(Ptype_variant items) ("t" |> with_loc ~loc)
+    |> stri_td ~loc
+
+  let stri_variant ~ctx ~loc = function
+    | Variant { name; items; _ } ->
+        stri_module ~loc ~suffix:"union" name [ stri_variant_t ~ctx ~loc items ]
+        |> Option.some
+    | _ -> None
+
   let stri_decl ~ctx ~loc decl =
     let type_decl =
       td_type_declaration ~ctx ~loc decl |> Option.map (stri_td ~loc)
@@ -303,7 +327,9 @@ module Type = struct
     let record_decl = stri_struct ~ctx ~loc decl in
     let enum_decl = stri_enum ~loc decl in
     let mask_decl = stri_mask ~loc decl in
-    List.filter_map Fun.id [ type_decl; record_decl; enum_decl; mask_decl ]
+    let variant_decl = stri_variant ~ctx ~loc decl in
+    List.filter_map Fun.id
+      [ type_decl; record_decl; enum_decl; mask_decl; variant_decl ]
 
   let stri_event ~ctx:(Cm current_module as ctx) ~loc = function
     | Event { name; fields; number; _ } ->
