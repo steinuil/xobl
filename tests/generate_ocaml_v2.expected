@@ -110,7 +110,7 @@ module Xproto = struct
     let (property_change : t) = of_int64 (Int64.shift_right 1L 22)
     let (color_map_change : t) = of_int64 (Int64.shift_right 1L 23)
     let (owner_grab_button : t) = of_int64 (Int64.shift_right 1L 24)
-    let none : t = 0L
+    let none : t = of_int64 0L
   end
 
   module Backing_store_enum = struct
@@ -732,7 +732,7 @@ module Xproto = struct
     end
 
     module Key_release = struct
-      type t = Key_press.t
+      type t = Key_press.t [@@deriving sexp]
 
       let name = "KeyRelease"
       let number = 3
@@ -759,7 +759,7 @@ module Xproto = struct
     end
 
     module Button_release = struct
-      type t = Button_press.t
+      type t = Button_press.t [@@deriving sexp]
 
       let name = "ButtonRelease"
       let number = 5
@@ -807,7 +807,7 @@ module Xproto = struct
     end
 
     module Leave_notify = struct
-      type t = Enter_notify.t
+      type t = Enter_notify.t [@@deriving sexp]
 
       let name = "LeaveNotify"
       let number = 8
@@ -826,7 +826,7 @@ module Xproto = struct
     end
 
     module Focus_out = struct
-      type t = Focus_in.t
+      type t = Focus_in.t [@@deriving sexp]
 
       let name = "FocusOut"
       let number = 10
@@ -1009,7 +1009,7 @@ module Xproto = struct
     end
 
     module Circulate_request = struct
-      type t = Circulate_notify.t
+      type t = Circulate_notify.t [@@deriving sexp]
 
       let name = "CirculateRequest"
       let number = 27
@@ -1159,105 +1159,105 @@ module Xproto = struct
     end
 
     module Window = struct
-      type t = Value.t
+      type t = Value.t [@@deriving sexp]
 
       let name = "Window"
       let number = 3
     end
 
     module Pixmap = struct
-      type t = Value.t
+      type t = Value.t [@@deriving sexp]
 
       let name = "Pixmap"
       let number = 4
     end
 
     module Atom = struct
-      type t = Value.t
+      type t = Value.t [@@deriving sexp]
 
       let name = "Atom"
       let number = 5
     end
 
     module Cursor = struct
-      type t = Value.t
+      type t = Value.t [@@deriving sexp]
 
       let name = "Cursor"
       let number = 6
     end
 
     module Font = struct
-      type t = Value.t
+      type t = Value.t [@@deriving sexp]
 
       let name = "Font"
       let number = 7
     end
 
     module Match_ = struct
-      type t = Request.t
+      type t = Request.t [@@deriving sexp]
 
       let name = "Match"
       let number = 8
     end
 
     module Drawable = struct
-      type t = Value.t
+      type t = Value.t [@@deriving sexp]
 
       let name = "Drawable"
       let number = 9
     end
 
     module Access = struct
-      type t = Request.t
+      type t = Request.t [@@deriving sexp]
 
       let name = "Access"
       let number = 10
     end
 
     module Alloc = struct
-      type t = Request.t
+      type t = Request.t [@@deriving sexp]
 
       let name = "Alloc"
       let number = 11
     end
 
     module Colormap = struct
-      type t = Value.t
+      type t = Value.t [@@deriving sexp]
 
       let name = "Colormap"
       let number = 12
     end
 
     module G_context = struct
-      type t = Value.t
+      type t = Value.t [@@deriving sexp]
 
       let name = "GContext"
       let number = 13
     end
 
     module Id_choice = struct
-      type t = Value.t
+      type t = Value.t [@@deriving sexp]
 
       let name = "IDChoice"
       let number = 14
     end
 
     module Name = struct
-      type t = Request.t
+      type t = Request.t [@@deriving sexp]
 
       let name = "Name"
       let number = 15
     end
 
     module Length = struct
-      type t = Request.t
+      type t = Request.t [@@deriving sexp]
 
       let name = "Length"
       let number = 16
     end
 
     module Implementation = struct
-      type t = Request.t
+      type t = Request.t [@@deriving sexp]
 
       let name = "Implementation"
       let number = 17
@@ -3622,98 +3622,98 @@ module Glx = struct
     end
 
     module Bad_context = struct
-      type t = Generic.t
+      type t = Generic.t [@@deriving sexp]
 
       let name = "BadContext"
       let number = 0
     end
 
     module Bad_context_state = struct
-      type t = Generic.t
+      type t = Generic.t [@@deriving sexp]
 
       let name = "BadContextState"
       let number = 1
     end
 
     module Bad_drawable = struct
-      type t = Generic.t
+      type t = Generic.t [@@deriving sexp]
 
       let name = "BadDrawable"
       let number = 2
     end
 
     module Bad_pixmap = struct
-      type t = Generic.t
+      type t = Generic.t [@@deriving sexp]
 
       let name = "BadPixmap"
       let number = 3
     end
 
     module Bad_context_tag = struct
-      type t = Generic.t
+      type t = Generic.t [@@deriving sexp]
 
       let name = "BadContextTag"
       let number = 4
     end
 
     module Bad_current_window = struct
-      type t = Generic.t
+      type t = Generic.t [@@deriving sexp]
 
       let name = "BadCurrentWindow"
       let number = 5
     end
 
     module Bad_render_request = struct
-      type t = Generic.t
+      type t = Generic.t [@@deriving sexp]
 
       let name = "BadRenderRequest"
       let number = 6
     end
 
     module Bad_large_request = struct
-      type t = Generic.t
+      type t = Generic.t [@@deriving sexp]
 
       let name = "BadLargeRequest"
       let number = 7
     end
 
     module Unsupported_private_request = struct
-      type t = Generic.t
+      type t = Generic.t [@@deriving sexp]
 
       let name = "UnsupportedPrivateRequest"
       let number = 8
     end
 
     module Bad_fb_config = struct
-      type t = Generic.t
+      type t = Generic.t [@@deriving sexp]
 
       let name = "BadFBConfig"
       let number = 9
     end
 
     module Bad_pbuffer = struct
-      type t = Generic.t
+      type t = Generic.t [@@deriving sexp]
 
       let name = "BadPbuffer"
       let number = 10
     end
 
     module Bad_current_drawable = struct
-      type t = Generic.t
+      type t = Generic.t [@@deriving sexp]
 
       let name = "BadCurrentDrawable"
       let number = 11
     end
 
     module Bad_window = struct
-      type t = Generic.t
+      type t = Generic.t [@@deriving sexp]
 
       let name = "BadWindow"
       let number = 12
     end
 
     module Glx_bad_profile_arb = struct
-      type t = Generic.t
+      type t = Generic.t [@@deriving sexp]
 
       let name = "GLXBadProfileARB"
       let number = 13
@@ -5340,7 +5340,7 @@ module Present = struct
     let (complete_notify : t) = of_int64 (Int64.shift_right 1L 1)
     let (idle_notify : t) = of_int64 (Int64.shift_right 1L 2)
     let (redirect_notify : t) = of_int64 (Int64.shift_right 1L 3)
-    let none : t = 0L
+    let none : t = of_int64 0L
   end
 
   module Option_mask = struct
@@ -5350,7 +5350,7 @@ module Present = struct
     let (copy : t) = of_int64 (Int64.shift_right 1L 1)
     let (ust : t) = of_int64 (Int64.shift_right 1L 2)
     let (suboptimal : t) = of_int64 (Int64.shift_right 1L 3)
-    let none : t = 0L
+    let none : t = of_int64 0L
   end
 
   module Capability_mask = struct
@@ -5359,7 +5359,7 @@ module Present = struct
     let (async : t) = of_int64 (Int64.shift_right 1L 0)
     let (fence : t) = of_int64 (Int64.shift_right 1L 1)
     let (ust : t) = of_int64 (Int64.shift_right 1L 2)
-    let none : t = 0L
+    let none : t = of_int64 0L
   end
 
   module Complete_kind_enum = struct
@@ -5837,7 +5837,7 @@ module Shm = struct
 
   module Error = struct
     module Bad_seg = struct
-      type t = Xproto.Error.Value.t
+      type t = Xproto.Error.Value.t [@@deriving sexp]
 
       let name = "BadSeg"
       let number = 0
@@ -7382,28 +7382,28 @@ module Xinput = struct
     end
 
     module Device_key_release = struct
-      type t = Device_key_press.t
+      type t = Device_key_press.t [@@deriving sexp]
 
       let name = "DeviceKeyRelease"
       let number = 2
     end
 
     module Device_button_press = struct
-      type t = Device_key_press.t
+      type t = Device_key_press.t [@@deriving sexp]
 
       let name = "DeviceButtonPress"
       let number = 3
     end
 
     module Device_button_release = struct
-      type t = Device_key_press.t
+      type t = Device_key_press.t [@@deriving sexp]
 
       let name = "DeviceButtonRelease"
       let number = 4
     end
 
     module Device_motion_notify = struct
-      type t = Device_key_press.t
+      type t = Device_key_press.t [@@deriving sexp]
 
       let name = "DeviceMotionNotify"
       let number = 5
@@ -7424,21 +7424,21 @@ module Xinput = struct
     end
 
     module Device_focus_out = struct
-      type t = Device_focus_in.t
+      type t = Device_focus_in.t [@@deriving sexp]
 
       let name = "DeviceFocusOut"
       let number = 7
     end
 
     module Proximity_in = struct
-      type t = Device_key_press.t
+      type t = Device_key_press.t [@@deriving sexp]
 
       let name = "ProximityIn"
       let number = 8
     end
 
     module Proximity_out = struct
-      type t = Device_key_press.t
+      type t = Device_key_press.t [@@deriving sexp]
 
       let name = "ProximityOut"
       let number = 9
@@ -7571,7 +7571,7 @@ module Xinput = struct
     end
 
     module Key_release = struct
-      type t = Key_press.t
+      type t = Key_press.t [@@deriving sexp]
 
       let name = "KeyRelease"
       let number = 3
@@ -7604,14 +7604,14 @@ module Xinput = struct
     end
 
     module Button_release = struct
-      type t = Button_press.t
+      type t = Button_press.t [@@deriving sexp]
 
       let name = "ButtonRelease"
       let number = 5
     end
 
     module Motion = struct
-      type t = Button_press.t
+      type t = Button_press.t [@@deriving sexp]
 
       let name = "Motion"
       let number = 6
@@ -7644,21 +7644,21 @@ module Xinput = struct
     end
 
     module Leave = struct
-      type t = Enter.t
+      type t = Enter.t [@@deriving sexp]
 
       let name = "Leave"
       let number = 8
     end
 
     module Focus_in = struct
-      type t = Enter.t
+      type t = Enter.t [@@deriving sexp]
 
       let name = "FocusIn"
       let number = 9
     end
 
     module Focus_out = struct
-      type t = Enter.t
+      type t = Enter.t [@@deriving sexp]
 
       let name = "FocusOut"
       let number = 10
@@ -7708,7 +7708,7 @@ module Xinput = struct
     end
 
     module Raw_key_release = struct
-      type t = Raw_key_press.t
+      type t = Raw_key_press.t [@@deriving sexp]
 
       let name = "RawKeyRelease"
       let number = 14
@@ -7732,14 +7732,14 @@ module Xinput = struct
     end
 
     module Raw_button_release = struct
-      type t = Raw_button_press.t
+      type t = Raw_button_press.t [@@deriving sexp]
 
       let name = "RawButtonRelease"
       let number = 16
     end
 
     module Raw_motion = struct
-      type t = Raw_button_press.t
+      type t = Raw_button_press.t [@@deriving sexp]
 
       let name = "RawMotion"
       let number = 17
@@ -7772,14 +7772,14 @@ module Xinput = struct
     end
 
     module Touch_update = struct
-      type t = Touch_begin.t
+      type t = Touch_begin.t [@@deriving sexp]
 
       let name = "TouchUpdate"
       let number = 19
     end
 
     module Touch_end = struct
-      type t = Touch_begin.t
+      type t = Touch_begin.t [@@deriving sexp]
 
       let name = "TouchEnd"
       let number = 20
@@ -7820,14 +7820,14 @@ module Xinput = struct
     end
 
     module Raw_touch_update = struct
-      type t = Raw_touch_begin.t
+      type t = Raw_touch_begin.t [@@deriving sexp]
 
       let name = "RawTouchUpdate"
       let number = 23
     end
 
     module Raw_touch_end = struct
-      type t = Raw_touch_begin.t
+      type t = Raw_touch_begin.t [@@deriving sexp]
 
       let name = "RawTouchEnd"
       let number = 24
@@ -7856,7 +7856,7 @@ module Xinput = struct
     end
 
     module Barrier_leave = struct
-      type t = Barrier_hit.t
+      type t = Barrier_hit.t [@@deriving sexp]
 
       let name = "BarrierLeave"
       let number = 26
@@ -8451,7 +8451,7 @@ module Xprint = struct
 
     let (print_mask : t) = of_int64 (Int64.shift_right 1L 0)
     let (attribute_mask : t) = of_int64 (Int64.shift_right 1L 1)
-    let none : t = 0L
+    let none : t = of_int64 0L
   end
 
   module Detail_enum = struct

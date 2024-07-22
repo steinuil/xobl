@@ -67,4 +67,6 @@
    %{project_root}/xml-xcb/xv.xml
    %{project_root}/xml-xcb/xvmc.xml)
   (action
-   (run %{bin:xobl-compile} --out-dir . %{deps})))
+   (run %{bin:compile-ocaml} --out-dir . %{deps})))
+  ;(action
+  ; (run %{bin:xobl-compile} --out-dir . %{deps})))
