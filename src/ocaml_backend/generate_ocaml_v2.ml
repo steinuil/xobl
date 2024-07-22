@@ -206,8 +206,8 @@ module Type = struct
         t_list_type ~ctx ~loc type_
     | Field_variant { variant; _ } ->
         t_module_ident ~suffix:"union" ~ctx ~loc variant "t"
-    | Field_optional { type_; _ } ->
-        [%type: [%t t_field_type ~ctx ~loc type_] option]
+    | Field_optional { name; _ } ->
+        Format.ksprintf unexpected "optional field in type declaration: %s" name
     | ( Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _
       | Field_optional_mask _ ) as f ->
         Format.ksprintf unexpected "field is not visible:\n%s" (show_field f)
