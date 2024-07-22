@@ -1348,7 +1348,130 @@ module Xproto = struct
       let number = 2
     end
 
-    type t = [ `Request of Request.t | `Value of Value.t ] [@@deriving sexp]
+    module Window = struct
+      type t = Value.t
+
+      let name = "Window"
+      let number = 3
+    end
+
+    module Pixmap = struct
+      type t = Value.t
+
+      let name = "Pixmap"
+      let number = 4
+    end
+
+    module Atom = struct
+      type t = Value.t
+
+      let name = "Atom"
+      let number = 5
+    end
+
+    module Cursor = struct
+      type t = Value.t
+
+      let name = "Cursor"
+      let number = 6
+    end
+
+    module Font = struct
+      type t = Value.t
+
+      let name = "Font"
+      let number = 7
+    end
+
+    module Match_ = struct
+      type t = Request.t
+
+      let name = "Match"
+      let number = 8
+    end
+
+    module Drawable = struct
+      type t = Value.t
+
+      let name = "Drawable"
+      let number = 9
+    end
+
+    module Access = struct
+      type t = Request.t
+
+      let name = "Access"
+      let number = 10
+    end
+
+    module Alloc = struct
+      type t = Request.t
+
+      let name = "Alloc"
+      let number = 11
+    end
+
+    module Colormap = struct
+      type t = Value.t
+
+      let name = "Colormap"
+      let number = 12
+    end
+
+    module G_context = struct
+      type t = Value.t
+
+      let name = "GContext"
+      let number = 13
+    end
+
+    module Id_choice = struct
+      type t = Value.t
+
+      let name = "IDChoice"
+      let number = 14
+    end
+
+    module Name = struct
+      type t = Request.t
+
+      let name = "Name"
+      let number = 15
+    end
+
+    module Length = struct
+      type t = Request.t
+
+      let name = "Length"
+      let number = 16
+    end
+
+    module Implementation = struct
+      type t = Request.t
+
+      let name = "Implementation"
+      let number = 17
+    end
+
+    type t =
+      [ `Request of Request.t
+      | `Value of Value.t
+      | `Window of Window.t
+      | `Pixmap of Pixmap.t
+      | `Atom of Atom.t
+      | `Cursor of Cursor.t
+      | `Font of Font.t
+      | `Match_ of Match_.t
+      | `Drawable of Drawable.t
+      | `Access of Access.t
+      | `Alloc of Alloc.t
+      | `Colormap of Colormap.t
+      | `G_context of G_context.t
+      | `Id_choice of Id_choice.t
+      | `Name of Name.t
+      | `Length of Length.t
+      | `Implementation of Implementation.t ]
+    [@@deriving sexp]
   end
 end
 
@@ -2485,7 +2608,121 @@ module Glx = struct
       let number = -1
     end
 
-    type t = [ `Generic of Generic.t ] [@@deriving sexp]
+    module Bad_context = struct
+      type t = Generic.t
+
+      let name = "BadContext"
+      let number = 0
+    end
+
+    module Bad_context_state = struct
+      type t = Generic.t
+
+      let name = "BadContextState"
+      let number = 1
+    end
+
+    module Bad_drawable = struct
+      type t = Generic.t
+
+      let name = "BadDrawable"
+      let number = 2
+    end
+
+    module Bad_pixmap = struct
+      type t = Generic.t
+
+      let name = "BadPixmap"
+      let number = 3
+    end
+
+    module Bad_context_tag = struct
+      type t = Generic.t
+
+      let name = "BadContextTag"
+      let number = 4
+    end
+
+    module Bad_current_window = struct
+      type t = Generic.t
+
+      let name = "BadCurrentWindow"
+      let number = 5
+    end
+
+    module Bad_render_request = struct
+      type t = Generic.t
+
+      let name = "BadRenderRequest"
+      let number = 6
+    end
+
+    module Bad_large_request = struct
+      type t = Generic.t
+
+      let name = "BadLargeRequest"
+      let number = 7
+    end
+
+    module Unsupported_private_request = struct
+      type t = Generic.t
+
+      let name = "UnsupportedPrivateRequest"
+      let number = 8
+    end
+
+    module Bad_fb_config = struct
+      type t = Generic.t
+
+      let name = "BadFBConfig"
+      let number = 9
+    end
+
+    module Bad_pbuffer = struct
+      type t = Generic.t
+
+      let name = "BadPbuffer"
+      let number = 10
+    end
+
+    module Bad_current_drawable = struct
+      type t = Generic.t
+
+      let name = "BadCurrentDrawable"
+      let number = 11
+    end
+
+    module Bad_window = struct
+      type t = Generic.t
+
+      let name = "BadWindow"
+      let number = 12
+    end
+
+    module Glx_bad_profile_arb = struct
+      type t = Generic.t
+
+      let name = "GLXBadProfileARB"
+      let number = 13
+    end
+
+    type t =
+      [ `Generic of Generic.t
+      | `Bad_context of Bad_context.t
+      | `Bad_context_state of Bad_context_state.t
+      | `Bad_drawable of Bad_drawable.t
+      | `Bad_pixmap of Bad_pixmap.t
+      | `Bad_context_tag of Bad_context_tag.t
+      | `Bad_current_window of Bad_current_window.t
+      | `Bad_render_request of Bad_render_request.t
+      | `Bad_large_request of Bad_large_request.t
+      | `Unsupported_private_request of Unsupported_private_request.t
+      | `Bad_fb_config of Bad_fb_config.t
+      | `Bad_pbuffer of Bad_pbuffer.t
+      | `Bad_current_drawable of Bad_current_drawable.t
+      | `Bad_window of Bad_window.t
+      | `Glx_bad_profile_arb of Glx_bad_profile_arb.t ]
+    [@@deriving sexp]
   end
 end
 
@@ -3476,7 +3713,14 @@ module Shm = struct
   end
 
   module Error = struct
-    type t = [] [@@deriving sexp]
+    module Bad_seg = struct
+      type t = Xproto.Error.Value.t
+
+      let name = "BadSeg"
+      let number = 0
+    end
+
+    type t = [ `Bad_seg of Bad_seg.t ] [@@deriving sexp]
   end
 end
 

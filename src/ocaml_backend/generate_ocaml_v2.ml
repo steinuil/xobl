@@ -313,14 +313,14 @@ module Type = struct
           if event.id_module = current_module then
             t_ident ~ctx ~loc { id_module = event.id_name; id_name = "t" }
           else
+            let id_module = Ident.caml event.id_module in
             let ev = Ident.caml event.id_name in
             let lid =
-              Ldot (Ldot (Ldot (Lident event.id_module, "Error"), ev), "t")
+              Ldot (Ldot (Ldot (Lident id_module, "Event"), ev), "t")
               |> with_loc ~loc
             in
             Ast_helper.Typ.constr ~loc lid []
         in
-
         let t = [%stri type t = [%t event_t]] in
         let name' = [%stri let name = [%e e_str ~loc name]] in
         let number = [%stri let number = [%e e_int ~loc number]] in
@@ -347,16 +347,33 @@ module Type = struct
     let events = List.filter_map (stri_event ~ctx ~loc) decls in
     stri_module ~loc "event" (events @ [ t ])
 
-  let stri_error ~ctx ~loc = function
+  let stri_error ~ctx:(Cm current_module as ctx) ~loc = function
     | Error { name; fields; number } ->
         let t = stri_record ~ctx ~loc "t" fields in
+        let name' = [%stri let name = [%e e_str ~loc name]] in
+        let number = [%stri let number = [%e e_int ~loc number]] in
+        stri_module ~loc name [ t; name'; number ] |> Option.some
+    | Error_copy { name; error; number; _ } ->
+        let error_t =
+          if error.id_module = current_module then
+            t_ident ~ctx ~loc { id_module = error.id_name; id_name = "t" }
+          else
+            let id_module = Ident.caml error.id_module in
+            let err = Ident.caml error.id_name in
+            let lid =
+              Ldot (Ldot (Ldot (Lident id_module, "Error"), err), "t")
+              |> with_loc ~loc
+            in
+            Ast_helper.Typ.constr ~loc lid []
+        in
+        let t = [%stri type t = [%t error_t]] in
         let name' = [%stri let name = [%e e_str ~loc name]] in
         let number = [%stri let number = [%e e_int ~loc number]] in
         stri_module ~loc name [ t; name'; number ] |> Option.some
     | _ -> None
 
   let rf_error_type ~ctx:(Cm current_module as ctx) ~loc = function
-    | Error { name; fields = _; number = _; _ } ->
+    | Error { name; _ } | Error_copy { name; _ } ->
         let typ =
           t_module_ident ~ctx ~loc
             { id_module = current_module; id_name = name }
