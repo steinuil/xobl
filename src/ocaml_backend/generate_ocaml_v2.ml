@@ -485,7 +485,8 @@ module Type = struct
                 (lid ~loc name, e_id ~loc name))
               fields
           in
-          Ast_helper.Exp.record ~loc fields None
+          let record = Ast_helper.Exp.record ~loc fields None in
+          [%expr f ([%e record] : request)]
         in
         let init =
           let no_optional_fields =
@@ -493,8 +494,7 @@ module Type = struct
               (function Field_optional _ -> false | _ -> true)
               fields
           in
-          if no_optional_fields then [%expr f ([%e body] : request)]
-          else [%expr fun () -> f ([%e body] : request)]
+          if no_optional_fields then body else [%expr fun () -> [%e body]]
         in
         let make =
           ListLabels.fold_right fields ~init ~f:(fun field expr ->
