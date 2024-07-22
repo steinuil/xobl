@@ -245,9 +245,6 @@ module Type = struct
         stri_record ~ctx ~loc name fields |> Option.some
     | Request { name; reply = Some fields; _ } ->
         stri_record ~suffix:"reply" ~ctx ~loc name fields |> Option.some
-    (* | Variant { name; items; _ } ->
-        stri_td ~loc (td_type ~loc name (t_variant ~ctx ~loc name items))
-        |> Option.some *)
     | _ -> None
 
   let stri_module ?suffix ~loc name body =
