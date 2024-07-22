@@ -484,20 +484,17 @@ module Type = struct
     let errors = stri_errors ~ctx ~loc declarations in
     let event_structs = str_event_structs ~ctx ~loc declarations in
     let requests = str_requests ~ctx ~loc declarations in
-    let body = decls @ [ events ] @ event_structs @ [ errors ] @ requests in
+    let body =
+      [%str
+        [@@@ocaml.warning "-12"]
+
+        open Types [@@ocaml.warning "-33"]
+        open Sexplib.Conv [@@ocaml.warning "-33"]]
+      @ decls @ [ events ] @ event_structs @ [ errors ] @ requests
+    in
     match module_ with
     | Core _declarations -> body
-    | Extension
-        {
-          name;
-          query_name;
-          version = major, minor;
-          _;
-          (* file_name; *)
-          (* multiword; *)
-          (* imports; *)
-          (* declarations; *)
-        } ->
+    | Extension { name; query_name; version = major, minor; _ } ->
         let name_t =
           let name = with_loc ~loc name in
           let name = Ast_helper.Rf.mk ~loc (Rtag (name, true, [])) in

@@ -12,9 +12,6 @@ let compile files out_dir =
          in
          let out_filename = Filename.concat out_dir filename ^ ".ml" in
          Out_channel.with_open_text out_filename (fun out ->
-             Printf.fprintf out "[@@@ocaml.warning \"-12\"]\n";
-             Printf.fprintf out "open[@ocaml.warning \"-33\"] Types\n";
-             Printf.fprintf out "open[@ocaml.warning \"-33\"] Sexplib.Conv\n";
              let out = Format.formatter_of_out_channel out in
              Format.fprintf out "%a\n" Ppxlib.Pprintast.structure str))
 

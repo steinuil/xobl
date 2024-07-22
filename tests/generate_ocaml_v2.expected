@@ -6,6 +6,11 @@ module Bigreq = struct
     let query_name = "BIG-REQUESTS"
   end
 
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
+
   module Event = struct
     type t = [] [@@deriving sexp]
   end
@@ -23,6 +28,11 @@ module Bigreq = struct
 end
 
 module Xproto = struct
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
+
   type char2b = { byte1 : u8; byte2 : u8 } [@@deriving sexp]
   type window = xid [@@deriving sexp]
   type pixmap = xid [@@deriving sexp]
@@ -2125,6 +2135,11 @@ module Render = struct
     let query_name = "RENDER"
   end
 
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
+
   module Pict_type_enum = struct
     type t = [ `Indexed | `Direct ] [@@deriving sexp]
   end
@@ -2549,6 +2564,11 @@ module Shape = struct
     let query_name = "SHAPE"
   end
 
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
+
   type op = u8 [@@deriving sexp]
   type kind = u8 [@@deriving sexp]
 
@@ -2663,6 +2683,11 @@ module Xfixes = struct
     let version = (5, 0)
     let query_name = "XFIXES"
   end
+
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
 
   module Save_set_mode_enum = struct
     type t = [ `Insert | `Delete ] [@@deriving sexp]
@@ -2980,6 +3005,11 @@ module Composite = struct
     let query_name = "Composite"
   end
 
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
+
   module Redirect_enum = struct
     type t = [ `Automatic | `Manual ] [@@deriving sexp]
   end
@@ -3049,6 +3079,11 @@ module Damage = struct
     let version = (1, 1)
     let query_name = "DAMAGE"
   end
+
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
 
   type damage = xid [@@deriving sexp]
 
@@ -3122,6 +3157,11 @@ module Dpms = struct
     let version = (0, 0)
     let query_name = "DPMS"
   end
+
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
 
   module Dpms_mode_enum = struct
     type t = [ `On | `Standby | `Suspend | `Off ] [@@deriving sexp]
@@ -3198,6 +3238,11 @@ module Dri2 = struct
     let version = (1, 4)
     let query_name = "DRI2"
   end
+
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
 
   module Attachment_enum = struct
     type t =
@@ -3403,6 +3448,11 @@ module Dri3 = struct
     let query_name = "DRI3"
   end
 
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
+
   module Event = struct
     type t = [] [@@deriving sexp]
   end
@@ -3498,6 +3548,11 @@ module Ge = struct
     let query_name = "Generic Event Extension"
   end
 
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
+
   module Event = struct
     type t = [] [@@deriving sexp]
   end
@@ -3521,6 +3576,11 @@ module Glx = struct
     let version = (1, 4)
     let query_name = "GLX"
   end
+
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
 
   type pixmap = xid [@@deriving sexp]
   type context = xid [@@deriving sexp]
@@ -4401,6 +4461,11 @@ module Randr = struct
     let query_name = "RANDR"
   end
 
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
+
   type mode = xid [@@deriving sexp]
   type crtc = xid [@@deriving sexp]
   type output = xid [@@deriving sexp]
@@ -5096,6 +5161,11 @@ module Sync = struct
     let query_name = "SYNC"
   end
 
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
+
   type alarm = xid [@@deriving sexp]
 
   module Alarmstate_enum = struct
@@ -5327,6 +5397,11 @@ module Present = struct
     let query_name = "Present"
   end
 
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
+
   module Event_enum = struct
     type t =
       [ `Configure_notify | `Complete_notify | `Idle_notify | `Redirect_notify ]
@@ -5512,6 +5587,11 @@ module Record = struct
     let query_name = "RECORD"
   end
 
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
+
   type context = xid [@@deriving sexp]
   type range8 = { first : u8; last : u8 } [@@deriving sexp]
   type range16 = { first : u16; last : u16 } [@@deriving sexp]
@@ -5634,6 +5714,11 @@ module Res = struct
     let query_name = "X-Resource"
   end
 
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
+
   type client = { resource_base : u32; resource_mask : u32 } [@@deriving sexp]
   type type_ = { resource_type : Xproto.atom; count : u32 } [@@deriving sexp]
 
@@ -5725,6 +5810,11 @@ module Screensaver = struct
     let query_name = "MIT-SCREEN-SAVER"
   end
 
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
+
   module Kind_enum = struct
     type t = [ `Blanked | `Internal | `External_ ] [@@deriving sexp]
   end
@@ -5814,6 +5904,11 @@ module Shm = struct
     let version = (1, 2)
     let query_name = "MIT-SHM"
   end
+
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
 
   type seg = xid [@@deriving sexp]
 
@@ -5910,6 +6005,11 @@ module Xc_misc = struct
     let query_name = "XC-MISC"
   end
 
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
+
   module Event = struct
     type t = [] [@@deriving sexp]
   end
@@ -5948,6 +6048,11 @@ module Xf86dri = struct
     let version = (4, 1)
     let query_name = "XFree86-DRI"
   end
+
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
 
   type drm_clip_rect = { x1 : i16; y1 : i16; x2 : i16; x3 : i16 }
   [@@deriving sexp]
@@ -6082,6 +6187,11 @@ module Xf86vidmode = struct
     let version = (2, 2)
     let query_name = "XFree86-VidModeExtension"
   end
+
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
 
   type syncrange = u32 [@@deriving sexp]
   type dotclock = u32 [@@deriving sexp]
@@ -6367,6 +6477,11 @@ module Xinerama = struct
     let query_name = "XINERAMA"
   end
 
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
+
   type screen_info = { x_org : i16; y_org : i16; width : u16; height : u16 }
   [@@deriving sexp]
 
@@ -6435,6 +6550,11 @@ module Xinput = struct
     let version = (2, 3)
     let query_name = "XInputExtension"
   end
+
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
 
   type event_class = u32 [@@deriving sexp]
   type key_code = u8 [@@deriving sexp]
@@ -8438,6 +8558,11 @@ module Xprint = struct
     let query_name = "XpExtension"
   end
 
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
+
   type string8 = char [@@deriving sexp]
   type printer = { name : string; description : string } [@@deriving sexp]
   type pcontext = xid [@@deriving sexp]
@@ -8683,6 +8808,11 @@ module Xselinux = struct
     let query_name = "SELinux"
   end
 
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
+
   type list_item = {
     name : Xproto.atom;
     object_context : string;
@@ -8854,6 +8984,11 @@ module Xtest = struct
     let query_name = "XTEST"
   end
 
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
+
   module Cursor_enum = struct
     type t = [ `None | `Current ] [@@deriving sexp]
   end
@@ -8898,6 +9033,11 @@ module Xv = struct
     let version = (2, 2)
     let query_name = "XVideo"
   end
+
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
 
   type port = xid [@@deriving sexp]
   type encoding = xid [@@deriving sexp]
@@ -9206,6 +9346,11 @@ module Xvmc = struct
     let version = (1, 1)
     let query_name = "XVideo-MotionCompensation"
   end
+
+  [@@@ocaml.warning "-12"]
+
+  open Types [@@ocaml.warning "-33"]
+  open Sexplib.Conv [@@ocaml.warning "-33"]
 
   type context = xid [@@deriving sexp]
   type surface = xid [@@deriving sexp]
