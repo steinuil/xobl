@@ -472,10 +472,10 @@ module Type = struct
 
   let e_make_request ~loc fields =
     match visible_fields fields with
-    | [] -> [%expr fun f () -> f (() : request)]
+    | [] -> [%expr fun f () -> f (() : t)]
     | [ field ] ->
         let name = name_of_field field |> Option.get |> Ident.snake in
-        [%expr fun f [%p p_id ~loc name] -> f ([%e e_id ~loc name] : request)]
+        [%expr fun f [%p p_id ~loc name] -> f ([%e e_id ~loc name] : t)]
     | fields ->
         let body =
           let fields =
@@ -486,7 +486,7 @@ module Type = struct
               fields
           in
           let record = Ast_helper.Exp.record ~loc fields None in
-          [%expr f ([%e record] : request)]
+          [%expr f ([%e record] : t)]
         in
         let init =
           let no_optional_fields =
@@ -506,10 +506,16 @@ module Type = struct
 
   let stri_request ~ctx ~loc = function
     | Request { name; fields; reply; opcode; _ } ->
-        let request = stri_record ~ctx ~loc "request" fields in
+        let request = stri_record ~ctx ~loc "t" fields in
         let make = e_make_request ~loc fields in
         let reply =
-          Option.map (stri_record ~ctx ~loc "reply") reply |> Option.to_list
+          match reply with
+          | None -> []
+          | Some reply ->
+              [%str
+                module Reply = struct
+                  [%%i stri_record ~ctx ~loc "t" reply]
+                end]
         in
         let body =
           [%str
