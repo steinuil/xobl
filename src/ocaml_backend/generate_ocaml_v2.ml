@@ -278,8 +278,7 @@ module Type = struct
           ListLabels.map items ~f:(fun (name, value) ->
               [%stri
                 let [%p p_id ~loc name] : t =
-                  of_int32
-                    (Optint.shift_right_logical Optint.one [%e e_int ~loc value])])
+                  of_int32 (bit [%e e_int ~loc value])])
         in
         let values =
           match additional_values with
@@ -292,7 +291,7 @@ module Type = struct
           | None_value -> [%str let none : t = of_int32 Optint.zero]
         in
         stri_module ~loc ~suffix:"mask" name
-          (([%stri include Mask] :: items) @ values)
+          (([%stri include Mask.M ()] :: items) @ values)
         |> Option.some
     | _ -> None
 
@@ -552,7 +551,8 @@ module Type = struct
         [@@@ocaml.warning "-12"]
 
         open Types [@@ocaml.warning "-33"]
-        open Sexplib.Conv [@@ocaml.warning "-33"]]
+        open Sexplib.Conv [@@ocaml.warning "-33"]
+        open Util [@@ocaml.warning "-33"]]
       @ decls @ [ events ] @ event_structs @ [ errors ] @ requests
     in
     match module_ with

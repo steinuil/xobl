@@ -10,6 +10,7 @@ module Bigreq = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   module Event = struct
     type t = [] [@@deriving sexp]
@@ -38,6 +39,7 @@ module Xproto = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   type char2b = { byte1 : u8; byte2 : u8 } [@@deriving sexp]
   type window = xid [@@deriving sexp]
@@ -99,71 +101,33 @@ module Xproto = struct
   type depth = { depth : u8; visuals : visualtype list } [@@deriving sexp]
 
   module Event_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (key_press : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (key_release : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-    let (button_press : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
-
-    let (button_release : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 3)
-
-    let (enter_window : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
-    let (leave_window : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
-
-    let (pointer_motion : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 6)
-
-    let (pointer_motion_hint : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 7)
-
-    let (button1_motion : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 8)
-
-    let (button2_motion : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 9)
-
-    let (button3_motion : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 10)
-
-    let (button4_motion : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 11)
-
-    let (button5_motion : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 12)
-
-    let (button_motion : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 13)
-
-    let (keymap_state : t) = of_int32 (Optint.shift_right_logical Optint.one 14)
-    let (exposure : t) = of_int32 (Optint.shift_right_logical Optint.one 15)
-
-    let (visibility_change : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 16)
-
-    let (structure_notify : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 17)
-
-    let (resize_redirect : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 18)
-
-    let (substructure_notify : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 19)
-
-    let (substructure_redirect : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 20)
-
-    let (focus_change : t) = of_int32 (Optint.shift_right_logical Optint.one 21)
-
-    let (property_change : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 22)
-
-    let (color_map_change : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 23)
-
-    let (owner_grab_button : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 24)
-
+    let (key_press : t) = of_int32 (bit 0)
+    let (key_release : t) = of_int32 (bit 1)
+    let (button_press : t) = of_int32 (bit 2)
+    let (button_release : t) = of_int32 (bit 3)
+    let (enter_window : t) = of_int32 (bit 4)
+    let (leave_window : t) = of_int32 (bit 5)
+    let (pointer_motion : t) = of_int32 (bit 6)
+    let (pointer_motion_hint : t) = of_int32 (bit 7)
+    let (button1_motion : t) = of_int32 (bit 8)
+    let (button2_motion : t) = of_int32 (bit 9)
+    let (button3_motion : t) = of_int32 (bit 10)
+    let (button4_motion : t) = of_int32 (bit 11)
+    let (button5_motion : t) = of_int32 (bit 12)
+    let (button_motion : t) = of_int32 (bit 13)
+    let (keymap_state : t) = of_int32 (bit 14)
+    let (exposure : t) = of_int32 (bit 15)
+    let (visibility_change : t) = of_int32 (bit 16)
+    let (structure_notify : t) = of_int32 (bit 17)
+    let (resize_redirect : t) = of_int32 (bit 18)
+    let (substructure_notify : t) = of_int32 (bit 19)
+    let (substructure_redirect : t) = of_int32 (bit 20)
+    let (focus_change : t) = of_int32 (bit 21)
+    let (property_change : t) = of_int32 (bit 22)
+    let (color_map_change : t) = of_int32 (bit 23)
+    let (owner_grab_button : t) = of_int32 (bit 24)
     let none : t = of_int32 Optint.zero
   end
 
@@ -238,35 +202,35 @@ module Xproto = struct
   [@@deriving sexp]
 
   module Mod_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (shift : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (lock : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-    let (control : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
-    let (_1 : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
-    let (_2 : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
-    let (_3 : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
-    let (_4 : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
-    let (_5 : t) = of_int32 (Optint.shift_right_logical Optint.one 7)
-    let (any : t) = of_int32 (Optint.shift_right_logical Optint.one 15)
+    let (shift : t) = of_int32 (bit 0)
+    let (lock : t) = of_int32 (bit 1)
+    let (control : t) = of_int32 (bit 2)
+    let (_1 : t) = of_int32 (bit 3)
+    let (_2 : t) = of_int32 (bit 4)
+    let (_3 : t) = of_int32 (bit 5)
+    let (_4 : t) = of_int32 (bit 6)
+    let (_5 : t) = of_int32 (bit 7)
+    let (any : t) = of_int32 (bit 15)
   end
 
   module Key_but_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (shift : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (lock : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-    let (control : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
-    let (mod1 : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
-    let (mod2 : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
-    let (mod3 : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
-    let (mod4 : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
-    let (mod5 : t) = of_int32 (Optint.shift_right_logical Optint.one 7)
-    let (button1 : t) = of_int32 (Optint.shift_right_logical Optint.one 8)
-    let (button2 : t) = of_int32 (Optint.shift_right_logical Optint.one 9)
-    let (button3 : t) = of_int32 (Optint.shift_right_logical Optint.one 10)
-    let (button4 : t) = of_int32 (Optint.shift_right_logical Optint.one 11)
-    let (button5 : t) = of_int32 (Optint.shift_right_logical Optint.one 12)
+    let (shift : t) = of_int32 (bit 0)
+    let (lock : t) = of_int32 (bit 1)
+    let (control : t) = of_int32 (bit 2)
+    let (mod1 : t) = of_int32 (bit 3)
+    let (mod2 : t) = of_int32 (bit 4)
+    let (mod3 : t) = of_int32 (bit 5)
+    let (mod4 : t) = of_int32 (bit 6)
+    let (mod5 : t) = of_int32 (bit 7)
+    let (button1 : t) = of_int32 (bit 8)
+    let (button2 : t) = of_int32 (bit 9)
+    let (button3 : t) = of_int32 (bit 10)
+    let (button4 : t) = of_int32 (bit 11)
+    let (button5 : t) = of_int32 (bit 12)
   end
 
   module Window_enum = struct
@@ -274,14 +238,14 @@ module Xproto = struct
   end
 
   module Button_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (_1 : t) = of_int32 (Optint.shift_right_logical Optint.one 8)
-    let (_2 : t) = of_int32 (Optint.shift_right_logical Optint.one 9)
-    let (_3 : t) = of_int32 (Optint.shift_right_logical Optint.one 10)
-    let (_4 : t) = of_int32 (Optint.shift_right_logical Optint.one 11)
-    let (_5 : t) = of_int32 (Optint.shift_right_logical Optint.one 12)
-    let (any : t) = of_int32 (Optint.shift_right_logical Optint.one 15)
+    let (_1 : t) = of_int32 (bit 8)
+    let (_2 : t) = of_int32 (bit 9)
+    let (_3 : t) = of_int32 (bit 10)
+    let (_4 : t) = of_int32 (bit 11)
+    let (_5 : t) = of_int32 (bit 12)
+    let (any : t) = of_int32 (bit 15)
   end
 
   module Motion_enum = struct
@@ -316,15 +280,15 @@ module Xproto = struct
   end
 
   module Config_window_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (x : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (y : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-    let (width : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
-    let (height : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
-    let (border_width : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
-    let (sibling : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
-    let (stack_mode : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
+    let (x : t) = of_int32 (bit 0)
+    let (y : t) = of_int32 (bit 1)
+    let (width : t) = of_int32 (bit 2)
+    let (height : t) = of_int32 (bit 3)
+    let (border_width : t) = of_int32 (bit 4)
+    let (sibling : t) = of_int32 (bit 5)
+    let (stack_mode : t) = of_int32 (bit 6)
   end
 
   module Place_enum = struct
@@ -441,32 +405,23 @@ module Xproto = struct
   end
 
   module Cw_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (back_pixmap : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (back_pixel : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-    let (border_pixmap : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
-    let (border_pixel : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
-    let (bit_gravity : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
-    let (win_gravity : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
-    let (backing_store : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
-
-    let (backing_planes : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 7)
-
-    let (backing_pixel : t) = of_int32 (Optint.shift_right_logical Optint.one 8)
-
-    let (override_redirect : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 9)
-
-    let (save_under : t) = of_int32 (Optint.shift_right_logical Optint.one 10)
-    let (event_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 11)
-
-    let (dont_propagate : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 12)
-
-    let (colormap : t) = of_int32 (Optint.shift_right_logical Optint.one 13)
-    let (cursor : t) = of_int32 (Optint.shift_right_logical Optint.one 14)
+    let (back_pixmap : t) = of_int32 (bit 0)
+    let (back_pixel : t) = of_int32 (bit 1)
+    let (border_pixmap : t) = of_int32 (bit 2)
+    let (border_pixel : t) = of_int32 (bit 3)
+    let (bit_gravity : t) = of_int32 (bit 4)
+    let (win_gravity : t) = of_int32 (bit 5)
+    let (backing_store : t) = of_int32 (bit 6)
+    let (backing_planes : t) = of_int32 (bit 7)
+    let (backing_pixel : t) = of_int32 (bit 8)
+    let (override_redirect : t) = of_int32 (bit 9)
+    let (save_under : t) = of_int32 (bit 10)
+    let (event_mask : t) = of_int32 (bit 11)
+    let (dont_propagate : t) = of_int32 (bit 12)
+    let (colormap : t) = of_int32 (bit 13)
+    let (cursor : t) = of_int32 (bit 14)
   end
 
   module Back_pixmap_enum = struct
@@ -579,45 +534,31 @@ module Xproto = struct
   type str = string [@@deriving sexp]
 
   module Gc_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (function_ : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (plane_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-    let (foreground : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
-    let (background : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
-    let (line_width : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
-    let (line_style : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
-    let (cap_style : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
-    let (join_style : t) = of_int32 (Optint.shift_right_logical Optint.one 7)
-    let (fill_style : t) = of_int32 (Optint.shift_right_logical Optint.one 8)
-    let (fill_rule : t) = of_int32 (Optint.shift_right_logical Optint.one 9)
-    let (tile : t) = of_int32 (Optint.shift_right_logical Optint.one 10)
-    let (stipple : t) = of_int32 (Optint.shift_right_logical Optint.one 11)
-
-    let (tile_stipple_origin_x : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 12)
-
-    let (tile_stipple_origin_y : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 13)
-
-    let (font : t) = of_int32 (Optint.shift_right_logical Optint.one 14)
-
-    let (subwindow_mode : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 15)
-
-    let (graphics_exposures : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 16)
-
-    let (clip_origin_x : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 17)
-
-    let (clip_origin_y : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 18)
-
-    let (clip_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 19)
-    let (dash_offset : t) = of_int32 (Optint.shift_right_logical Optint.one 20)
-    let (dash_list : t) = of_int32 (Optint.shift_right_logical Optint.one 21)
-    let (arc_mode : t) = of_int32 (Optint.shift_right_logical Optint.one 22)
+    let (function_ : t) = of_int32 (bit 0)
+    let (plane_mask : t) = of_int32 (bit 1)
+    let (foreground : t) = of_int32 (bit 2)
+    let (background : t) = of_int32 (bit 3)
+    let (line_width : t) = of_int32 (bit 4)
+    let (line_style : t) = of_int32 (bit 5)
+    let (cap_style : t) = of_int32 (bit 6)
+    let (join_style : t) = of_int32 (bit 7)
+    let (fill_style : t) = of_int32 (bit 8)
+    let (fill_rule : t) = of_int32 (bit 9)
+    let (tile : t) = of_int32 (bit 10)
+    let (stipple : t) = of_int32 (bit 11)
+    let (tile_stipple_origin_x : t) = of_int32 (bit 12)
+    let (tile_stipple_origin_y : t) = of_int32 (bit 13)
+    let (font : t) = of_int32 (bit 14)
+    let (subwindow_mode : t) = of_int32 (bit 15)
+    let (graphics_exposures : t) = of_int32 (bit 16)
+    let (clip_origin_x : t) = of_int32 (bit 17)
+    let (clip_origin_y : t) = of_int32 (bit 18)
+    let (clip_mask : t) = of_int32 (bit 19)
+    let (dash_offset : t) = of_int32 (bit 20)
+    let (dash_list : t) = of_int32 (bit 21)
+    let (arc_mode : t) = of_int32 (bit 22)
   end
 
   module Gx_enum = struct
@@ -698,11 +639,11 @@ module Xproto = struct
   end
 
   module Color_flag_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (red : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (green : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-    let (blue : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (red : t) = of_int32 (bit 0)
+    let (green : t) = of_int32 (bit 1)
+    let (blue : t) = of_int32 (bit 2)
   end
 
   type coloritem = {
@@ -722,20 +663,16 @@ module Xproto = struct
   end
 
   module Kb_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (key_click_percent : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 0)
-
-    let (bell_percent : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-    let (bell_pitch : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
-    let (bell_duration : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
-    let (led : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
-    let (led_mode : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
-    let (key : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
-
-    let (auto_repeat_mode : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 7)
+    let (key_click_percent : t) = of_int32 (bit 0)
+    let (bell_percent : t) = of_int32 (bit 1)
+    let (bell_pitch : t) = of_int32 (bit 2)
+    let (bell_duration : t) = of_int32 (bit 3)
+    let (led : t) = of_int32 (bit 4)
+    let (led_mode : t) = of_int32 (bit 5)
+    let (key : t) = of_int32 (bit 6)
+    let (auto_repeat_mode : t) = of_int32 (bit 7)
   end
 
   module Led_mode_enum = struct
@@ -3536,6 +3473,7 @@ module Render = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   module Pict_type_enum = struct
     type t = [ `Indexed | `Direct ] [@@deriving sexp]
@@ -3612,33 +3550,21 @@ module Render = struct
   end
 
   module Cp_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (repeat : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (alpha_map : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-
-    let (alpha_x_origin : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 2)
-
-    let (alpha_y_origin : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 3)
-
-    let (clip_x_origin : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
-    let (clip_y_origin : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
-    let (clip_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
-
-    let (graphics_exposure : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 7)
-
-    let (subwindow_mode : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 8)
-
-    let (poly_edge : t) = of_int32 (Optint.shift_right_logical Optint.one 9)
-    let (poly_mode : t) = of_int32 (Optint.shift_right_logical Optint.one 10)
-    let (dither : t) = of_int32 (Optint.shift_right_logical Optint.one 11)
-
-    let (component_alpha : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 12)
+    let (repeat : t) = of_int32 (bit 0)
+    let (alpha_map : t) = of_int32 (bit 1)
+    let (alpha_x_origin : t) = of_int32 (bit 2)
+    let (alpha_y_origin : t) = of_int32 (bit 3)
+    let (clip_x_origin : t) = of_int32 (bit 4)
+    let (clip_y_origin : t) = of_int32 (bit 5)
+    let (clip_mask : t) = of_int32 (bit 6)
+    let (graphics_exposure : t) = of_int32 (bit 7)
+    let (subwindow_mode : t) = of_int32 (bit 8)
+    let (poly_edge : t) = of_int32 (bit 9)
+    let (poly_mode : t) = of_int32 (bit 10)
+    let (dither : t) = of_int32 (bit 11)
+    let (component_alpha : t) = of_int32 (bit 12)
   end
 
   module Sub_pixel_enum = struct
@@ -4350,6 +4276,7 @@ module Shape = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   type op = u8 [@@deriving sexp]
   type kind = u8 [@@deriving sexp]
@@ -4586,6 +4513,7 @@ module Xfixes = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   module Save_set_mode_enum = struct
     type t = [ `Insert | `Delete ] [@@deriving sexp]
@@ -4608,16 +4536,11 @@ module Xfixes = struct
   end
 
   module Selection_event_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (set_selection_owner : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 0)
-
-    let (selection_window_destroy : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 1)
-
-    let (selection_client_close : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (set_selection_owner : t) = of_int32 (bit 0)
+    let (selection_window_destroy : t) = of_int32 (bit 1)
+    let (selection_client_close : t) = of_int32 (bit 2)
   end
 
   module Cursor_notify_enum = struct
@@ -4625,10 +4548,9 @@ module Xfixes = struct
   end
 
   module Cursor_notify_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (display_cursor : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (display_cursor : t) = of_int32 (bit 0)
   end
 
   type region = xid [@@deriving sexp]
@@ -4640,12 +4562,12 @@ module Xfixes = struct
   type barrier = xid [@@deriving sexp]
 
   module Barrier_directions_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (positive_x : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (positive_y : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-    let (negative_x : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
-    let (negative_y : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
+    let (positive_x : t) = of_int32 (bit 0)
+    let (positive_y : t) = of_int32 (bit 1)
+    let (negative_x : t) = of_int32 (bit 2)
+    let (negative_y : t) = of_int32 (bit 3)
   end
 
   module Event = struct
@@ -5129,6 +5051,7 @@ module Composite = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   module Redirect_enum = struct
     type t = [ `Automatic | `Manual ] [@@deriving sexp]
@@ -5252,6 +5175,7 @@ module Damage = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   type damage = xid [@@deriving sexp]
 
@@ -5367,6 +5291,7 @@ module Dpms = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   module Dpms_mode_enum = struct
     type t = [ `On | `Standby | `Suspend | `Off ] [@@deriving sexp]
@@ -5492,6 +5417,7 @@ module Dri2 = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   module Attachment_enum = struct
     type t =
@@ -5835,6 +5761,7 @@ module Dri3 = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   module Event = struct
     type t = [] [@@deriving sexp]
@@ -6056,6 +5983,7 @@ module Ge = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   module Event = struct
     type t = [] [@@deriving sexp]
@@ -6093,6 +6021,7 @@ module Glx = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   type pixmap = xid [@@deriving sexp]
   type context = xid [@@deriving sexp]
@@ -6114,59 +6043,28 @@ module Glx = struct
   end
 
   module Gc_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (gl_current_bit : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 0)
-
-    let (gl_point_bit : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-    let (gl_line_bit : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
-
-    let (gl_polygon_bit : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 3)
-
-    let (gl_polygon_stipple_bit : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 4)
-
-    let (gl_pixel_mode_bit : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 5)
-
-    let (gl_lighting_bit : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 6)
-
-    let (gl_fog_bit : t) = of_int32 (Optint.shift_right_logical Optint.one 7)
-
-    let (gl_depth_buffer_bit : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 8)
-
-    let (gl_accum_buffer_bit : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 9)
-
-    let (gl_stencil_buffer_bit : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 10)
-
-    let (gl_viewport_bit : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 11)
-
-    let (gl_transform_bit : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 12)
-
-    let (gl_enable_bit : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 13)
-
-    let (gl_color_buffer_bit : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 14)
-
-    let (gl_hint_bit : t) = of_int32 (Optint.shift_right_logical Optint.one 15)
-    let (gl_eval_bit : t) = of_int32 (Optint.shift_right_logical Optint.one 16)
-    let (gl_list_bit : t) = of_int32 (Optint.shift_right_logical Optint.one 17)
-
-    let (gl_texture_bit : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 18)
-
-    let (gl_scissor_bit : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 19)
-
+    let (gl_current_bit : t) = of_int32 (bit 0)
+    let (gl_point_bit : t) = of_int32 (bit 1)
+    let (gl_line_bit : t) = of_int32 (bit 2)
+    let (gl_polygon_bit : t) = of_int32 (bit 3)
+    let (gl_polygon_stipple_bit : t) = of_int32 (bit 4)
+    let (gl_pixel_mode_bit : t) = of_int32 (bit 5)
+    let (gl_lighting_bit : t) = of_int32 (bit 6)
+    let (gl_fog_bit : t) = of_int32 (bit 7)
+    let (gl_depth_buffer_bit : t) = of_int32 (bit 8)
+    let (gl_accum_buffer_bit : t) = of_int32 (bit 9)
+    let (gl_stencil_buffer_bit : t) = of_int32 (bit 10)
+    let (gl_viewport_bit : t) = of_int32 (bit 11)
+    let (gl_transform_bit : t) = of_int32 (bit 12)
+    let (gl_enable_bit : t) = of_int32 (bit 13)
+    let (gl_color_buffer_bit : t) = of_int32 (bit 14)
+    let (gl_hint_bit : t) = of_int32 (bit 15)
+    let (gl_eval_bit : t) = of_int32 (bit 16)
+    let (gl_list_bit : t) = of_int32 (bit 17)
+    let (gl_texture_bit : t) = of_int32 (bit 18)
+    let (gl_scissor_bit : t) = of_int32 (bit 19)
     let (gl_all_attrib_bits : t) = of_int32 (Optint.of_int 16777215)
   end
 
@@ -7839,6 +7737,7 @@ module Randr = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   type mode = xid [@@deriving sexp]
   type crtc = xid [@@deriving sexp]
@@ -7847,14 +7746,14 @@ module Randr = struct
   type lease = xid [@@deriving sexp]
 
   module Rotation_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (rotate_0 : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (rotate_90 : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-    let (rotate_180 : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
-    let (rotate_270 : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
-    let (reflect_x : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
-    let (reflect_y : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
+    let (rotate_0 : t) = of_int32 (bit 0)
+    let (rotate_90 : t) = of_int32 (bit 1)
+    let (rotate_180 : t) = of_int32 (bit 2)
+    let (rotate_270 : t) = of_int32 (bit 3)
+    let (reflect_x : t) = of_int32 (bit 4)
+    let (reflect_y : t) = of_int32 (bit 5)
   end
 
   type screen_size = { width : u16; height : u16; mwidth : u16; mheight : u16 }
@@ -7868,60 +7767,35 @@ module Randr = struct
   end
 
   module Notify_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (screen_change : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (crtc_change : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-    let (output_change : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
-
-    let (output_property : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 3)
-
-    let (provider_change : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 4)
-
-    let (provider_property : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 5)
-
-    let (resource_change : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 6)
-
-    let (lease : t) = of_int32 (Optint.shift_right_logical Optint.one 7)
+    let (screen_change : t) = of_int32 (bit 0)
+    let (crtc_change : t) = of_int32 (bit 1)
+    let (output_change : t) = of_int32 (bit 2)
+    let (output_property : t) = of_int32 (bit 3)
+    let (provider_change : t) = of_int32 (bit 4)
+    let (provider_property : t) = of_int32 (bit 5)
+    let (resource_change : t) = of_int32 (bit 6)
+    let (lease : t) = of_int32 (bit 7)
   end
 
   module Mode_flag_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (hsync_positive : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 0)
-
-    let (hsync_negative : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 1)
-
-    let (vsync_positive : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 2)
-
-    let (vsync_negative : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 3)
-
-    let (interlace : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
-    let (double_scan : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
-    let (csync : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
-
-    let (csync_positive : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 7)
-
-    let (csync_negative : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 8)
-
-    let (hskew_present : t) = of_int32 (Optint.shift_right_logical Optint.one 9)
-    let (bcast : t) = of_int32 (Optint.shift_right_logical Optint.one 10)
-
-    let (pixel_multiplex : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 11)
-
-    let (double_clock : t) = of_int32 (Optint.shift_right_logical Optint.one 12)
-    let (halve_clock : t) = of_int32 (Optint.shift_right_logical Optint.one 13)
+    let (hsync_positive : t) = of_int32 (bit 0)
+    let (hsync_negative : t) = of_int32 (bit 1)
+    let (vsync_positive : t) = of_int32 (bit 2)
+    let (vsync_negative : t) = of_int32 (bit 3)
+    let (interlace : t) = of_int32 (bit 4)
+    let (double_scan : t) = of_int32 (bit 5)
+    let (csync : t) = of_int32 (bit 6)
+    let (csync_positive : t) = of_int32 (bit 7)
+    let (csync_negative : t) = of_int32 (bit 8)
+    let (hskew_present : t) = of_int32 (bit 9)
+    let (bcast : t) = of_int32 (bit 10)
+    let (pixel_multiplex : t) = of_int32 (bit 11)
+    let (double_clock : t) = of_int32 (bit 12)
+    let (halve_clock : t) = of_int32 (bit 13)
   end
 
   type mode_info = {
@@ -7946,24 +7820,21 @@ module Randr = struct
   end
 
   module Transform_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (unit : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (scale_up : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-    let (scale_down : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
-    let (projective : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
+    let (unit : t) = of_int32 (bit 0)
+    let (scale_up : t) = of_int32 (bit 1)
+    let (scale_down : t) = of_int32 (bit 2)
+    let (projective : t) = of_int32 (bit 3)
   end
 
   module Provider_capability_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (source_output : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (sink_output : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-
-    let (source_offload : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 2)
-
-    let (sink_offload : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
+    let (source_output : t) = of_int32 (bit 0)
+    let (sink_output : t) = of_int32 (bit 1)
+    let (source_offload : t) = of_int32 (bit 2)
+    let (sink_offload : t) = of_int32 (bit 3)
   end
 
   module Notify_enum = struct
@@ -8977,6 +8848,7 @@ module Sync = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   type alarm = xid [@@deriving sexp]
 
@@ -9001,14 +8873,14 @@ module Sync = struct
   end
 
   module Ca_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (counter : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (value_type : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-    let (value : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
-    let (test_type : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
-    let (delta : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
-    let (events : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
+    let (counter : t) = of_int32 (bit 0)
+    let (value_type : t) = of_int32 (bit 1)
+    let (value : t) = of_int32 (bit 2)
+    let (test_type : t) = of_int32 (bit 3)
+    let (delta : t) = of_int32 (bit 4)
+    let (events : t) = of_int32 (bit 5)
   end
 
   type int64 = { hi : i32; lo : u32 } [@@deriving sexp]
@@ -9335,6 +9207,7 @@ module Present = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   module Event_enum = struct
     type t =
@@ -9343,38 +9216,31 @@ module Present = struct
   end
 
   module Event_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (configure_notify : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 0)
-
-    let (complete_notify : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 1)
-
-    let (idle_notify : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
-
-    let (redirect_notify : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 3)
-
+    let (configure_notify : t) = of_int32 (bit 0)
+    let (complete_notify : t) = of_int32 (bit 1)
+    let (idle_notify : t) = of_int32 (bit 2)
+    let (redirect_notify : t) = of_int32 (bit 3)
     let none : t = of_int32 Optint.zero
   end
 
   module Option_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (async : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (copy : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-    let (ust : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
-    let (suboptimal : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
+    let (async : t) = of_int32 (bit 0)
+    let (copy : t) = of_int32 (bit 1)
+    let (ust : t) = of_int32 (bit 2)
+    let (suboptimal : t) = of_int32 (bit 3)
     let none : t = of_int32 Optint.zero
   end
 
   module Capability_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (async : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (fence : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-    let (ust : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (async : t) = of_int32 (bit 0)
+    let (fence : t) = of_int32 (bit 1)
+    let (ust : t) = of_int32 (bit 2)
     let none : t = of_int32 Optint.zero
   end
 
@@ -9605,6 +9471,7 @@ module Record = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   type context = xid [@@deriving sexp]
   type range8 = { first : u8; last : u8 } [@@deriving sexp]
@@ -9627,16 +9494,11 @@ module Record = struct
   type element_header = u8 [@@deriving sexp]
 
   module H_type_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (from_server_time : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 0)
-
-    let (from_client_time : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 1)
-
-    let (from_client_sequence : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (from_server_time : t) = of_int32 (bit 0)
+    let (from_client_time : t) = of_int32 (bit 1)
+    let (from_client_sequence : t) = of_int32 (bit 2)
   end
 
   type client_spec = u32 [@@deriving sexp]
@@ -9792,17 +9654,16 @@ module Res = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   type client = { resource_base : u32; resource_mask : u32 } [@@deriving sexp]
   type type_ = { resource_type : Xproto.atom; count : u32 } [@@deriving sexp]
 
   module Client_id_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (client_xid : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-
-    let (local_client_pid : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (client_xid : t) = of_int32 (bit 0)
+    let (local_client_pid : t) = of_int32 (bit 1)
   end
 
   type client_id_spec = { client : u32; mask : Client_id_mask.t }
@@ -9927,16 +9788,17 @@ module Screensaver = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   module Kind_enum = struct
     type t = [ `Blanked | `Internal | `External_ ] [@@deriving sexp]
   end
 
   module Event_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (notify_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (cycle_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (notify_mask : t) = of_int32 (bit 0)
+    let (cycle_mask : t) = of_int32 (bit 1)
   end
 
   module State_enum = struct
@@ -10112,6 +9974,7 @@ module Shm = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   type seg = xid [@@deriving sexp]
 
@@ -10317,6 +10180,7 @@ module Xc_misc = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   module Event = struct
     type t = [] [@@deriving sexp]
@@ -10381,6 +10245,7 @@ module Xevie = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   module Datatype_enum = struct
     type t = [ `Unmodified | `Modified ] [@@deriving sexp]
@@ -10477,6 +10342,7 @@ module Xf86dri = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   type drm_clip_rect = { x1 : i16; y1 : i16; x2 : i16; x3 : i16 }
   [@@deriving sexp]
@@ -10683,54 +10549,40 @@ module Xf86vidmode = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   type syncrange = u32 [@@deriving sexp]
   type dotclock = u32 [@@deriving sexp]
 
   module Mode_flag_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (positive_h_sync : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 0)
-
-    let (negative_h_sync : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 1)
-
-    let (positive_v_sync : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 2)
-
-    let (negative_v_sync : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 3)
-
-    let (interlace : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
-
-    let (composite_sync : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 5)
-
-    let (positive_c_sync : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 6)
-
-    let (negative_c_sync : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 7)
-
-    let (h_skew : t) = of_int32 (Optint.shift_right_logical Optint.one 8)
-    let (broadcast : t) = of_int32 (Optint.shift_right_logical Optint.one 9)
-    let (pixmux : t) = of_int32 (Optint.shift_right_logical Optint.one 10)
-    let (double_clock : t) = of_int32 (Optint.shift_right_logical Optint.one 11)
-    let (half_clock : t) = of_int32 (Optint.shift_right_logical Optint.one 12)
+    let (positive_h_sync : t) = of_int32 (bit 0)
+    let (negative_h_sync : t) = of_int32 (bit 1)
+    let (positive_v_sync : t) = of_int32 (bit 2)
+    let (negative_v_sync : t) = of_int32 (bit 3)
+    let (interlace : t) = of_int32 (bit 4)
+    let (composite_sync : t) = of_int32 (bit 5)
+    let (positive_c_sync : t) = of_int32 (bit 6)
+    let (negative_c_sync : t) = of_int32 (bit 7)
+    let (h_skew : t) = of_int32 (bit 8)
+    let (broadcast : t) = of_int32 (bit 9)
+    let (pixmux : t) = of_int32 (bit 10)
+    let (double_clock : t) = of_int32 (bit 11)
+    let (half_clock : t) = of_int32 (bit 12)
   end
 
   module Clock_flag_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (programable : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (programable : t) = of_int32 (bit 0)
   end
 
   module Permission_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (read : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (write : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (read : t) = of_int32 (bit 0)
+    let (write : t) = of_int32 (bit 1)
   end
 
   type mode_info = {
@@ -11286,6 +11138,7 @@ module Xinerama = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   type screen_info = { x_org : i16; y_org : i16; width : u16; height : u16 }
   [@@deriving sexp]
@@ -11395,6 +11248,7 @@ module Xinput = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   type event_class = u32 [@@deriving sexp]
   type key_code = u8 [@@deriving sexp]
@@ -11679,26 +11533,21 @@ module Xinput = struct
   [@@deriving sexp]
 
   module Change_feedback_control_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (key_click_percent : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 0)
-
-    let (percent : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-    let (pitch : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
-    let (duration : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
-    let (led : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
-    let (led_mode : t) = of_int32 (Optint.shift_right_logical Optint.one 5)
-    let (key : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
-
-    let (auto_repeat_mode : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 7)
-
-    let (string : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (integer : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (accel_num : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (accel_denom : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-    let (threshold : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
+    let (key_click_percent : t) = of_int32 (bit 0)
+    let (percent : t) = of_int32 (bit 1)
+    let (pitch : t) = of_int32 (bit 2)
+    let (duration : t) = of_int32 (bit 3)
+    let (led : t) = of_int32 (bit 4)
+    let (led_mode : t) = of_int32 (bit 5)
+    let (key : t) = of_int32 (bit 6)
+    let (auto_repeat_mode : t) = of_int32 (bit 7)
+    let (string : t) = of_int32 (bit 0)
+    let (integer : t) = of_int32 (bit 0)
+    let (accel_num : t) = of_int32 (bit 0)
+    let (accel_denom : t) = of_int32 (bit 1)
+    let (threshold : t) = of_int32 (bit 2)
   end
 
   type key_state = {
@@ -11718,13 +11567,10 @@ module Xinput = struct
   [@@deriving sexp]
 
   module Valuator_state_mode_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (device_mode_absolute : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 0)
-
-    let (out_of_proximity : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (device_mode_absolute : t) = of_int32 (bit 0)
+    let (out_of_proximity : t) = of_int32 (bit 1)
   end
 
   type valuator_state = {
@@ -11985,59 +11831,34 @@ module Xinput = struct
   [@@deriving sexp]
 
   module Xi_event_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (device_changed : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 1)
-
-    let (key_press : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
-    let (key_release : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
-    let (button_press : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
-
-    let (button_release : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 5)
-
-    let (motion : t) = of_int32 (Optint.shift_right_logical Optint.one 6)
-    let (enter : t) = of_int32 (Optint.shift_right_logical Optint.one 7)
-    let (leave : t) = of_int32 (Optint.shift_right_logical Optint.one 8)
-    let (focus_in : t) = of_int32 (Optint.shift_right_logical Optint.one 9)
-    let (focus_out : t) = of_int32 (Optint.shift_right_logical Optint.one 10)
-    let (hierarchy : t) = of_int32 (Optint.shift_right_logical Optint.one 11)
-    let (property : t) = of_int32 (Optint.shift_right_logical Optint.one 12)
-
-    let (raw_key_press : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 13)
-
-    let (raw_key_release : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 14)
-
-    let (raw_button_press : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 15)
-
-    let (raw_button_release : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 16)
-
-    let (raw_motion : t) = of_int32 (Optint.shift_right_logical Optint.one 17)
-    let (touch_begin : t) = of_int32 (Optint.shift_right_logical Optint.one 18)
-    let (touch_update : t) = of_int32 (Optint.shift_right_logical Optint.one 19)
-    let (touch_end : t) = of_int32 (Optint.shift_right_logical Optint.one 20)
-
-    let (touch_ownership : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 21)
-
-    let (raw_touch_begin : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 22)
-
-    let (raw_touch_update : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 23)
-
-    let (raw_touch_end : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 24)
-
-    let (barrier_hit : t) = of_int32 (Optint.shift_right_logical Optint.one 25)
-
-    let (barrier_leave : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 26)
+    let (device_changed : t) = of_int32 (bit 1)
+    let (key_press : t) = of_int32 (bit 2)
+    let (key_release : t) = of_int32 (bit 3)
+    let (button_press : t) = of_int32 (bit 4)
+    let (button_release : t) = of_int32 (bit 5)
+    let (motion : t) = of_int32 (bit 6)
+    let (enter : t) = of_int32 (bit 7)
+    let (leave : t) = of_int32 (bit 8)
+    let (focus_in : t) = of_int32 (bit 9)
+    let (focus_out : t) = of_int32 (bit 10)
+    let (hierarchy : t) = of_int32 (bit 11)
+    let (property : t) = of_int32 (bit 12)
+    let (raw_key_press : t) = of_int32 (bit 13)
+    let (raw_key_release : t) = of_int32 (bit 14)
+    let (raw_button_press : t) = of_int32 (bit 15)
+    let (raw_button_release : t) = of_int32 (bit 16)
+    let (raw_motion : t) = of_int32 (bit 17)
+    let (touch_begin : t) = of_int32 (bit 18)
+    let (touch_update : t) = of_int32 (bit 19)
+    let (touch_end : t) = of_int32 (bit 20)
+    let (touch_ownership : t) = of_int32 (bit 21)
+    let (raw_touch_begin : t) = of_int32 (bit 22)
+    let (raw_touch_update : t) = of_int32 (bit 23)
+    let (raw_touch_end : t) = of_int32 (bit 24)
+    let (barrier_hit : t) = of_int32 (bit 25)
+    let (barrier_leave : t) = of_int32 (bit 26)
   end
 
   type event_mask = {
@@ -12061,10 +11882,10 @@ module Xinput = struct
   end
 
   module Scroll_flags_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (no_emulation : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (preferred : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (no_emulation : t) = of_int32 (bit 0)
+    let (preferred : t) = of_int32 (bit 1)
   end
 
   module Scroll_type_enum = struct
@@ -12205,9 +12026,9 @@ module Xinput = struct
   end
 
   module Modifier_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (any : t) = of_int32 (Optint.shift_right_logical Optint.one 31)
+    let (any : t) = of_int32 (bit 31)
   end
 
   type grab_modifier_info = {
@@ -12224,28 +12045,19 @@ module Xinput = struct
   [@@deriving sexp]
 
   module More_events_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (more_events : t) = of_int32 (Optint.shift_right_logical Optint.one 7)
+    let (more_events : t) = of_int32 (bit 7)
   end
 
   module Classes_reported_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (out_of_proximity : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 7)
-
-    let (device_mode_absolute : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 6)
-
-    let (reporting_valuators : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 2)
-
-    let (reporting_buttons : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 1)
-
-    let (reporting_keys : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 0)
+    let (out_of_proximity : t) = of_int32 (bit 7)
+    let (device_mode_absolute : t) = of_int32 (bit 6)
+    let (reporting_valuators : t) = of_int32 (bit 2)
+    let (reporting_buttons : t) = of_int32 (bit 1)
+    let (reporting_keys : t) = of_int32 (bit 0)
   end
 
   module Change_device_enum = struct
@@ -12268,16 +12080,15 @@ module Xinput = struct
   end
 
   module Key_event_flags_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (key_repeat : t) = of_int32 (Optint.shift_right_logical Optint.one 16)
+    let (key_repeat : t) = of_int32 (bit 16)
   end
 
   module Pointer_event_flags_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (pointer_emulated : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 16)
+    let (pointer_emulated : t) = of_int32 (bit 16)
   end
 
   module Notify_mode_enum = struct
@@ -12305,27 +12116,16 @@ module Xinput = struct
   end
 
   module Hierarchy_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (master_added : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-
-    let (master_removed : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 1)
-
-    let (slave_added : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
-    let (slave_removed : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
-
-    let (slave_attached : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 4)
-
-    let (slave_detached : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 5)
-
-    let (device_enabled : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 6)
-
-    let (device_disabled : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 7)
+    let (master_added : t) = of_int32 (bit 0)
+    let (master_removed : t) = of_int32 (bit 1)
+    let (slave_added : t) = of_int32 (bit 2)
+    let (slave_removed : t) = of_int32 (bit 3)
+    let (slave_attached : t) = of_int32 (bit 4)
+    let (slave_detached : t) = of_int32 (bit 5)
+    let (device_enabled : t) = of_int32 (bit 6)
+    let (device_disabled : t) = of_int32 (bit 7)
   end
 
   type hierarchy_info = {
@@ -12342,13 +12142,10 @@ module Xinput = struct
   end
 
   module Touch_event_flags_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (touch_pending_end : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 16)
-
-    let (touch_emulating_pointer : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 17)
+    let (touch_pending_end : t) = of_int32 (bit 16)
+    let (touch_emulating_pointer : t) = of_int32 (bit 17)
   end
 
   module Touch_ownership_flags_enum = struct
@@ -12356,13 +12153,10 @@ module Xinput = struct
   end
 
   module Barrier_flags_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (pointer_released : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 0)
-
-    let (device_is_grabbed : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (pointer_released : t) = of_int32 (bit 0)
+    let (device_is_grabbed : t) = of_int32 (bit 1)
   end
 
   module Event = struct
@@ -14104,6 +13898,7 @@ module Xprint = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   type string8 = char [@@deriving sexp]
   type printer = { name : string; description : string } [@@deriving sexp]
@@ -14114,13 +13909,10 @@ module Xprint = struct
   end
 
   module Ev_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (print_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-
-    let (attribute_mask : t) =
-      of_int32 (Optint.shift_right_logical Optint.one 1)
-
+    let (print_mask : t) = of_int32 (bit 0)
+    let (attribute_mask : t) = of_int32 (bit 1)
     let none : t = of_int32 Optint.zero
   end
 
@@ -14499,6 +14291,7 @@ module Xselinux = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   type list_item = {
     name : Xproto.atom;
@@ -14802,6 +14595,7 @@ module Xtest = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   module Cursor_enum = struct
     type t = [ `None | `Current ] [@@deriving sexp]
@@ -14884,18 +14678,19 @@ module Xv = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   type port = xid [@@deriving sexp]
   type encoding = xid [@@deriving sexp]
 
   module Type_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (input_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (output_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
-    let (video_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 2)
-    let (still_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 3)
-    let (image_mask : t) = of_int32 (Optint.shift_right_logical Optint.one 4)
+    let (input_mask : t) = of_int32 (bit 0)
+    let (output_mask : t) = of_int32 (bit 1)
+    let (video_mask : t) = of_int32 (bit 2)
+    let (still_mask : t) = of_int32 (bit 3)
+    let (image_mask : t) = of_int32 (bit 4)
   end
 
   module Image_format_info_type_enum = struct
@@ -14907,10 +14702,10 @@ module Xv = struct
   end
 
   module Attribute_flag_mask = struct
-    include Mask
+    include Mask.M (struct end)
 
-    let (gettable : t) = of_int32 (Optint.shift_right_logical Optint.one 0)
-    let (settable : t) = of_int32 (Optint.shift_right_logical Optint.one 1)
+    let (gettable : t) = of_int32 (bit 0)
+    let (settable : t) = of_int32 (bit 1)
   end
 
   module Video_notify_reason_enum = struct
@@ -15510,6 +15305,7 @@ module Xvmc = struct
 
   open Types [@@ocaml.warning "-33"]
   open Sexplib.Conv [@@ocaml.warning "-33"]
+  open Util [@@ocaml.warning "-33"]
 
   type context = xid [@@deriving sexp]
   type surface = xid [@@deriving sexp]

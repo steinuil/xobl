@@ -10,42 +10,4 @@ let hex_string_of_bytes bytes =
     bytes;
   Bytes.unsafe_to_string b
 
-let identity x = x
-let char_to_int64 c = Char.code c |> Int64.of_int
-let bool_to_int64 b = Bool.to_int b |> Int64.of_int
-let bool_of_int b = b <> 0
-
-let sum_of_expr get_field =
-  List.fold_left (fun acc elem -> acc + get_field elem) 0
-
-let mask_of_int of_bit mask =
-  let rec iter mask pos acc =
-    if mask = 0L then Some acc
-    else if Int64.logand mask 1L <> 0L then
-      match of_bit pos with
-      | Some item -> iter Int64.(shift_right mask 1) (pos + 1) (item :: acc)
-      | None -> None
-    else iter Int64.(shift_right mask 1) (pos + 1) acc
-  in
-  iter mask 0 []
-
-let mask_value_of_int of_bit of_value mask =
-  match of_value mask with
-  | Some v -> Some (X11_types.V v)
-  | None -> (
-      match mask_of_int of_bit mask with Some f -> Some (F f) | None -> None)
-
-let int_of_mask to_bit mask =
-  List.fold_left (fun mask v -> mask lor (1 lsl to_bit v)) 0 mask
-
-let int_of_mask_value to_mask to_enum = function
-  | X11_types.F f -> int_of_mask to_mask f
-  | V v -> to_enum v
-
-let pop_count n =
-  let rec iter pos acc =
-    if pos > 31 then acc
-    else if n land (1 lsl pos) <> 0 then iter (pos + 1) acc + 1
-    else iter (pos + 1) acc
-  in
-  iter 0 0
+let bit n = Optint.shift_right_logical Optint.one n
