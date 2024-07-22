@@ -1,6 +1,7 @@
 open Ppxlib
 open Xobl_compiler.Hir
 module Ident = Casing.OCaml
+open Ast_helper
 
 exception Unexpected of string
 
@@ -267,8 +268,29 @@ module Type = struct
 
   let stri_enum ~loc = function
     | Enum { name; items } ->
-        let body = td_type ~loc "t" (t_enum_items ~loc items) in
-        stri_module ~loc ~suffix:"enum" name [ stri_td ~loc body ]
+        let t = td_type ~loc "t" (t_enum_items ~loc items) in
+        let of_int =
+          let cases =
+            ListLabels.map items ~f:(fun (name, value) ->
+                Ast_helper.Exp.case
+                  (p_int ~loc (Int64.to_int value))
+                  (e_variant ~loc name))
+          in
+          let default = Exp.case [%pat? n] [%expr `Alt n] in
+          let body = Exp.function_ ~loc (cases @ [ default ]) in
+          [%stri let of_int : int -> [ t | int alt ] = [%e body]]
+        in
+        let to_int =
+          let cases =
+            ListLabels.map items ~f:(fun (name, value) ->
+                Exp.case
+                  (Pat.variant (Ident.caml name) None)
+                  (e_int ~loc (Int64.to_int value)))
+          in
+          let body = Exp.function_ ~loc cases in
+          [%stri let to_int : [< t ] -> int = [%e body]]
+        in
+        stri_module ~loc ~suffix:"enum" name [ stri_td ~loc t; of_int; to_int ]
         |> Option.some
     | _ -> None
 
@@ -549,6 +571,8 @@ module Type = struct
     let body =
       [%str
         [@@@ocaml.warning "-12"]
+        [@@@ocaml.warning "-73"]
+        [@@@ocaml.warning "-11"]
 
         open Types [@@ocaml.warning "-33"]
         open Sexplib.Conv [@@ocaml.warning "-33"]
