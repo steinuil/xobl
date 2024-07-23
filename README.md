@@ -16,6 +16,7 @@ The X11 OCaml Bindings Library. A Pure OCaml implementation of the X11 protocol.
     - how do we encode stuff which needs a reply?
   - [ ] events/variant structs/errors that are only made of one field should be converted to that one field.
     - notify_variant
+  - [ ] File descriptors are passed using fd passing: https://github.com/keith-packard/fdpassing
 - OCaml backend
 
 ## Documentation

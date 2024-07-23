@@ -1,12 +1,12 @@
+[@@@ocaml.warning "-12"]
+[@@@ocaml.warning "-73"]
+[@@@ocaml.warning "-11"]
+
+open Types
+open Util
+open Sexplib.Conv
+
 module Bigreq = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `BigRequests ]
 
@@ -36,15 +36,7 @@ module Bigreq = struct
   end
 end
 
-module Xproto = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
+module Core = struct
   type char2b = { byte1 : u8; byte2 : u8 } [@@deriving sexp]
   type window = xid [@@deriving sexp]
   type pixmap = xid [@@deriving sexp]
@@ -4346,14 +4338,6 @@ module Xproto = struct
 end
 
 module Render = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `Render ]
 
@@ -5319,14 +5303,6 @@ module Render = struct
 end
 
 module Shape = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `Shape ]
 
@@ -5584,14 +5560,6 @@ module Shape = struct
 end
 
 module Xfixes = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `XFixes ]
 
@@ -6176,14 +6144,6 @@ module Xfixes = struct
 end
 
 module Composite = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `Composite ]
 
@@ -6309,14 +6269,6 @@ module Composite = struct
 end
 
 module Damage = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `Damage ]
 
@@ -6441,14 +6393,6 @@ module Damage = struct
 end
 
 module Dpms = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `DPMS ]
 
@@ -6582,14 +6526,6 @@ module Dpms = struct
 end
 
 module Dri2 = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `DRI2 ]
 
@@ -6975,14 +6911,6 @@ module Dri2 = struct
 end
 
 module Dri3 = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `DRI3 ]
 
@@ -7199,14 +7127,6 @@ module Dri3 = struct
 end
 
 module Ge = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `GenericEvent ]
 
@@ -7239,14 +7159,6 @@ module Ge = struct
 end
 
 module Glx = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `Glx ]
 
@@ -8982,14 +8894,6 @@ module Glx = struct
 end
 
 module Randr = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `RandR ]
 
@@ -10139,14 +10043,6 @@ module Randr = struct
 end
 
 module Sync = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `Sync ]
 
@@ -10532,14 +10428,6 @@ module Sync = struct
 end
 
 module Present = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `Present ]
 
@@ -10833,14 +10721,6 @@ module Present = struct
 end
 
 module Record = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `Record ]
 
@@ -11029,14 +10909,6 @@ module Record = struct
 end
 
 module Res = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `Res ]
 
@@ -11165,14 +11037,6 @@ module Res = struct
 end
 
 module Screensaver = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `ScreenSaver ]
 
@@ -11377,14 +11241,6 @@ module Screensaver = struct
 end
 
 module Shm = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `Shm ]
 
@@ -11585,14 +11441,6 @@ module Shm = struct
 end
 
 module Xc_misc = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `XCMisc ]
 
@@ -11652,14 +11500,6 @@ module Xc_misc = struct
 end
 
 module Xevie = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `Xevie ]
 
@@ -11758,14 +11598,6 @@ module Xevie = struct
 end
 
 module Xf86dri = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `XF86Dri ]
 
@@ -11967,14 +11799,6 @@ module Xf86dri = struct
 end
 
 module Xf86vidmode = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `XF86VidMode ]
 
@@ -12558,14 +12382,6 @@ module Xf86vidmode = struct
 end
 
 module Xinerama = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `Xinerama ]
 
@@ -12670,14 +12486,6 @@ module Xinerama = struct
 end
 
 module Xinput = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `Input ]
 
@@ -15683,14 +15491,6 @@ module Xinput = struct
 end
 
 module Xprint = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `XPrint ]
 
@@ -16123,14 +15923,6 @@ module Xprint = struct
 end
 
 module Xselinux = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `SELinux ]
 
@@ -16429,14 +16221,6 @@ module Xselinux = struct
 end
 
 module Xtest = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `Test ]
 
@@ -16521,14 +16305,6 @@ module Xtest = struct
 end
 
 module Xv = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `Xv ]
 
@@ -17215,14 +16991,6 @@ module Xv = struct
 end
 
 module Xvmc = struct
-  [@@@ocaml.warning "-12"]
-  [@@@ocaml.warning "-73"]
-  [@@@ocaml.warning "-11"]
-
-  open Types [@@ocaml.warning "-33"]
-  open Sexplib.Conv [@@ocaml.warning "-33"]
-  open Util [@@ocaml.warning "-33"]
-
   module Meta = struct
     type t = [ `XvMC ]
 

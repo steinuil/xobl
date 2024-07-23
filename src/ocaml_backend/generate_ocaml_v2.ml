@@ -75,6 +75,7 @@ let e_str ~loc str =
   Ast_helper.Exp.constant ~loc (Ast_helper.Const.string ~loc str)
 
 let with_loc ~loc txt = { txt; loc }
+let xproto_to_core = function "xproto" -> "core" | name -> name
 
 let lid ?prefix ?suffix ?parent ~loc name =
   let name = Ident.snake ?prefix ?suffix name in
@@ -100,7 +101,7 @@ let lid_module_ident ?prefix ?suffix ~ctx:(Cm current_module) ~loc
   let txt =
     if current_module = id_module then Ldot (Lident module_name, name)
     else
-      let parent = Ident.caml id_module in
+      let parent = Ident.caml (xproto_to_core id_module) in
       Ldot (Ldot (Lident parent, module_name), name)
   in
   with_loc ~loc txt
@@ -112,7 +113,10 @@ let e_id ?prefix ?suffix ?parent ~loc name =
 let e_ident ?prefix ?suffix ~ctx:(Cm current_module) ~loc { id_module; id_name }
     =
   if current_module = id_module then e_id ?prefix ?suffix ~loc id_name
-  else e_id ?prefix ?suffix ~parent:(Ident.caml id_module) ~loc id_name
+  else
+    e_id ?prefix ?suffix
+      ~parent:(Ident.caml (xproto_to_core id_module))
+      ~loc id_name
 
 let t_id ?prefix ?suffix ?parent ~loc name =
   let typ = lid ?prefix ?suffix ?parent ~loc name in
@@ -121,7 +125,10 @@ let t_id ?prefix ?suffix ?parent ~loc name =
 let t_ident ?prefix ?suffix ~ctx:(Cm current_module) ~loc { id_module; id_name }
     =
   if current_module = id_module then t_id ?prefix ?suffix ~loc id_name
-  else t_id ?prefix ?suffix ~parent:(Ident.caml id_module) ~loc id_name
+  else
+    t_id ?prefix ?suffix
+      ~parent:(Ident.caml (xproto_to_core id_module))
+      ~loc id_name
 
 let t_module_ident ?prefix ?suffix ~ctx ~loc ident name =
   let lid = lid_module_ident ?prefix ?suffix ~ctx ~loc ident name in
@@ -149,7 +156,7 @@ let t_poly ~loc items =
   let items = List.map (rf_poly_item ~loc) items in
   Ast_helper.Typ.variant ~loc items Closed None
 
-module Type = struct
+module Protocol = struct
   let a_deriving_sexp ~loc =
     Ast_helper.Attr.mk (with_loc ~loc "deriving") (PStr [%str sexp])
 
@@ -424,7 +431,7 @@ module Type = struct
           if error.id_module = current_module then
             t_ident ~ctx ~loc { id_module = error.id_name; id_name = "t" }
           else
-            let id_module = Ident.caml error.id_module in
+            let id_module = Ident.caml (xproto_to_core error.id_module) in
             let err = Ident.caml error.id_name in
             let lid =
               Ldot (Ldot (Ldot (Lident id_module, "Error"), err), "t")
@@ -466,7 +473,7 @@ module Type = struct
         if ev_id.id_module = current_module then
           Ldot (Ldot (Lident "Event", ev), "t")
         else
-          let id_module = Ident.caml ev_id.id_module in
+          let id_module = Ident.caml (xproto_to_core ev_id.id_module) in
           Ldot (Ldot (Ldot (Lident id_module, "Event"), ev), "t")
       in
       Ast_helper.Typ.constr ~loc (with_loc ~loc lid) []
@@ -563,7 +570,7 @@ module Type = struct
   let str_requests ~ctx ~loc decls =
     List.filter_map (stri_request ~ctx ~loc) decls
 
-  let stri_module ~loc module_ =
+  let stri_protocol ~loc module_ =
     let declarations, ctx =
       match module_ with
       | Core decls -> (decls, "xproto")
@@ -575,16 +582,7 @@ module Type = struct
     let errors = stri_errors ~ctx ~loc declarations in
     let event_structs = str_event_structs ~ctx ~loc declarations in
     let requests = List.filter_map (stri_request ~ctx ~loc) declarations in
-    let header =
-      [%str
-        [@@@ocaml.warning "-12"]
-        [@@@ocaml.warning "-73"]
-        [@@@ocaml.warning "-11"]
-
-        open Types [@@ocaml.warning "-33"]
-        open Sexplib.Conv [@@ocaml.warning "-33"]
-        open Util [@@ocaml.warning "-33"]]
-    in
+    let header = [%str] in
     let body = decls @ [ events ] @ event_structs @ [ errors ] @ requests in
     match module_ with
     | Core _declarations -> header @ body
@@ -604,4 +602,40 @@ module Type = struct
             end]
         in
         header @ meta @ body
+
+  let stri_protocols ~loc protocols =
+    let protocols =
+      protocols
+      |> List.map (fun protocol ->
+             let name =
+               match protocol with
+               | Xobl_compiler.Hir.Core _ -> "Core"
+               | Extension { file_name; _ } ->
+                   file_name |> String.capitalize_ascii
+             in
+             let body = stri_protocol ~loc protocol in
+             stri_module ~loc name body)
+    in
+    [%str
+      [@@@ocaml.warning "-12"]
+      [@@@ocaml.warning "-73"]
+      [@@@ocaml.warning "-11"]
+
+      open Types
+      open Util
+      open Sexplib.Conv]
+    @ protocols
 end
+
+(* module Codecs = struct
+     let stri_module ~loc module_ =
+       let declarations, ctx =
+         match module_ with
+         | Core decls -> (decls, "xproto")
+         | Extension { declarations; file_name; _ } -> (declarations, file_name)
+       in
+       let ctx = Cm ctx in
+
+       [%str
+       ]
+   end *)

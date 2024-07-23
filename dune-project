@@ -1,4 +1,4 @@
-(lang dune 3.1)
+(lang dune 3.7)
 
 (name xobl)
 

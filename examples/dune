@@ -1,29 +1,29 @@
-(executable
- (name create_window)
- (modules create_window)
- (public_name create-window)
- (libraries xobl xobl.lwt lwt.unix))
+; (executable
+;  (name create_window)
+;  (modules create_window)
+;  (public_name create-window)
+;  (libraries xobl xobl.lwt lwt.unix))
 
-(executable
- (name create_window_reactor)
- (modules create_window_reactor)
- (public_name create-window-reactor)
- (libraries xobl xobl.lwt lwt.unix logs logs.fmt))
+; (executable
+;  (name create_window_reactor)
+;  (modules create_window_reactor)
+;  (public_name create-window-reactor)
+;  (libraries xobl xobl.lwt lwt.unix logs logs.fmt))
 
-(executable
- (name window_manager)
- (modules window_manager)
- (public_name window-manager)
- (libraries xobl xobl.lwt lwt.unix))
+; (executable
+;  (name window_manager)
+;  (modules window_manager)
+;  (public_name window-manager)
+;  (libraries xobl xobl.lwt lwt.unix))
 
-(executable
- (name xeyes)
- (modules xeyes)
- (public_name xeyes)
- (libraries xobl xobl.lwt lwt.unix))
+; (executable
+;  (name xeyes)
+;  (modules xeyes)
+;  (public_name xeyes)
+;  (libraries xobl xobl.lwt lwt.unix))
 
-(executable
- (name xprop_reactor)
- (modules xprop_reactor)
- (public_name xprop_reactor)
- (libraries xobl xobl.lwt lwt.unix))
+; (executable
+;  (name xprop_reactor)
+;  (modules xprop_reactor)
+;  (public_name xprop_reactor)
+;  (libraries xobl xobl.lwt lwt.unix))

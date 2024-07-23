@@ -1,7 +1,7 @@
-(library
- (name xobl_lwt)
- (public_name xobl.lwt)
- (inline_tests)
- (libraries sexplib lwt.unix xobl.protocol xobl logs logs.lwt)
- (preprocess
-  (pps ppx_inline_test ppx_sexp_conv ppx_expect)))
+; (library
+;  (name xobl_lwt)
+;  (public_name xobl.lwt)
+;  (inline_tests)
+;  (libraries sexplib lwt.unix xobl.protocol xobl logs logs.lwt)
+;  (preprocess
+;   (pps ppx_inline_test ppx_sexp_conv ppx_expect)))

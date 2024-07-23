@@ -5,23 +5,3 @@
  (libraries xobl.compiler)
  (deps
   (glob_files ../xml-xcb/*.xml)))
-
-(executable
- (name generate_ocaml_v2)
- (modules generate_ocaml_v2)
- (libraries xobl.compiler xobl.ocaml_backend))
-
-(rule
- (deps
-  (glob_files ../xml-xcb/*.xml))
- (action
-  (with-stdout-to
-   generate_ocaml_v2.output
-   (pipe-stdout
-    (run ./generate_ocaml_v2.exe)
-    (run ocamlformat - --impl)))))
-
-(rule
- (alias runtest)
- (action
-  (diff generate_ocaml_v2.expected generate_ocaml_v2.output)))
