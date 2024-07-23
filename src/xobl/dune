@@ -2,7 +2,17 @@
  (name xobl)
  (public_name xobl)
  (libraries sexplib optint)
- (modules types util protocol authorization xauthority display_name xobl)
+ (modules
+  types
+  util
+  conv
+  decode
+  encode
+  protocol
+  authorization
+  xauthority
+  display_name
+  xobl)
  (preprocess
   (pps ppx_sexp_conv ppx_inline_test ppx_expect)))
 
