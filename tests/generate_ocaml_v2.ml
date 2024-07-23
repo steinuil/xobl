@@ -46,7 +46,7 @@ let () =
          Format.printf "module %s = struct\n" (String.capitalize_ascii name);
          let stri =
            let loc = !Ast_helper.default_loc in
-           Xobl_ocaml_backend.Generate_ocaml_v2.Type.stri_module ~loc m
+           Xobl_ocaml_backend.Generate_ocaml_v2.stri_module ~loc m
          in
          Format.printf "%a\n" Ppxlib.Pprintast.structure stri;
          Format.printf "\nend\n")
