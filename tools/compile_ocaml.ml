@@ -8,7 +8,7 @@ let compile files out_dir =
          in
          let str =
            let loc = !Ast_helper.default_loc in
-           Xobl_ocaml_backend.Generate_ocaml_v2.stri_module ~loc m
+           Xobl_ocaml_backend.Generate_ocaml_v2.Type.stri_module ~loc m
          in
          let out_filename = Filename.concat out_dir filename ^ ".ml" in
          Out_channel.with_open_text out_filename (fun out ->
