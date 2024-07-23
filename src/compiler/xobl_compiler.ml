@@ -24,5 +24,3 @@ let compile_files_to_hir files =
   files
   |> List.map (fun fname -> parse_file fname |> Result.get_ok)
   |> parsetree_to_hir
-
-let output_ocaml = Generate_ocaml.gen_xcb

@@ -1,10 +1,4 @@
 (executable
- (name xobl_compile)
- (modules xobl_compile)
- (public_name xobl-compile)
- (libraries xobl.compiler))
-
-(executable
  (name compile_ocaml)
  (modules compile_ocaml)
  (public_name compile-ocaml)
