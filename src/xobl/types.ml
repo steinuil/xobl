@@ -31,28 +31,15 @@ type utf16_string = Utf16_string of string [@@deriving sexp]
 
 type 'a alt = [ `Alt of 'a ] [@@deriving sexp]
 
-module Mask = struct
-  module type S = sig
-    type t
+module type Mask = sig
+  type t
 
-    val ( & ) : t -> t -> bool
-    val ( || ) : t -> t -> t
-    val of_int32 : Optint.t -> t
-    val to_int32 : t -> Optint.t
-    val sexp_of_t : t -> Sexplib0.Sexp.t
-    val t_of_sexp : Sexplib0.Sexp.t -> t
-  end
-
-  module M () : S = struct
-    type t = Optint.t
-
-    let ( & ) a b = Optint.logand a b <> Optint.zero
-    let ( || ) = Optint.logor
-    let of_int32 = Fun.id
-    let to_int32 = Fun.id
-    let sexp_of_t n = Optint.to_unsigned_int32 n |> sexp_of_int32
-    let t_of_sexp n = int32_of_sexp n |> Optint.of_unsigned_int32
-  end
+  val ( & ) : t -> t -> bool
+  val ( || ) : t -> t -> t
+  val of_int32 : Optint.t -> t
+  val to_int32 : t -> Optint.t
+  val sexp_of_t : t -> Sexplib0.Sexp.t
+  val t_of_sexp : Sexplib0.Sexp.t -> t
 end
 
 module type Event = sig

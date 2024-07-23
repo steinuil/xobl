@@ -84,7 +84,7 @@ module Core =
       visuals: visualtype list }[@@deriving sexp]
     module Event_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (key_press : t) = of_int32 (bit 0)
         let (key_release : t) = of_int32 (bit 1)
         let (button_press : t) = of_int32 (bit 2)
@@ -196,7 +196,7 @@ module Core =
       roots: screen list }[@@deriving sexp]
     module Mod_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (shift : t) = of_int32 (bit 0)
         let (lock : t) = of_int32 (bit 1)
         let (control : t) = of_int32 (bit 2)
@@ -209,7 +209,7 @@ module Core =
       end
     module Key_but_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (shift : t) = of_int32 (bit 0)
         let (lock : t) = of_int32 (bit 1)
         let (control : t) = of_int32 (bit 2)
@@ -237,7 +237,7 @@ module Core =
       end
     module Button_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (_1 : t) = of_int32 (bit 8)
         let (_2 : t) = of_int32 (bit 9)
         let (_3 : t) = of_int32 (bit 10)
@@ -349,7 +349,7 @@ module Core =
       end
     module Config_window_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (x : t) = of_int32 (bit 0)
         let (y : t) = of_int32 (bit 1)
         let (width : t) = of_int32 (bit 2)
@@ -641,7 +641,7 @@ module Core =
       end
     module Cw_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (back_pixmap : t) = of_int32 (bit 0)
         let (back_pixel : t) = of_int32 (bit 1)
         let (border_pixmap : t) = of_int32 (bit 2)
@@ -993,7 +993,7 @@ module Core =
     type str = string[@@deriving sexp]
     module Gc_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (function_ : t) = of_int32 (bit 0)
         let (plane_mask : t) = of_int32 (bit 1)
         let (foreground : t) = of_int32 (bit 2)
@@ -1259,7 +1259,7 @@ module Core =
       end
     module Color_flag_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (red : t) = of_int32 (bit 0)
         let (green : t) = of_int32 (bit 1)
         let (blue : t) = of_int32 (bit 2)
@@ -1295,7 +1295,7 @@ module Core =
       end
     module Kb_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (key_click_percent : t) = of_int32 (bit 0)
         let (bell_percent : t) = of_int32 (bit 1)
         let (bell_pitch : t) = of_int32 (bit 2)
@@ -4115,7 +4115,7 @@ module Render =
       end
     module Cp_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (repeat : t) = of_int32 (bit 0)
         let (alpha_map : t) = of_int32 (bit 1)
         let (alpha_x_origin : t) = of_int32 (bit 2)
@@ -5097,7 +5097,7 @@ module Xfixes =
       end
     module Selection_event_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (set_selection_owner : t) = of_int32 (bit 0)
         let (selection_window_destroy : t) = of_int32 (bit 1)
         let (selection_client_close : t) = of_int32 (bit 2)
@@ -5115,7 +5115,7 @@ module Xfixes =
       end
     module Cursor_notify_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (display_cursor : t) = of_int32 (bit 0)
       end
     type region = xid[@@deriving sexp]
@@ -5133,7 +5133,7 @@ module Xfixes =
     type barrier = xid[@@deriving sexp]
     module Barrier_directions_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (positive_x : t) = of_int32 (bit 0)
         let (positive_y : t) = of_int32 (bit 1)
         let (negative_x : t) = of_int32 (bit 2)
@@ -6529,7 +6529,7 @@ module Glx =
       end
     module Gc_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (gl_current_bit : t) = of_int32 (bit 0)
         let (gl_point_bit : t) = of_int32 (bit 1)
         let (gl_line_bit : t) = of_int32 (bit 2)
@@ -8118,7 +8118,7 @@ module Randr =
     type lease = xid[@@deriving sexp]
     module Rotation_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (rotate_0 : t) = of_int32 (bit 0)
         let (rotate_90 : t) = of_int32 (bit 1)
         let (rotate_180 : t) = of_int32 (bit 2)
@@ -8155,7 +8155,7 @@ module Randr =
       end
     module Notify_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (screen_change : t) = of_int32 (bit 0)
         let (crtc_change : t) = of_int32 (bit 1)
         let (output_change : t) = of_int32 (bit 2)
@@ -8167,7 +8167,7 @@ module Randr =
       end
     module Mode_flag_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (hsync_positive : t) = of_int32 (bit 0)
         let (hsync_negative : t) = of_int32 (bit 1)
         let (vsync_positive : t) = of_int32 (bit 2)
@@ -8214,7 +8214,7 @@ module Randr =
       end
     module Transform_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (unit : t) = of_int32 (bit 0)
         let (scale_up : t) = of_int32 (bit 1)
         let (scale_down : t) = of_int32 (bit 2)
@@ -8222,7 +8222,7 @@ module Randr =
       end
     module Provider_capability_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (source_output : t) = of_int32 (bit 0)
         let (sink_output : t) = of_int32 (bit 1)
         let (source_offload : t) = of_int32 (bit 2)
@@ -9206,7 +9206,7 @@ module Sync =
       end
     module Ca_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (counter : t) = of_int32 (bit 0)
         let (value_type : t) = of_int32 (bit 1)
         let (value : t) = of_int32 (bit 2)
@@ -9513,7 +9513,7 @@ module Present =
       end
     module Event_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (configure_notify : t) = of_int32 (bit 0)
         let (complete_notify : t) = of_int32 (bit 1)
         let (idle_notify : t) = of_int32 (bit 2)
@@ -9522,7 +9522,7 @@ module Present =
       end
     module Option_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (async : t) = of_int32 (bit 0)
         let (copy : t) = of_int32 (bit 1)
         let (ust : t) = of_int32 (bit 2)
@@ -9531,7 +9531,7 @@ module Present =
       end
     module Capability_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (async : t) = of_int32 (bit 0)
         let (fence : t) = of_int32 (bit 1)
         let (ust : t) = of_int32 (bit 2)
@@ -9790,7 +9790,7 @@ module Record =
     type element_header = u8[@@deriving sexp]
     module H_type_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (from_server_time : t) = of_int32 (bit 0)
         let (from_client_time : t) = of_int32 (bit 1)
         let (from_client_sequence : t) = of_int32 (bit 2)
@@ -9944,7 +9944,7 @@ module Res =
       count: u32 }[@@deriving sexp]
     module Client_id_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (client_xid : t) = of_int32 (bit 0)
         let (local_client_pid : t) = of_int32 (bit 1)
       end
@@ -10059,7 +10059,7 @@ module Screensaver =
       end
     module Event_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (notify_mask : t) = of_int32 (bit 0)
         let (cycle_mask : t) = of_int32 (bit 1)
       end
@@ -10718,7 +10718,7 @@ module Xf86vidmode =
     type dotclock = u32[@@deriving sexp]
     module Mode_flag_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (positive_h_sync : t) = of_int32 (bit 0)
         let (negative_h_sync : t) = of_int32 (bit 1)
         let (positive_v_sync : t) = of_int32 (bit 2)
@@ -10735,12 +10735,12 @@ module Xf86vidmode =
       end
     module Clock_flag_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (programable : t) = of_int32 (bit 0)
       end
     module Permission_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (read : t) = of_int32 (bit 0)
         let (write : t) = of_int32 (bit 1)
       end
@@ -11676,7 +11676,7 @@ module Xinput =
       data: Feedback_class.t }[@@deriving sexp]
     module Change_feedback_control_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (key_click_percent : t) = of_int32 (bit 0)
         let (percent : t) = of_int32 (bit 1)
         let (pitch : t) = of_int32 (bit 2)
@@ -11705,7 +11705,7 @@ module Xinput =
       buttons: u8 list }[@@deriving sexp]
     module Valuator_state_mode_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (device_mode_absolute : t) = of_int32 (bit 0)
         let (out_of_proximity : t) = of_int32 (bit 1)
       end
@@ -11990,7 +11990,7 @@ module Xinput =
       data: Hierarchy_change_type.t }[@@deriving sexp]
     module Xi_event_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (device_changed : t) = of_int32 (bit 1)
         let (key_press : t) = of_int32 (bit 2)
         let (key_release : t) = of_int32 (bit 3)
@@ -12070,7 +12070,7 @@ module Xinput =
       end
     module Scroll_flags_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (no_emulation : t) = of_int32 (bit 0)
         let (preferred : t) = of_int32 (bit 1)
       end
@@ -12261,7 +12261,7 @@ module Xinput =
       end
     module Modifier_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (any : t) = of_int32 (bit 31)
       end
     type grab_modifier_info =
@@ -12275,12 +12275,12 @@ module Xinput =
       eventid: u32 }[@@deriving sexp]
     module More_events_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (more_events : t) = of_int32 (bit 7)
       end
     module Classes_reported_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (out_of_proximity : t) = of_int32 (bit 7)
         let (device_mode_absolute : t) = of_int32 (bit 6)
         let (reporting_valuators : t) = of_int32 (bit 2)
@@ -12340,12 +12340,12 @@ module Xinput =
       end
     module Key_event_flags_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (key_repeat : t) = of_int32 (bit 16)
       end
     module Pointer_event_flags_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (pointer_emulated : t) = of_int32 (bit 16)
       end
     module Notify_mode_enum =
@@ -12405,7 +12405,7 @@ module Xinput =
       end
     module Hierarchy_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (master_added : t) = of_int32 (bit 0)
         let (master_removed : t) = of_int32 (bit 1)
         let (slave_added : t) = of_int32 (bit 2)
@@ -12438,7 +12438,7 @@ module Xinput =
       end
     module Touch_event_flags_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (touch_pending_end : t) = of_int32 (bit 16)
         let (touch_emulating_pointer : t) = of_int32 (bit 17)
       end
@@ -12456,7 +12456,7 @@ module Xinput =
       end
     module Barrier_flags_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (pointer_released : t) = of_int32 (bit 0)
         let (device_is_grabbed : t) = of_int32 (bit 1)
       end
@@ -14013,7 +14013,7 @@ module Xprint =
       end
     module Ev_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (print_mask : t) = of_int32 (bit 0)
         let (attribute_mask : t) = of_int32 (bit 1)
         let none : t = of_int32 Optint.zero
@@ -14658,7 +14658,7 @@ module Xv =
     type encoding = xid[@@deriving sexp]
     module Type_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (input_mask : t) = of_int32 (bit 0)
         let (output_mask : t) = of_int32 (bit 1)
         let (video_mask : t) = of_int32 (bit 2)
@@ -14693,7 +14693,7 @@ module Xv =
       end
     module Attribute_flag_mask =
       struct
-        include (Mask.M)(struct  end)
+        include (Mask_impl)(struct  end)
         let (gettable : t) = of_int32 (bit 0)
         let (settable : t) = of_int32 (bit 1)
       end

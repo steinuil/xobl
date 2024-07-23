@@ -327,7 +327,7 @@ module Protocol = struct
           | None_value -> [%str let none : t = of_int32 Optint.zero]
         in
         stri_module ~loc ~suffix:"mask" name
-          (([%stri include Mask.M ()] :: items) @ values)
+          (([%stri include Mask_impl ()] :: items) @ values)
         |> Option.some
     | _ -> None
 
