@@ -37,4 +37,4 @@ val select_best :
   ?types:string list ->
   entry list ->
   Authorization.t option
-(** Find an Authorization entry matching [family], [address] and [display]. *)
+(** Find an authorization entry matching [family], [address] and [display]. *)
