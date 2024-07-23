@@ -158,7 +158,7 @@ let t_poly ~loc items =
 
 module Protocol = struct
   let a_deriving_sexp ~loc =
-    Ast_helper.Attr.mk (with_loc ~loc "deriving") (PStr [%str sexp])
+    Ast_helper.Attr.mk (with_loc ~loc "deriving") (PStr [%str sexp_of])
 
   let t_prim ~loc prim =
     let str = prim_to_string prim in
@@ -394,7 +394,7 @@ module Protocol = struct
             in
             Ast_helper.Typ.constr ~loc lid []
         in
-        let t = [%stri type t = [%t event_t] [@@deriving sexp]] in
+        let t = [%stri type t = [%t event_t] [@@deriving sexp_of]] in
         let name' = [%stri let name = [%e e_str ~loc name]] in
         let number = [%stri let number = [%e e_int ~loc number]] in
         stri_module ~loc name [ t; name'; number ] |> Option.some
@@ -415,7 +415,7 @@ module Protocol = struct
     let t =
       let events = List.filter_map (rf_event_type ~ctx ~loc) decls in
       let t = Ast_helper.Typ.variant ~loc events Closed None in
-      [%stri type t = [%t t] [@@deriving sexp]]
+      [%stri type t = [%t t] [@@deriving sexp_of]]
     in
     let events = List.filter_map (stri_event ~ctx ~loc) decls in
     stri_module ~loc "event" (events @ [ t ])
@@ -439,7 +439,7 @@ module Protocol = struct
             in
             Ast_helper.Typ.constr ~loc lid []
         in
-        let t = [%stri type t = [%t error_t] [@@deriving sexp]] in
+        let t = [%stri type t = [%t error_t] [@@deriving sexp_of]] in
         let name' = [%stri let name = [%e e_str ~loc name]] in
         let number = [%stri let number = [%e e_int ~loc number]] in
         stri_module ~loc name [ t; name'; number ] |> Option.some
@@ -460,7 +460,7 @@ module Protocol = struct
     let t =
       let errors = List.filter_map (rf_error_type ~ctx ~loc) decls in
       let t = Ast_helper.Typ.variant ~loc errors Closed None in
-      [%stri type t = [%t t] [@@deriving sexp]]
+      [%stri type t = [%t t] [@@deriving sexp_of]]
     in
     let errors = List.filter_map (stri_error ~ctx ~loc) decls in
     stri_module ~loc "error" (errors @ [ t ])

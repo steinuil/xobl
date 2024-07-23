@@ -9,31 +9,31 @@ module Core =
   struct
     type char2b = {
       byte1: u8 ;
-      byte2: u8 }[@@deriving sexp]
-    type window = xid[@@deriving sexp]
-    type pixmap = xid[@@deriving sexp]
-    type cursor = xid[@@deriving sexp]
-    type font = xid[@@deriving sexp]
-    type gcontext = xid[@@deriving sexp]
-    type colormap = xid[@@deriving sexp]
-    type atom = xid[@@deriving sexp]
-    type drawable = xid[@@deriving sexp]
-    type fontable = xid[@@deriving sexp]
-    type bool32 = u32[@@deriving sexp]
-    type visualid = u32[@@deriving sexp]
-    type timestamp = u32[@@deriving sexp]
-    type keysym = u32[@@deriving sexp]
-    type keycode = u8[@@deriving sexp]
-    type keycode32 = u32[@@deriving sexp]
-    type button = u8[@@deriving sexp]
+      byte2: u8 }[@@deriving sexp_of]
+    type window = xid[@@deriving sexp_of]
+    type pixmap = xid[@@deriving sexp_of]
+    type cursor = xid[@@deriving sexp_of]
+    type font = xid[@@deriving sexp_of]
+    type gcontext = xid[@@deriving sexp_of]
+    type colormap = xid[@@deriving sexp_of]
+    type atom = xid[@@deriving sexp_of]
+    type drawable = xid[@@deriving sexp_of]
+    type fontable = xid[@@deriving sexp_of]
+    type bool32 = u32[@@deriving sexp_of]
+    type visualid = u32[@@deriving sexp_of]
+    type timestamp = u32[@@deriving sexp_of]
+    type keysym = u32[@@deriving sexp_of]
+    type keycode = u8[@@deriving sexp_of]
+    type keycode32 = u32[@@deriving sexp_of]
+    type button = u8[@@deriving sexp_of]
     type point = {
       x: i16 ;
-      y: i16 }[@@deriving sexp]
+      y: i16 }[@@deriving sexp_of]
     type rectangle = {
       x: i16 ;
       y: i16 ;
       width: u16 ;
-      height: u16 }[@@deriving sexp]
+      height: u16 }[@@deriving sexp_of]
     type arc =
       {
       x: i16 ;
@@ -41,16 +41,16 @@ module Core =
       width: u16 ;
       height: u16 ;
       angle1: i16 ;
-      angle2: i16 }[@@deriving sexp]
+      angle2: i16 }[@@deriving sexp_of]
     type format = {
       depth: u8 ;
       bits_per_pixel: u8 ;
-      scanline_pad: u8 }[@@deriving sexp]
+      scanline_pad: u8 }[@@deriving sexp_of]
     module Visual_class_enum =
       struct
         type t =
           [ `Static_gray  | `Gray_scale  | `Static_color  | `Pseudo_color 
-          | `True_color  | `Direct_color ][@@deriving sexp]
+          | `True_color  | `Direct_color ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Static_gray
@@ -79,10 +79,10 @@ module Core =
       colormap_entries: u16 ;
       red_mask: u32 ;
       green_mask: u32 ;
-      blue_mask: u32 }[@@deriving sexp]
+      blue_mask: u32 }[@@deriving sexp_of]
     type depth = {
       depth: u8 ;
-      visuals: visualtype list }[@@deriving sexp]
+      visuals: visualtype list }[@@deriving sexp_of]
     module Event_mask =
       struct
         include (Mask_impl)(struct  end)
@@ -115,7 +115,8 @@ module Core =
       end
     module Backing_store_enum =
       struct
-        type t = [ `Not_useful  | `When_mapped  | `Always ][@@deriving sexp]
+        type t = [ `Not_useful  | `When_mapped  | `Always ][@@deriving
+                                                             sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Not_useful
@@ -144,27 +145,27 @@ module Core =
       backing_stores: Backing_store_enum.t ;
       save_unders: bool ;
       root_depth: u8 ;
-      allowed_depths: depth list }[@@deriving sexp]
+      allowed_depths: depth list }[@@deriving sexp_of]
     type setup_request =
       {
       byte_order: u8 ;
       protocol_major_version: u16 ;
       protocol_minor_version: u16 ;
       authorization_protocol_name: string ;
-      authorization_protocol_data: string }[@@deriving sexp]
+      authorization_protocol_data: string }[@@deriving sexp_of]
     type setup_failed =
       {
       status: u8 ;
       protocol_major_version: u16 ;
       protocol_minor_version: u16 ;
       length: u16 ;
-      reason: string }[@@deriving sexp]
+      reason: string }[@@deriving sexp_of]
     type setup_authenticate = {
       status: u8 ;
-      reason: string }[@@deriving sexp]
+      reason: string }[@@deriving sexp_of]
     module Image_order_enum =
       struct
-        type t = [ `Lsb_first  | `Msb_first ][@@deriving sexp]
+        type t = [ `Lsb_first  | `Msb_first ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Lsb_first
@@ -194,7 +195,7 @@ module Core =
       max_keycode: keycode ;
       vendor: string ;
       pixmap_formats: format list ;
-      roots: screen list }[@@deriving sexp]
+      roots: screen list }[@@deriving sexp_of]
     module Mod_mask =
       struct
         include (Mask_impl)(struct  end)
@@ -227,7 +228,7 @@ module Core =
       end
     module Window_enum =
       struct
-        type t = [ `None ][@@deriving sexp]
+        type t = [ `None ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `None
@@ -248,7 +249,7 @@ module Core =
       end
     module Motion_enum =
       struct
-        type t = [ `Normal  | `Hint ][@@deriving sexp]
+        type t = [ `Normal  | `Hint ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Normal
@@ -263,7 +264,7 @@ module Core =
         type t =
           [ `Ancestor  | `Virtual_  | `Inferior  | `Nonlinear 
           | `Nonlinear_virtual  | `Pointer  | `Pointer_root  | `None ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Ancestor
@@ -291,7 +292,7 @@ module Core =
     module Notify_mode_enum =
       struct
         type t = [ `Normal  | `Grab  | `Ungrab  | `While_grabbed ][@@deriving
-                                                                    sexp]
+                                                                    sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Normal
@@ -311,7 +312,7 @@ module Core =
     module Visibility_enum =
       struct
         type t = [ `Unobscured  | `Partially_obscured  | `Fully_obscured ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Unobscured
@@ -329,7 +330,7 @@ module Core =
     module Stack_mode_enum =
       struct
         type t = [ `Above  | `Below  | `Top_if  | `Bottom_if  | `Opposite ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Above
@@ -361,7 +362,7 @@ module Core =
       end
     module Place_enum =
       struct
-        type t = [ `On_top  | `On_bottom ][@@deriving sexp]
+        type t = [ `On_top  | `On_bottom ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `On_top
@@ -373,7 +374,7 @@ module Core =
       end
     module Property_enum =
       struct
-        type t = [ `New_value  | `Delete ][@@deriving sexp]
+        type t = [ `New_value  | `Delete ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `New_value
@@ -385,7 +386,7 @@ module Core =
       end
     module Time_enum =
       struct
-        type t = [ `Current_time ][@@deriving sexp]
+        type t = [ `Current_time ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Current_time
@@ -414,7 +415,7 @@ module Core =
           | `Italic_angle  | `X_height  | `Quad_width  | `Weight 
           | `Point_size  | `Resolution  | `Copyright  | `Notice 
           | `Font_name  | `Family_name  | `Full_name  | `Cap_height 
-          | `Wm_class  | `Wm_transient_for ][@@deriving sexp]
+          | `Wm_class  | `Wm_transient_for ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `None
@@ -565,7 +566,7 @@ module Core =
       end
     module Colormap_state_enum =
       struct
-        type t = [ `Uninstalled  | `Installed ][@@deriving sexp]
+        type t = [ `Uninstalled  | `Installed ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Uninstalled
@@ -578,7 +579,7 @@ module Core =
       end
     module Colormap_enum =
       struct
-        type t = [ `None ][@@deriving sexp]
+        type t = [ `None ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `None
@@ -589,7 +590,7 @@ module Core =
       end
     module Client_message_data_format_enum =
       struct
-        type t = [ `Data8  | `Data16  | `Data32 ][@@deriving sexp]
+        type t = [ `Data8  | `Data16  | `Data32 ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 8 -> `Data8
@@ -606,11 +607,11 @@ module Core =
       struct
         type t =
           [ `Data8 of u8 list  | `Data16 of u16 list  | `Data32 of u32 list ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
       end
     module Mapping_enum =
       struct
-        type t = [ `Modifier  | `Keyboard  | `Pointer ][@@deriving sexp]
+        type t = [ `Modifier  | `Keyboard  | `Pointer ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Modifier
@@ -625,7 +626,7 @@ module Core =
     module Window_class_enum =
       struct
         type t = [ `Copy_from_parent  | `Input_output  | `Input_only ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Copy_from_parent
@@ -661,7 +662,7 @@ module Core =
       end
     module Back_pixmap_enum =
       struct
-        type t = [ `None  | `Parent_relative ][@@deriving sexp]
+        type t = [ `None  | `Parent_relative ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `None
@@ -677,7 +678,7 @@ module Core =
         type t =
           [ `Bit_forget  | `North_west  | `North  | `North_east  | `West 
           | `Center  | `East  | `South_west  | `South  | `South_east 
-          | `Static ][@@deriving sexp]
+          | `Static ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Bit_forget
@@ -713,7 +714,7 @@ module Core =
         type t =
           [ `Win_unmap  | `North_west  | `North  | `North_east  | `West 
           | `Center  | `East  | `South_west  | `South  | `South_east 
-          | `Static ][@@deriving sexp]
+          | `Static ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Win_unmap
@@ -746,7 +747,7 @@ module Core =
       end
     module Pixmap_enum =
       struct
-        type t = [ `None ][@@deriving sexp]
+        type t = [ `None ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `None
@@ -757,7 +758,7 @@ module Core =
       end
     module Cursor_enum =
       struct
-        type t = [ `None ][@@deriving sexp]
+        type t = [ `None ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `None
@@ -768,7 +769,8 @@ module Core =
       end
     module Map_state_enum =
       struct
-        type t = [ `Unmapped  | `Unviewable  | `Viewable ][@@deriving sexp]
+        type t = [ `Unmapped  | `Unviewable  | `Viewable ][@@deriving
+                                                            sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Unmapped
@@ -782,7 +784,7 @@ module Core =
       end
     module Set_mode_enum =
       struct
-        type t = [ `Insert  | `Delete ][@@deriving sexp]
+        type t = [ `Insert  | `Delete ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Insert
@@ -794,7 +796,7 @@ module Core =
       end
     module Circulate_enum =
       struct
-        type t = [ `Raise_lowest  | `Lower_highest ][@@deriving sexp]
+        type t = [ `Raise_lowest  | `Lower_highest ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Raise_lowest
@@ -807,7 +809,7 @@ module Core =
       end
     module Prop_mode_enum =
       struct
-        type t = [ `Replace  | `Prepend  | `Append ][@@deriving sexp]
+        type t = [ `Replace  | `Prepend  | `Append ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Replace
@@ -821,7 +823,7 @@ module Core =
       end
     module Get_property_type_enum =
       struct
-        type t = [ `Any ][@@deriving sexp]
+        type t = [ `Any ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Any
@@ -833,7 +835,7 @@ module Core =
       end
     module Send_event_dest_enum =
       struct
-        type t = [ `Pointer_window  | `Item_focus ][@@deriving sexp]
+        type t = [ `Pointer_window  | `Item_focus ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Pointer_window
@@ -846,7 +848,7 @@ module Core =
       end
     module Grab_mode_enum =
       struct
-        type t = [ `Sync  | `Async ][@@deriving sexp]
+        type t = [ `Sync  | `Async ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Sync
@@ -860,7 +862,7 @@ module Core =
       struct
         type t =
           [ `Success  | `Already_grabbed  | `Invalid_time  | `Not_viewable 
-          | `Frozen ][@@deriving sexp]
+          | `Frozen ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Success
@@ -881,7 +883,8 @@ module Core =
       end
     module Button_index_enum =
       struct
-        type t = [ `Any  | `D1  | `D2  | `D3  | `D4  | `D5 ][@@deriving sexp]
+        type t = [ `Any  | `D1  | `D2  | `D3  | `D4  | `D5 ][@@deriving
+                                                              sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Any
@@ -904,7 +907,7 @@ module Core =
       end
     module Grab_enum =
       struct
-        type t = [ `Any ][@@deriving sexp]
+        type t = [ `Any ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Any
@@ -918,7 +921,7 @@ module Core =
         type t =
           [ `Async_pointer  | `Sync_pointer  | `Replay_pointer 
           | `Async_keyboard  | `Sync_keyboard  | `Replay_keyboard 
-          | `Async_both  | `Sync_both ][@@deriving sexp]
+          | `Async_both  | `Sync_both ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Async_pointer
@@ -946,11 +949,11 @@ module Core =
     type timecoord = {
       time: timestamp ;
       x: i16 ;
-      y: i16 }[@@deriving sexp]
+      y: i16 }[@@deriving sexp_of]
     module Input_focus_enum =
       struct
         type t = [ `None  | `Pointer_root  | `Parent  | `Follow_keyboard ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `None
@@ -969,7 +972,7 @@ module Core =
       end
     module Font_draw_enum =
       struct
-        type t = [ `Left_to_right  | `Right_to_left ][@@deriving sexp]
+        type t = [ `Left_to_right  | `Right_to_left ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Left_to_right
@@ -982,7 +985,7 @@ module Core =
       end
     type fontprop = {
       name: atom ;
-      value: u32 }[@@deriving sexp]
+      value: u32 }[@@deriving sexp_of]
     type charinfo =
       {
       left_side_bearing: i16 ;
@@ -990,8 +993,8 @@ module Core =
       character_width: i16 ;
       ascent: i16 ;
       descent: i16 ;
-      attributes: u16 }[@@deriving sexp]
-    type str = string[@@deriving sexp]
+      attributes: u16 }[@@deriving sexp_of]
+    type str = string[@@deriving sexp_of]
     module Gc_mask =
       struct
         include (Mask_impl)(struct  end)
@@ -1025,7 +1028,7 @@ module Core =
           [ `Clear  | `And_  | `And_reverse  | `Copy  | `And_inverted 
           | `Noop  | `Xor  | `Or_  | `Nor  | `Equiv  | `Invert 
           | `Or_reverse  | `Copy_inverted  | `Or_inverted  | `Nand  | 
-            `Set ][@@deriving sexp]
+            `Set ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Clear
@@ -1067,7 +1070,8 @@ module Core =
       end
     module Line_style_enum =
       struct
-        type t = [ `Solid  | `On_off_dash  | `Double_dash ][@@deriving sexp]
+        type t = [ `Solid  | `On_off_dash  | `Double_dash ][@@deriving
+                                                             sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Solid
@@ -1082,7 +1086,7 @@ module Core =
     module Cap_style_enum =
       struct
         type t = [ `Not_last  | `Butt  | `Round  | `Projecting ][@@deriving
-                                                                  sexp]
+                                                                  sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Not_last
@@ -1101,7 +1105,7 @@ module Core =
       end
     module Join_style_enum =
       struct
-        type t = [ `Miter  | `Round  | `Bevel ][@@deriving sexp]
+        type t = [ `Miter  | `Round  | `Bevel ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Miter
@@ -1116,7 +1120,7 @@ module Core =
     module Fill_style_enum =
       struct
         type t = [ `Solid  | `Tiled  | `Stippled  | `Opaque_stippled ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Solid
@@ -1135,7 +1139,7 @@ module Core =
       end
     module Fill_rule_enum =
       struct
-        type t = [ `Even_odd  | `Winding ][@@deriving sexp]
+        type t = [ `Even_odd  | `Winding ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Even_odd
@@ -1147,7 +1151,8 @@ module Core =
       end
     module Subwindow_mode_enum =
       struct
-        type t = [ `Clip_by_children  | `Include_inferiors ][@@deriving sexp]
+        type t = [ `Clip_by_children  | `Include_inferiors ][@@deriving
+                                                              sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Clip_by_children
@@ -1160,7 +1165,7 @@ module Core =
       end
     module Arc_mode_enum =
       struct
-        type t = [ `Chord  | `Pie_slice ][@@deriving sexp]
+        type t = [ `Chord  | `Pie_slice ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Chord
@@ -1172,7 +1177,7 @@ module Core =
       end
     module Font_enum =
       struct
-        type t = [ `None ][@@deriving sexp]
+        type t = [ `None ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `None
@@ -1184,7 +1189,7 @@ module Core =
     module Clip_ordering_enum =
       struct
         type t = [ `Unsorted  | `Y_sorted  | `Yx_sorted  | `Yx_banded ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Unsorted
@@ -1203,7 +1208,7 @@ module Core =
       end
     module Coord_mode_enum =
       struct
-        type t = [ `Origin  | `Previous ][@@deriving sexp]
+        type t = [ `Origin  | `Previous ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Origin
@@ -1217,10 +1222,10 @@ module Core =
       x1: i16 ;
       y1: i16 ;
       x2: i16 ;
-      y2: i16 }[@@deriving sexp]
+      y2: i16 }[@@deriving sexp_of]
     module Poly_shape_enum =
       struct
-        type t = [ `Complex  | `Nonconvex  | `Convex ][@@deriving sexp]
+        type t = [ `Complex  | `Nonconvex  | `Convex ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Complex
@@ -1234,7 +1239,8 @@ module Core =
       end
     module Image_format_enum =
       struct
-        type t = [ `Xy_bitmap  | `Xy_pixmap  | `Z_pixmap ][@@deriving sexp]
+        type t = [ `Xy_bitmap  | `Xy_pixmap  | `Z_pixmap ][@@deriving
+                                                            sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Xy_bitmap
@@ -1248,7 +1254,7 @@ module Core =
       end
     module Colormap_alloc_enum =
       struct
-        type t = [ `None  | `All ][@@deriving sexp]
+        type t = [ `None  | `All ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `None
@@ -1271,15 +1277,15 @@ module Core =
       red: u16 ;
       green: u16 ;
       blue: u16 ;
-      flags: Color_flag_mask.t }[@@deriving sexp]
+      flags: Color_flag_mask.t }[@@deriving sexp_of]
     type rgb = {
       red: u16 ;
       green: u16 ;
-      blue: u16 }[@@deriving sexp]
+      blue: u16 }[@@deriving sexp_of]
     module Query_shape_of_enum =
       struct
         type t = [ `Largest_cursor  | `Fastest_tile  | `Fastest_stipple ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Largest_cursor
@@ -1308,7 +1314,7 @@ module Core =
       end
     module Led_mode_enum =
       struct
-        type t = [ `Off  | `On ][@@deriving sexp]
+        type t = [ `Off  | `On ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Off
@@ -1320,7 +1326,7 @@ module Core =
       end
     module Auto_repeat_mode_enum =
       struct
-        type t = [ `Off  | `On  | `Default ][@@deriving sexp]
+        type t = [ `Off  | `On  | `Default ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Off
@@ -1336,7 +1342,7 @@ module Core =
     module Blanking_enum =
       struct
         type t = [ `Not_preferred  | `Preferred  | `Default ][@@deriving
-                                                               sexp]
+                                                               sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Not_preferred
@@ -1350,7 +1356,7 @@ module Core =
       end
     module Exposures_enum =
       struct
-        type t = [ `Not_allowed  | `Allowed  | `Default ][@@deriving sexp]
+        type t = [ `Not_allowed  | `Allowed  | `Default ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Not_allowed
@@ -1364,7 +1370,7 @@ module Core =
       end
     module Host_mode_enum =
       struct
-        type t = [ `Insert  | `Delete ][@@deriving sexp]
+        type t = [ `Insert  | `Delete ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Insert
@@ -1378,7 +1384,7 @@ module Core =
       struct
         type t =
           [ `Internet  | `Decnet  | `Chaos  | `Server_interpreted 
-          | `Internet6 ][@@deriving sexp]
+          | `Internet6 ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Internet
@@ -1399,10 +1405,10 @@ module Core =
       end
     type host = {
       family: Family_enum.t ;
-      address: byte list }[@@deriving sexp]
+      address: byte list }[@@deriving sexp_of]
     module Access_control_enum =
       struct
-        type t = [ `Disable  | `Enable ][@@deriving sexp]
+        type t = [ `Disable  | `Enable ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Disable
@@ -1415,7 +1421,7 @@ module Core =
     module Close_down_enum =
       struct
         type t = [ `Destroy_all  | `Retain_permanent  | `Retain_temporary ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Destroy_all
@@ -1432,7 +1438,7 @@ module Core =
       end
     module Kill_enum =
       struct
-        type t = [ `All_temporary ][@@deriving sexp]
+        type t = [ `All_temporary ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `All_temporary
@@ -1443,7 +1449,7 @@ module Core =
       end
     module Screen_saver_enum =
       struct
-        type t = [ `Reset  | `Active ][@@deriving sexp]
+        type t = [ `Reset  | `Active ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Reset
@@ -1455,7 +1461,7 @@ module Core =
       end
     module Mapping_status_enum =
       struct
-        type t = [ `Success  | `Busy  | `Failure ][@@deriving sexp]
+        type t = [ `Success  | `Busy  | `Failure ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Success
@@ -1471,7 +1477,7 @@ module Core =
       struct
         type t =
           [ `Shift  | `Lock  | `Control  | `D1  | `D2  | `D3  | `D4  | `D5 ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Shift
@@ -1512,13 +1518,13 @@ module Core =
               event_x: i16 ;
               event_y: i16 ;
               state: Key_but_mask.t ;
-              same_screen: bool }[@@deriving sexp]
+              same_screen: bool }[@@deriving sexp_of]
             let name = "KeyPress"
             let number = 2
           end
         module Key_release =
           struct
-            type t = Key_press.t[@@deriving sexp]
+            type t = Key_press.t[@@deriving sexp_of]
             let name = "KeyRelease"
             let number = 3
           end
@@ -1536,13 +1542,13 @@ module Core =
               event_x: i16 ;
               event_y: i16 ;
               state: Key_but_mask.t ;
-              same_screen: bool }[@@deriving sexp]
+              same_screen: bool }[@@deriving sexp_of]
             let name = "ButtonPress"
             let number = 4
           end
         module Button_release =
           struct
-            type t = Button_press.t[@@deriving sexp]
+            type t = Button_press.t[@@deriving sexp_of]
             let name = "ButtonRelease"
             let number = 5
           end
@@ -1560,7 +1566,7 @@ module Core =
               event_x: i16 ;
               event_y: i16 ;
               state: Key_but_mask.t ;
-              same_screen: bool }[@@deriving sexp]
+              same_screen: bool }[@@deriving sexp_of]
             let name = "MotionNotify"
             let number = 6
           end
@@ -1579,13 +1585,13 @@ module Core =
               event_y: i16 ;
               state: Key_but_mask.t ;
               mode: Notify_mode_enum.t ;
-              same_screen_focus: byte }[@@deriving sexp]
+              same_screen_focus: byte }[@@deriving sexp_of]
             let name = "EnterNotify"
             let number = 7
           end
         module Leave_notify =
           struct
-            type t = Enter_notify.t[@@deriving sexp]
+            type t = Enter_notify.t[@@deriving sexp_of]
             let name = "LeaveNotify"
             let number = 8
           end
@@ -1595,19 +1601,19 @@ module Core =
               {
               detail: Notify_detail_enum.t ;
               event: window ;
-              mode: Notify_mode_enum.t }[@@deriving sexp]
+              mode: Notify_mode_enum.t }[@@deriving sexp_of]
             let name = "FocusIn"
             let number = 9
           end
         module Focus_out =
           struct
-            type t = Focus_in.t[@@deriving sexp]
+            type t = Focus_in.t[@@deriving sexp_of]
             let name = "FocusOut"
             let number = 10
           end
         module Keymap_notify =
           struct
-            type t = u8 list[@@deriving sexp]
+            type t = u8 list[@@deriving sexp_of]
             let name = "KeymapNotify"
             let number = 11
           end
@@ -1620,7 +1626,7 @@ module Core =
               y: u16 ;
               width: u16 ;
               height: u16 ;
-              count: u16 }[@@deriving sexp]
+              count: u16 }[@@deriving sexp_of]
             let name = "Expose"
             let number = 12
           end
@@ -1635,7 +1641,7 @@ module Core =
               height: u16 ;
               minor_opcode: u16 ;
               count: u16 ;
-              major_opcode: u8 }[@@deriving sexp]
+              major_opcode: u8 }[@@deriving sexp_of]
             let name = "GraphicsExposure"
             let number = 13
           end
@@ -1645,7 +1651,7 @@ module Core =
               {
               drawable: drawable ;
               minor_opcode: u16 ;
-              major_opcode: u8 }[@@deriving sexp]
+              major_opcode: u8 }[@@deriving sexp_of]
             let name = "NoExposure"
             let number = 14
           end
@@ -1653,7 +1659,7 @@ module Core =
           struct
             type t = {
               window: window ;
-              state: Visibility_enum.t }[@@deriving sexp]
+              state: Visibility_enum.t }[@@deriving sexp_of]
             let name = "VisibilityNotify"
             let number = 15
           end
@@ -1668,7 +1674,7 @@ module Core =
               width: u16 ;
               height: u16 ;
               border_width: u16 ;
-              override_redirect: bool }[@@deriving sexp]
+              override_redirect: bool }[@@deriving sexp_of]
             let name = "CreateNotify"
             let number = 16
           end
@@ -1676,7 +1682,7 @@ module Core =
           struct
             type t = {
               event: window ;
-              window: window }[@@deriving sexp]
+              window: window }[@@deriving sexp_of]
             let name = "DestroyNotify"
             let number = 17
           end
@@ -1685,7 +1691,7 @@ module Core =
             type t = {
               event: window ;
               window: window ;
-              from_configure: bool }[@@deriving sexp]
+              from_configure: bool }[@@deriving sexp_of]
             let name = "UnmapNotify"
             let number = 18
           end
@@ -1695,7 +1701,7 @@ module Core =
               {
               event: window ;
               window: window ;
-              override_redirect: bool }[@@deriving sexp]
+              override_redirect: bool }[@@deriving sexp_of]
             let name = "MapNotify"
             let number = 19
           end
@@ -1703,7 +1709,7 @@ module Core =
           struct
             type t = {
               parent: window ;
-              window: window }[@@deriving sexp]
+              window: window }[@@deriving sexp_of]
             let name = "MapRequest"
             let number = 20
           end
@@ -1716,7 +1722,7 @@ module Core =
               parent: window ;
               x: i16 ;
               y: i16 ;
-              override_redirect: bool }[@@deriving sexp]
+              override_redirect: bool }[@@deriving sexp_of]
             let name = "ReparentNotify"
             let number = 21
           end
@@ -1732,7 +1738,7 @@ module Core =
               width: u16 ;
               height: u16 ;
               border_width: u16 ;
-              override_redirect: bool }[@@deriving sexp]
+              override_redirect: bool }[@@deriving sexp_of]
             let name = "ConfigureNotify"
             let number = 22
           end
@@ -1749,7 +1755,7 @@ module Core =
               width: u16 ;
               height: u16 ;
               border_width: u16 ;
-              value_mask: Config_window_mask.t }[@@deriving sexp]
+              value_mask: Config_window_mask.t }[@@deriving sexp_of]
             let name = "ConfigureRequest"
             let number = 23
           end
@@ -1759,7 +1765,7 @@ module Core =
               event: window ;
               window: window ;
               x: i16 ;
-              y: i16 }[@@deriving sexp]
+              y: i16 }[@@deriving sexp_of]
             let name = "GravityNotify"
             let number = 24
           end
@@ -1768,7 +1774,7 @@ module Core =
             type t = {
               window: window ;
               width: u16 ;
-              height: u16 }[@@deriving sexp]
+              height: u16 }[@@deriving sexp_of]
             let name = "ResizeRequest"
             let number = 25
           end
@@ -1777,13 +1783,13 @@ module Core =
             type t = {
               event: window ;
               window: window ;
-              place: Place_enum.t }[@@deriving sexp]
+              place: Place_enum.t }[@@deriving sexp_of]
             let name = "CirculateNotify"
             let number = 26
           end
         module Circulate_request =
           struct
-            type t = Circulate_notify.t[@@deriving sexp]
+            type t = Circulate_notify.t[@@deriving sexp_of]
             let name = "CirculateRequest"
             let number = 27
           end
@@ -1794,7 +1800,7 @@ module Core =
               window: window ;
               atom: atom ;
               time: timestamp ;
-              state: Property_enum.t }[@@deriving sexp]
+              state: Property_enum.t }[@@deriving sexp_of]
             let name = "PropertyNotify"
             let number = 28
           end
@@ -1803,7 +1809,7 @@ module Core =
             type t = {
               time: timestamp ;
               owner: window ;
-              selection: atom }[@@deriving sexp]
+              selection: atom }[@@deriving sexp_of]
             let name = "SelectionClear"
             let number = 29
           end
@@ -1816,7 +1822,7 @@ module Core =
               requestor: window ;
               selection: atom ;
               target: atom ;
-              property: [ | Atom_enum.t | atom alt] }[@@deriving sexp]
+              property: [ | Atom_enum.t | atom alt] }[@@deriving sexp_of]
             let name = "SelectionRequest"
             let number = 30
           end
@@ -1828,7 +1834,7 @@ module Core =
               requestor: window ;
               selection: atom ;
               target: atom ;
-              property: [ | Atom_enum.t | atom alt] }[@@deriving sexp]
+              property: [ | Atom_enum.t | atom alt] }[@@deriving sexp_of]
             let name = "SelectionNotify"
             let number = 31
           end
@@ -1839,7 +1845,7 @@ module Core =
               window: window ;
               colormap: [ | Colormap_enum.t | colormap alt] ;
               new_: bool ;
-              state: Colormap_state_enum.t }[@@deriving sexp]
+              state: Colormap_state_enum.t }[@@deriving sexp_of]
             let name = "ColormapNotify"
             let number = 32
           end
@@ -1849,7 +1855,7 @@ module Core =
               {
               window: window ;
               type_: atom ;
-              data: Client_message_data_format.t }[@@deriving sexp]
+              data: Client_message_data_format.t }[@@deriving sexp_of]
             let name = "ClientMessage"
             let number = 33
           end
@@ -1859,13 +1865,13 @@ module Core =
               {
               request: Mapping_enum.t ;
               first_keycode: keycode ;
-              count: u8 }[@@deriving sexp]
+              count: u8 }[@@deriving sexp_of]
             let name = "MappingNotify"
             let number = 34
           end
         module Ge_generic =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "GeGeneric"
             let number = 35
           end
@@ -1898,109 +1904,109 @@ module Core =
           | `Colormap_notify of Colormap_notify.t 
           | `Client_message of Client_message.t 
           | `Mapping_notify of Mapping_notify.t 
-          | `Ge_generic of Ge_generic.t ][@@deriving sexp]
+          | `Ge_generic of Ge_generic.t ][@@deriving sexp_of]
       end
     module Error =
       struct
         module Request =
           struct
-            type t = u32[@@deriving sexp]
+            type t = u32[@@deriving sexp_of]
             let name = "Request"
             let number = 1
           end
         module Value =
           struct
-            type t = u32[@@deriving sexp]
+            type t = u32[@@deriving sexp_of]
             let name = "Value"
             let number = 2
           end
         module Window =
           struct
-            type t = Value.t[@@deriving sexp]
+            type t = Value.t[@@deriving sexp_of]
             let name = "Window"
             let number = 3
           end
         module Pixmap =
           struct
-            type t = Value.t[@@deriving sexp]
+            type t = Value.t[@@deriving sexp_of]
             let name = "Pixmap"
             let number = 4
           end
         module Atom =
           struct
-            type t = Value.t[@@deriving sexp]
+            type t = Value.t[@@deriving sexp_of]
             let name = "Atom"
             let number = 5
           end
         module Cursor =
           struct
-            type t = Value.t[@@deriving sexp]
+            type t = Value.t[@@deriving sexp_of]
             let name = "Cursor"
             let number = 6
           end
         module Font =
           struct
-            type t = Value.t[@@deriving sexp]
+            type t = Value.t[@@deriving sexp_of]
             let name = "Font"
             let number = 7
           end
         module Match_ =
           struct
-            type t = Request.t[@@deriving sexp]
+            type t = Request.t[@@deriving sexp_of]
             let name = "Match"
             let number = 8
           end
         module Drawable =
           struct
-            type t = Value.t[@@deriving sexp]
+            type t = Value.t[@@deriving sexp_of]
             let name = "Drawable"
             let number = 9
           end
         module Access =
           struct
-            type t = Request.t[@@deriving sexp]
+            type t = Request.t[@@deriving sexp_of]
             let name = "Access"
             let number = 10
           end
         module Alloc =
           struct
-            type t = Request.t[@@deriving sexp]
+            type t = Request.t[@@deriving sexp_of]
             let name = "Alloc"
             let number = 11
           end
         module Colormap =
           struct
-            type t = Value.t[@@deriving sexp]
+            type t = Value.t[@@deriving sexp_of]
             let name = "Colormap"
             let number = 12
           end
         module G_context =
           struct
-            type t = Value.t[@@deriving sexp]
+            type t = Value.t[@@deriving sexp_of]
             let name = "GContext"
             let number = 13
           end
         module Id_choice =
           struct
-            type t = Value.t[@@deriving sexp]
+            type t = Value.t[@@deriving sexp_of]
             let name = "IDChoice"
             let number = 14
           end
         module Name =
           struct
-            type t = Request.t[@@deriving sexp]
+            type t = Request.t[@@deriving sexp_of]
             let name = "Name"
             let number = 15
           end
         module Length =
           struct
-            type t = Request.t[@@deriving sexp]
+            type t = Request.t[@@deriving sexp_of]
             let name = "Length"
             let number = 16
           end
         module Implementation =
           struct
-            type t = Request.t[@@deriving sexp]
+            type t = Request.t[@@deriving sexp_of]
             let name = "Implementation"
             let number = 17
           end
@@ -2012,7 +2018,7 @@ module Core =
           | `Alloc of Alloc.t  | `Colormap of Colormap.t 
           | `G_context of G_context.t  | `Id_choice of Id_choice.t 
           | `Name of Name.t  | `Length of Length.t 
-          | `Implementation of Implementation.t ][@@deriving sexp]
+          | `Implementation of Implementation.t ][@@deriving sexp_of]
       end
     module Create_window =
       struct
@@ -2044,7 +2050,8 @@ module Core =
           event_mask: Event_mask.t option ;
           do_not_propogate_mask: Event_mask.t option ;
           colormap: [ | Colormap_enum.t | colormap alt] option ;
-          cursor: [ | Cursor_enum.t | cursor alt] option }[@@deriving sexp]
+          cursor: [ | Cursor_enum.t | cursor alt] option }[@@deriving
+                                                            sexp_of]
         let with_request f ~depth  ~wid  ~parent  ~x  ~y  ~width  ~height 
           ~border_width  ~class_  ~visual  ?background_pixmap 
           ?background_pixel  ?border_pixmap  ?border_pixel  ?bit_gravity 
@@ -2101,7 +2108,8 @@ module Core =
           event_mask: Event_mask.t option ;
           do_not_propogate_mask: Event_mask.t option ;
           colormap: [ | Colormap_enum.t | colormap alt] option ;
-          cursor: [ | Cursor_enum.t | cursor alt] option }[@@deriving sexp]
+          cursor: [ | Cursor_enum.t | cursor alt] option }[@@deriving
+                                                            sexp_of]
         let with_request f ~window  ?background_pixmap  ?background_pixel 
           ?border_pixmap  ?border_pixel  ?bit_gravity  ?win_gravity 
           ?backing_store  ?backing_planes  ?backing_pixel  ?override_redirect
@@ -2131,7 +2139,7 @@ module Core =
       struct
         let name = "GetWindowAttributes"
         let opcode = 3
-        type t = window[@@deriving sexp]
+        type t = window[@@deriving sexp_of]
         let with_request f window = f (window : t)
         module Reply =
           struct
@@ -2151,21 +2159,21 @@ module Core =
               colormap: [ | Colormap_enum.t | colormap alt] ;
               all_event_masks: Event_mask.t ;
               your_event_mask: Event_mask.t ;
-              do_not_propagate_mask: Event_mask.t }[@@deriving sexp]
+              do_not_propagate_mask: Event_mask.t }[@@deriving sexp_of]
           end
       end
     module Destroy_window =
       struct
         let name = "DestroyWindow"
         let opcode = 4
-        type t = window[@@deriving sexp]
+        type t = window[@@deriving sexp_of]
         let with_request f window = f (window : t)
       end
     module Destroy_subwindows =
       struct
         let name = "DestroySubwindows"
         let opcode = 5
-        type t = window[@@deriving sexp]
+        type t = window[@@deriving sexp_of]
         let with_request f window = f (window : t)
       end
     module Change_save_set =
@@ -2174,7 +2182,7 @@ module Core =
         let opcode = 6
         type t = {
           mode: Set_mode_enum.t ;
-          window: window }[@@deriving sexp]
+          window: window }[@@deriving sexp_of]
         let with_request f ~mode  ~window  = f ({ mode; window } : t)
       end
     module Reparent_window =
@@ -2185,7 +2193,7 @@ module Core =
           window: window ;
           parent: window ;
           x: i16 ;
-          y: i16 }[@@deriving sexp]
+          y: i16 }[@@deriving sexp_of]
         let with_request f ~window  ~parent  ~x  ~y  =
           f ({ window; parent; x; y } : t)
       end
@@ -2193,28 +2201,28 @@ module Core =
       struct
         let name = "MapWindow"
         let opcode = 8
-        type t = window[@@deriving sexp]
+        type t = window[@@deriving sexp_of]
         let with_request f window = f (window : t)
       end
     module Map_subwindows =
       struct
         let name = "MapSubwindows"
         let opcode = 9
-        type t = window[@@deriving sexp]
+        type t = window[@@deriving sexp_of]
         let with_request f window = f (window : t)
       end
     module Unmap_window =
       struct
         let name = "UnmapWindow"
         let opcode = 10
-        type t = window[@@deriving sexp]
+        type t = window[@@deriving sexp_of]
         let with_request f window = f (window : t)
       end
     module Unmap_subwindows =
       struct
         let name = "UnmapSubwindows"
         let opcode = 11
-        type t = window[@@deriving sexp]
+        type t = window[@@deriving sexp_of]
         let with_request f window = f (window : t)
       end
     module Configure_window =
@@ -2230,7 +2238,7 @@ module Core =
           height: u32 option ;
           border_width: u32 option ;
           sibling: [ | Window_enum.t | window alt] option ;
-          stack_mode: Stack_mode_enum.t option }[@@deriving sexp]
+          stack_mode: Stack_mode_enum.t option }[@@deriving sexp_of]
         let with_request f ~window  ?x  ?y  ?width  ?height  ?border_width 
           ?sibling  ?stack_mode  () =
           f
@@ -2243,7 +2251,7 @@ module Core =
         let opcode = 13
         type t = {
           direction: Circulate_enum.t ;
-          window: window }[@@deriving sexp]
+          window: window }[@@deriving sexp_of]
         let with_request f ~direction  ~window  =
           f ({ direction; window } : t)
       end
@@ -2251,7 +2259,7 @@ module Core =
       struct
         let name = "GetGeometry"
         let opcode = 14
-        type t = drawable[@@deriving sexp]
+        type t = drawable[@@deriving sexp_of]
         let with_request f drawable = f (drawable : t)
         module Reply =
           struct
@@ -2263,14 +2271,14 @@ module Core =
               y: i16 ;
               width: u16 ;
               height: u16 ;
-              border_width: u16 }[@@deriving sexp]
+              border_width: u16 }[@@deriving sexp_of]
           end
       end
     module Query_tree =
       struct
         let name = "QueryTree"
         let opcode = 15
-        type t = window[@@deriving sexp]
+        type t = window[@@deriving sexp_of]
         let with_request f window = f (window : t)
         module Reply =
           struct
@@ -2278,7 +2286,7 @@ module Core =
               {
               root: window ;
               parent: [ | Window_enum.t | window alt] ;
-              children: window list }[@@deriving sexp]
+              children: window list }[@@deriving sexp_of]
           end
       end
     module Intern_atom =
@@ -2287,19 +2295,19 @@ module Core =
         let opcode = 16
         type t = {
           only_if_exists: bool ;
-          name: string }[@@deriving sexp]
+          name: string }[@@deriving sexp_of]
         let with_request f ~only_if_exists  ~name  =
           f ({ only_if_exists; name } : t)
         module Reply =
-          struct type t = [ | Atom_enum.t | atom alt][@@deriving sexp] end
+          struct type t = [ | Atom_enum.t | atom alt][@@deriving sexp_of] end
       end
     module Get_atom_name =
       struct
         let name = "GetAtomName"
         let opcode = 17
-        type t = atom[@@deriving sexp]
+        type t = atom[@@deriving sexp_of]
         let with_request f atom = f (atom : t)
-        module Reply = struct type t = string[@@deriving sexp] end
+        module Reply = struct type t = string[@@deriving sexp_of] end
       end
     module Change_property =
       struct
@@ -2313,7 +2321,7 @@ module Core =
           type_: atom ;
           format: u8 ;
           data_len: u32 ;
-          data: string }[@@deriving sexp]
+          data: string }[@@deriving sexp_of]
         let with_request f ~mode  ~window  ~property  ~type_  ~format 
           ~data_len  ~data  =
           f ({ mode; window; property; type_; format; data_len; data } : t)
@@ -2324,7 +2332,7 @@ module Core =
         let opcode = 19
         type t = {
           window: window ;
-          property: atom }[@@deriving sexp]
+          property: atom }[@@deriving sexp_of]
         let with_request f ~window  ~property  = f ({ window; property } : t)
       end
     module Get_property =
@@ -2338,7 +2346,7 @@ module Core =
           property: atom ;
           type_: [ | Get_property_type_enum.t | atom alt] ;
           long_offset: u32 ;
-          long_length: u32 }[@@deriving sexp]
+          long_length: u32 }[@@deriving sexp_of]
         let with_request f ~delete  ~window  ~property  ~type_  ~long_offset 
           ~long_length  =
           f
@@ -2352,16 +2360,16 @@ module Core =
               type_: atom ;
               bytes_after: u32 ;
               value_len: u32 ;
-              value: string }[@@deriving sexp]
+              value: string }[@@deriving sexp_of]
           end
       end
     module List_properties =
       struct
         let name = "ListProperties"
         let opcode = 21
-        type t = window[@@deriving sexp]
+        type t = window[@@deriving sexp_of]
         let with_request f window = f (window : t)
-        module Reply = struct type t = atom list[@@deriving sexp] end
+        module Reply = struct type t = atom list[@@deriving sexp_of] end
       end
     module Set_selection_owner =
       struct
@@ -2371,7 +2379,7 @@ module Core =
           {
           owner: [ | Window_enum.t | window alt] ;
           selection: atom ;
-          time: [ | Time_enum.t | timestamp alt] }[@@deriving sexp]
+          time: [ | Time_enum.t | timestamp alt] }[@@deriving sexp_of]
         let with_request f ~owner  ~selection  ~time  =
           f ({ owner; selection; time } : t)
       end
@@ -2379,11 +2387,11 @@ module Core =
       struct
         let name = "GetSelectionOwner"
         let opcode = 23
-        type t = atom[@@deriving sexp]
+        type t = atom[@@deriving sexp_of]
         let with_request f selection = f (selection : t)
         module Reply =
           struct
-            type t = [ | Window_enum.t | window alt][@@deriving sexp]
+            type t = [ | Window_enum.t | window alt][@@deriving sexp_of]
           end
       end
     module Convert_selection =
@@ -2396,7 +2404,7 @@ module Core =
           selection: atom ;
           target: atom ;
           property: [ | Atom_enum.t | atom alt] ;
-          time: [ | Time_enum.t | timestamp alt] }[@@deriving sexp]
+          time: [ | Time_enum.t | timestamp alt] }[@@deriving sexp_of]
         let with_request f ~requestor  ~selection  ~target  ~property  ~time 
           = f ({ requestor; selection; target; property; time } : t)
       end
@@ -2409,7 +2417,7 @@ module Core =
           propagate: bool ;
           destination: [ | Send_event_dest_enum.t | window alt] ;
           event_mask: Event_mask.t ;
-          event: string }[@@deriving sexp]
+          event: string }[@@deriving sexp_of]
         let with_request f ~propagate  ~destination  ~event_mask  ~event  =
           f ({ propagate; destination; event_mask; event } : t)
       end
@@ -2426,7 +2434,7 @@ module Core =
           keyboard_mode: Grab_mode_enum.t ;
           confine_to: [ | Window_enum.t | window alt] ;
           cursor: [ | Cursor_enum.t | cursor alt] ;
-          time: [ | Time_enum.t | timestamp alt] }[@@deriving sexp]
+          time: [ | Time_enum.t | timestamp alt] }[@@deriving sexp_of]
         let with_request f ~owner_events  ~grab_window  ~event_mask 
           ~pointer_mode  ~keyboard_mode  ~confine_to  ~cursor  ~time  =
           f
@@ -2441,13 +2449,13 @@ module Core =
                time
              } : t)
         module Reply =
-          struct type t = Grab_status_enum.t[@@deriving sexp] end
+          struct type t = Grab_status_enum.t[@@deriving sexp_of] end
       end
     module Ungrab_pointer =
       struct
         let name = "UngrabPointer"
         let opcode = 27
-        type t = [ | Time_enum.t | timestamp alt][@@deriving sexp]
+        type t = [ | Time_enum.t | timestamp alt][@@deriving sexp_of]
         let with_request f time = f (time : t)
       end
     module Grab_button =
@@ -2464,7 +2472,7 @@ module Core =
           confine_to: [ | Window_enum.t | window alt] ;
           cursor: [ | Cursor_enum.t | cursor alt] ;
           button: Button_index_enum.t ;
-          modifiers: Mod_mask.t }[@@deriving sexp]
+          modifiers: Mod_mask.t }[@@deriving sexp_of]
         let with_request f ~owner_events  ~grab_window  ~event_mask 
           ~pointer_mode  ~keyboard_mode  ~confine_to  ~cursor  ~button 
           ~modifiers  =
@@ -2489,7 +2497,7 @@ module Core =
           {
           button: Button_index_enum.t ;
           grab_window: window ;
-          modifiers: Mod_mask.t }[@@deriving sexp]
+          modifiers: Mod_mask.t }[@@deriving sexp_of]
         let with_request f ~button  ~grab_window  ~modifiers  =
           f ({ button; grab_window; modifiers } : t)
       end
@@ -2501,7 +2509,7 @@ module Core =
           {
           cursor: [ | Cursor_enum.t | cursor alt] ;
           time: [ | Time_enum.t | timestamp alt] ;
-          event_mask: Event_mask.t }[@@deriving sexp]
+          event_mask: Event_mask.t }[@@deriving sexp_of]
         let with_request f ~cursor  ~time  ~event_mask  =
           f ({ cursor; time; event_mask } : t)
       end
@@ -2515,20 +2523,20 @@ module Core =
           grab_window: window ;
           time: [ | Time_enum.t | timestamp alt] ;
           pointer_mode: Grab_mode_enum.t ;
-          keyboard_mode: Grab_mode_enum.t }[@@deriving sexp]
+          keyboard_mode: Grab_mode_enum.t }[@@deriving sexp_of]
         let with_request f ~owner_events  ~grab_window  ~time  ~pointer_mode 
           ~keyboard_mode  =
           f
             ({ owner_events; grab_window; time; pointer_mode; keyboard_mode } : 
             t)
         module Reply =
-          struct type t = Grab_status_enum.t[@@deriving sexp] end
+          struct type t = Grab_status_enum.t[@@deriving sexp_of] end
       end
     module Ungrab_keyboard =
       struct
         let name = "UngrabKeyboard"
         let opcode = 32
-        type t = [ | Time_enum.t | timestamp alt][@@deriving sexp]
+        type t = [ | Time_enum.t | timestamp alt][@@deriving sexp_of]
         let with_request f time = f (time : t)
       end
     module Grab_key =
@@ -2542,7 +2550,7 @@ module Core =
           modifiers: Mod_mask.t ;
           key: [ | Grab_enum.t | keycode alt] ;
           pointer_mode: Grab_mode_enum.t ;
-          keyboard_mode: Grab_mode_enum.t }[@@deriving sexp]
+          keyboard_mode: Grab_mode_enum.t }[@@deriving sexp_of]
         let with_request f ~owner_events  ~grab_window  ~modifiers  ~key 
           ~pointer_mode  ~keyboard_mode  =
           f
@@ -2563,7 +2571,7 @@ module Core =
           {
           key: [ | Grab_enum.t | keycode alt] ;
           grab_window: window ;
-          modifiers: Mod_mask.t }[@@deriving sexp]
+          modifiers: Mod_mask.t }[@@deriving sexp_of]
         let with_request f ~key  ~grab_window  ~modifiers  =
           f ({ key; grab_window; modifiers } : t)
       end
@@ -2574,28 +2582,28 @@ module Core =
         type t =
           {
           mode: Allow_enum.t ;
-          time: [ | Time_enum.t | timestamp alt] }[@@deriving sexp]
+          time: [ | Time_enum.t | timestamp alt] }[@@deriving sexp_of]
         let with_request f ~mode  ~time  = f ({ mode; time } : t)
       end
     module Grab_server =
       struct
         let name = "GrabServer"
         let opcode = 36
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
       end
     module Ungrab_server =
       struct
         let name = "UngrabServer"
         let opcode = 37
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
       end
     module Query_pointer =
       struct
         let name = "QueryPointer"
         let opcode = 38
-        type t = window[@@deriving sexp]
+        type t = window[@@deriving sexp_of]
         let with_request f window = f (window : t)
         module Reply =
           struct
@@ -2608,7 +2616,7 @@ module Core =
               root_y: i16 ;
               win_x: i16 ;
               win_y: i16 ;
-              mask: Key_but_mask.t }[@@deriving sexp]
+              mask: Key_but_mask.t }[@@deriving sexp_of]
           end
       end
     module Get_motion_events =
@@ -2619,10 +2627,10 @@ module Core =
           {
           window: window ;
           start: [ | Time_enum.t | timestamp alt] ;
-          stop: [ | Time_enum.t | timestamp alt] }[@@deriving sexp]
+          stop: [ | Time_enum.t | timestamp alt] }[@@deriving sexp_of]
         let with_request f ~window  ~start  ~stop  =
           f ({ window; start; stop } : t)
-        module Reply = struct type t = timecoord list[@@deriving sexp] end
+        module Reply = struct type t = timecoord list[@@deriving sexp_of] end
       end
     module Translate_coordinates =
       struct
@@ -2633,7 +2641,7 @@ module Core =
           src_window: window ;
           dst_window: window ;
           src_x: i16 ;
-          src_y: i16 }[@@deriving sexp]
+          src_y: i16 }[@@deriving sexp_of]
         let with_request f ~src_window  ~dst_window  ~src_x  ~src_y  =
           f ({ src_window; dst_window; src_x; src_y } : t)
         module Reply =
@@ -2643,7 +2651,7 @@ module Core =
               same_screen: bool ;
               child: [ | Window_enum.t | window alt] ;
               dst_x: i16 ;
-              dst_y: i16 }[@@deriving sexp]
+              dst_y: i16 }[@@deriving sexp_of]
           end
       end
     module Warp_pointer =
@@ -2659,7 +2667,7 @@ module Core =
           src_width: u16 ;
           src_height: u16 ;
           dst_x: i16 ;
-          dst_y: i16 }[@@deriving sexp]
+          dst_y: i16 }[@@deriving sexp_of]
         let with_request f ~src_window  ~dst_window  ~src_x  ~src_y 
           ~src_width  ~src_height  ~dst_x  ~dst_y  =
           f
@@ -2682,7 +2690,7 @@ module Core =
           {
           revert_to: Input_focus_enum.t ;
           focus: [ | Input_focus_enum.t | window alt] ;
-          time: [ | Time_enum.t | timestamp alt] }[@@deriving sexp]
+          time: [ | Time_enum.t | timestamp alt] }[@@deriving sexp_of]
         let with_request f ~revert_to  ~focus  ~time  =
           f ({ revert_to; focus; time } : t)
       end
@@ -2690,23 +2698,24 @@ module Core =
       struct
         let name = "GetInputFocus"
         let opcode = 43
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
           struct
             type t =
               {
               revert_to: Input_focus_enum.t ;
-              focus: [ | Input_focus_enum.t | window alt] }[@@deriving sexp]
+              focus: [ | Input_focus_enum.t | window alt] }[@@deriving
+                                                             sexp_of]
           end
       end
     module Query_keymap =
       struct
         let name = "QueryKeymap"
         let opcode = 44
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = u8 list[@@deriving sexp] end
+        module Reply = struct type t = u8 list[@@deriving sexp_of] end
       end
     module Open_font =
       struct
@@ -2714,21 +2723,21 @@ module Core =
         let opcode = 45
         type t = {
           fid: font ;
-          name: string }[@@deriving sexp]
+          name: string }[@@deriving sexp_of]
         let with_request f ~fid  ~name  = f ({ fid; name } : t)
       end
     module Close_font =
       struct
         let name = "CloseFont"
         let opcode = 46
-        type t = font[@@deriving sexp]
+        type t = font[@@deriving sexp_of]
         let with_request f font = f (font : t)
       end
     module Query_font =
       struct
         let name = "QueryFont"
         let opcode = 47
-        type t = fontable[@@deriving sexp]
+        type t = fontable[@@deriving sexp_of]
         let with_request f font = f (font : t)
         module Reply =
           struct
@@ -2746,7 +2755,7 @@ module Core =
               font_ascent: i16 ;
               font_descent: i16 ;
               properties: fontprop list ;
-              char_infos: charinfo list }[@@deriving sexp]
+              char_infos: charinfo list }[@@deriving sexp_of]
           end
       end
     module Query_text_extents =
@@ -2755,7 +2764,7 @@ module Core =
         let opcode = 48
         type t = {
           font: fontable ;
-          string: utf16_string }[@@deriving sexp]
+          string: utf16_string }[@@deriving sexp_of]
         let with_request f ~font  ~string  = f ({ font; string } : t)
         module Reply =
           struct
@@ -2768,7 +2777,7 @@ module Core =
               overall_descent: i16 ;
               overall_width: i32 ;
               overall_left: i32 ;
-              overall_right: i32 }[@@deriving sexp]
+              overall_right: i32 }[@@deriving sexp_of]
           end
       end
     module List_fonts =
@@ -2777,10 +2786,10 @@ module Core =
         let opcode = 49
         type t = {
           max_names: u16 ;
-          pattern: string }[@@deriving sexp]
+          pattern: string }[@@deriving sexp_of]
         let with_request f ~max_names  ~pattern  =
           f ({ max_names; pattern } : t)
-        module Reply = struct type t = str list[@@deriving sexp] end
+        module Reply = struct type t = str list[@@deriving sexp_of] end
       end
     module List_fonts_with_info =
       struct
@@ -2788,7 +2797,7 @@ module Core =
         let opcode = 50
         type t = {
           max_names: u16 ;
-          pattern: string }[@@deriving sexp]
+          pattern: string }[@@deriving sexp_of]
         let with_request f ~max_names  ~pattern  =
           f ({ max_names; pattern } : t)
         module Reply =
@@ -2808,23 +2817,23 @@ module Core =
               font_descent: i16 ;
               replies_hint: u32 ;
               properties: fontprop list ;
-              name: string }[@@deriving sexp]
+              name: string }[@@deriving sexp_of]
           end
       end
     module Set_font_path =
       struct
         let name = "SetFontPath"
         let opcode = 51
-        type t = str list[@@deriving sexp]
+        type t = str list[@@deriving sexp_of]
         let with_request f font = f (font : t)
       end
     module Get_font_path =
       struct
         let name = "GetFontPath"
         let opcode = 52
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = str list[@@deriving sexp] end
+        module Reply = struct type t = str list[@@deriving sexp_of] end
       end
     module Create_pixmap =
       struct
@@ -2836,7 +2845,7 @@ module Core =
           pid: pixmap ;
           drawable: drawable ;
           width: u16 ;
-          height: u16 }[@@deriving sexp]
+          height: u16 }[@@deriving sexp_of]
         let with_request f ~depth  ~pid  ~drawable  ~width  ~height  =
           f ({ depth; pid; drawable; width; height } : t)
       end
@@ -2844,7 +2853,7 @@ module Core =
       struct
         let name = "FreePixmap"
         let opcode = 54
-        type t = pixmap[@@deriving sexp]
+        type t = pixmap[@@deriving sexp_of]
         let with_request f pixmap = f (pixmap : t)
       end
     module Create_gc =
@@ -2877,7 +2886,7 @@ module Core =
           clip_mask: [ | Pixmap_enum.t | pixmap alt] option ;
           dash_offset: u32 option ;
           dashes: u32 option ;
-          arc_mode: Arc_mode_enum.t option }[@@deriving sexp]
+          arc_mode: Arc_mode_enum.t option }[@@deriving sexp_of]
         let with_request f ~cid  ~drawable  ?function_  ?plane_mask 
           ?foreground  ?background  ?line_width  ?line_style  ?cap_style 
           ?join_style  ?fill_style  ?fill_rule  ?tile  ?stipple 
@@ -2942,7 +2951,7 @@ module Core =
           clip_mask: [ | Pixmap_enum.t | pixmap alt] option ;
           dash_offset: u32 option ;
           dashes: u32 option ;
-          arc_mode: Arc_mode_enum.t option }[@@deriving sexp]
+          arc_mode: Arc_mode_enum.t option }[@@deriving sexp_of]
         let with_request f ~gc  ?function_  ?plane_mask  ?foreground 
           ?background  ?line_width  ?line_style  ?cap_style  ?join_style 
           ?fill_style  ?fill_rule  ?tile  ?stipple  ?tile_stipple_x_origin 
@@ -2984,7 +2993,7 @@ module Core =
         type t = {
           src_gc: gcontext ;
           dst_gc: gcontext ;
-          value_mask: Gc_mask.t }[@@deriving sexp]
+          value_mask: Gc_mask.t }[@@deriving sexp_of]
         let with_request f ~src_gc  ~dst_gc  ~value_mask  =
           f ({ src_gc; dst_gc; value_mask } : t)
       end
@@ -2995,7 +3004,7 @@ module Core =
         type t = {
           gc: gcontext ;
           dash_offset: u16 ;
-          dashes: u8 list }[@@deriving sexp]
+          dashes: u8 list }[@@deriving sexp_of]
         let with_request f ~gc  ~dash_offset  ~dashes  =
           f ({ gc; dash_offset; dashes } : t)
       end
@@ -3009,7 +3018,7 @@ module Core =
           gc: gcontext ;
           clip_x_origin: i16 ;
           clip_y_origin: i16 ;
-          rectangles: rectangle list }[@@deriving sexp]
+          rectangles: rectangle list }[@@deriving sexp_of]
         let with_request f ~ordering  ~gc  ~clip_x_origin  ~clip_y_origin 
           ~rectangles  =
           f ({ ordering; gc; clip_x_origin; clip_y_origin; rectangles } : t)
@@ -3018,7 +3027,7 @@ module Core =
       struct
         let name = "FreeGC"
         let opcode = 60
-        type t = gcontext[@@deriving sexp]
+        type t = gcontext[@@deriving sexp_of]
         let with_request f gc = f (gc : t)
       end
     module Clear_area =
@@ -3032,7 +3041,7 @@ module Core =
           x: i16 ;
           y: i16 ;
           width: u16 ;
-          height: u16 }[@@deriving sexp]
+          height: u16 }[@@deriving sexp_of]
         let with_request f ~exposures  ~window  ~x  ~y  ~width  ~height  =
           f ({ exposures; window; x; y; width; height } : t)
       end
@@ -3050,7 +3059,7 @@ module Core =
           dst_x: i16 ;
           dst_y: i16 ;
           width: u16 ;
-          height: u16 }[@@deriving sexp]
+          height: u16 }[@@deriving sexp_of]
         let with_request f ~src_drawable  ~dst_drawable  ~gc  ~src_x  ~src_y 
           ~dst_x  ~dst_y  ~width  ~height  =
           f
@@ -3081,7 +3090,7 @@ module Core =
           dst_y: i16 ;
           width: u16 ;
           height: u16 ;
-          bit_plane: u32 }[@@deriving sexp]
+          bit_plane: u32 }[@@deriving sexp_of]
         let with_request f ~src_drawable  ~dst_drawable  ~gc  ~src_x  ~src_y 
           ~dst_x  ~dst_y  ~width  ~height  ~bit_plane  =
           f
@@ -3107,7 +3116,7 @@ module Core =
           coordinate_mode: Coord_mode_enum.t ;
           drawable: drawable ;
           gc: gcontext ;
-          points: point list }[@@deriving sexp]
+          points: point list }[@@deriving sexp_of]
         let with_request f ~coordinate_mode  ~drawable  ~gc  ~points  =
           f ({ coordinate_mode; drawable; gc; points } : t)
       end
@@ -3120,7 +3129,7 @@ module Core =
           coordinate_mode: Coord_mode_enum.t ;
           drawable: drawable ;
           gc: gcontext ;
-          points: point list }[@@deriving sexp]
+          points: point list }[@@deriving sexp_of]
         let with_request f ~coordinate_mode  ~drawable  ~gc  ~points  =
           f ({ coordinate_mode; drawable; gc; points } : t)
       end
@@ -3131,7 +3140,7 @@ module Core =
         type t = {
           drawable: drawable ;
           gc: gcontext ;
-          segments: segment list }[@@deriving sexp]
+          segments: segment list }[@@deriving sexp_of]
         let with_request f ~drawable  ~gc  ~segments  =
           f ({ drawable; gc; segments } : t)
       end
@@ -3143,7 +3152,7 @@ module Core =
           {
           drawable: drawable ;
           gc: gcontext ;
-          rectangles: rectangle list }[@@deriving sexp]
+          rectangles: rectangle list }[@@deriving sexp_of]
         let with_request f ~drawable  ~gc  ~rectangles  =
           f ({ drawable; gc; rectangles } : t)
       end
@@ -3154,7 +3163,7 @@ module Core =
         type t = {
           drawable: drawable ;
           gc: gcontext ;
-          arcs: arc list }[@@deriving sexp]
+          arcs: arc list }[@@deriving sexp_of]
         let with_request f ~drawable  ~gc  ~arcs  =
           f ({ drawable; gc; arcs } : t)
       end
@@ -3168,7 +3177,7 @@ module Core =
           gc: gcontext ;
           shape: Poly_shape_enum.t ;
           coordinate_mode: Coord_mode_enum.t ;
-          points: point list }[@@deriving sexp]
+          points: point list }[@@deriving sexp_of]
         let with_request f ~drawable  ~gc  ~shape  ~coordinate_mode  ~points 
           = f ({ drawable; gc; shape; coordinate_mode; points } : t)
       end
@@ -3180,7 +3189,7 @@ module Core =
           {
           drawable: drawable ;
           gc: gcontext ;
-          rectangles: rectangle list }[@@deriving sexp]
+          rectangles: rectangle list }[@@deriving sexp_of]
         let with_request f ~drawable  ~gc  ~rectangles  =
           f ({ drawable; gc; rectangles } : t)
       end
@@ -3191,7 +3200,7 @@ module Core =
         type t = {
           drawable: drawable ;
           gc: gcontext ;
-          arcs: arc list }[@@deriving sexp]
+          arcs: arc list }[@@deriving sexp_of]
         let with_request f ~drawable  ~gc  ~arcs  =
           f ({ drawable; gc; arcs } : t)
       end
@@ -3210,7 +3219,7 @@ module Core =
           dst_y: i16 ;
           left_pad: u8 ;
           depth: u8 ;
-          data: byte list }[@@deriving sexp]
+          data: byte list }[@@deriving sexp_of]
         let with_request f ~format  ~drawable  ~gc  ~width  ~height  ~dst_x 
           ~dst_y  ~left_pad  ~depth  ~data  =
           f
@@ -3239,7 +3248,7 @@ module Core =
           y: i16 ;
           width: u16 ;
           height: u16 ;
-          plane_mask: u32 }[@@deriving sexp]
+          plane_mask: u32 }[@@deriving sexp_of]
         let with_request f ~format  ~drawable  ~x  ~y  ~width  ~height 
           ~plane_mask  =
           f ({ format; drawable; x; y; width; height; plane_mask } : t)
@@ -3248,7 +3257,7 @@ module Core =
             type t = {
               depth: u8 ;
               visual: visualid ;
-              data: byte list }[@@deriving sexp]
+              data: byte list }[@@deriving sexp_of]
           end
       end
     module Poly_text8 =
@@ -3261,7 +3270,7 @@ module Core =
           gc: gcontext ;
           x: i16 ;
           y: i16 ;
-          items: byte list }[@@deriving sexp]
+          items: byte list }[@@deriving sexp_of]
         let with_request f ~drawable  ~gc  ~x  ~y  ~items  =
           f ({ drawable; gc; x; y; items } : t)
       end
@@ -3275,7 +3284,7 @@ module Core =
           gc: gcontext ;
           x: i16 ;
           y: i16 ;
-          items: byte list }[@@deriving sexp]
+          items: byte list }[@@deriving sexp_of]
         let with_request f ~drawable  ~gc  ~x  ~y  ~items  =
           f ({ drawable; gc; x; y; items } : t)
       end
@@ -3289,7 +3298,7 @@ module Core =
           gc: gcontext ;
           x: i16 ;
           y: i16 ;
-          string: string }[@@deriving sexp]
+          string: string }[@@deriving sexp_of]
         let with_request f ~drawable  ~gc  ~x  ~y  ~string  =
           f ({ drawable; gc; x; y; string } : t)
       end
@@ -3303,7 +3312,7 @@ module Core =
           gc: gcontext ;
           x: i16 ;
           y: i16 ;
-          string: utf16_string }[@@deriving sexp]
+          string: utf16_string }[@@deriving sexp_of]
         let with_request f ~drawable  ~gc  ~x  ~y  ~string  =
           f ({ drawable; gc; x; y; string } : t)
       end
@@ -3316,7 +3325,7 @@ module Core =
           alloc: Colormap_alloc_enum.t ;
           mid: colormap ;
           window: window ;
-          visual: visualid }[@@deriving sexp]
+          visual: visualid }[@@deriving sexp_of]
         let with_request f ~alloc  ~mid  ~window  ~visual  =
           f ({ alloc; mid; window; visual } : t)
       end
@@ -3324,7 +3333,7 @@ module Core =
       struct
         let name = "FreeColormap"
         let opcode = 79
-        type t = colormap[@@deriving sexp]
+        type t = colormap[@@deriving sexp_of]
         let with_request f cmap = f (cmap : t)
       end
     module Copy_colormap_and_free =
@@ -3333,30 +3342,30 @@ module Core =
         let opcode = 80
         type t = {
           mid: colormap ;
-          src_cmap: colormap }[@@deriving sexp]
+          src_cmap: colormap }[@@deriving sexp_of]
         let with_request f ~mid  ~src_cmap  = f ({ mid; src_cmap } : t)
       end
     module Install_colormap =
       struct
         let name = "InstallColormap"
         let opcode = 81
-        type t = colormap[@@deriving sexp]
+        type t = colormap[@@deriving sexp_of]
         let with_request f cmap = f (cmap : t)
       end
     module Uninstall_colormap =
       struct
         let name = "UninstallColormap"
         let opcode = 82
-        type t = colormap[@@deriving sexp]
+        type t = colormap[@@deriving sexp_of]
         let with_request f cmap = f (cmap : t)
       end
     module List_installed_colormaps =
       struct
         let name = "ListInstalledColormaps"
         let opcode = 83
-        type t = window[@@deriving sexp]
+        type t = window[@@deriving sexp_of]
         let with_request f window = f (window : t)
-        module Reply = struct type t = colormap list[@@deriving sexp] end
+        module Reply = struct type t = colormap list[@@deriving sexp_of] end
       end
     module Alloc_color =
       struct
@@ -3366,7 +3375,7 @@ module Core =
           cmap: colormap ;
           red: u16 ;
           green: u16 ;
-          blue: u16 }[@@deriving sexp]
+          blue: u16 }[@@deriving sexp_of]
         let with_request f ~cmap  ~red  ~green  ~blue  =
           f ({ cmap; red; green; blue } : t)
         module Reply =
@@ -3375,7 +3384,7 @@ module Core =
               red: u16 ;
               green: u16 ;
               blue: u16 ;
-              pixel: u32 }[@@deriving sexp]
+              pixel: u32 }[@@deriving sexp_of]
           end
       end
     module Alloc_named_color =
@@ -3384,7 +3393,7 @@ module Core =
         let opcode = 85
         type t = {
           cmap: colormap ;
-          name: string }[@@deriving sexp]
+          name: string }[@@deriving sexp_of]
         let with_request f ~cmap  ~name  = f ({ cmap; name } : t)
         module Reply =
           struct
@@ -3396,7 +3405,7 @@ module Core =
               exact_blue: u16 ;
               visual_red: u16 ;
               visual_green: u16 ;
-              visual_blue: u16 }[@@deriving sexp]
+              visual_blue: u16 }[@@deriving sexp_of]
           end
       end
     module Alloc_color_cells =
@@ -3408,14 +3417,14 @@ module Core =
           contiguous: bool ;
           cmap: colormap ;
           colors: u16 ;
-          planes: u16 }[@@deriving sexp]
+          planes: u16 }[@@deriving sexp_of]
         let with_request f ~contiguous  ~cmap  ~colors  ~planes  =
           f ({ contiguous; cmap; colors; planes } : t)
         module Reply =
           struct
             type t = {
               pixels: u32 list ;
-              masks: u32 list }[@@deriving sexp]
+              masks: u32 list }[@@deriving sexp_of]
           end
       end
     module Alloc_color_planes =
@@ -3429,7 +3438,7 @@ module Core =
           colors: u16 ;
           reds: u16 ;
           greens: u16 ;
-          blues: u16 }[@@deriving sexp]
+          blues: u16 }[@@deriving sexp_of]
         let with_request f ~contiguous  ~cmap  ~colors  ~reds  ~greens 
           ~blues  = f ({ contiguous; cmap; colors; reds; greens; blues } : t)
         module Reply =
@@ -3439,7 +3448,7 @@ module Core =
               red_mask: u32 ;
               green_mask: u32 ;
               blue_mask: u32 ;
-              pixels: u32 list }[@@deriving sexp]
+              pixels: u32 list }[@@deriving sexp_of]
           end
       end
     module Free_colors =
@@ -3449,7 +3458,7 @@ module Core =
         type t = {
           cmap: colormap ;
           plane_mask: u32 ;
-          pixels: u32 list }[@@deriving sexp]
+          pixels: u32 list }[@@deriving sexp_of]
         let with_request f ~cmap  ~plane_mask  ~pixels  =
           f ({ cmap; plane_mask; pixels } : t)
       end
@@ -3459,7 +3468,7 @@ module Core =
         let opcode = 89
         type t = {
           cmap: colormap ;
-          items: coloritem list }[@@deriving sexp]
+          items: coloritem list }[@@deriving sexp_of]
         let with_request f ~cmap  ~items  = f ({ cmap; items } : t)
       end
     module Store_named_color =
@@ -3471,7 +3480,7 @@ module Core =
           flags: Color_flag_mask.t ;
           cmap: colormap ;
           pixel: u32 ;
-          name: string }[@@deriving sexp]
+          name: string }[@@deriving sexp_of]
         let with_request f ~flags  ~cmap  ~pixel  ~name  =
           f ({ flags; cmap; pixel; name } : t)
       end
@@ -3481,9 +3490,9 @@ module Core =
         let opcode = 91
         type t = {
           cmap: colormap ;
-          pixels: u32 list }[@@deriving sexp]
+          pixels: u32 list }[@@deriving sexp_of]
         let with_request f ~cmap  ~pixels  = f ({ cmap; pixels } : t)
-        module Reply = struct type t = rgb list[@@deriving sexp] end
+        module Reply = struct type t = rgb list[@@deriving sexp_of] end
       end
     module Lookup_color =
       struct
@@ -3491,7 +3500,7 @@ module Core =
         let opcode = 92
         type t = {
           cmap: colormap ;
-          name: string }[@@deriving sexp]
+          name: string }[@@deriving sexp_of]
         let with_request f ~cmap  ~name  = f ({ cmap; name } : t)
         module Reply =
           struct
@@ -3502,7 +3511,7 @@ module Core =
               exact_blue: u16 ;
               visual_red: u16 ;
               visual_green: u16 ;
-              visual_blue: u16 }[@@deriving sexp]
+              visual_blue: u16 }[@@deriving sexp_of]
           end
       end
     module Create_cursor =
@@ -3521,7 +3530,7 @@ module Core =
           back_green: u16 ;
           back_blue: u16 ;
           x: u16 ;
-          y: u16 }[@@deriving sexp]
+          y: u16 }[@@deriving sexp_of]
         let with_request f ~cid  ~source  ~mask  ~fore_red  ~fore_green 
           ~fore_blue  ~back_red  ~back_green  ~back_blue  ~x  ~y  =
           f
@@ -3555,7 +3564,7 @@ module Core =
           fore_blue: u16 ;
           back_red: u16 ;
           back_green: u16 ;
-          back_blue: u16 }[@@deriving sexp]
+          back_blue: u16 }[@@deriving sexp_of]
         let with_request f ~cid  ~source_font  ~mask_font  ~source_char 
           ~mask_char  ~fore_red  ~fore_green  ~fore_blue  ~back_red 
           ~back_green  ~back_blue  =
@@ -3578,7 +3587,7 @@ module Core =
       struct
         let name = "FreeCursor"
         let opcode = 95
-        type t = cursor[@@deriving sexp]
+        type t = cursor[@@deriving sexp_of]
         let with_request f cursor = f (cursor : t)
       end
     module Recolor_cursor =
@@ -3593,7 +3602,7 @@ module Core =
           fore_blue: u16 ;
           back_red: u16 ;
           back_green: u16 ;
-          back_blue: u16 }[@@deriving sexp]
+          back_blue: u16 }[@@deriving sexp_of]
         let with_request f ~cursor  ~fore_red  ~fore_green  ~fore_blue 
           ~back_red  ~back_green  ~back_blue  =
           f
@@ -3616,19 +3625,19 @@ module Core =
           class_: Query_shape_of_enum.t ;
           drawable: drawable ;
           width: u16 ;
-          height: u16 }[@@deriving sexp]
+          height: u16 }[@@deriving sexp_of]
         let with_request f ~class_  ~drawable  ~width  ~height  =
           f ({ class_; drawable; width; height } : t)
         module Reply =
           struct type t = {
                    width: u16 ;
-                   height: u16 }[@@deriving sexp] end
+                   height: u16 }[@@deriving sexp_of] end
       end
     module Query_extension =
       struct
         let name = "QueryExtension"
         let opcode = 98
-        type t = string[@@deriving sexp]
+        type t = string[@@deriving sexp_of]
         let with_request f name = f (name : t)
         module Reply =
           struct
@@ -3637,16 +3646,16 @@ module Core =
               present: bool ;
               major_opcode: u8 ;
               first_event: u8 ;
-              first_error: u8 }[@@deriving sexp]
+              first_error: u8 }[@@deriving sexp_of]
           end
       end
     module List_extensions =
       struct
         let name = "ListExtensions"
         let opcode = 99
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = str list[@@deriving sexp] end
+        module Reply = struct type t = str list[@@deriving sexp_of] end
       end
     module Change_keyboard_mapping =
       struct
@@ -3657,7 +3666,7 @@ module Core =
           keycode_count: u8 ;
           first_keycode: keycode ;
           keysyms_per_keycode: u8 ;
-          keysyms: keysym list }[@@deriving sexp]
+          keysyms: keysym list }[@@deriving sexp_of]
         let with_request f ~keycode_count  ~first_keycode 
           ~keysyms_per_keycode  ~keysyms  =
           f
@@ -3670,14 +3679,14 @@ module Core =
         let opcode = 101
         type t = {
           first_keycode: keycode ;
-          count: u8 }[@@deriving sexp]
+          count: u8 }[@@deriving sexp_of]
         let with_request f ~first_keycode  ~count  =
           f ({ first_keycode; count } : t)
         module Reply =
           struct
             type t = {
               keysyms_per_keycode: byte ;
-              keysyms: keysym list }[@@deriving sexp]
+              keysyms: keysym list }[@@deriving sexp_of]
           end
       end
     module Change_keyboard_control =
@@ -3693,7 +3702,8 @@ module Core =
           led: u32 option ;
           led_mode: Led_mode_enum.t option ;
           key: keycode32 option ;
-          auto_repeat_mode: Auto_repeat_mode_enum.t option }[@@deriving sexp]
+          auto_repeat_mode: Auto_repeat_mode_enum.t option }[@@deriving
+                                                              sexp_of]
         let with_request f ?key_click_percent  ?bell_percent  ?bell_pitch 
           ?bell_duration  ?led  ?led_mode  ?key  ?auto_repeat_mode  () =
           f
@@ -3712,7 +3722,7 @@ module Core =
       struct
         let name = "GetKeyboardControl"
         let opcode = 103
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
           struct
@@ -3724,14 +3734,14 @@ module Core =
               bell_percent: u8 ;
               bell_pitch: u16 ;
               bell_duration: u16 ;
-              auto_repeats: u8 list }[@@deriving sexp]
+              auto_repeats: u8 list }[@@deriving sexp_of]
           end
       end
     module Bell =
       struct
         let name = "Bell"
         let opcode = 104
-        type t = i8[@@deriving sexp]
+        type t = i8[@@deriving sexp_of]
         let with_request f percent = f (percent : t)
       end
     module Change_pointer_control =
@@ -3744,7 +3754,7 @@ module Core =
           acceleration_denominator: i16 ;
           threshold: i16 ;
           do_acceleration: bool ;
-          do_threshold: bool }[@@deriving sexp]
+          do_threshold: bool }[@@deriving sexp_of]
         let with_request f ~acceleration_numerator  ~acceleration_denominator
            ~threshold  ~do_acceleration  ~do_threshold  =
           f
@@ -3760,7 +3770,7 @@ module Core =
       struct
         let name = "GetPointerControl"
         let opcode = 106
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
           struct
@@ -3768,7 +3778,7 @@ module Core =
               {
               acceleration_numerator: u16 ;
               acceleration_denominator: u16 ;
-              threshold: u16 }[@@deriving sexp]
+              threshold: u16 }[@@deriving sexp_of]
           end
       end
     module Set_screen_saver =
@@ -3780,7 +3790,7 @@ module Core =
           timeout: i16 ;
           interval: i16 ;
           prefer_blanking: Blanking_enum.t ;
-          allow_exposures: Exposures_enum.t }[@@deriving sexp]
+          allow_exposures: Exposures_enum.t }[@@deriving sexp_of]
         let with_request f ~timeout  ~interval  ~prefer_blanking 
           ~allow_exposures  =
           f ({ timeout; interval; prefer_blanking; allow_exposures } : t)
@@ -3789,7 +3799,7 @@ module Core =
       struct
         let name = "GetScreenSaver"
         let opcode = 108
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
           struct
@@ -3798,7 +3808,7 @@ module Core =
               timeout: u16 ;
               interval: u16 ;
               prefer_blanking: Blanking_enum.t ;
-              allow_exposures: Exposures_enum.t }[@@deriving sexp]
+              allow_exposures: Exposures_enum.t }[@@deriving sexp_of]
           end
       end
     module Change_hosts =
@@ -3809,7 +3819,7 @@ module Core =
           {
           mode: Host_mode_enum.t ;
           family: Family_enum.t ;
-          address: byte list }[@@deriving sexp]
+          address: byte list }[@@deriving sexp_of]
         let with_request f ~mode  ~family  ~address  =
           f ({ mode; family; address } : t)
       end
@@ -3817,34 +3827,34 @@ module Core =
       struct
         let name = "ListHosts"
         let opcode = 110
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
           struct
             type t = {
               mode: Access_control_enum.t ;
-              hosts: host list }[@@deriving sexp]
+              hosts: host list }[@@deriving sexp_of]
           end
       end
     module Set_access_control =
       struct
         let name = "SetAccessControl"
         let opcode = 111
-        type t = Access_control_enum.t[@@deriving sexp]
+        type t = Access_control_enum.t[@@deriving sexp_of]
         let with_request f mode = f (mode : t)
       end
     module Set_close_down_mode =
       struct
         let name = "SetCloseDownMode"
         let opcode = 112
-        type t = Close_down_enum.t[@@deriving sexp]
+        type t = Close_down_enum.t[@@deriving sexp_of]
         let with_request f mode = f (mode : t)
       end
     module Kill_client =
       struct
         let name = "KillClient"
         let opcode = 113
-        type t = [ | Kill_enum.t | u32 alt][@@deriving sexp]
+        type t = [ | Kill_enum.t | u32 alt][@@deriving sexp_of]
         let with_request f resource = f (resource : t)
       end
     module Rotate_properties =
@@ -3854,7 +3864,7 @@ module Core =
         type t = {
           window: window ;
           delta: i16 ;
-          atoms: atom list }[@@deriving sexp]
+          atoms: atom list }[@@deriving sexp_of]
         let with_request f ~window  ~delta  ~atoms  =
           f ({ window; delta; atoms } : t)
       end
@@ -3862,48 +3872,48 @@ module Core =
       struct
         let name = "ForceScreenSaver"
         let opcode = 115
-        type t = Screen_saver_enum.t[@@deriving sexp]
+        type t = Screen_saver_enum.t[@@deriving sexp_of]
         let with_request f mode = f (mode : t)
       end
     module Set_pointer_mapping =
       struct
         let name = "SetPointerMapping"
         let opcode = 116
-        type t = u8 list[@@deriving sexp]
+        type t = u8 list[@@deriving sexp_of]
         let with_request f map = f (map : t)
         module Reply =
-          struct type t = Mapping_status_enum.t[@@deriving sexp] end
+          struct type t = Mapping_status_enum.t[@@deriving sexp_of] end
       end
     module Get_pointer_mapping =
       struct
         let name = "GetPointerMapping"
         let opcode = 117
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = u8 list[@@deriving sexp] end
+        module Reply = struct type t = u8 list[@@deriving sexp_of] end
       end
     module Set_modifier_mapping =
       struct
         let name = "SetModifierMapping"
         let opcode = 118
-        type t = keycode list[@@deriving sexp]
+        type t = keycode list[@@deriving sexp_of]
         let with_request f keycodes = f (keycodes : t)
         module Reply =
-          struct type t = Mapping_status_enum.t[@@deriving sexp] end
+          struct type t = Mapping_status_enum.t[@@deriving sexp_of] end
       end
     module Get_modifier_mapping =
       struct
         let name = "GetModifierMapping"
         let opcode = 119
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = keycode list[@@deriving sexp] end
+        module Reply = struct type t = keycode list[@@deriving sexp_of] end
       end
     module No_operation =
       struct
         let name = "NoOperation"
         let opcode = 127
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
       end
   end
@@ -3915,15 +3925,15 @@ module Bigreq =
         let version = (0, 0)
         let query_name = "BIG-REQUESTS"
       end
-    module Event = struct type t = [][@@deriving sexp] end
-    module Error = struct type t = [][@@deriving sexp] end
+    module Event = struct type t = [][@@deriving sexp_of] end
+    module Error = struct type t = [][@@deriving sexp_of] end
     module Enable =
       struct
         let name = "Enable"
         let opcode = 0
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = u32[@@deriving sexp] end
+        module Reply = struct type t = u32[@@deriving sexp_of] end
       end
   end
 module Render =
@@ -3936,7 +3946,7 @@ module Render =
       end
     module Pict_type_enum =
       struct
-        type t = [ `Indexed  | `Direct ][@@deriving sexp]
+        type t = [ `Indexed  | `Direct ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Indexed
@@ -3948,7 +3958,7 @@ module Render =
       end
     module Picture_enum =
       struct
-        type t = [ `None ][@@deriving sexp]
+        type t = [ `None ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `None
@@ -3974,7 +3984,7 @@ module Render =
           | `Overlay  | `Darken  | `Lighten  | `Color_dodge  | `Color_burn 
           | `Hard_light  | `Soft_light  | `Difference  | `Exclusion 
           | `Hsl_hue  | `Hsl_saturation  | `Hsl_color  | `Hsl_luminosity ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Clear
@@ -4091,7 +4101,7 @@ module Render =
       end
     module Poly_edge_enum =
       struct
-        type t = [ `Sharp  | `Smooth ][@@deriving sexp]
+        type t = [ `Sharp  | `Smooth ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Sharp
@@ -4103,7 +4113,7 @@ module Render =
       end
     module Poly_mode_enum =
       struct
-        type t = [ `Precise  | `Imprecise ][@@deriving sexp]
+        type t = [ `Precise  | `Imprecise ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Precise
@@ -4135,7 +4145,7 @@ module Render =
       struct
         type t =
           [ `Unknown  | `Horizontal_rgb  | `Horizontal_bgr  | `Vertical_rgb 
-          | `Vertical_bgr  | `None ][@@deriving sexp]
+          | `Vertical_bgr  | `None ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Unknown
@@ -4158,7 +4168,7 @@ module Render =
       end
     module Repeat_enum =
       struct
-        type t = [ `None  | `Normal  | `Pad  | `Reflect ][@@deriving sexp]
+        type t = [ `None  | `Normal  | `Pad  | `Reflect ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `None
@@ -4171,11 +4181,11 @@ module Render =
         let to_int : [< t] -> int =
           function | `None -> 0 | `Normal -> 1 | `Pad -> 2 | `Reflect -> 3
       end
-    type glyph = u32[@@deriving sexp]
-    type glyphset = xid[@@deriving sexp]
-    type picture = xid[@@deriving sexp]
-    type pictformat = xid[@@deriving sexp]
-    type fixed = i32[@@deriving sexp]
+    type glyph = u32[@@deriving sexp_of]
+    type glyphset = xid[@@deriving sexp_of]
+    type picture = xid[@@deriving sexp_of]
+    type pictformat = xid[@@deriving sexp_of]
+    type fixed = i32[@@deriving sexp_of]
     type directformat =
       {
       red_shift: u16 ;
@@ -4185,51 +4195,51 @@ module Render =
       blue_shift: u16 ;
       blue_mask: u16 ;
       alpha_shift: u16 ;
-      alpha_mask: u16 }[@@deriving sexp]
+      alpha_mask: u16 }[@@deriving sexp_of]
     type pictforminfo =
       {
       id: pictformat ;
       type_: Pict_type_enum.t ;
       depth: u8 ;
       direct: directformat ;
-      colormap: Core.colormap }[@@deriving sexp]
+      colormap: Core.colormap }[@@deriving sexp_of]
     type pictvisual = {
       visual: Core.visualid ;
-      format: pictformat }[@@deriving sexp]
+      format: pictformat }[@@deriving sexp_of]
     type pictdepth = {
       depth: u8 ;
-      visuals: pictvisual list }[@@deriving sexp]
+      visuals: pictvisual list }[@@deriving sexp_of]
     type pictscreen = {
       fallback: pictformat ;
-      depths: pictdepth list }[@@deriving sexp]
+      depths: pictdepth list }[@@deriving sexp_of]
     type indexvalue =
       {
       pixel: u32 ;
       red: u16 ;
       green: u16 ;
       blue: u16 ;
-      alpha: u16 }[@@deriving sexp]
+      alpha: u16 }[@@deriving sexp_of]
     type color = {
       red: u16 ;
       green: u16 ;
       blue: u16 ;
-      alpha: u16 }[@@deriving sexp]
+      alpha: u16 }[@@deriving sexp_of]
     type pointfix = {
       x: fixed ;
-      y: fixed }[@@deriving sexp]
+      y: fixed }[@@deriving sexp_of]
     type linefix = {
       p1: pointfix ;
-      p2: pointfix }[@@deriving sexp]
+      p2: pointfix }[@@deriving sexp_of]
     type triangle = {
       p1: pointfix ;
       p2: pointfix ;
-      p3: pointfix }[@@deriving sexp]
+      p3: pointfix }[@@deriving sexp_of]
     type trapezoid =
       {
       top: fixed ;
       bottom: fixed ;
       left: linefix ;
-      right: linefix }[@@deriving sexp]
+      right: linefix }[@@deriving sexp_of]
     type glyphinfo =
       {
       width: u16 ;
@@ -4237,7 +4247,7 @@ module Render =
       x: i16 ;
       y: i16 ;
       x_off: i16 ;
-      y_off: i16 }[@@deriving sexp]
+      y_off: i16 }[@@deriving sexp_of]
     type transform =
       {
       matrix11: fixed ;
@@ -4248,54 +4258,54 @@ module Render =
       matrix23: fixed ;
       matrix31: fixed ;
       matrix32: fixed ;
-      matrix33: fixed }[@@deriving sexp]
+      matrix33: fixed }[@@deriving sexp_of]
     type animcursorelt = {
       cursor: Core.cursor ;
-      delay: u32 }[@@deriving sexp]
+      delay: u32 }[@@deriving sexp_of]
     type spanfix = {
       l: fixed ;
       r: fixed ;
-      y: fixed }[@@deriving sexp]
+      y: fixed }[@@deriving sexp_of]
     type trap = {
       top: spanfix ;
-      bot: spanfix }[@@deriving sexp]
-    module Event = struct type t = [][@@deriving sexp] end
+      bot: spanfix }[@@deriving sexp_of]
+    module Event = struct type t = [][@@deriving sexp_of] end
     module Error =
       struct
         module Pict_format =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "PictFormat"
             let number = 0
           end
         module Picture =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "Picture"
             let number = 1
           end
         module Pict_op =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "PictOp"
             let number = 2
           end
         module Glyph_set =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "GlyphSet"
             let number = 3
           end
         module Glyph =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "Glyph"
             let number = 4
           end
         type t =
           [ `Pict_format of Pict_format.t  | `Picture of Picture.t 
           | `Pict_op of Pict_op.t  | `Glyph_set of Glyph_set.t 
-          | `Glyph of Glyph.t ][@@deriving sexp]
+          | `Glyph of Glyph.t ][@@deriving sexp_of]
       end
     module Query_version =
       struct
@@ -4303,21 +4313,21 @@ module Render =
         let opcode = 0
         type t = {
           client_major_version: u32 ;
-          client_minor_version: u32 }[@@deriving sexp]
+          client_minor_version: u32 }[@@deriving sexp_of]
         let with_request f ~client_major_version  ~client_minor_version  =
           f ({ client_major_version; client_minor_version } : t)
         module Reply =
           struct
             type t = {
               major_version: u32 ;
-              minor_version: u32 }[@@deriving sexp]
+              minor_version: u32 }[@@deriving sexp_of]
           end
       end
     module Query_pict_formats =
       struct
         let name = "QueryPictFormats"
         let opcode = 1
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
           struct
@@ -4327,16 +4337,17 @@ module Render =
               num_visuals: u32 ;
               formats: pictforminfo list ;
               screens: pictscreen list ;
-              subpixels: Sub_pixel_enum.t list }[@@deriving sexp]
+              subpixels: Sub_pixel_enum.t list }[@@deriving sexp_of]
           end
       end
     module Query_pict_index_values =
       struct
         let name = "QueryPictIndexValues"
         let opcode = 2
-        type t = pictformat[@@deriving sexp]
+        type t = pictformat[@@deriving sexp_of]
         let with_request f format = f (format : t)
-        module Reply = struct type t = indexvalue list[@@deriving sexp] end
+        module Reply =
+          struct type t = indexvalue list[@@deriving sexp_of] end
       end
     module Create_picture =
       struct
@@ -4359,7 +4370,7 @@ module Render =
           polyedge: Poly_edge_enum.t option ;
           polymode: Poly_mode_enum.t option ;
           dither: Core.atom option ;
-          componentalpha: u32 option }[@@deriving sexp]
+          componentalpha: u32 option }[@@deriving sexp_of]
         let with_request f ~pid  ~drawable  ~format  ?repeat  ?alphamap 
           ?alphaxorigin  ?alphayorigin  ?clipxorigin  ?clipyorigin  ?clipmask
            ?graphicsexposure  ?subwindowmode  ?polyedge  ?polymode  ?dither 
@@ -4403,7 +4414,7 @@ module Render =
           polyedge: Poly_edge_enum.t option ;
           polymode: Poly_mode_enum.t option ;
           dither: Core.atom option ;
-          componentalpha: u32 option }[@@deriving sexp]
+          componentalpha: u32 option }[@@deriving sexp_of]
         let with_request f ~picture  ?repeat  ?alphamap  ?alphaxorigin 
           ?alphayorigin  ?clipxorigin  ?clipyorigin  ?clipmask 
           ?graphicsexposure  ?subwindowmode  ?polyedge  ?polymode  ?dither 
@@ -4435,7 +4446,7 @@ module Render =
           picture: picture ;
           clip_x_origin: i16 ;
           clip_y_origin: i16 ;
-          rectangles: Core.rectangle list }[@@deriving sexp]
+          rectangles: Core.rectangle list }[@@deriving sexp_of]
         let with_request f ~picture  ~clip_x_origin  ~clip_y_origin 
           ~rectangles  =
           f ({ picture; clip_x_origin; clip_y_origin; rectangles } : t)
@@ -4444,7 +4455,7 @@ module Render =
       struct
         let name = "FreePicture"
         let opcode = 7
-        type t = picture[@@deriving sexp]
+        type t = picture[@@deriving sexp_of]
         let with_request f picture = f (picture : t)
       end
     module Composite =
@@ -4464,7 +4475,7 @@ module Render =
           dst_x: i16 ;
           dst_y: i16 ;
           width: u16 ;
-          height: u16 }[@@deriving sexp]
+          height: u16 }[@@deriving sexp_of]
         let with_request f ~op  ~src  ~mask  ~dst  ~src_x  ~src_y  ~mask_x 
           ~mask_y  ~dst_x  ~dst_y  ~width  ~height  =
           f
@@ -4495,7 +4506,7 @@ module Render =
           mask_format: pictformat ;
           src_x: i16 ;
           src_y: i16 ;
-          traps: trapezoid list }[@@deriving sexp]
+          traps: trapezoid list }[@@deriving sexp_of]
         let with_request f ~op  ~src  ~dst  ~mask_format  ~src_x  ~src_y 
           ~traps  =
           f ({ op; src; dst; mask_format; src_x; src_y; traps } : t)
@@ -4512,7 +4523,7 @@ module Render =
           mask_format: pictformat ;
           src_x: i16 ;
           src_y: i16 ;
-          triangles: triangle list }[@@deriving sexp]
+          triangles: triangle list }[@@deriving sexp_of]
         let with_request f ~op  ~src  ~dst  ~mask_format  ~src_x  ~src_y 
           ~triangles  =
           f ({ op; src; dst; mask_format; src_x; src_y; triangles } : t)
@@ -4529,7 +4540,7 @@ module Render =
           mask_format: pictformat ;
           src_x: i16 ;
           src_y: i16 ;
-          points: pointfix list }[@@deriving sexp]
+          points: pointfix list }[@@deriving sexp_of]
         let with_request f ~op  ~src  ~dst  ~mask_format  ~src_x  ~src_y 
           ~points  =
           f ({ op; src; dst; mask_format; src_x; src_y; points } : t)
@@ -4546,7 +4557,7 @@ module Render =
           mask_format: pictformat ;
           src_x: i16 ;
           src_y: i16 ;
-          points: pointfix list }[@@deriving sexp]
+          points: pointfix list }[@@deriving sexp_of]
         let with_request f ~op  ~src  ~dst  ~mask_format  ~src_x  ~src_y 
           ~points  =
           f ({ op; src; dst; mask_format; src_x; src_y; points } : t)
@@ -4557,7 +4568,7 @@ module Render =
         let opcode = 17
         type t = {
           gsid: glyphset ;
-          format: pictformat }[@@deriving sexp]
+          format: pictformat }[@@deriving sexp_of]
         let with_request f ~gsid  ~format  = f ({ gsid; format } : t)
       end
     module Reference_glyph_set =
@@ -4566,14 +4577,14 @@ module Render =
         let opcode = 18
         type t = {
           gsid: glyphset ;
-          existing: glyphset }[@@deriving sexp]
+          existing: glyphset }[@@deriving sexp_of]
         let with_request f ~gsid  ~existing  = f ({ gsid; existing } : t)
       end
     module Free_glyph_set =
       struct
         let name = "FreeGlyphSet"
         let opcode = 19
-        type t = glyphset[@@deriving sexp]
+        type t = glyphset[@@deriving sexp_of]
         let with_request f glyphset = f (glyphset : t)
       end
     module Add_glyphs =
@@ -4585,7 +4596,7 @@ module Render =
           glyphset: glyphset ;
           glyphids: u32 list ;
           glyphs: glyphinfo list ;
-          data: byte list }[@@deriving sexp]
+          data: byte list }[@@deriving sexp_of]
         let with_request f ~glyphset  ~glyphids  ~glyphs  ~data  =
           f ({ glyphset; glyphids; glyphs; data } : t)
       end
@@ -4595,7 +4606,7 @@ module Render =
         let opcode = 22
         type t = {
           glyphset: glyphset ;
-          glyphs: glyph list }[@@deriving sexp]
+          glyphs: glyph list }[@@deriving sexp_of]
         let with_request f ~glyphset  ~glyphs  = f ({ glyphset; glyphs } : t)
       end
     module Composite_glyphs8 =
@@ -4611,7 +4622,7 @@ module Render =
           glyphset: glyphset ;
           src_x: i16 ;
           src_y: i16 ;
-          glyphcmds: byte list }[@@deriving sexp]
+          glyphcmds: byte list }[@@deriving sexp_of]
         let with_request f ~op  ~src  ~dst  ~mask_format  ~glyphset  ~src_x 
           ~src_y  ~glyphcmds  =
           f
@@ -4631,7 +4642,7 @@ module Render =
           glyphset: glyphset ;
           src_x: i16 ;
           src_y: i16 ;
-          glyphcmds: byte list }[@@deriving sexp]
+          glyphcmds: byte list }[@@deriving sexp_of]
         let with_request f ~op  ~src  ~dst  ~mask_format  ~glyphset  ~src_x 
           ~src_y  ~glyphcmds  =
           f
@@ -4651,7 +4662,7 @@ module Render =
           glyphset: glyphset ;
           src_x: i16 ;
           src_y: i16 ;
-          glyphcmds: byte list }[@@deriving sexp]
+          glyphcmds: byte list }[@@deriving sexp_of]
         let with_request f ~op  ~src  ~dst  ~mask_format  ~glyphset  ~src_x 
           ~src_y  ~glyphcmds  =
           f
@@ -4667,7 +4678,7 @@ module Render =
           op: Pict_op_enum.t ;
           dst: picture ;
           color: color ;
-          rects: Core.rectangle list }[@@deriving sexp]
+          rects: Core.rectangle list }[@@deriving sexp_of]
         let with_request f ~op  ~dst  ~color  ~rects  =
           f ({ op; dst; color; rects } : t)
       end
@@ -4679,7 +4690,7 @@ module Render =
           cid: Core.cursor ;
           source: picture ;
           x: u16 ;
-          y: u16 }[@@deriving sexp]
+          y: u16 }[@@deriving sexp_of]
         let with_request f ~cid  ~source  ~x  ~y  =
           f ({ cid; source; x; y } : t)
       end
@@ -4689,7 +4700,7 @@ module Render =
         let opcode = 28
         type t = {
           picture: picture ;
-          transform: transform }[@@deriving sexp]
+          transform: transform }[@@deriving sexp_of]
         let with_request f ~picture  ~transform  =
           f ({ picture; transform } : t)
       end
@@ -4697,13 +4708,13 @@ module Render =
       struct
         let name = "QueryFilters"
         let opcode = 29
-        type t = Core.drawable[@@deriving sexp]
+        type t = Core.drawable[@@deriving sexp_of]
         let with_request f drawable = f (drawable : t)
         module Reply =
           struct
             type t = {
               aliases: u16 list ;
-              filters: Core.str list }[@@deriving sexp]
+              filters: Core.str list }[@@deriving sexp_of]
           end
       end
     module Set_picture_filter =
@@ -4713,7 +4724,7 @@ module Render =
         type t = {
           picture: picture ;
           filter: string ;
-          values: fixed list }[@@deriving sexp]
+          values: fixed list }[@@deriving sexp_of]
         let with_request f ~picture  ~filter  ~values  =
           f ({ picture; filter; values } : t)
       end
@@ -4723,7 +4734,7 @@ module Render =
         let opcode = 31
         type t = {
           cid: Core.cursor ;
-          cursors: animcursorelt list }[@@deriving sexp]
+          cursors: animcursorelt list }[@@deriving sexp_of]
         let with_request f ~cid  ~cursors  = f ({ cid; cursors } : t)
       end
     module Add_traps =
@@ -4735,7 +4746,7 @@ module Render =
           picture: picture ;
           x_off: i16 ;
           y_off: i16 ;
-          traps: trap list }[@@deriving sexp]
+          traps: trap list }[@@deriving sexp_of]
         let with_request f ~picture  ~x_off  ~y_off  ~traps  =
           f ({ picture; x_off; y_off; traps } : t)
       end
@@ -4745,7 +4756,7 @@ module Render =
         let opcode = 33
         type t = {
           picture: picture ;
-          color: color }[@@deriving sexp]
+          color: color }[@@deriving sexp_of]
         let with_request f ~picture  ~color  = f ({ picture; color } : t)
       end
     module Create_linear_gradient =
@@ -4758,7 +4769,7 @@ module Render =
           p1: pointfix ;
           p2: pointfix ;
           stops: fixed list ;
-          colors: color list }[@@deriving sexp]
+          colors: color list }[@@deriving sexp_of]
         let with_request f ~picture  ~p1  ~p2  ~stops  ~colors  =
           f ({ picture; p1; p2; stops; colors } : t)
       end
@@ -4774,7 +4785,7 @@ module Render =
           inner_radius: fixed ;
           outer_radius: fixed ;
           stops: fixed list ;
-          colors: color list }[@@deriving sexp]
+          colors: color list }[@@deriving sexp_of]
         let with_request f ~picture  ~inner  ~outer  ~inner_radius 
           ~outer_radius  ~stops  ~colors  =
           f
@@ -4798,7 +4809,7 @@ module Render =
           center: pointfix ;
           angle: fixed ;
           stops: fixed list ;
-          colors: color list }[@@deriving sexp]
+          colors: color list }[@@deriving sexp_of]
         let with_request f ~picture  ~center  ~angle  ~stops  ~colors  =
           f ({ picture; center; angle; stops; colors } : t)
       end
@@ -4811,12 +4822,12 @@ module Shape =
         let version = (1, 1)
         let query_name = "SHAPE"
       end
-    type op = u8[@@deriving sexp]
-    type kind = u8[@@deriving sexp]
+    type op = u8[@@deriving sexp_of]
+    type kind = u8[@@deriving sexp_of]
     module So_enum =
       struct
         type t = [ `Set  | `Union  | `Intersect  | `Subtract  | `Invert ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Set
@@ -4836,7 +4847,7 @@ module Shape =
       end
     module Sk_enum =
       struct
-        type t = [ `Bounding  | `Clip  | `Input ][@@deriving sexp]
+        type t = [ `Bounding  | `Clip  | `Input ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Bounding
@@ -4860,24 +4871,24 @@ module Shape =
               extents_width: u16 ;
               extents_height: u16 ;
               server_time: Core.timestamp ;
-              shaped: bool }[@@deriving sexp]
+              shaped: bool }[@@deriving sexp_of]
             let name = "Notify"
             let number = 0
           end
-        type t = [ `Notify of Notify.t ][@@deriving sexp]
+        type t = [ `Notify of Notify.t ][@@deriving sexp_of]
       end
-    module Error = struct type t = [][@@deriving sexp] end
+    module Error = struct type t = [][@@deriving sexp_of] end
     module Query_version =
       struct
         let name = "QueryVersion"
         let opcode = 0
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
           struct
             type t = {
               major_version: u16 ;
-              minor_version: u16 }[@@deriving sexp]
+              minor_version: u16 }[@@deriving sexp_of]
           end
       end
     module Rectangles =
@@ -4892,7 +4903,7 @@ module Shape =
           destination_window: Core.window ;
           x_offset: i16 ;
           y_offset: i16 ;
-          rectangles: Core.rectangle list }[@@deriving sexp]
+          rectangles: Core.rectangle list }[@@deriving sexp_of]
         let with_request f ~operation  ~destination_kind  ~ordering 
           ~destination_window  ~x_offset  ~y_offset  ~rectangles  =
           f
@@ -4918,7 +4929,7 @@ module Shape =
           x_offset: i16 ;
           y_offset: i16 ;
           source_bitmap: [ | Core.Pixmap_enum.t | Core.pixmap alt] }[@@deriving
-                                                                    sexp]
+                                                                    sexp_of]
         let with_request f ~operation  ~destination_kind  ~destination_window
            ~x_offset  ~y_offset  ~source_bitmap  =
           f
@@ -4943,7 +4954,7 @@ module Shape =
           destination_window: Core.window ;
           x_offset: i16 ;
           y_offset: i16 ;
-          source_window: Core.window }[@@deriving sexp]
+          source_window: Core.window }[@@deriving sexp_of]
         let with_request f ~operation  ~destination_kind  ~source_kind 
           ~destination_window  ~x_offset  ~y_offset  ~source_window  =
           f
@@ -4966,7 +4977,7 @@ module Shape =
           destination_kind: Sk_enum.t ;
           destination_window: Core.window ;
           x_offset: i16 ;
-          y_offset: i16 }[@@deriving sexp]
+          y_offset: i16 }[@@deriving sexp_of]
         let with_request f ~destination_kind  ~destination_window  ~x_offset 
           ~y_offset  =
           f
@@ -4977,7 +4988,7 @@ module Shape =
       struct
         let name = "QueryExtents"
         let opcode = 5
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f destination_window = f (destination_window : t)
         module Reply =
           struct
@@ -4992,7 +5003,7 @@ module Shape =
               clip_shape_extents_x: i16 ;
               clip_shape_extents_y: i16 ;
               clip_shape_extents_width: u16 ;
-              clip_shape_extents_height: u16 }[@@deriving sexp]
+              clip_shape_extents_height: u16 }[@@deriving sexp_of]
           end
       end
     module Select_input =
@@ -5001,7 +5012,7 @@ module Shape =
         let opcode = 6
         type t = {
           destination_window: Core.window ;
-          enable: bool }[@@deriving sexp]
+          enable: bool }[@@deriving sexp_of]
         let with_request f ~destination_window  ~enable  =
           f ({ destination_window; enable } : t)
       end
@@ -5009,9 +5020,9 @@ module Shape =
       struct
         let name = "InputSelected"
         let opcode = 7
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f destination_window = f (destination_window : t)
-        module Reply = struct type t = bool[@@deriving sexp] end
+        module Reply = struct type t = bool[@@deriving sexp_of] end
       end
     module Get_rectangles =
       struct
@@ -5019,7 +5030,7 @@ module Shape =
         let opcode = 8
         type t = {
           window: Core.window ;
-          source_kind: Sk_enum.t }[@@deriving sexp]
+          source_kind: Sk_enum.t }[@@deriving sexp_of]
         let with_request f ~window  ~source_kind  =
           f ({ window; source_kind } : t)
         module Reply =
@@ -5027,7 +5038,7 @@ module Shape =
             type t =
               {
               ordering: Core.Clip_ordering_enum.t ;
-              rectangles: Core.rectangle list }[@@deriving sexp]
+              rectangles: Core.rectangle list }[@@deriving sexp_of]
           end
       end
   end
@@ -5041,7 +5052,7 @@ module Xfixes =
       end
     module Save_set_mode_enum =
       struct
-        type t = [ `Insert  | `Delete ][@@deriving sexp]
+        type t = [ `Insert  | `Delete ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Insert
@@ -5053,7 +5064,7 @@ module Xfixes =
       end
     module Save_set_target_enum =
       struct
-        type t = [ `Nearest  | `Root ][@@deriving sexp]
+        type t = [ `Nearest  | `Root ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Nearest
@@ -5065,7 +5076,7 @@ module Xfixes =
       end
     module Save_set_mapping_enum =
       struct
-        type t = [ `Map  | `Unmap ][@@deriving sexp]
+        type t = [ `Map  | `Unmap ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Map
@@ -5080,7 +5091,7 @@ module Xfixes =
       struct
         type t =
           [ `Set_selection_owner  | `Selection_window_destroy 
-          | `Selection_client_close ][@@deriving sexp]
+          | `Selection_client_close ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Set_selection_owner
@@ -5105,7 +5116,7 @@ module Xfixes =
       end
     module Cursor_notify_enum =
       struct
-        type t = [ `Display_cursor ][@@deriving sexp]
+        type t = [ `Display_cursor ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Display_cursor
@@ -5119,10 +5130,10 @@ module Xfixes =
         include (Mask_impl)(struct  end)
         let (display_cursor : t) = of_int32 (bit 0)
       end
-    type region = xid[@@deriving sexp]
+    type region = xid[@@deriving sexp_of]
     module Region_enum =
       struct
-        type t = [ `None ][@@deriving sexp]
+        type t = [ `None ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `None
@@ -5131,7 +5142,7 @@ module Xfixes =
                 ("Invalid enum value for Region: " ^ (string_of_int n))
         let to_int : [< t] -> int = function | `None -> 0
       end
-    type barrier = xid[@@deriving sexp]
+    type barrier = xid[@@deriving sexp_of]
     module Barrier_directions_mask =
       struct
         include (Mask_impl)(struct  end)
@@ -5151,7 +5162,7 @@ module Xfixes =
               owner: Core.window ;
               selection: Core.atom ;
               timestamp: Core.timestamp ;
-              selection_timestamp: Core.timestamp }[@@deriving sexp]
+              selection_timestamp: Core.timestamp }[@@deriving sexp_of]
             let name = "SelectionNotify"
             let number = 0
           end
@@ -5163,23 +5174,24 @@ module Xfixes =
               window: Core.window ;
               cursor_serial: u32 ;
               timestamp: Core.timestamp ;
-              name: [ | Core.Atom_enum.t | Core.atom alt] }[@@deriving sexp]
+              name: [ | Core.Atom_enum.t | Core.atom alt] }[@@deriving
+                                                             sexp_of]
             let name = "CursorNotify"
             let number = 1
           end
         type t =
           [ `Selection_notify of Selection_notify.t 
-          | `Cursor_notify of Cursor_notify.t ][@@deriving sexp]
+          | `Cursor_notify of Cursor_notify.t ][@@deriving sexp_of]
       end
     module Error =
       struct
         module Bad_region =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "BadRegion"
             let number = 0
           end
-        type t = [ `Bad_region of Bad_region.t ][@@deriving sexp]
+        type t = [ `Bad_region of Bad_region.t ][@@deriving sexp_of]
       end
     module Query_version =
       struct
@@ -5187,14 +5199,14 @@ module Xfixes =
         let opcode = 0
         type t = {
           client_major_version: u32 ;
-          client_minor_version: u32 }[@@deriving sexp]
+          client_minor_version: u32 }[@@deriving sexp_of]
         let with_request f ~client_major_version  ~client_minor_version  =
           f ({ client_major_version; client_minor_version } : t)
         module Reply =
           struct
             type t = {
               major_version: u32 ;
-              minor_version: u32 }[@@deriving sexp]
+              minor_version: u32 }[@@deriving sexp_of]
           end
       end
     module Change_save_set =
@@ -5206,7 +5218,7 @@ module Xfixes =
           mode: Save_set_mode_enum.t ;
           target: Save_set_target_enum.t ;
           map: Save_set_mapping_enum.t ;
-          window: Core.window }[@@deriving sexp]
+          window: Core.window }[@@deriving sexp_of]
         let with_request f ~mode  ~target  ~map  ~window  =
           f ({ mode; target; map; window } : t)
       end
@@ -5218,7 +5230,7 @@ module Xfixes =
           {
           window: Core.window ;
           selection: Core.atom ;
-          event_mask: Selection_event_mask.t }[@@deriving sexp]
+          event_mask: Selection_event_mask.t }[@@deriving sexp_of]
         let with_request f ~window  ~selection  ~event_mask  =
           f ({ window; selection; event_mask } : t)
       end
@@ -5228,7 +5240,7 @@ module Xfixes =
         let opcode = 3
         type t = {
           window: Core.window ;
-          event_mask: Cursor_notify_mask.t }[@@deriving sexp]
+          event_mask: Cursor_notify_mask.t }[@@deriving sexp_of]
         let with_request f ~window  ~event_mask  =
           f ({ window; event_mask } : t)
       end
@@ -5236,7 +5248,7 @@ module Xfixes =
       struct
         let name = "GetCursorImage"
         let opcode = 4
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
           struct
@@ -5249,7 +5261,7 @@ module Xfixes =
               xhot: u16 ;
               yhot: u16 ;
               cursor_serial: u32 ;
-              cursor_image: u32 list }[@@deriving sexp]
+              cursor_image: u32 list }[@@deriving sexp_of]
           end
       end
     module Create_region =
@@ -5258,7 +5270,7 @@ module Xfixes =
         let opcode = 5
         type t = {
           region: region ;
-          rectangles: Core.rectangle list }[@@deriving sexp]
+          rectangles: Core.rectangle list }[@@deriving sexp_of]
         let with_request f ~region  ~rectangles  =
           f ({ region; rectangles } : t)
       end
@@ -5268,7 +5280,7 @@ module Xfixes =
         let opcode = 6
         type t = {
           region: region ;
-          bitmap: Core.pixmap }[@@deriving sexp]
+          bitmap: Core.pixmap }[@@deriving sexp_of]
         let with_request f ~region  ~bitmap  = f ({ region; bitmap } : t)
       end
     module Create_region_from_window =
@@ -5279,7 +5291,7 @@ module Xfixes =
           {
           region: region ;
           window: Core.window ;
-          kind: Shape.Sk_enum.t }[@@deriving sexp]
+          kind: Shape.Sk_enum.t }[@@deriving sexp_of]
         let with_request f ~region  ~window  ~kind  =
           f ({ region; window; kind } : t)
       end
@@ -5289,7 +5301,7 @@ module Xfixes =
         let opcode = 8
         type t = {
           region: region ;
-          gc: Core.gcontext }[@@deriving sexp]
+          gc: Core.gcontext }[@@deriving sexp_of]
         let with_request f ~region  ~gc  = f ({ region; gc } : t)
       end
     module Create_region_from_picture =
@@ -5298,14 +5310,14 @@ module Xfixes =
         let opcode = 9
         type t = {
           region: region ;
-          picture: Render.picture }[@@deriving sexp]
+          picture: Render.picture }[@@deriving sexp_of]
         let with_request f ~region  ~picture  = f ({ region; picture } : t)
       end
     module Destroy_region =
       struct
         let name = "DestroyRegion"
         let opcode = 10
-        type t = region[@@deriving sexp]
+        type t = region[@@deriving sexp_of]
         let with_request f region = f (region : t)
       end
     module Set_region =
@@ -5314,7 +5326,7 @@ module Xfixes =
         let opcode = 11
         type t = {
           region: region ;
-          rectangles: Core.rectangle list }[@@deriving sexp]
+          rectangles: Core.rectangle list }[@@deriving sexp_of]
         let with_request f ~region  ~rectangles  =
           f ({ region; rectangles } : t)
       end
@@ -5324,7 +5336,7 @@ module Xfixes =
         let opcode = 12
         type t = {
           source: region ;
-          destination: region }[@@deriving sexp]
+          destination: region }[@@deriving sexp_of]
         let with_request f ~source  ~destination  =
           f ({ source; destination } : t)
       end
@@ -5335,7 +5347,7 @@ module Xfixes =
         type t = {
           source1: region ;
           source2: region ;
-          destination: region }[@@deriving sexp]
+          destination: region }[@@deriving sexp_of]
         let with_request f ~source1  ~source2  ~destination  =
           f ({ source1; source2; destination } : t)
       end
@@ -5346,7 +5358,7 @@ module Xfixes =
         type t = {
           source1: region ;
           source2: region ;
-          destination: region }[@@deriving sexp]
+          destination: region }[@@deriving sexp_of]
         let with_request f ~source1  ~source2  ~destination  =
           f ({ source1; source2; destination } : t)
       end
@@ -5357,7 +5369,7 @@ module Xfixes =
         type t = {
           source1: region ;
           source2: region ;
-          destination: region }[@@deriving sexp]
+          destination: region }[@@deriving sexp_of]
         let with_request f ~source1  ~source2  ~destination  =
           f ({ source1; source2; destination } : t)
       end
@@ -5369,7 +5381,7 @@ module Xfixes =
           {
           source: region ;
           bounds: Core.rectangle ;
-          destination: region }[@@deriving sexp]
+          destination: region }[@@deriving sexp_of]
         let with_request f ~source  ~bounds  ~destination  =
           f ({ source; bounds; destination } : t)
       end
@@ -5380,7 +5392,7 @@ module Xfixes =
         type t = {
           region: region ;
           dx: i16 ;
-          dy: i16 }[@@deriving sexp]
+          dy: i16 }[@@deriving sexp_of]
         let with_request f ~region  ~dx  ~dy  = f ({ region; dx; dy } : t)
       end
     module Region_extents =
@@ -5389,7 +5401,7 @@ module Xfixes =
         let opcode = 18
         type t = {
           source: region ;
-          destination: region }[@@deriving sexp]
+          destination: region }[@@deriving sexp_of]
         let with_request f ~source  ~destination  =
           f ({ source; destination } : t)
       end
@@ -5397,14 +5409,14 @@ module Xfixes =
       struct
         let name = "FetchRegion"
         let opcode = 19
-        type t = region[@@deriving sexp]
+        type t = region[@@deriving sexp_of]
         let with_request f region = f (region : t)
         module Reply =
           struct
             type t =
               {
               extents: Core.rectangle ;
-              rectangles: Core.rectangle list }[@@deriving sexp]
+              rectangles: Core.rectangle list }[@@deriving sexp_of]
           end
       end
     module Set_gc_clip_region =
@@ -5416,7 +5428,7 @@ module Xfixes =
           gc: Core.gcontext ;
           region: [ | Region_enum.t | region alt] ;
           x_origin: i16 ;
-          y_origin: i16 }[@@deriving sexp]
+          y_origin: i16 }[@@deriving sexp_of]
         let with_request f ~gc  ~region  ~x_origin  ~y_origin  =
           f ({ gc; region; x_origin; y_origin } : t)
       end
@@ -5430,7 +5442,7 @@ module Xfixes =
           dest_kind: Shape.Sk_enum.t ;
           x_offset: i16 ;
           y_offset: i16 ;
-          region: [ | Region_enum.t | region alt] }[@@deriving sexp]
+          region: [ | Region_enum.t | region alt] }[@@deriving sexp_of]
         let with_request f ~dest  ~dest_kind  ~x_offset  ~y_offset  ~region 
           = f ({ dest; dest_kind; x_offset; y_offset; region } : t)
       end
@@ -5443,7 +5455,7 @@ module Xfixes =
           picture: Render.picture ;
           region: [ | Region_enum.t | region alt] ;
           x_origin: i16 ;
-          y_origin: i16 }[@@deriving sexp]
+          y_origin: i16 }[@@deriving sexp_of]
         let with_request f ~picture  ~region  ~x_origin  ~y_origin  =
           f ({ picture; region; x_origin; y_origin } : t)
       end
@@ -5453,28 +5465,28 @@ module Xfixes =
         let opcode = 23
         type t = {
           cursor: Core.cursor ;
-          name: string }[@@deriving sexp]
+          name: string }[@@deriving sexp_of]
         let with_request f ~cursor  ~name  = f ({ cursor; name } : t)
       end
     module Get_cursor_name =
       struct
         let name = "GetCursorName"
         let opcode = 24
-        type t = Core.cursor[@@deriving sexp]
+        type t = Core.cursor[@@deriving sexp_of]
         let with_request f cursor = f (cursor : t)
         module Reply =
           struct
             type t =
               {
               atom: [ | Core.Atom_enum.t | Core.atom alt] ;
-              name: string }[@@deriving sexp]
+              name: string }[@@deriving sexp_of]
           end
       end
     module Get_cursor_image_and_name =
       struct
         let name = "GetCursorImageAndName"
         let opcode = 25
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
           struct
@@ -5489,7 +5501,7 @@ module Xfixes =
               cursor_serial: u32 ;
               cursor_atom: [ | Core.Atom_enum.t | Core.atom alt] ;
               cursor_image: u32 list ;
-              name: string }[@@deriving sexp]
+              name: string }[@@deriving sexp_of]
           end
       end
     module Change_cursor =
@@ -5498,7 +5510,7 @@ module Xfixes =
         let opcode = 26
         type t = {
           source: Core.cursor ;
-          destination: Core.cursor }[@@deriving sexp]
+          destination: Core.cursor }[@@deriving sexp_of]
         let with_request f ~source  ~destination  =
           f ({ source; destination } : t)
       end
@@ -5508,7 +5520,7 @@ module Xfixes =
         let opcode = 27
         type t = {
           src: Core.cursor ;
-          name: string }[@@deriving sexp]
+          name: string }[@@deriving sexp_of]
         let with_request f ~src  ~name  = f ({ src; name } : t)
       end
     module Expand_region =
@@ -5522,7 +5534,7 @@ module Xfixes =
           left: u16 ;
           right: u16 ;
           top: u16 ;
-          bottom: u16 }[@@deriving sexp]
+          bottom: u16 }[@@deriving sexp_of]
         let with_request f ~source  ~destination  ~left  ~right  ~top 
           ~bottom  =
           f ({ source; destination; left; right; top; bottom } : t)
@@ -5531,14 +5543,14 @@ module Xfixes =
       struct
         let name = "HideCursor"
         let opcode = 29
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
       end
     module Show_cursor =
       struct
         let name = "ShowCursor"
         let opcode = 30
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
       end
     module Create_pointer_barrier =
@@ -5554,7 +5566,7 @@ module Xfixes =
           x2: u16 ;
           y2: u16 ;
           directions: Barrier_directions_mask.t ;
-          devices: u16 list }[@@deriving sexp]
+          devices: u16 list }[@@deriving sexp_of]
         let with_request f ~barrier  ~window  ~x1  ~y1  ~x2  ~y2  ~directions
            ~devices  =
           f ({ barrier; window; x1; y1; x2; y2; directions; devices } : t)
@@ -5563,7 +5575,7 @@ module Xfixes =
       struct
         let name = "DeletePointerBarrier"
         let opcode = 32
-        type t = barrier[@@deriving sexp]
+        type t = barrier[@@deriving sexp_of]
         let with_request f barrier = f (barrier : t)
       end
   end
@@ -5577,7 +5589,7 @@ module Composite =
       end
     module Redirect_enum =
       struct
-        type t = [ `Automatic  | `Manual ][@@deriving sexp]
+        type t = [ `Automatic  | `Manual ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Automatic
@@ -5587,22 +5599,22 @@ module Composite =
                 ("Invalid enum value for Redirect: " ^ (string_of_int n))
         let to_int : [< t] -> int = function | `Automatic -> 0 | `Manual -> 1
       end
-    module Event = struct type t = [][@@deriving sexp] end
-    module Error = struct type t = [][@@deriving sexp] end
+    module Event = struct type t = [][@@deriving sexp_of] end
+    module Error = struct type t = [][@@deriving sexp_of] end
     module Query_version =
       struct
         let name = "QueryVersion"
         let opcode = 0
         type t = {
           client_major_version: u32 ;
-          client_minor_version: u32 }[@@deriving sexp]
+          client_minor_version: u32 }[@@deriving sexp_of]
         let with_request f ~client_major_version  ~client_minor_version  =
           f ({ client_major_version; client_minor_version } : t)
         module Reply =
           struct
             type t = {
               major_version: u32 ;
-              minor_version: u32 }[@@deriving sexp]
+              minor_version: u32 }[@@deriving sexp_of]
           end
       end
     module Redirect_window =
@@ -5611,7 +5623,7 @@ module Composite =
         let opcode = 1
         type t = {
           window: Core.window ;
-          update: Redirect_enum.t }[@@deriving sexp]
+          update: Redirect_enum.t }[@@deriving sexp_of]
         let with_request f ~window  ~update  = f ({ window; update } : t)
       end
     module Redirect_subwindows =
@@ -5620,7 +5632,7 @@ module Composite =
         let opcode = 2
         type t = {
           window: Core.window ;
-          update: Redirect_enum.t }[@@deriving sexp]
+          update: Redirect_enum.t }[@@deriving sexp_of]
         let with_request f ~window  ~update  = f ({ window; update } : t)
       end
     module Unredirect_window =
@@ -5629,7 +5641,7 @@ module Composite =
         let opcode = 3
         type t = {
           window: Core.window ;
-          update: Redirect_enum.t }[@@deriving sexp]
+          update: Redirect_enum.t }[@@deriving sexp_of]
         let with_request f ~window  ~update  = f ({ window; update } : t)
       end
     module Unredirect_subwindows =
@@ -5638,7 +5650,7 @@ module Composite =
         let opcode = 4
         type t = {
           window: Core.window ;
-          update: Redirect_enum.t }[@@deriving sexp]
+          update: Redirect_enum.t }[@@deriving sexp_of]
         let with_request f ~window  ~update  = f ({ window; update } : t)
       end
     module Create_region_from_border_clip =
@@ -5647,7 +5659,7 @@ module Composite =
         let opcode = 5
         type t = {
           region: Xfixes.region ;
-          window: Core.window }[@@deriving sexp]
+          window: Core.window }[@@deriving sexp_of]
         let with_request f ~region  ~window  = f ({ region; window } : t)
       end
     module Name_window_pixmap =
@@ -5656,22 +5668,22 @@ module Composite =
         let opcode = 6
         type t = {
           window: Core.window ;
-          pixmap: Core.pixmap }[@@deriving sexp]
+          pixmap: Core.pixmap }[@@deriving sexp_of]
         let with_request f ~window  ~pixmap  = f ({ window; pixmap } : t)
       end
     module Get_overlay_window =
       struct
         let name = "GetOverlayWindow"
         let opcode = 7
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
-        module Reply = struct type t = Core.window[@@deriving sexp] end
+        module Reply = struct type t = Core.window[@@deriving sexp_of] end
       end
     module Release_overlay_window =
       struct
         let name = "ReleaseOverlayWindow"
         let opcode = 8
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
       end
   end
@@ -5683,12 +5695,12 @@ module Damage =
         let version = (1, 1)
         let query_name = "DAMAGE"
       end
-    type damage = xid[@@deriving sexp]
+    type damage = xid[@@deriving sexp_of]
     module Report_level_enum =
       struct
         type t =
           [ `Raw_rectangles  | `Delta_rectangles  | `Bounding_box 
-          | `Non_empty ][@@deriving sexp]
+          | `Non_empty ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Raw_rectangles
@@ -5716,21 +5728,21 @@ module Damage =
               damage: damage ;
               timestamp: Core.timestamp ;
               area: Core.rectangle ;
-              geometry: Core.rectangle }[@@deriving sexp]
+              geometry: Core.rectangle }[@@deriving sexp_of]
             let name = "Notify"
             let number = 0
           end
-        type t = [ `Notify of Notify.t ][@@deriving sexp]
+        type t = [ `Notify of Notify.t ][@@deriving sexp_of]
       end
     module Error =
       struct
         module Bad_damage =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "BadDamage"
             let number = 0
           end
-        type t = [ `Bad_damage of Bad_damage.t ][@@deriving sexp]
+        type t = [ `Bad_damage of Bad_damage.t ][@@deriving sexp_of]
       end
     module Query_version =
       struct
@@ -5738,14 +5750,14 @@ module Damage =
         let opcode = 0
         type t = {
           client_major_version: u32 ;
-          client_minor_version: u32 }[@@deriving sexp]
+          client_minor_version: u32 }[@@deriving sexp_of]
         let with_request f ~client_major_version  ~client_minor_version  =
           f ({ client_major_version; client_minor_version } : t)
         module Reply =
           struct
             type t = {
               major_version: u32 ;
-              minor_version: u32 }[@@deriving sexp]
+              minor_version: u32 }[@@deriving sexp_of]
           end
       end
     module Create =
@@ -5756,7 +5768,7 @@ module Damage =
           {
           damage: damage ;
           drawable: Core.drawable ;
-          level: Report_level_enum.t }[@@deriving sexp]
+          level: Report_level_enum.t }[@@deriving sexp_of]
         let with_request f ~damage  ~drawable  ~level  =
           f ({ damage; drawable; level } : t)
       end
@@ -5764,7 +5776,7 @@ module Damage =
       struct
         let name = "Destroy"
         let opcode = 2
-        type t = damage[@@deriving sexp]
+        type t = damage[@@deriving sexp_of]
         let with_request f damage = f (damage : t)
       end
     module Subtract =
@@ -5776,7 +5788,7 @@ module Damage =
           damage: damage ;
           repair: [ | Xfixes.Region_enum.t | Xfixes.region alt] ;
           parts: [ | Xfixes.Region_enum.t | Xfixes.region alt] }[@@deriving
-                                                                  sexp]
+                                                                  sexp_of]
         let with_request f ~damage  ~repair  ~parts  =
           f ({ damage; repair; parts } : t)
       end
@@ -5786,7 +5798,7 @@ module Damage =
         let opcode = 4
         type t = {
           drawable: Core.drawable ;
-          region: Xfixes.region }[@@deriving sexp]
+          region: Xfixes.region }[@@deriving sexp_of]
         let with_request f ~drawable  ~region  = f ({ drawable; region } : t)
       end
   end
@@ -5800,7 +5812,7 @@ module Dpms =
       end
     module Dpms_mode_enum =
       struct
-        type t = [ `On  | `Standby  | `Suspend  | `Off ][@@deriving sexp]
+        type t = [ `On  | `Standby  | `Suspend  | `Off ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `On
@@ -5813,37 +5825,37 @@ module Dpms =
         let to_int : [< t] -> int =
           function | `On -> 0 | `Standby -> 1 | `Suspend -> 2 | `Off -> 3
       end
-    module Event = struct type t = [][@@deriving sexp] end
-    module Error = struct type t = [][@@deriving sexp] end
+    module Event = struct type t = [][@@deriving sexp_of] end
+    module Error = struct type t = [][@@deriving sexp_of] end
     module Get_version =
       struct
         let name = "GetVersion"
         let opcode = 0
         type t = {
           client_major_version: u16 ;
-          client_minor_version: u16 }[@@deriving sexp]
+          client_minor_version: u16 }[@@deriving sexp_of]
         let with_request f ~client_major_version  ~client_minor_version  =
           f ({ client_major_version; client_minor_version } : t)
         module Reply =
           struct
             type t = {
               server_major_version: u16 ;
-              server_minor_version: u16 }[@@deriving sexp]
+              server_minor_version: u16 }[@@deriving sexp_of]
           end
       end
     module Capable =
       struct
         let name = "Capable"
         let opcode = 1
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = bool[@@deriving sexp] end
+        module Reply = struct type t = bool[@@deriving sexp_of] end
       end
     module Get_timeouts =
       struct
         let name = "GetTimeouts"
         let opcode = 2
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
           struct
@@ -5851,7 +5863,7 @@ module Dpms =
               {
               standby_timeout: u16 ;
               suspend_timeout: u16 ;
-              off_timeout: u16 }[@@deriving sexp]
+              off_timeout: u16 }[@@deriving sexp_of]
           end
       end
     module Set_timeouts =
@@ -5862,7 +5874,7 @@ module Dpms =
           {
           standby_timeout: u16 ;
           suspend_timeout: u16 ;
-          off_timeout: u16 }[@@deriving sexp]
+          off_timeout: u16 }[@@deriving sexp_of]
         let with_request f ~standby_timeout  ~suspend_timeout  ~off_timeout 
           = f ({ standby_timeout; suspend_timeout; off_timeout } : t)
       end
@@ -5870,34 +5882,34 @@ module Dpms =
       struct
         let name = "Enable"
         let opcode = 4
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
       end
     module Disable =
       struct
         let name = "Disable"
         let opcode = 5
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
       end
     module Force_level =
       struct
         let name = "ForceLevel"
         let opcode = 6
-        type t = Dpms_mode_enum.t[@@deriving sexp]
+        type t = Dpms_mode_enum.t[@@deriving sexp_of]
         let with_request f power_level = f (power_level : t)
       end
     module Info =
       struct
         let name = "Info"
         let opcode = 7
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
           struct
             type t = {
               power_level: Dpms_mode_enum.t ;
-              state: bool }[@@deriving sexp]
+              state: bool }[@@deriving sexp_of]
           end
       end
   end
@@ -5916,7 +5928,7 @@ module Dri2 =
           | `Buffer_back_right  | `Buffer_depth  | `Buffer_stencil 
           | `Buffer_accum  | `Buffer_fake_front_left 
           | `Buffer_fake_front_right  | `Buffer_depth_stencil 
-          | `Buffer_hiz ][@@deriving sexp]
+          | `Buffer_hiz ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Buffer_front_left
@@ -5949,7 +5961,7 @@ module Dri2 =
       end
     module Driver_type_enum =
       struct
-        type t = [ `Dri  | `Vdpau ][@@deriving sexp]
+        type t = [ `Dri  | `Vdpau ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Dri
@@ -5962,7 +5974,7 @@ module Dri2 =
     module Event_type_enum =
       struct
         type t = [ `Exchange_complete  | `Blit_complete  | `Flip_complete ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 1 -> `Exchange_complete
@@ -5983,10 +5995,10 @@ module Dri2 =
       name: u32 ;
       pitch: u32 ;
       cpp: u32 ;
-      flags: u32 }[@@deriving sexp]
+      flags: u32 }[@@deriving sexp_of]
     type attach_format = {
       attachment: Attachment_enum.t ;
-      format: u32 }[@@deriving sexp]
+      format: u32 }[@@deriving sexp_of]
     module Event =
       struct
         module Buffer_swap_complete =
@@ -5999,35 +6011,35 @@ module Dri2 =
               ust_lo: u32 ;
               msc_hi: u32 ;
               msc_lo: u32 ;
-              sbc: u32 }[@@deriving sexp]
+              sbc: u32 }[@@deriving sexp_of]
             let name = "BufferSwapComplete"
             let number = 0
           end
         module Invalidate_buffers =
           struct
-            type t = Core.drawable[@@deriving sexp]
+            type t = Core.drawable[@@deriving sexp_of]
             let name = "InvalidateBuffers"
             let number = 1
           end
         type t =
           [ `Buffer_swap_complete of Buffer_swap_complete.t 
-          | `Invalidate_buffers of Invalidate_buffers.t ][@@deriving sexp]
+          | `Invalidate_buffers of Invalidate_buffers.t ][@@deriving sexp_of]
       end
-    module Error = struct type t = [][@@deriving sexp] end
+    module Error = struct type t = [][@@deriving sexp_of] end
     module Query_version =
       struct
         let name = "QueryVersion"
         let opcode = 0
         type t = {
           major_version: u32 ;
-          minor_version: u32 }[@@deriving sexp]
+          minor_version: u32 }[@@deriving sexp_of]
         let with_request f ~major_version  ~minor_version  =
           f ({ major_version; minor_version } : t)
         module Reply =
           struct
             type t = {
               major_version: u32 ;
-              minor_version: u32 }[@@deriving sexp]
+              minor_version: u32 }[@@deriving sexp_of]
           end
       end
     module Connect =
@@ -6036,7 +6048,7 @@ module Dri2 =
         let opcode = 1
         type t = {
           window: Core.window ;
-          driver_type: Driver_type_enum.t }[@@deriving sexp]
+          driver_type: Driver_type_enum.t }[@@deriving sexp_of]
         let with_request f ~window  ~driver_type  =
           f ({ window; driver_type } : t)
         module Reply =
@@ -6045,7 +6057,7 @@ module Dri2 =
               {
               driver_name: string ;
               alignment_pad: string ;
-              device_name: string }[@@deriving sexp]
+              device_name: string }[@@deriving sexp_of]
           end
       end
     module Authenticate =
@@ -6054,22 +6066,22 @@ module Dri2 =
         let opcode = 2
         type t = {
           window: Core.window ;
-          magic: u32 }[@@deriving sexp]
+          magic: u32 }[@@deriving sexp_of]
         let with_request f ~window  ~magic  = f ({ window; magic } : t)
-        module Reply = struct type t = u32[@@deriving sexp] end
+        module Reply = struct type t = u32[@@deriving sexp_of] end
       end
     module Create_drawable =
       struct
         let name = "CreateDrawable"
         let opcode = 3
-        type t = Core.drawable[@@deriving sexp]
+        type t = Core.drawable[@@deriving sexp_of]
         let with_request f drawable = f (drawable : t)
       end
     module Destroy_drawable =
       struct
         let name = "DestroyDrawable"
         let opcode = 4
-        type t = Core.drawable[@@deriving sexp]
+        type t = Core.drawable[@@deriving sexp_of]
         let with_request f drawable = f (drawable : t)
       end
     module Get_buffers =
@@ -6078,7 +6090,7 @@ module Dri2 =
         let opcode = 5
         type t = {
           drawable: Core.drawable ;
-          attachments: u32 list }[@@deriving sexp]
+          attachments: u32 list }[@@deriving sexp_of]
         let with_request f ~drawable  ~attachments  =
           f ({ drawable; attachments } : t)
         module Reply =
@@ -6086,7 +6098,7 @@ module Dri2 =
             type t = {
               width: u32 ;
               height: u32 ;
-              buffers: dri2_buffer list }[@@deriving sexp]
+              buffers: dri2_buffer list }[@@deriving sexp_of]
           end
       end
     module Copy_region =
@@ -6097,10 +6109,10 @@ module Dri2 =
           drawable: Core.drawable ;
           region: u32 ;
           dest: u32 ;
-          src: u32 }[@@deriving sexp]
+          src: u32 }[@@deriving sexp_of]
         let with_request f ~drawable  ~region  ~dest  ~src  =
           f ({ drawable; region; dest; src } : t)
-        module Reply = struct type t = unit[@@deriving sexp] end
+        module Reply = struct type t = unit[@@deriving sexp_of] end
       end
     module Get_buffers_with_format =
       struct
@@ -6108,7 +6120,7 @@ module Dri2 =
         let opcode = 7
         type t = {
           drawable: Core.drawable ;
-          attachments: attach_format list }[@@deriving sexp]
+          attachments: attach_format list }[@@deriving sexp_of]
         let with_request f ~drawable  ~attachments  =
           f ({ drawable; attachments } : t)
         module Reply =
@@ -6116,7 +6128,7 @@ module Dri2 =
             type t = {
               width: u32 ;
               height: u32 ;
-              buffers: dri2_buffer list }[@@deriving sexp]
+              buffers: dri2_buffer list }[@@deriving sexp_of]
           end
       end
     module Swap_buffers =
@@ -6131,7 +6143,7 @@ module Dri2 =
           divisor_hi: u32 ;
           divisor_lo: u32 ;
           remainder_hi: u32 ;
-          remainder_lo: u32 }[@@deriving sexp]
+          remainder_lo: u32 }[@@deriving sexp_of]
         let with_request f ~drawable  ~target_msc_hi  ~target_msc_lo 
           ~divisor_hi  ~divisor_lo  ~remainder_hi  ~remainder_lo  =
           f
@@ -6145,15 +6157,17 @@ module Dri2 =
                remainder_lo
              } : t)
         module Reply =
-          struct type t = {
-                   swap_hi: u32 ;
-                   swap_lo: u32 }[@@deriving sexp] end
+          struct
+            type t = {
+              swap_hi: u32 ;
+              swap_lo: u32 }[@@deriving sexp_of]
+          end
       end
     module Get_msc =
       struct
         let name = "GetMSC"
         let opcode = 9
-        type t = Core.drawable[@@deriving sexp]
+        type t = Core.drawable[@@deriving sexp_of]
         let with_request f drawable = f (drawable : t)
         module Reply =
           struct
@@ -6164,7 +6178,7 @@ module Dri2 =
               msc_hi: u32 ;
               msc_lo: u32 ;
               sbc_hi: u32 ;
-              sbc_lo: u32 }[@@deriving sexp]
+              sbc_lo: u32 }[@@deriving sexp_of]
           end
       end
     module Wait_msc =
@@ -6179,7 +6193,7 @@ module Dri2 =
           divisor_hi: u32 ;
           divisor_lo: u32 ;
           remainder_hi: u32 ;
-          remainder_lo: u32 }[@@deriving sexp]
+          remainder_lo: u32 }[@@deriving sexp_of]
         let with_request f ~drawable  ~target_msc_hi  ~target_msc_lo 
           ~divisor_hi  ~divisor_lo  ~remainder_hi  ~remainder_lo  =
           f
@@ -6201,7 +6215,7 @@ module Dri2 =
               msc_hi: u32 ;
               msc_lo: u32 ;
               sbc_hi: u32 ;
-              sbc_lo: u32 }[@@deriving sexp]
+              sbc_lo: u32 }[@@deriving sexp_of]
           end
       end
     module Wait_sbc =
@@ -6212,7 +6226,7 @@ module Dri2 =
           {
           drawable: Core.drawable ;
           target_sbc_hi: u32 ;
-          target_sbc_lo: u32 }[@@deriving sexp]
+          target_sbc_lo: u32 }[@@deriving sexp_of]
         let with_request f ~drawable  ~target_sbc_hi  ~target_sbc_lo  =
           f ({ drawable; target_sbc_hi; target_sbc_lo } : t)
         module Reply =
@@ -6224,7 +6238,7 @@ module Dri2 =
               msc_hi: u32 ;
               msc_lo: u32 ;
               sbc_hi: u32 ;
-              sbc_lo: u32 }[@@deriving sexp]
+              sbc_lo: u32 }[@@deriving sexp_of]
           end
       end
     module Swap_interval =
@@ -6233,7 +6247,7 @@ module Dri2 =
         let opcode = 12
         type t = {
           drawable: Core.drawable ;
-          interval: u32 }[@@deriving sexp]
+          interval: u32 }[@@deriving sexp_of]
         let with_request f ~drawable  ~interval  =
           f ({ drawable; interval } : t)
       end
@@ -6243,7 +6257,7 @@ module Dri2 =
         let opcode = 13
         type t = {
           drawable: Core.drawable ;
-          param: u32 }[@@deriving sexp]
+          param: u32 }[@@deriving sexp_of]
         let with_request f ~drawable  ~param  = f ({ drawable; param } : t)
         module Reply =
           struct
@@ -6251,7 +6265,7 @@ module Dri2 =
               {
               is_param_recognized: bool ;
               value_hi: u32 ;
-              value_lo: u32 }[@@deriving sexp]
+              value_lo: u32 }[@@deriving sexp_of]
           end
       end
   end
@@ -6263,22 +6277,22 @@ module Dri3 =
         let version = (1, 2)
         let query_name = "DRI3"
       end
-    module Event = struct type t = [][@@deriving sexp] end
-    module Error = struct type t = [][@@deriving sexp] end
+    module Event = struct type t = [][@@deriving sexp_of] end
+    module Error = struct type t = [][@@deriving sexp_of] end
     module Query_version =
       struct
         let name = "QueryVersion"
         let opcode = 0
         type t = {
           major_version: u32 ;
-          minor_version: u32 }[@@deriving sexp]
+          minor_version: u32 }[@@deriving sexp_of]
         let with_request f ~major_version  ~minor_version  =
           f ({ major_version; minor_version } : t)
         module Reply =
           struct
             type t = {
               major_version: u32 ;
-              minor_version: u32 }[@@deriving sexp]
+              minor_version: u32 }[@@deriving sexp_of]
           end
       end
     module Open_ =
@@ -6287,14 +6301,14 @@ module Dri3 =
         let opcode = 1
         type t = {
           drawable: Core.drawable ;
-          provider: u32 }[@@deriving sexp]
+          provider: u32 }[@@deriving sexp_of]
         let with_request f ~drawable  ~provider  =
           f ({ drawable; provider } : t)
         module Reply =
           struct
             type t = {
               nfd: u8 ;
-              device_fd: file_descr }[@@deriving sexp]
+              device_fd: file_descr }[@@deriving sexp_of]
           end
       end
     module Pixmap_from_buffer =
@@ -6311,7 +6325,7 @@ module Dri3 =
           stride: u16 ;
           depth: u8 ;
           bpp: u8 ;
-          pixmap_fd: file_descr }[@@deriving sexp]
+          pixmap_fd: file_descr }[@@deriving sexp_of]
         let with_request f ~pixmap  ~drawable  ~size  ~width  ~height 
           ~stride  ~depth  ~bpp  ~pixmap_fd  =
           f
@@ -6331,7 +6345,7 @@ module Dri3 =
       struct
         let name = "BufferFromPixmap"
         let opcode = 3
-        type t = Core.pixmap[@@deriving sexp]
+        type t = Core.pixmap[@@deriving sexp_of]
         let with_request f pixmap = f (pixmap : t)
         module Reply =
           struct
@@ -6344,7 +6358,7 @@ module Dri3 =
               stride: u16 ;
               depth: u8 ;
               bpp: u8 ;
-              pixmap_fd: file_descr }[@@deriving sexp]
+              pixmap_fd: file_descr }[@@deriving sexp_of]
           end
       end
     module Fence_from_fd =
@@ -6356,7 +6370,7 @@ module Dri3 =
           drawable: Core.drawable ;
           fence: u32 ;
           initially_triggered: bool ;
-          fence_fd: file_descr }[@@deriving sexp]
+          fence_fd: file_descr }[@@deriving sexp_of]
         let with_request f ~drawable  ~fence  ~initially_triggered  ~fence_fd
            = f ({ drawable; fence; initially_triggered; fence_fd } : t)
       end
@@ -6366,13 +6380,13 @@ module Dri3 =
         let opcode = 5
         type t = {
           drawable: Core.drawable ;
-          fence: u32 }[@@deriving sexp]
+          fence: u32 }[@@deriving sexp_of]
         let with_request f ~drawable  ~fence  = f ({ drawable; fence } : t)
         module Reply =
           struct
             type t = {
               nfd: u8 ;
-              fence_fd: file_descr }[@@deriving sexp]
+              fence_fd: file_descr }[@@deriving sexp_of]
           end
       end
     module Get_supported_modifiers =
@@ -6382,7 +6396,7 @@ module Dri3 =
         type t = {
           window: u32 ;
           depth: u8 ;
-          bpp: u8 }[@@deriving sexp]
+          bpp: u8 }[@@deriving sexp_of]
         let with_request f ~window  ~depth  ~bpp  =
           f ({ window; depth; bpp } : t)
         module Reply =
@@ -6390,7 +6404,7 @@ module Dri3 =
             type t =
               {
               window_modifiers: u64 list ;
-              screen_modifiers: u64 list }[@@deriving sexp]
+              screen_modifiers: u64 list }[@@deriving sexp_of]
           end
       end
     module Pixmap_from_buffers =
@@ -6414,7 +6428,7 @@ module Dri3 =
           depth: u8 ;
           bpp: u8 ;
           modifier: u64 ;
-          buffers: file_descr list }[@@deriving sexp]
+          buffers: file_descr list }[@@deriving sexp_of]
         let with_request f ~pixmap  ~window  ~width  ~height  ~stride0 
           ~offset0  ~stride1  ~offset1  ~stride2  ~offset2  ~stride3 
           ~offset3  ~depth  ~bpp  ~modifier  ~buffers  =
@@ -6442,7 +6456,7 @@ module Dri3 =
       struct
         let name = "BuffersFromPixmap"
         let opcode = 8
-        type t = Core.pixmap[@@deriving sexp]
+        type t = Core.pixmap[@@deriving sexp_of]
         let with_request f pixmap = f (pixmap : t)
         module Reply =
           struct
@@ -6455,7 +6469,7 @@ module Dri3 =
               bpp: u8 ;
               strides: u32 list ;
               offsets: u32 list ;
-              buffers: file_descr list }[@@deriving sexp]
+              buffers: file_descr list }[@@deriving sexp_of]
           end
       end
   end
@@ -6467,22 +6481,22 @@ module Ge =
         let version = (1, 0)
         let query_name = "Generic Event Extension"
       end
-    module Event = struct type t = [][@@deriving sexp] end
-    module Error = struct type t = [][@@deriving sexp] end
+    module Event = struct type t = [][@@deriving sexp_of] end
+    module Error = struct type t = [][@@deriving sexp_of] end
     module Query_version =
       struct
         let name = "QueryVersion"
         let opcode = 0
         type t = {
           client_major_version: u16 ;
-          client_minor_version: u16 }[@@deriving sexp]
+          client_minor_version: u16 }[@@deriving sexp_of]
         let with_request f ~client_major_version  ~client_minor_version  =
           f ({ client_major_version; client_minor_version } : t)
         module Reply =
           struct
             type t = {
               major_version: u16 ;
-              minor_version: u16 }[@@deriving sexp]
+              minor_version: u16 }[@@deriving sexp_of]
           end
       end
   end
@@ -6492,19 +6506,19 @@ module Glx =
       struct type t = [ `Glx ]
              let version = (1, 4)
              let query_name = "GLX" end
-    type pixmap = xid[@@deriving sexp]
-    type context = xid[@@deriving sexp]
-    type pbuffer = xid[@@deriving sexp]
-    type window = xid[@@deriving sexp]
-    type fbconfig = xid[@@deriving sexp]
-    type drawable = xid[@@deriving sexp]
-    type float32 = float[@@deriving sexp]
-    type float64 = double[@@deriving sexp]
-    type bool32 = u32[@@deriving sexp]
-    type context_tag = u32[@@deriving sexp]
+    type pixmap = xid[@@deriving sexp_of]
+    type context = xid[@@deriving sexp_of]
+    type pbuffer = xid[@@deriving sexp_of]
+    type window = xid[@@deriving sexp_of]
+    type fbconfig = xid[@@deriving sexp_of]
+    type drawable = xid[@@deriving sexp_of]
+    type float32 = float[@@deriving sexp_of]
+    type float64 = double[@@deriving sexp_of]
+    type bool32 = u32[@@deriving sexp_of]
+    type context_tag = u32[@@deriving sexp_of]
     module Pbcet_enum =
       struct
-        type t = [ `Damaged  | `Saved ][@@deriving sexp]
+        type t = [ `Damaged  | `Saved ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 32791 -> `Damaged
@@ -6517,7 +6531,7 @@ module Glx =
       end
     module Pbcdt_enum =
       struct
-        type t = [ `Window  | `Pbuffer ][@@deriving sexp]
+        type t = [ `Window  | `Pbuffer ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 32793 -> `Window
@@ -6556,7 +6570,7 @@ module Glx =
     module Rm_enum =
       struct
         type t = [ `Gl_render  | `Gl_feedback  | `Gl_select ][@@deriving
-                                                               sexp]
+                                                               sexp_of]
         let of_int : int -> [> t] =
           function
           | 7168 -> `Gl_render
@@ -6585,7 +6599,7 @@ module Glx =
               y: u16 ;
               width: u16 ;
               height: u16 ;
-              count: u16 }[@@deriving sexp]
+              count: u16 }[@@deriving sexp_of]
             let name = "PbufferClobber"
             let number = 0
           end
@@ -6599,104 +6613,104 @@ module Glx =
               ust_lo: u32 ;
               msc_hi: u32 ;
               msc_lo: u32 ;
-              sbc: u32 }[@@deriving sexp]
+              sbc: u32 }[@@deriving sexp_of]
             let name = "BufferSwapComplete"
             let number = 1
           end
         type t =
           [ `Pbuffer_clobber of Pbuffer_clobber.t 
           | `Buffer_swap_complete of Buffer_swap_complete.t ][@@deriving
-                                                               sexp]
+                                                               sexp_of]
       end
     module Error =
       struct
         module Generic =
           struct
-            type t = u32[@@deriving sexp]
+            type t = u32[@@deriving sexp_of]
             let name = "Generic"
             let number = (-1)
           end
         module Bad_context =
           struct
-            type t = Generic.t[@@deriving sexp]
+            type t = Generic.t[@@deriving sexp_of]
             let name = "BadContext"
             let number = 0
           end
         module Bad_context_state =
           struct
-            type t = Generic.t[@@deriving sexp]
+            type t = Generic.t[@@deriving sexp_of]
             let name = "BadContextState"
             let number = 1
           end
         module Bad_drawable =
           struct
-            type t = Generic.t[@@deriving sexp]
+            type t = Generic.t[@@deriving sexp_of]
             let name = "BadDrawable"
             let number = 2
           end
         module Bad_pixmap =
           struct
-            type t = Generic.t[@@deriving sexp]
+            type t = Generic.t[@@deriving sexp_of]
             let name = "BadPixmap"
             let number = 3
           end
         module Bad_context_tag =
           struct
-            type t = Generic.t[@@deriving sexp]
+            type t = Generic.t[@@deriving sexp_of]
             let name = "BadContextTag"
             let number = 4
           end
         module Bad_current_window =
           struct
-            type t = Generic.t[@@deriving sexp]
+            type t = Generic.t[@@deriving sexp_of]
             let name = "BadCurrentWindow"
             let number = 5
           end
         module Bad_render_request =
           struct
-            type t = Generic.t[@@deriving sexp]
+            type t = Generic.t[@@deriving sexp_of]
             let name = "BadRenderRequest"
             let number = 6
           end
         module Bad_large_request =
           struct
-            type t = Generic.t[@@deriving sexp]
+            type t = Generic.t[@@deriving sexp_of]
             let name = "BadLargeRequest"
             let number = 7
           end
         module Unsupported_private_request =
           struct
-            type t = Generic.t[@@deriving sexp]
+            type t = Generic.t[@@deriving sexp_of]
             let name = "UnsupportedPrivateRequest"
             let number = 8
           end
         module Bad_fb_config =
           struct
-            type t = Generic.t[@@deriving sexp]
+            type t = Generic.t[@@deriving sexp_of]
             let name = "BadFBConfig"
             let number = 9
           end
         module Bad_pbuffer =
           struct
-            type t = Generic.t[@@deriving sexp]
+            type t = Generic.t[@@deriving sexp_of]
             let name = "BadPbuffer"
             let number = 10
           end
         module Bad_current_drawable =
           struct
-            type t = Generic.t[@@deriving sexp]
+            type t = Generic.t[@@deriving sexp_of]
             let name = "BadCurrentDrawable"
             let number = 11
           end
         module Bad_window =
           struct
-            type t = Generic.t[@@deriving sexp]
+            type t = Generic.t[@@deriving sexp_of]
             let name = "BadWindow"
             let number = 12
           end
         module Glx_bad_profile_arb =
           struct
-            type t = Generic.t[@@deriving sexp]
+            type t = Generic.t[@@deriving sexp_of]
             let name = "GLXBadProfileARB"
             let number = 13
           end
@@ -6713,7 +6727,8 @@ module Glx =
           | `Bad_pbuffer of Bad_pbuffer.t 
           | `Bad_current_drawable of Bad_current_drawable.t 
           | `Bad_window of Bad_window.t 
-          | `Glx_bad_profile_arb of Glx_bad_profile_arb.t ][@@deriving sexp]
+          | `Glx_bad_profile_arb of Glx_bad_profile_arb.t ][@@deriving
+                                                             sexp_of]
       end
     module Render =
       struct
@@ -6721,7 +6736,7 @@ module Glx =
         let opcode = 1
         type t = {
           context_tag: context_tag ;
-          data: byte list }[@@deriving sexp]
+          data: byte list }[@@deriving sexp_of]
         let with_request f ~context_tag  ~data  =
           f ({ context_tag; data } : t)
       end
@@ -6734,7 +6749,7 @@ module Glx =
           context_tag: context_tag ;
           request_num: u16 ;
           request_total: u16 ;
-          data: byte list }[@@deriving sexp]
+          data: byte list }[@@deriving sexp_of]
         let with_request f ~context_tag  ~request_num  ~request_total  ~data 
           = f ({ context_tag; request_num; request_total; data } : t)
       end
@@ -6748,7 +6763,7 @@ module Glx =
           visual: Core.visualid ;
           screen: u32 ;
           share_list: context ;
-          is_direct: bool }[@@deriving sexp]
+          is_direct: bool }[@@deriving sexp_of]
         let with_request f ~context  ~visual  ~screen  ~share_list 
           ~is_direct  =
           f ({ context; visual; screen; share_list; is_direct } : t)
@@ -6757,7 +6772,7 @@ module Glx =
       struct
         let name = "DestroyContext"
         let opcode = 4
-        type t = context[@@deriving sexp]
+        type t = context[@@deriving sexp_of]
         let with_request f context = f (context : t)
       end
     module Make_current =
@@ -6768,18 +6783,18 @@ module Glx =
           {
           drawable: drawable ;
           context: context ;
-          old_context_tag: context_tag }[@@deriving sexp]
+          old_context_tag: context_tag }[@@deriving sexp_of]
         let with_request f ~drawable  ~context  ~old_context_tag  =
           f ({ drawable; context; old_context_tag } : t)
-        module Reply = struct type t = context_tag[@@deriving sexp] end
+        module Reply = struct type t = context_tag[@@deriving sexp_of] end
       end
     module Is_direct =
       struct
         let name = "IsDirect"
         let opcode = 6
-        type t = context[@@deriving sexp]
+        type t = context[@@deriving sexp_of]
         let with_request f context = f (context : t)
-        module Reply = struct type t = bool[@@deriving sexp] end
+        module Reply = struct type t = bool[@@deriving sexp_of] end
       end
     module Query_version =
       struct
@@ -6787,28 +6802,28 @@ module Glx =
         let opcode = 7
         type t = {
           major_version: u32 ;
-          minor_version: u32 }[@@deriving sexp]
+          minor_version: u32 }[@@deriving sexp_of]
         let with_request f ~major_version  ~minor_version  =
           f ({ major_version; minor_version } : t)
         module Reply =
           struct
             type t = {
               major_version: u32 ;
-              minor_version: u32 }[@@deriving sexp]
+              minor_version: u32 }[@@deriving sexp_of]
           end
       end
     module Wait_gl =
       struct
         let name = "WaitGL"
         let opcode = 8
-        type t = context_tag[@@deriving sexp]
+        type t = context_tag[@@deriving sexp_of]
         let with_request f context_tag = f (context_tag : t)
       end
     module Wait_x =
       struct
         let name = "WaitX"
         let opcode = 9
-        type t = context_tag[@@deriving sexp]
+        type t = context_tag[@@deriving sexp_of]
         let with_request f context_tag = f (context_tag : t)
       end
     module Copy_context =
@@ -6820,7 +6835,7 @@ module Glx =
           src: context ;
           dest: context ;
           mask: u32 ;
-          src_context_tag: context_tag }[@@deriving sexp]
+          src_context_tag: context_tag }[@@deriving sexp_of]
         let with_request f ~src  ~dest  ~mask  ~src_context_tag  =
           f ({ src; dest; mask; src_context_tag } : t)
       end
@@ -6830,7 +6845,7 @@ module Glx =
         let opcode = 11
         type t = {
           context_tag: context_tag ;
-          drawable: drawable }[@@deriving sexp]
+          drawable: drawable }[@@deriving sexp_of]
         let with_request f ~context_tag  ~drawable  =
           f ({ context_tag; drawable } : t)
       end
@@ -6844,7 +6859,7 @@ module Glx =
           font: Core.font ;
           first: u32 ;
           count: u32 ;
-          list_base: u32 }[@@deriving sexp]
+          list_base: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~font  ~first  ~count  ~list_base  =
           f ({ context_tag; font; first; count; list_base } : t)
       end
@@ -6857,7 +6872,7 @@ module Glx =
           screen: u32 ;
           visual: Core.visualid ;
           pixmap: Core.pixmap ;
-          glx_pixmap: pixmap }[@@deriving sexp]
+          glx_pixmap: pixmap }[@@deriving sexp_of]
         let with_request f ~screen  ~visual  ~pixmap  ~glx_pixmap  =
           f ({ screen; visual; pixmap; glx_pixmap } : t)
       end
@@ -6865,7 +6880,7 @@ module Glx =
       struct
         let name = "GetVisualConfigs"
         let opcode = 14
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f screen = f (screen : t)
         module Reply =
           struct
@@ -6873,14 +6888,14 @@ module Glx =
               {
               num_visuals: u32 ;
               num_properties: u32 ;
-              property_list: u32 list }[@@deriving sexp]
+              property_list: u32 list }[@@deriving sexp_of]
           end
       end
     module Destroy_glx_pixmap =
       struct
         let name = "DestroyGLXPixmap"
         let opcode = 15
-        type t = pixmap[@@deriving sexp]
+        type t = pixmap[@@deriving sexp_of]
         let with_request f glx_pixmap = f (glx_pixmap : t)
       end
     module Vendor_private =
@@ -6891,7 +6906,7 @@ module Glx =
           {
           vendor_code: u32 ;
           context_tag: context_tag ;
-          data: byte list }[@@deriving sexp]
+          data: byte list }[@@deriving sexp_of]
         let with_request f ~vendor_code  ~context_tag  ~data  =
           f ({ vendor_code; context_tag; data } : t)
       end
@@ -6903,7 +6918,7 @@ module Glx =
           {
           vendor_code: u32 ;
           context_tag: context_tag ;
-          data: byte list }[@@deriving sexp]
+          data: byte list }[@@deriving sexp_of]
         let with_request f ~vendor_code  ~context_tag  ~data  =
           f ({ vendor_code; context_tag; data } : t)
         module Reply =
@@ -6911,16 +6926,16 @@ module Glx =
             type t = {
               retval: u32 ;
               data1: byte list ;
-              data2: byte list }[@@deriving sexp]
+              data2: byte list }[@@deriving sexp_of]
           end
       end
     module Query_extensions_string =
       struct
         let name = "QueryExtensionsString"
         let opcode = 18
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f screen = f (screen : t)
-        module Reply = struct type t = u32[@@deriving sexp] end
+        module Reply = struct type t = u32[@@deriving sexp_of] end
       end
     module Query_server_string =
       struct
@@ -6928,9 +6943,9 @@ module Glx =
         let opcode = 19
         type t = {
           screen: u32 ;
-          name: u32 }[@@deriving sexp]
+          name: u32 }[@@deriving sexp_of]
         let with_request f ~screen  ~name  = f ({ screen; name } : t)
-        module Reply = struct type t = string[@@deriving sexp] end
+        module Reply = struct type t = string[@@deriving sexp_of] end
       end
     module Client_info =
       struct
@@ -6939,7 +6954,7 @@ module Glx =
         type t = {
           major_version: u32 ;
           minor_version: u32 ;
-          string: string }[@@deriving sexp]
+          string: string }[@@deriving sexp_of]
         let with_request f ~major_version  ~minor_version  ~string  =
           f ({ major_version; minor_version; string } : t)
       end
@@ -6947,7 +6962,7 @@ module Glx =
       struct
         let name = "GetFBConfigs"
         let opcode = 21
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f screen = f (screen : t)
         module Reply =
           struct
@@ -6955,7 +6970,7 @@ module Glx =
               {
               num_f_b_configs: u32 ;
               num_properties: u32 ;
-              property_list: u32 list }[@@deriving sexp]
+              property_list: u32 list }[@@deriving sexp_of]
           end
       end
     module Create_pixmap =
@@ -6968,7 +6983,7 @@ module Glx =
           fbconfig: fbconfig ;
           pixmap: Core.pixmap ;
           glx_pixmap: pixmap ;
-          attribs: u32 list }[@@deriving sexp]
+          attribs: u32 list }[@@deriving sexp_of]
         let with_request f ~screen  ~fbconfig  ~pixmap  ~glx_pixmap  ~attribs
            = f ({ screen; fbconfig; pixmap; glx_pixmap; attribs } : t)
       end
@@ -6976,7 +6991,7 @@ module Glx =
       struct
         let name = "DestroyPixmap"
         let opcode = 23
-        type t = pixmap[@@deriving sexp]
+        type t = pixmap[@@deriving sexp_of]
         let with_request f glx_pixmap = f (glx_pixmap : t)
       end
     module Create_new_context =
@@ -6990,7 +7005,7 @@ module Glx =
           screen: u32 ;
           render_type: u32 ;
           share_list: context ;
-          is_direct: bool }[@@deriving sexp]
+          is_direct: bool }[@@deriving sexp_of]
         let with_request f ~context  ~fbconfig  ~screen  ~render_type 
           ~share_list  ~is_direct  =
           f
@@ -7001,9 +7016,9 @@ module Glx =
       struct
         let name = "QueryContext"
         let opcode = 25
-        type t = context[@@deriving sexp]
+        type t = context[@@deriving sexp_of]
         let with_request f context = f (context : t)
-        module Reply = struct type t = u32 list[@@deriving sexp] end
+        module Reply = struct type t = u32 list[@@deriving sexp_of] end
       end
     module Make_context_current =
       struct
@@ -7014,11 +7029,11 @@ module Glx =
           old_context_tag: context_tag ;
           drawable: drawable ;
           read_drawable: drawable ;
-          context: context }[@@deriving sexp]
+          context: context }[@@deriving sexp_of]
         let with_request f ~old_context_tag  ~drawable  ~read_drawable 
           ~context  =
           f ({ old_context_tag; drawable; read_drawable; context } : t)
-        module Reply = struct type t = context_tag[@@deriving sexp] end
+        module Reply = struct type t = context_tag[@@deriving sexp_of] end
       end
     module Create_pbuffer =
       struct
@@ -7029,7 +7044,7 @@ module Glx =
           screen: u32 ;
           fbconfig: fbconfig ;
           pbuffer: pbuffer ;
-          attribs: u32 list }[@@deriving sexp]
+          attribs: u32 list }[@@deriving sexp_of]
         let with_request f ~screen  ~fbconfig  ~pbuffer  ~attribs  =
           f ({ screen; fbconfig; pbuffer; attribs } : t)
       end
@@ -7037,16 +7052,16 @@ module Glx =
       struct
         let name = "DestroyPbuffer"
         let opcode = 28
-        type t = pbuffer[@@deriving sexp]
+        type t = pbuffer[@@deriving sexp_of]
         let with_request f pbuffer = f (pbuffer : t)
       end
     module Get_drawable_attributes =
       struct
         let name = "GetDrawableAttributes"
         let opcode = 29
-        type t = drawable[@@deriving sexp]
+        type t = drawable[@@deriving sexp_of]
         let with_request f drawable = f (drawable : t)
-        module Reply = struct type t = u32 list[@@deriving sexp] end
+        module Reply = struct type t = u32 list[@@deriving sexp_of] end
       end
     module Change_drawable_attributes =
       struct
@@ -7054,7 +7069,7 @@ module Glx =
         let opcode = 30
         type t = {
           drawable: drawable ;
-          attribs: u32 list }[@@deriving sexp]
+          attribs: u32 list }[@@deriving sexp_of]
         let with_request f ~drawable  ~attribs  =
           f ({ drawable; attribs } : t)
       end
@@ -7068,7 +7083,7 @@ module Glx =
           fbconfig: fbconfig ;
           window: Core.window ;
           glx_window: window ;
-          attribs: u32 list }[@@deriving sexp]
+          attribs: u32 list }[@@deriving sexp_of]
         let with_request f ~screen  ~fbconfig  ~window  ~glx_window  ~attribs
            = f ({ screen; fbconfig; window; glx_window; attribs } : t)
       end
@@ -7076,7 +7091,7 @@ module Glx =
       struct
         let name = "DeleteWindow"
         let opcode = 32
-        type t = window[@@deriving sexp]
+        type t = window[@@deriving sexp_of]
         let with_request f glxwindow = f (glxwindow : t)
       end
     module Set_client_info_arb =
@@ -7089,7 +7104,7 @@ module Glx =
           minor_version: u32 ;
           gl_versions: u32 list ;
           gl_extension_string: string ;
-          glx_extension_string: string }[@@deriving sexp]
+          glx_extension_string: string }[@@deriving sexp_of]
         let with_request f ~major_version  ~minor_version  ~gl_versions 
           ~gl_extension_string  ~glx_extension_string  =
           f
@@ -7112,7 +7127,7 @@ module Glx =
           screen: u32 ;
           share_list: context ;
           is_direct: bool ;
-          attribs: u32 list }[@@deriving sexp]
+          attribs: u32 list }[@@deriving sexp_of]
         let with_request f ~context  ~fbconfig  ~screen  ~share_list 
           ~is_direct  ~attribs  =
           f
@@ -7129,7 +7144,7 @@ module Glx =
           minor_version: u32 ;
           gl_versions: u32 list ;
           gl_extension_string: string ;
-          glx_extension_string: string }[@@deriving sexp]
+          glx_extension_string: string }[@@deriving sexp_of]
         let with_request f ~major_version  ~minor_version  ~gl_versions 
           ~gl_extension_string  ~glx_extension_string  =
           f
@@ -7148,7 +7163,7 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           list: u32 ;
-          mode: u32 }[@@deriving sexp]
+          mode: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~list  ~mode  =
           f ({ context_tag; list; mode } : t)
       end
@@ -7156,7 +7171,7 @@ module Glx =
       struct
         let name = "EndList"
         let opcode = 102
-        type t = context_tag[@@deriving sexp]
+        type t = context_tag[@@deriving sexp_of]
         let with_request f context_tag = f (context_tag : t)
       end
     module Delete_lists =
@@ -7166,7 +7181,7 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           list: u32 ;
-          range: i32 }[@@deriving sexp]
+          range: i32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~list  ~range  =
           f ({ context_tag; list; range } : t)
       end
@@ -7176,10 +7191,10 @@ module Glx =
         let opcode = 104
         type t = {
           context_tag: context_tag ;
-          range: i32 }[@@deriving sexp]
+          range: i32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~range  =
           f ({ context_tag; range } : t)
-        module Reply = struct type t = u32[@@deriving sexp] end
+        module Reply = struct type t = u32[@@deriving sexp_of] end
       end
     module Feedback_buffer =
       struct
@@ -7188,7 +7203,7 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           size: i32 ;
-          type_: i32 }[@@deriving sexp]
+          type_: i32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~size  ~type_  =
           f ({ context_tag; size; type_ } : t)
       end
@@ -7198,7 +7213,7 @@ module Glx =
         let opcode = 106
         type t = {
           context_tag: context_tag ;
-          size: i32 }[@@deriving sexp]
+          size: i32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~size  =
           f ({ context_tag; size } : t)
       end
@@ -7208,7 +7223,7 @@ module Glx =
         let opcode = 107
         type t = {
           context_tag: context_tag ;
-          mode: u32 }[@@deriving sexp]
+          mode: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~mode  =
           f ({ context_tag; mode } : t)
         module Reply =
@@ -7216,16 +7231,16 @@ module Glx =
             type t = {
               ret_val: u32 ;
               new_mode: u32 ;
-              data: u32 list }[@@deriving sexp]
+              data: u32 list }[@@deriving sexp_of]
           end
       end
     module Finish =
       struct
         let name = "Finish"
         let opcode = 108
-        type t = context_tag[@@deriving sexp]
+        type t = context_tag[@@deriving sexp_of]
         let with_request f context_tag = f (context_tag : t)
-        module Reply = struct type t = unit[@@deriving sexp] end
+        module Reply = struct type t = unit[@@deriving sexp_of] end
       end
     module Pixel_storef =
       struct
@@ -7234,7 +7249,7 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           pname: u32 ;
-          datum: float32 }[@@deriving sexp]
+          datum: float32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~pname  ~datum  =
           f ({ context_tag; pname; datum } : t)
       end
@@ -7245,7 +7260,7 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           pname: u32 ;
-          datum: i32 }[@@deriving sexp]
+          datum: i32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~pname  ~datum  =
           f ({ context_tag; pname; datum } : t)
       end
@@ -7263,7 +7278,7 @@ module Glx =
           format: u32 ;
           type_: u32 ;
           swap_bytes: bool ;
-          lsb_first: bool }[@@deriving sexp]
+          lsb_first: bool }[@@deriving sexp_of]
         let with_request f ~context_tag  ~x  ~y  ~width  ~height  ~format 
           ~type_  ~swap_bytes  ~lsb_first  =
           f
@@ -7278,7 +7293,7 @@ module Glx =
                swap_bytes;
                lsb_first
              } : t)
-        module Reply = struct type t = byte list[@@deriving sexp] end
+        module Reply = struct type t = byte list[@@deriving sexp_of] end
       end
     module Get_booleanv =
       struct
@@ -7286,14 +7301,14 @@ module Glx =
         let opcode = 112
         type t = {
           context_tag: context_tag ;
-          pname: i32 }[@@deriving sexp]
+          pname: i32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~pname  =
           f ({ context_tag; pname } : t)
         module Reply =
           struct
             type t = {
               datum: bool ;
-              data: bool list }[@@deriving sexp]
+              data: bool list }[@@deriving sexp_of]
           end
       end
     module Get_clip_plane =
@@ -7302,10 +7317,10 @@ module Glx =
         let opcode = 113
         type t = {
           context_tag: context_tag ;
-          plane: i32 }[@@deriving sexp]
+          plane: i32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~plane  =
           f ({ context_tag; plane } : t)
-        module Reply = struct type t = float64 list[@@deriving sexp] end
+        module Reply = struct type t = float64 list[@@deriving sexp_of] end
       end
     module Get_doublev =
       struct
@@ -7313,23 +7328,23 @@ module Glx =
         let opcode = 114
         type t = {
           context_tag: context_tag ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~pname  =
           f ({ context_tag; pname } : t)
         module Reply =
           struct
             type t = {
               datum: float64 ;
-              data: float64 list }[@@deriving sexp]
+              data: float64 list }[@@deriving sexp_of]
           end
       end
     module Get_error =
       struct
         let name = "GetError"
         let opcode = 115
-        type t = context_tag[@@deriving sexp]
+        type t = context_tag[@@deriving sexp_of]
         let with_request f context_tag = f (context_tag : t)
-        module Reply = struct type t = i32[@@deriving sexp] end
+        module Reply = struct type t = i32[@@deriving sexp_of] end
       end
     module Get_floatv =
       struct
@@ -7337,14 +7352,14 @@ module Glx =
         let opcode = 116
         type t = {
           context_tag: context_tag ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~pname  =
           f ({ context_tag; pname } : t)
         module Reply =
           struct
             type t = {
               datum: float32 ;
-              data: float32 list }[@@deriving sexp]
+              data: float32 list }[@@deriving sexp_of]
           end
       end
     module Get_integerv =
@@ -7353,13 +7368,15 @@ module Glx =
         let opcode = 117
         type t = {
           context_tag: context_tag ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~pname  =
           f ({ context_tag; pname } : t)
         module Reply =
-          struct type t = {
-                   datum: i32 ;
-                   data: i32 list }[@@deriving sexp] end
+          struct
+            type t = {
+              datum: i32 ;
+              data: i32 list }[@@deriving sexp_of]
+          end
       end
     module Get_lightfv =
       struct
@@ -7368,14 +7385,14 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           light: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~light  ~pname  =
           f ({ context_tag; light; pname } : t)
         module Reply =
           struct
             type t = {
               datum: float32 ;
-              data: float32 list }[@@deriving sexp]
+              data: float32 list }[@@deriving sexp_of]
           end
       end
     module Get_lightiv =
@@ -7385,13 +7402,15 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           light: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~light  ~pname  =
           f ({ context_tag; light; pname } : t)
         module Reply =
-          struct type t = {
-                   datum: i32 ;
-                   data: i32 list }[@@deriving sexp] end
+          struct
+            type t = {
+              datum: i32 ;
+              data: i32 list }[@@deriving sexp_of]
+          end
       end
     module Get_mapdv =
       struct
@@ -7400,14 +7419,14 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           target: u32 ;
-          query: u32 }[@@deriving sexp]
+          query: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~query  =
           f ({ context_tag; target; query } : t)
         module Reply =
           struct
             type t = {
               datum: float64 ;
-              data: float64 list }[@@deriving sexp]
+              data: float64 list }[@@deriving sexp_of]
           end
       end
     module Get_mapfv =
@@ -7417,14 +7436,14 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           target: u32 ;
-          query: u32 }[@@deriving sexp]
+          query: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~query  =
           f ({ context_tag; target; query } : t)
         module Reply =
           struct
             type t = {
               datum: float32 ;
-              data: float32 list }[@@deriving sexp]
+              data: float32 list }[@@deriving sexp_of]
           end
       end
     module Get_mapiv =
@@ -7434,13 +7453,15 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           target: u32 ;
-          query: u32 }[@@deriving sexp]
+          query: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~query  =
           f ({ context_tag; target; query } : t)
         module Reply =
-          struct type t = {
-                   datum: i32 ;
-                   data: i32 list }[@@deriving sexp] end
+          struct
+            type t = {
+              datum: i32 ;
+              data: i32 list }[@@deriving sexp_of]
+          end
       end
     module Get_materialfv =
       struct
@@ -7449,14 +7470,14 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           face: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~face  ~pname  =
           f ({ context_tag; face; pname } : t)
         module Reply =
           struct
             type t = {
               datum: float32 ;
-              data: float32 list }[@@deriving sexp]
+              data: float32 list }[@@deriving sexp_of]
           end
       end
     module Get_materialiv =
@@ -7466,13 +7487,15 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           face: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~face  ~pname  =
           f ({ context_tag; face; pname } : t)
         module Reply =
-          struct type t = {
-                   datum: i32 ;
-                   data: i32 list }[@@deriving sexp] end
+          struct
+            type t = {
+              datum: i32 ;
+              data: i32 list }[@@deriving sexp_of]
+          end
       end
     module Get_pixel_mapfv =
       struct
@@ -7480,13 +7503,13 @@ module Glx =
         let opcode = 125
         type t = {
           context_tag: context_tag ;
-          map: u32 }[@@deriving sexp]
+          map: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~map  = f ({ context_tag; map } : t)
         module Reply =
           struct
             type t = {
               datum: float32 ;
-              data: float32 list }[@@deriving sexp]
+              data: float32 list }[@@deriving sexp_of]
           end
       end
     module Get_pixel_mapuiv =
@@ -7495,12 +7518,14 @@ module Glx =
         let opcode = 126
         type t = {
           context_tag: context_tag ;
-          map: u32 }[@@deriving sexp]
+          map: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~map  = f ({ context_tag; map } : t)
         module Reply =
-          struct type t = {
-                   datum: u32 ;
-                   data: u32 list }[@@deriving sexp] end
+          struct
+            type t = {
+              datum: u32 ;
+              data: u32 list }[@@deriving sexp_of]
+          end
       end
     module Get_pixel_mapusv =
       struct
@@ -7508,12 +7533,14 @@ module Glx =
         let opcode = 127
         type t = {
           context_tag: context_tag ;
-          map: u32 }[@@deriving sexp]
+          map: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~map  = f ({ context_tag; map } : t)
         module Reply =
-          struct type t = {
-                   datum: u16 ;
-                   data: u16 list }[@@deriving sexp] end
+          struct
+            type t = {
+              datum: u16 ;
+              data: u16 list }[@@deriving sexp_of]
+          end
       end
     module Get_polygon_stipple =
       struct
@@ -7521,10 +7548,10 @@ module Glx =
         let opcode = 128
         type t = {
           context_tag: context_tag ;
-          lsb_first: bool }[@@deriving sexp]
+          lsb_first: bool }[@@deriving sexp_of]
         let with_request f ~context_tag  ~lsb_first  =
           f ({ context_tag; lsb_first } : t)
-        module Reply = struct type t = byte list[@@deriving sexp] end
+        module Reply = struct type t = byte list[@@deriving sexp_of] end
       end
     module Get_string =
       struct
@@ -7532,10 +7559,10 @@ module Glx =
         let opcode = 129
         type t = {
           context_tag: context_tag ;
-          name: u32 }[@@deriving sexp]
+          name: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~name  =
           f ({ context_tag; name } : t)
-        module Reply = struct type t = string[@@deriving sexp] end
+        module Reply = struct type t = string[@@deriving sexp_of] end
       end
     module Get_tex_envfv =
       struct
@@ -7544,14 +7571,14 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           target: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~pname  =
           f ({ context_tag; target; pname } : t)
         module Reply =
           struct
             type t = {
               datum: float32 ;
-              data: float32 list }[@@deriving sexp]
+              data: float32 list }[@@deriving sexp_of]
           end
       end
     module Get_tex_enviv =
@@ -7561,13 +7588,15 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           target: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~pname  =
           f ({ context_tag; target; pname } : t)
         module Reply =
-          struct type t = {
-                   datum: i32 ;
-                   data: i32 list }[@@deriving sexp] end
+          struct
+            type t = {
+              datum: i32 ;
+              data: i32 list }[@@deriving sexp_of]
+          end
       end
     module Get_tex_gendv =
       struct
@@ -7576,14 +7605,14 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           coord: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~coord  ~pname  =
           f ({ context_tag; coord; pname } : t)
         module Reply =
           struct
             type t = {
               datum: float64 ;
-              data: float64 list }[@@deriving sexp]
+              data: float64 list }[@@deriving sexp_of]
           end
       end
     module Get_tex_genfv =
@@ -7593,14 +7622,14 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           coord: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~coord  ~pname  =
           f ({ context_tag; coord; pname } : t)
         module Reply =
           struct
             type t = {
               datum: float32 ;
-              data: float32 list }[@@deriving sexp]
+              data: float32 list }[@@deriving sexp_of]
           end
       end
     module Get_tex_geniv =
@@ -7610,13 +7639,15 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           coord: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~coord  ~pname  =
           f ({ context_tag; coord; pname } : t)
         module Reply =
-          struct type t = {
-                   datum: i32 ;
-                   data: i32 list }[@@deriving sexp] end
+          struct
+            type t = {
+              datum: i32 ;
+              data: i32 list }[@@deriving sexp_of]
+          end
       end
     module Get_tex_image =
       struct
@@ -7629,7 +7660,7 @@ module Glx =
           level: i32 ;
           format: u32 ;
           type_: u32 ;
-          swap_bytes: bool }[@@deriving sexp]
+          swap_bytes: bool }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~level  ~format  ~type_ 
           ~swap_bytes  =
           f ({ context_tag; target; level; format; type_; swap_bytes } : t)
@@ -7639,7 +7670,7 @@ module Glx =
               width: i32 ;
               height: i32 ;
               depth: i32 ;
-              data: byte list }[@@deriving sexp]
+              data: byte list }[@@deriving sexp_of]
           end
       end
     module Get_tex_parameterfv =
@@ -7649,14 +7680,14 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           target: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~pname  =
           f ({ context_tag; target; pname } : t)
         module Reply =
           struct
             type t = {
               datum: float32 ;
-              data: float32 list }[@@deriving sexp]
+              data: float32 list }[@@deriving sexp_of]
           end
       end
     module Get_tex_parameteriv =
@@ -7666,13 +7697,15 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           target: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~pname  =
           f ({ context_tag; target; pname } : t)
         module Reply =
-          struct type t = {
-                   datum: i32 ;
-                   data: i32 list }[@@deriving sexp] end
+          struct
+            type t = {
+              datum: i32 ;
+              data: i32 list }[@@deriving sexp_of]
+          end
       end
     module Get_tex_level_parameterfv =
       struct
@@ -7683,14 +7716,14 @@ module Glx =
           context_tag: context_tag ;
           target: u32 ;
           level: i32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~level  ~pname  =
           f ({ context_tag; target; level; pname } : t)
         module Reply =
           struct
             type t = {
               datum: float32 ;
-              data: float32 list }[@@deriving sexp]
+              data: float32 list }[@@deriving sexp_of]
           end
       end
     module Get_tex_level_parameteriv =
@@ -7702,13 +7735,15 @@ module Glx =
           context_tag: context_tag ;
           target: u32 ;
           level: i32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~level  ~pname  =
           f ({ context_tag; target; level; pname } : t)
         module Reply =
-          struct type t = {
-                   datum: i32 ;
-                   data: i32 list }[@@deriving sexp] end
+          struct
+            type t = {
+              datum: i32 ;
+              data: i32 list }[@@deriving sexp_of]
+          end
       end
     module Is_enabled =
       struct
@@ -7716,10 +7751,10 @@ module Glx =
         let opcode = 140
         type t = {
           context_tag: context_tag ;
-          capability: u32 }[@@deriving sexp]
+          capability: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~capability  =
           f ({ context_tag; capability } : t)
-        module Reply = struct type t = bool32[@@deriving sexp] end
+        module Reply = struct type t = bool32[@@deriving sexp_of] end
       end
     module Is_list =
       struct
@@ -7727,16 +7762,16 @@ module Glx =
         let opcode = 141
         type t = {
           context_tag: context_tag ;
-          list: u32 }[@@deriving sexp]
+          list: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~list  =
           f ({ context_tag; list } : t)
-        module Reply = struct type t = bool32[@@deriving sexp] end
+        module Reply = struct type t = bool32[@@deriving sexp_of] end
       end
     module Flush =
       struct
         let name = "Flush"
         let opcode = 142
-        type t = context_tag[@@deriving sexp]
+        type t = context_tag[@@deriving sexp_of]
         let with_request f context_tag = f (context_tag : t)
       end
     module Are_textures_resident =
@@ -7745,14 +7780,14 @@ module Glx =
         let opcode = 143
         type t = {
           context_tag: context_tag ;
-          textures: u32 list }[@@deriving sexp]
+          textures: u32 list }[@@deriving sexp_of]
         let with_request f ~context_tag  ~textures  =
           f ({ context_tag; textures } : t)
         module Reply =
           struct
             type t = {
               ret_val: bool32 ;
-              data: bool list }[@@deriving sexp]
+              data: bool list }[@@deriving sexp_of]
           end
       end
     module Delete_textures =
@@ -7761,7 +7796,7 @@ module Glx =
         let opcode = 144
         type t = {
           context_tag: context_tag ;
-          textures: u32 list }[@@deriving sexp]
+          textures: u32 list }[@@deriving sexp_of]
         let with_request f ~context_tag  ~textures  =
           f ({ context_tag; textures } : t)
       end
@@ -7771,9 +7806,9 @@ module Glx =
         let opcode = 145
         type t = {
           context_tag: context_tag ;
-          n: i32 }[@@deriving sexp]
+          n: i32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~n  = f ({ context_tag; n } : t)
-        module Reply = struct type t = u32 list[@@deriving sexp] end
+        module Reply = struct type t = u32 list[@@deriving sexp_of] end
       end
     module Is_texture =
       struct
@@ -7781,10 +7816,10 @@ module Glx =
         let opcode = 146
         type t = {
           context_tag: context_tag ;
-          texture: u32 }[@@deriving sexp]
+          texture: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~texture  =
           f ({ context_tag; texture } : t)
-        module Reply = struct type t = bool32[@@deriving sexp] end
+        module Reply = struct type t = bool32[@@deriving sexp_of] end
       end
     module Get_color_table =
       struct
@@ -7796,14 +7831,16 @@ module Glx =
           target: u32 ;
           format: u32 ;
           type_: u32 ;
-          swap_bytes: bool }[@@deriving sexp]
+          swap_bytes: bool }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~format  ~type_ 
           ~swap_bytes  =
           f ({ context_tag; target; format; type_; swap_bytes } : t)
         module Reply =
-          struct type t = {
-                   width: i32 ;
-                   data: byte list }[@@deriving sexp] end
+          struct
+            type t = {
+              width: i32 ;
+              data: byte list }[@@deriving sexp_of]
+          end
       end
     module Get_color_table_parameterfv =
       struct
@@ -7812,14 +7849,14 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           target: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~pname  =
           f ({ context_tag; target; pname } : t)
         module Reply =
           struct
             type t = {
               datum: float32 ;
-              data: float32 list }[@@deriving sexp]
+              data: float32 list }[@@deriving sexp_of]
           end
       end
     module Get_color_table_parameteriv =
@@ -7829,13 +7866,15 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           target: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~pname  =
           f ({ context_tag; target; pname } : t)
         module Reply =
-          struct type t = {
-                   datum: i32 ;
-                   data: i32 list }[@@deriving sexp] end
+          struct
+            type t = {
+              datum: i32 ;
+              data: i32 list }[@@deriving sexp_of]
+          end
       end
     module Get_convolution_filter =
       struct
@@ -7847,7 +7886,7 @@ module Glx =
           target: u32 ;
           format: u32 ;
           type_: u32 ;
-          swap_bytes: bool }[@@deriving sexp]
+          swap_bytes: bool }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~format  ~type_ 
           ~swap_bytes  =
           f ({ context_tag; target; format; type_; swap_bytes } : t)
@@ -7856,7 +7895,7 @@ module Glx =
             type t = {
               width: i32 ;
               height: i32 ;
-              data: byte list }[@@deriving sexp]
+              data: byte list }[@@deriving sexp_of]
           end
       end
     module Get_convolution_parameterfv =
@@ -7866,14 +7905,14 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           target: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~pname  =
           f ({ context_tag; target; pname } : t)
         module Reply =
           struct
             type t = {
               datum: float32 ;
-              data: float32 list }[@@deriving sexp]
+              data: float32 list }[@@deriving sexp_of]
           end
       end
     module Get_convolution_parameteriv =
@@ -7883,13 +7922,15 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           target: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~pname  =
           f ({ context_tag; target; pname } : t)
         module Reply =
-          struct type t = {
-                   datum: i32 ;
-                   data: i32 list }[@@deriving sexp] end
+          struct
+            type t = {
+              datum: i32 ;
+              data: i32 list }[@@deriving sexp_of]
+          end
       end
     module Get_separable_filter =
       struct
@@ -7901,7 +7942,7 @@ module Glx =
           target: u32 ;
           format: u32 ;
           type_: u32 ;
-          swap_bytes: bool }[@@deriving sexp]
+          swap_bytes: bool }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~format  ~type_ 
           ~swap_bytes  =
           f ({ context_tag; target; format; type_; swap_bytes } : t)
@@ -7910,7 +7951,7 @@ module Glx =
             type t = {
               row_w: i32 ;
               col_h: i32 ;
-              rows_and_cols: byte list }[@@deriving sexp]
+              rows_and_cols: byte list }[@@deriving sexp_of]
           end
       end
     module Get_histogram =
@@ -7924,14 +7965,16 @@ module Glx =
           format: u32 ;
           type_: u32 ;
           swap_bytes: bool ;
-          reset: bool }[@@deriving sexp]
+          reset: bool }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~format  ~type_ 
           ~swap_bytes  ~reset  =
           f ({ context_tag; target; format; type_; swap_bytes; reset } : t)
         module Reply =
-          struct type t = {
-                   width: i32 ;
-                   data: byte list }[@@deriving sexp] end
+          struct
+            type t = {
+              width: i32 ;
+              data: byte list }[@@deriving sexp_of]
+          end
       end
     module Get_histogram_parameterfv =
       struct
@@ -7940,14 +7983,14 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           target: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~pname  =
           f ({ context_tag; target; pname } : t)
         module Reply =
           struct
             type t = {
               datum: float32 ;
-              data: float32 list }[@@deriving sexp]
+              data: float32 list }[@@deriving sexp_of]
           end
       end
     module Get_histogram_parameteriv =
@@ -7957,13 +8000,15 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           target: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~pname  =
           f ({ context_tag; target; pname } : t)
         module Reply =
-          struct type t = {
-                   datum: i32 ;
-                   data: i32 list }[@@deriving sexp] end
+          struct
+            type t = {
+              datum: i32 ;
+              data: i32 list }[@@deriving sexp_of]
+          end
       end
     module Get_minmax =
       struct
@@ -7976,11 +8021,11 @@ module Glx =
           format: u32 ;
           type_: u32 ;
           swap_bytes: bool ;
-          reset: bool }[@@deriving sexp]
+          reset: bool }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~format  ~type_ 
           ~swap_bytes  ~reset  =
           f ({ context_tag; target; format; type_; swap_bytes; reset } : t)
-        module Reply = struct type t = byte list[@@deriving sexp] end
+        module Reply = struct type t = byte list[@@deriving sexp_of] end
       end
     module Get_minmax_parameterfv =
       struct
@@ -7989,14 +8034,14 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           target: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~pname  =
           f ({ context_tag; target; pname } : t)
         module Reply =
           struct
             type t = {
               datum: float32 ;
-              data: float32 list }[@@deriving sexp]
+              data: float32 list }[@@deriving sexp_of]
           end
       end
     module Get_minmax_parameteriv =
@@ -8006,13 +8051,15 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           target: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~pname  =
           f ({ context_tag; target; pname } : t)
         module Reply =
-          struct type t = {
-                   datum: i32 ;
-                   data: i32 list }[@@deriving sexp] end
+          struct
+            type t = {
+              datum: i32 ;
+              data: i32 list }[@@deriving sexp_of]
+          end
       end
     module Get_compressed_tex_image_arb =
       struct
@@ -8021,13 +8068,15 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           target: u32 ;
-          level: i32 }[@@deriving sexp]
+          level: i32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~level  =
           f ({ context_tag; target; level } : t)
         module Reply =
-          struct type t = {
-                   size: i32 ;
-                   data: byte list }[@@deriving sexp] end
+          struct
+            type t = {
+              size: i32 ;
+              data: byte list }[@@deriving sexp_of]
+          end
       end
     module Delete_queries_arb =
       struct
@@ -8035,7 +8084,7 @@ module Glx =
         let opcode = 161
         type t = {
           context_tag: context_tag ;
-          ids: u32 list }[@@deriving sexp]
+          ids: u32 list }[@@deriving sexp_of]
         let with_request f ~context_tag  ~ids  = f ({ context_tag; ids } : t)
       end
     module Gen_queries_arb =
@@ -8044,9 +8093,9 @@ module Glx =
         let opcode = 162
         type t = {
           context_tag: context_tag ;
-          n: i32 }[@@deriving sexp]
+          n: i32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~n  = f ({ context_tag; n } : t)
-        module Reply = struct type t = u32 list[@@deriving sexp] end
+        module Reply = struct type t = u32 list[@@deriving sexp_of] end
       end
     module Is_query_arb =
       struct
@@ -8054,9 +8103,9 @@ module Glx =
         let opcode = 163
         type t = {
           context_tag: context_tag ;
-          id: u32 }[@@deriving sexp]
+          id: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~id  = f ({ context_tag; id } : t)
-        module Reply = struct type t = bool32[@@deriving sexp] end
+        module Reply = struct type t = bool32[@@deriving sexp_of] end
       end
     module Get_queryiv_arb =
       struct
@@ -8065,13 +8114,15 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           target: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~target  ~pname  =
           f ({ context_tag; target; pname } : t)
         module Reply =
-          struct type t = {
-                   datum: i32 ;
-                   data: i32 list }[@@deriving sexp] end
+          struct
+            type t = {
+              datum: i32 ;
+              data: i32 list }[@@deriving sexp_of]
+          end
       end
     module Get_query_objectiv_arb =
       struct
@@ -8080,13 +8131,15 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           id: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~id  ~pname  =
           f ({ context_tag; id; pname } : t)
         module Reply =
-          struct type t = {
-                   datum: i32 ;
-                   data: i32 list }[@@deriving sexp] end
+          struct
+            type t = {
+              datum: i32 ;
+              data: i32 list }[@@deriving sexp_of]
+          end
       end
     module Get_query_objectuiv_arb =
       struct
@@ -8095,13 +8148,15 @@ module Glx =
         type t = {
           context_tag: context_tag ;
           id: u32 ;
-          pname: u32 }[@@deriving sexp]
+          pname: u32 }[@@deriving sexp_of]
         let with_request f ~context_tag  ~id  ~pname  =
           f ({ context_tag; id; pname } : t)
         module Reply =
-          struct type t = {
-                   datum: u32 ;
-                   data: u32 list }[@@deriving sexp] end
+          struct
+            type t = {
+              datum: u32 ;
+              data: u32 list }[@@deriving sexp_of]
+          end
       end
   end
 module Randr =
@@ -8112,11 +8167,11 @@ module Randr =
         let version = (1, 6)
         let query_name = "RANDR"
       end
-    type mode = xid[@@deriving sexp]
-    type crtc = xid[@@deriving sexp]
-    type output = xid[@@deriving sexp]
-    type provider = xid[@@deriving sexp]
-    type lease = xid[@@deriving sexp]
+    type mode = xid[@@deriving sexp_of]
+    type crtc = xid[@@deriving sexp_of]
+    type output = xid[@@deriving sexp_of]
+    type provider = xid[@@deriving sexp_of]
+    type lease = xid[@@deriving sexp_of]
     module Rotation_mask =
       struct
         include (Mask_impl)(struct  end)
@@ -8131,13 +8186,13 @@ module Randr =
       width: u16 ;
       height: u16 ;
       mwidth: u16 ;
-      mheight: u16 }[@@deriving sexp]
-    type refresh_rates = u16 list[@@deriving sexp]
+      mheight: u16 }[@@deriving sexp_of]
+    type refresh_rates = u16 list[@@deriving sexp_of]
     module Set_config_enum =
       struct
         type t =
           [ `Success  | `Invalid_config_time  | `Invalid_time  | `Failed ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Success
@@ -8198,10 +8253,11 @@ module Randr =
       vsync_end: u16 ;
       vtotal: u16 ;
       name_len: u16 ;
-      mode_flags: Mode_flag_mask.t }[@@deriving sexp]
+      mode_flags: Mode_flag_mask.t }[@@deriving sexp_of]
     module Connection_enum =
       struct
-        type t = [ `Connected  | `Disconnected  | `Unknown ][@@deriving sexp]
+        type t = [ `Connected  | `Disconnected  | `Unknown ][@@deriving
+                                                              sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Connected
@@ -8234,7 +8290,7 @@ module Randr =
         type t =
           [ `Crtc_change  | `Output_change  | `Output_property 
           | `Provider_change  | `Provider_property  | `Resource_change 
-          | `Lease ][@@deriving sexp]
+          | `Lease ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Crtc_change
@@ -8267,7 +8323,7 @@ module Randr =
       x: i16 ;
       y: i16 ;
       width: u16 ;
-      height: u16 }[@@deriving sexp]
+      height: u16 }[@@deriving sexp_of]
     type output_change =
       {
       timestamp: Core.timestamp ;
@@ -8278,29 +8334,29 @@ module Randr =
       mode: mode ;
       rotation: Rotation_mask.t ;
       connection: Connection_enum.t ;
-      subpixel_order: Render.Sub_pixel_enum.t }[@@deriving sexp]
+      subpixel_order: Render.Sub_pixel_enum.t }[@@deriving sexp_of]
     type output_property =
       {
       window: Core.window ;
       output: output ;
       atom: Core.atom ;
       timestamp: Core.timestamp ;
-      status: Core.Property_enum.t }[@@deriving sexp]
+      status: Core.Property_enum.t }[@@deriving sexp_of]
     type provider_change =
       {
       timestamp: Core.timestamp ;
       window: Core.window ;
-      provider: provider }[@@deriving sexp]
+      provider: provider }[@@deriving sexp_of]
     type provider_property =
       {
       window: Core.window ;
       provider: provider ;
       atom: Core.atom ;
       timestamp: Core.timestamp ;
-      state: u8 }[@@deriving sexp]
+      state: u8 }[@@deriving sexp_of]
     type resource_change = {
       timestamp: Core.timestamp ;
-      window: Core.window }[@@deriving sexp]
+      window: Core.window }[@@deriving sexp_of]
     type monitor_info =
       {
       name: Core.atom ;
@@ -8312,13 +8368,13 @@ module Randr =
       height: u16 ;
       width_in_millimeters: u32 ;
       height_in_millimeters: u32 ;
-      outputs: output list }[@@deriving sexp]
+      outputs: output list }[@@deriving sexp_of]
     type lease_notify =
       {
       timestamp: Core.timestamp ;
       window: Core.window ;
       lease: lease ;
-      created: u8 }[@@deriving sexp]
+      created: u8 }[@@deriving sexp_of]
     module Notify =
       struct
         type t =
@@ -8327,7 +8383,7 @@ module Randr =
           | `Provider_change of provider_change 
           | `Provider_property of provider_property 
           | `Resource_change of resource_change  | `Lease of lease_notify ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
       end
     module Event =
       struct
@@ -8345,50 +8401,50 @@ module Randr =
               width: u16 ;
               height: u16 ;
               mwidth: u16 ;
-              mheight: u16 }[@@deriving sexp]
+              mheight: u16 }[@@deriving sexp_of]
             let name = "ScreenChangeNotify"
             let number = 0
           end
         module Notify =
           struct
-            type t = Notify.t[@@deriving sexp]
+            type t = Notify.t[@@deriving sexp_of]
             let name = "Notify"
             let number = 1
           end
         type t =
           [ `Screen_change_notify of Screen_change_notify.t 
-          | `Notify of Notify.t ][@@deriving sexp]
+          | `Notify of Notify.t ][@@deriving sexp_of]
       end
     module Error =
       struct
         module Bad_output =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "BadOutput"
             let number = 0
           end
         module Bad_crtc =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "BadCrtc"
             let number = 1
           end
         module Bad_mode =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "BadMode"
             let number = 2
           end
         module Bad_provider =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "BadProvider"
             let number = 3
           end
         type t =
           [ `Bad_output of Bad_output.t  | `Bad_crtc of Bad_crtc.t 
           | `Bad_mode of Bad_mode.t  | `Bad_provider of Bad_provider.t ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
       end
     module Query_version =
       struct
@@ -8396,14 +8452,14 @@ module Randr =
         let opcode = 0
         type t = {
           major_version: u32 ;
-          minor_version: u32 }[@@deriving sexp]
+          minor_version: u32 }[@@deriving sexp_of]
         let with_request f ~major_version  ~minor_version  =
           f ({ major_version; minor_version } : t)
         module Reply =
           struct
             type t = {
               major_version: u32 ;
-              minor_version: u32 }[@@deriving sexp]
+              minor_version: u32 }[@@deriving sexp_of]
           end
       end
     module Set_screen_config =
@@ -8417,7 +8473,7 @@ module Randr =
           config_timestamp: Core.timestamp ;
           size_id: u16 ;
           rotation: Rotation_mask.t ;
-          rate: u16 }[@@deriving sexp]
+          rate: u16 }[@@deriving sexp_of]
         let with_request f ~window  ~timestamp  ~config_timestamp  ~size_id 
           ~rotation  ~rate  =
           f
@@ -8431,7 +8487,7 @@ module Randr =
               new_timestamp: Core.timestamp ;
               config_timestamp: Core.timestamp ;
               root: Core.window ;
-              subpixel_order: Render.Sub_pixel_enum.t }[@@deriving sexp]
+              subpixel_order: Render.Sub_pixel_enum.t }[@@deriving sexp_of]
           end
       end
     module Select_input =
@@ -8440,14 +8496,14 @@ module Randr =
         let opcode = 4
         type t = {
           window: Core.window ;
-          enable: Notify_mask.t }[@@deriving sexp]
+          enable: Notify_mask.t }[@@deriving sexp_of]
         let with_request f ~window  ~enable  = f ({ window; enable } : t)
       end
     module Get_screen_info =
       struct
         let name = "GetScreenInfo"
         let opcode = 5
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
         module Reply =
           struct
@@ -8462,14 +8518,14 @@ module Randr =
               rate: u16 ;
               n_info: u16 ;
               sizes: screen_size list ;
-              rates: refresh_rates list }[@@deriving sexp]
+              rates: refresh_rates list }[@@deriving sexp_of]
           end
       end
     module Get_screen_size_range =
       struct
         let name = "GetScreenSizeRange"
         let opcode = 6
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
         module Reply =
           struct
@@ -8478,7 +8534,7 @@ module Randr =
               min_width: u16 ;
               min_height: u16 ;
               max_width: u16 ;
-              max_height: u16 }[@@deriving sexp]
+              max_height: u16 }[@@deriving sexp_of]
           end
       end
     module Set_screen_size =
@@ -8491,7 +8547,7 @@ module Randr =
           width: u16 ;
           height: u16 ;
           mm_width: u32 ;
-          mm_height: u32 }[@@deriving sexp]
+          mm_height: u32 }[@@deriving sexp_of]
         let with_request f ~window  ~width  ~height  ~mm_width  ~mm_height  =
           f ({ window; width; height; mm_width; mm_height } : t)
       end
@@ -8499,7 +8555,7 @@ module Randr =
       struct
         let name = "GetScreenResources"
         let opcode = 8
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
         module Reply =
           struct
@@ -8510,7 +8566,7 @@ module Randr =
               crtcs: crtc list ;
               outputs: output list ;
               modes: mode_info list ;
-              names: byte list }[@@deriving sexp]
+              names: byte list }[@@deriving sexp_of]
           end
       end
     module Get_output_info =
@@ -8519,7 +8575,7 @@ module Randr =
         let opcode = 9
         type t = {
           output: output ;
-          config_timestamp: Core.timestamp }[@@deriving sexp]
+          config_timestamp: Core.timestamp }[@@deriving sexp_of]
         let with_request f ~output  ~config_timestamp  =
           f ({ output; config_timestamp } : t)
         module Reply =
@@ -8537,16 +8593,16 @@ module Randr =
               crtcs: crtc list ;
               modes: mode list ;
               clones: output list ;
-              name: byte list }[@@deriving sexp]
+              name: byte list }[@@deriving sexp_of]
           end
       end
     module List_output_properties =
       struct
         let name = "ListOutputProperties"
         let opcode = 10
-        type t = output[@@deriving sexp]
+        type t = output[@@deriving sexp_of]
         let with_request f output = f (output : t)
-        module Reply = struct type t = Core.atom list[@@deriving sexp] end
+        module Reply = struct type t = Core.atom list[@@deriving sexp_of] end
       end
     module Query_output_property =
       struct
@@ -8554,7 +8610,7 @@ module Randr =
         let opcode = 11
         type t = {
           output: output ;
-          property: Core.atom }[@@deriving sexp]
+          property: Core.atom }[@@deriving sexp_of]
         let with_request f ~output  ~property  = f ({ output; property } : t)
         module Reply =
           struct
@@ -8563,7 +8619,7 @@ module Randr =
               pending: bool ;
               range: bool ;
               immutable: bool ;
-              valid_values: i32 list }[@@deriving sexp]
+              valid_values: i32 list }[@@deriving sexp_of]
           end
       end
     module Configure_output_property =
@@ -8576,7 +8632,7 @@ module Randr =
           property: Core.atom ;
           pending: bool ;
           range: bool ;
-          values: i32 list }[@@deriving sexp]
+          values: i32 list }[@@deriving sexp_of]
         let with_request f ~output  ~property  ~pending  ~range  ~values  =
           f ({ output; property; pending; range; values } : t)
       end
@@ -8592,7 +8648,7 @@ module Randr =
           format: u8 ;
           mode: Core.Prop_mode_enum.t ;
           num_units: u32 ;
-          data: string }[@@deriving sexp]
+          data: string }[@@deriving sexp_of]
         let with_request f ~output  ~property  ~type_  ~format  ~mode 
           ~num_units  ~data  =
           f ({ output; property; type_; format; mode; num_units; data } : t)
@@ -8603,7 +8659,7 @@ module Randr =
         let opcode = 14
         type t = {
           output: output ;
-          property: Core.atom }[@@deriving sexp]
+          property: Core.atom }[@@deriving sexp_of]
         let with_request f ~output  ~property  = f ({ output; property } : t)
       end
     module Get_output_property =
@@ -8618,7 +8674,7 @@ module Randr =
           long_offset: u32 ;
           long_length: u32 ;
           delete: bool ;
-          pending: bool }[@@deriving sexp]
+          pending: bool }[@@deriving sexp_of]
         let with_request f ~output  ~property  ~type_  ~long_offset 
           ~long_length  ~delete  ~pending  =
           f
@@ -8639,7 +8695,7 @@ module Randr =
               type_: [ | Core.Atom_enum.t | Core.atom alt] ;
               bytes_after: u32 ;
               num_items: u32 ;
-              data: byte list }[@@deriving sexp]
+              data: byte list }[@@deriving sexp_of]
           end
       end
     module Create_mode =
@@ -8649,16 +8705,16 @@ module Randr =
         type t = {
           window: Core.window ;
           mode_info: mode_info ;
-          name: string }[@@deriving sexp]
+          name: string }[@@deriving sexp_of]
         let with_request f ~window  ~mode_info  ~name  =
           f ({ window; mode_info; name } : t)
-        module Reply = struct type t = mode[@@deriving sexp] end
+        module Reply = struct type t = mode[@@deriving sexp_of] end
       end
     module Destroy_mode =
       struct
         let name = "DestroyMode"
         let opcode = 17
-        type t = mode[@@deriving sexp]
+        type t = mode[@@deriving sexp_of]
         let with_request f mode = f (mode : t)
       end
     module Add_output_mode =
@@ -8667,7 +8723,7 @@ module Randr =
         let opcode = 18
         type t = {
           output: output ;
-          mode: mode }[@@deriving sexp]
+          mode: mode }[@@deriving sexp_of]
         let with_request f ~output  ~mode  = f ({ output; mode } : t)
       end
     module Delete_output_mode =
@@ -8676,7 +8732,7 @@ module Randr =
         let opcode = 19
         type t = {
           output: output ;
-          mode: mode }[@@deriving sexp]
+          mode: mode }[@@deriving sexp_of]
         let with_request f ~output  ~mode  = f ({ output; mode } : t)
       end
     module Get_crtc_info =
@@ -8685,7 +8741,7 @@ module Randr =
         let opcode = 20
         type t = {
           crtc: crtc ;
-          config_timestamp: Core.timestamp }[@@deriving sexp]
+          config_timestamp: Core.timestamp }[@@deriving sexp_of]
         let with_request f ~crtc  ~config_timestamp  =
           f ({ crtc; config_timestamp } : t)
         module Reply =
@@ -8702,7 +8758,7 @@ module Randr =
               rotation: Rotation_mask.t ;
               rotations: Rotation_mask.t ;
               outputs: output list ;
-              possible: output list }[@@deriving sexp]
+              possible: output list }[@@deriving sexp_of]
           end
       end
     module Set_crtc_config =
@@ -8718,7 +8774,7 @@ module Randr =
           y: i16 ;
           mode: mode ;
           rotation: Rotation_mask.t ;
-          outputs: output list }[@@deriving sexp]
+          outputs: output list }[@@deriving sexp_of]
         let with_request f ~crtc  ~timestamp  ~config_timestamp  ~x  ~y 
           ~mode  ~rotation  ~outputs  =
           f
@@ -8736,29 +8792,29 @@ module Randr =
           struct
             type t = {
               status: Set_config_enum.t ;
-              timestamp: Core.timestamp }[@@deriving sexp]
+              timestamp: Core.timestamp }[@@deriving sexp_of]
           end
       end
     module Get_crtc_gamma_size =
       struct
         let name = "GetCrtcGammaSize"
         let opcode = 22
-        type t = crtc[@@deriving sexp]
+        type t = crtc[@@deriving sexp_of]
         let with_request f crtc = f (crtc : t)
-        module Reply = struct type t = u16[@@deriving sexp] end
+        module Reply = struct type t = u16[@@deriving sexp_of] end
       end
     module Get_crtc_gamma =
       struct
         let name = "GetCrtcGamma"
         let opcode = 23
-        type t = crtc[@@deriving sexp]
+        type t = crtc[@@deriving sexp_of]
         let with_request f crtc = f (crtc : t)
         module Reply =
           struct
             type t = {
               red: u16 list ;
               green: u16 list ;
-              blue: u16 list }[@@deriving sexp]
+              blue: u16 list }[@@deriving sexp_of]
           end
       end
     module Set_crtc_gamma =
@@ -8770,7 +8826,7 @@ module Randr =
           crtc: crtc ;
           red: u16 list ;
           green: u16 list ;
-          blue: u16 list }[@@deriving sexp]
+          blue: u16 list }[@@deriving sexp_of]
         let with_request f ~crtc  ~red  ~green  ~blue  =
           f ({ crtc; red; green; blue } : t)
       end
@@ -8778,7 +8834,7 @@ module Randr =
       struct
         let name = "GetScreenResourcesCurrent"
         let opcode = 25
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
         module Reply =
           struct
@@ -8789,7 +8845,7 @@ module Randr =
               crtcs: crtc list ;
               outputs: output list ;
               modes: mode_info list ;
-              names: byte list }[@@deriving sexp]
+              names: byte list }[@@deriving sexp_of]
           end
       end
     module Set_crtc_transform =
@@ -8801,7 +8857,7 @@ module Randr =
           crtc: crtc ;
           transform: Render.transform ;
           filter_name: string ;
-          filter_params: Render.fixed list }[@@deriving sexp]
+          filter_params: Render.fixed list }[@@deriving sexp_of]
         let with_request f ~crtc  ~transform  ~filter_name  ~filter_params  =
           f ({ crtc; transform; filter_name; filter_params } : t)
       end
@@ -8809,7 +8865,7 @@ module Randr =
       struct
         let name = "GetCrtcTransform"
         let opcode = 27
-        type t = crtc[@@deriving sexp]
+        type t = crtc[@@deriving sexp_of]
         let with_request f crtc = f (crtc : t)
         module Reply =
           struct
@@ -8821,14 +8877,14 @@ module Randr =
               pending_filter_name: string ;
               pending_params: Render.fixed list ;
               current_filter_name: string ;
-              current_params: Render.fixed list }[@@deriving sexp]
+              current_params: Render.fixed list }[@@deriving sexp_of]
           end
       end
     module Get_panning =
       struct
         let name = "GetPanning"
         let opcode = 28
-        type t = crtc[@@deriving sexp]
+        type t = crtc[@@deriving sexp_of]
         let with_request f crtc = f (crtc : t)
         module Reply =
           struct
@@ -8847,7 +8903,7 @@ module Randr =
               border_left: i16 ;
               border_top: i16 ;
               border_right: i16 ;
-              border_bottom: i16 }[@@deriving sexp]
+              border_bottom: i16 }[@@deriving sexp_of]
           end
       end
     module Set_panning =
@@ -8869,7 +8925,7 @@ module Randr =
           border_left: i16 ;
           border_top: i16 ;
           border_right: i16 ;
-          border_bottom: i16 }[@@deriving sexp]
+          border_bottom: i16 }[@@deriving sexp_of]
         let with_request f ~crtc  ~timestamp  ~left  ~top  ~width  ~height 
           ~track_left  ~track_top  ~track_width  ~track_height  ~border_left 
           ~border_top  ~border_right  ~border_bottom  =
@@ -8894,7 +8950,7 @@ module Randr =
           struct
             type t = {
               status: Set_config_enum.t ;
-              timestamp: Core.timestamp }[@@deriving sexp]
+              timestamp: Core.timestamp }[@@deriving sexp_of]
           end
       end
     module Set_output_primary =
@@ -8903,28 +8959,28 @@ module Randr =
         let opcode = 30
         type t = {
           window: Core.window ;
-          output: output }[@@deriving sexp]
+          output: output }[@@deriving sexp_of]
         let with_request f ~window  ~output  = f ({ window; output } : t)
       end
     module Get_output_primary =
       struct
         let name = "GetOutputPrimary"
         let opcode = 31
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
-        module Reply = struct type t = output[@@deriving sexp] end
+        module Reply = struct type t = output[@@deriving sexp_of] end
       end
     module Get_providers =
       struct
         let name = "GetProviders"
         let opcode = 32
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
         module Reply =
           struct
             type t = {
               timestamp: Core.timestamp ;
-              providers: provider list }[@@deriving sexp]
+              providers: provider list }[@@deriving sexp_of]
           end
       end
     module Get_provider_info =
@@ -8933,7 +8989,7 @@ module Randr =
         let opcode = 33
         type t = {
           provider: provider ;
-          config_timestamp: Core.timestamp }[@@deriving sexp]
+          config_timestamp: Core.timestamp }[@@deriving sexp_of]
         let with_request f ~provider  ~config_timestamp  =
           f ({ provider; config_timestamp } : t)
         module Reply =
@@ -8947,7 +9003,7 @@ module Randr =
               outputs: output list ;
               associated_providers: provider list ;
               associated_capability: u32 list ;
-              name: string }[@@deriving sexp]
+              name: string }[@@deriving sexp_of]
           end
       end
     module Set_provider_offload_sink =
@@ -8958,7 +9014,7 @@ module Randr =
           {
           provider: provider ;
           sink_provider: provider ;
-          config_timestamp: Core.timestamp }[@@deriving sexp]
+          config_timestamp: Core.timestamp }[@@deriving sexp_of]
         let with_request f ~provider  ~sink_provider  ~config_timestamp  =
           f ({ provider; sink_provider; config_timestamp } : t)
       end
@@ -8970,7 +9026,7 @@ module Randr =
           {
           provider: provider ;
           source_provider: provider ;
-          config_timestamp: Core.timestamp }[@@deriving sexp]
+          config_timestamp: Core.timestamp }[@@deriving sexp_of]
         let with_request f ~provider  ~source_provider  ~config_timestamp  =
           f ({ provider; source_provider; config_timestamp } : t)
       end
@@ -8978,9 +9034,9 @@ module Randr =
       struct
         let name = "ListProviderProperties"
         let opcode = 36
-        type t = provider[@@deriving sexp]
+        type t = provider[@@deriving sexp_of]
         let with_request f provider = f (provider : t)
-        module Reply = struct type t = Core.atom list[@@deriving sexp] end
+        module Reply = struct type t = Core.atom list[@@deriving sexp_of] end
       end
     module Query_provider_property =
       struct
@@ -8988,7 +9044,7 @@ module Randr =
         let opcode = 37
         type t = {
           provider: provider ;
-          property: Core.atom }[@@deriving sexp]
+          property: Core.atom }[@@deriving sexp_of]
         let with_request f ~provider  ~property  =
           f ({ provider; property } : t)
         module Reply =
@@ -8998,7 +9054,7 @@ module Randr =
               pending: bool ;
               range: bool ;
               immutable: bool ;
-              valid_values: i32 list }[@@deriving sexp]
+              valid_values: i32 list }[@@deriving sexp_of]
           end
       end
     module Configure_provider_property =
@@ -9011,7 +9067,7 @@ module Randr =
           property: Core.atom ;
           pending: bool ;
           range: bool ;
-          values: i32 list }[@@deriving sexp]
+          values: i32 list }[@@deriving sexp_of]
         let with_request f ~provider  ~property  ~pending  ~range  ~values  =
           f ({ provider; property; pending; range; values } : t)
       end
@@ -9027,7 +9083,7 @@ module Randr =
           format: u8 ;
           mode: u8 ;
           num_items: u32 ;
-          data: string }[@@deriving sexp]
+          data: string }[@@deriving sexp_of]
         let with_request f ~provider  ~property  ~type_  ~format  ~mode 
           ~num_items  ~data  =
           f
@@ -9040,7 +9096,7 @@ module Randr =
         let opcode = 40
         type t = {
           provider: provider ;
-          property: Core.atom }[@@deriving sexp]
+          property: Core.atom }[@@deriving sexp_of]
         let with_request f ~provider  ~property  =
           f ({ provider; property } : t)
       end
@@ -9056,7 +9112,7 @@ module Randr =
           long_offset: u32 ;
           long_length: u32 ;
           delete: bool ;
-          pending: bool }[@@deriving sexp]
+          pending: bool }[@@deriving sexp_of]
         let with_request f ~provider  ~property  ~type_  ~long_offset 
           ~long_length  ~delete  ~pending  =
           f
@@ -9077,7 +9133,7 @@ module Randr =
               type_: Core.atom ;
               bytes_after: u32 ;
               num_items: u32 ;
-              data: string }[@@deriving sexp]
+              data: string }[@@deriving sexp_of]
           end
       end
     module Get_monitors =
@@ -9086,7 +9142,7 @@ module Randr =
         let opcode = 42
         type t = {
           window: Core.window ;
-          get_active: bool }[@@deriving sexp]
+          get_active: bool }[@@deriving sexp_of]
         let with_request f ~window  ~get_active  =
           f ({ window; get_active } : t)
         module Reply =
@@ -9095,7 +9151,7 @@ module Randr =
               {
               timestamp: Core.timestamp ;
               n_outputs: u32 ;
-              monitors: monitor_info list }[@@deriving sexp]
+              monitors: monitor_info list }[@@deriving sexp_of]
           end
       end
     module Set_monitor =
@@ -9104,7 +9160,7 @@ module Randr =
         let opcode = 43
         type t = {
           window: Core.window ;
-          monitorinfo: monitor_info }[@@deriving sexp]
+          monitorinfo: monitor_info }[@@deriving sexp_of]
         let with_request f ~window  ~monitorinfo  =
           f ({ window; monitorinfo } : t)
       end
@@ -9114,7 +9170,7 @@ module Randr =
         let opcode = 44
         type t = {
           window: Core.window ;
-          name: Core.atom }[@@deriving sexp]
+          name: Core.atom }[@@deriving sexp_of]
         let with_request f ~window  ~name  = f ({ window; name } : t)
       end
     module Create_lease =
@@ -9126,14 +9182,14 @@ module Randr =
           window: Core.window ;
           lid: lease ;
           crtcs: crtc list ;
-          outputs: output list }[@@deriving sexp]
+          outputs: output list }[@@deriving sexp_of]
         let with_request f ~window  ~lid  ~crtcs  ~outputs  =
           f ({ window; lid; crtcs; outputs } : t)
         module Reply =
           struct
             type t = {
               nfd: u8 ;
-              master_fd: file_descr }[@@deriving sexp]
+              master_fd: file_descr }[@@deriving sexp_of]
           end
       end
     module Free_lease =
@@ -9142,7 +9198,7 @@ module Randr =
         let opcode = 46
         type t = {
           lid: lease ;
-          terminate: byte }[@@deriving sexp]
+          terminate: byte }[@@deriving sexp_of]
         let with_request f ~lid  ~terminate  = f ({ lid; terminate } : t)
       end
   end
@@ -9154,10 +9210,10 @@ module Sync =
         let version = (3, 1)
         let query_name = "SYNC"
       end
-    type alarm = xid[@@deriving sexp]
+    type alarm = xid[@@deriving sexp_of]
     module Alarmstate_enum =
       struct
-        type t = [ `Active  | `Inactive  | `Destroyed ][@@deriving sexp]
+        type t = [ `Active  | `Inactive  | `Destroyed ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Active
@@ -9169,13 +9225,14 @@ module Sync =
         let to_int : [< t] -> int =
           function | `Active -> 0 | `Inactive -> 1 | `Destroyed -> 2
       end
-    type counter = xid[@@deriving sexp]
-    type fence = xid[@@deriving sexp]
+    type counter = xid[@@deriving sexp_of]
+    type fence = xid[@@deriving sexp_of]
     module Testtype_enum =
       struct
         type t =
           [ `Positive_transition  | `Negative_transition 
-          | `Positive_comparison  | `Negative_comparison ][@@deriving sexp]
+          | `Positive_comparison  | `Negative_comparison ][@@deriving
+                                                            sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Positive_transition
@@ -9194,7 +9251,7 @@ module Sync =
       end
     module Valuetype_enum =
       struct
-        type t = [ `Absolute  | `Relative ][@@deriving sexp]
+        type t = [ `Absolute  | `Relative ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Absolute
@@ -9217,20 +9274,20 @@ module Sync =
       end
     type int64 = {
       hi: i32 ;
-      lo: u32 }[@@deriving sexp]
+      lo: u32 }[@@deriving sexp_of]
     type systemcounter = {
       counter: counter ;
       resolution: int64 ;
-      name: string }[@@deriving sexp]
+      name: string }[@@deriving sexp_of]
     type trigger =
       {
       counter: counter ;
       wait_type: Valuetype_enum.t ;
       wait_value: int64 ;
-      test_type: Testtype_enum.t }[@@deriving sexp]
+      test_type: Testtype_enum.t }[@@deriving sexp_of]
     type waitcondition = {
       trigger: trigger ;
-      event_threshold: int64 }[@@deriving sexp]
+      event_threshold: int64 }[@@deriving sexp_of]
     module Event =
       struct
         module Counter_notify =
@@ -9243,7 +9300,7 @@ module Sync =
               counter_value: int64 ;
               timestamp: Core.timestamp ;
               count: u16 ;
-              destroyed: bool }[@@deriving sexp]
+              destroyed: bool }[@@deriving sexp_of]
             let name = "CounterNotify"
             let number = 0
           end
@@ -9256,30 +9313,30 @@ module Sync =
               counter_value: int64 ;
               alarm_value: int64 ;
               timestamp: Core.timestamp ;
-              state: Alarmstate_enum.t }[@@deriving sexp]
+              state: Alarmstate_enum.t }[@@deriving sexp_of]
             let name = "AlarmNotify"
             let number = 1
           end
         type t =
           [ `Counter_notify of Counter_notify.t 
-          | `Alarm_notify of Alarm_notify.t ][@@deriving sexp]
+          | `Alarm_notify of Alarm_notify.t ][@@deriving sexp_of]
       end
     module Error =
       struct
         module Counter =
           struct
-            type t = u32[@@deriving sexp]
+            type t = u32[@@deriving sexp_of]
             let name = "Counter"
             let number = 0
           end
         module Alarm =
           struct
-            type t = u32[@@deriving sexp]
+            type t = u32[@@deriving sexp_of]
             let name = "Alarm"
             let number = 1
           end
         type t = [ `Counter of Counter.t  | `Alarm of Alarm.t ][@@deriving
-                                                                 sexp]
+                                                                 sexp_of]
       end
     module Initialize =
       struct
@@ -9287,24 +9344,24 @@ module Sync =
         let opcode = 0
         type t = {
           desired_major_version: u8 ;
-          desired_minor_version: u8 }[@@deriving sexp]
+          desired_minor_version: u8 }[@@deriving sexp_of]
         let with_request f ~desired_major_version  ~desired_minor_version  =
           f ({ desired_major_version; desired_minor_version } : t)
         module Reply =
           struct
             type t = {
               major_version: u8 ;
-              minor_version: u8 }[@@deriving sexp]
+              minor_version: u8 }[@@deriving sexp_of]
           end
       end
     module List_system_counters =
       struct
         let name = "ListSystemCounters"
         let opcode = 1
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
-          struct type t = systemcounter list[@@deriving sexp] end
+          struct type t = systemcounter list[@@deriving sexp_of] end
       end
     module Create_counter =
       struct
@@ -9312,7 +9369,7 @@ module Sync =
         let opcode = 2
         type t = {
           id: counter ;
-          initial_value: int64 }[@@deriving sexp]
+          initial_value: int64 }[@@deriving sexp_of]
         let with_request f ~id  ~initial_value  =
           f ({ id; initial_value } : t)
       end
@@ -9320,22 +9377,22 @@ module Sync =
       struct
         let name = "DestroyCounter"
         let opcode = 6
-        type t = counter[@@deriving sexp]
+        type t = counter[@@deriving sexp_of]
         let with_request f counter = f (counter : t)
       end
     module Query_counter =
       struct
         let name = "QueryCounter"
         let opcode = 5
-        type t = counter[@@deriving sexp]
+        type t = counter[@@deriving sexp_of]
         let with_request f counter = f (counter : t)
-        module Reply = struct type t = int64[@@deriving sexp] end
+        module Reply = struct type t = int64[@@deriving sexp_of] end
       end
     module Await =
       struct
         let name = "Await"
         let opcode = 7
-        type t = waitcondition list[@@deriving sexp]
+        type t = waitcondition list[@@deriving sexp_of]
         let with_request f wait_list = f (wait_list : t)
       end
     module Change_counter =
@@ -9344,7 +9401,7 @@ module Sync =
         let opcode = 4
         type t = {
           counter: counter ;
-          amount: int64 }[@@deriving sexp]
+          amount: int64 }[@@deriving sexp_of]
         let with_request f ~counter  ~amount  = f ({ counter; amount } : t)
       end
     module Set_counter =
@@ -9353,7 +9410,7 @@ module Sync =
         let opcode = 3
         type t = {
           counter: counter ;
-          value: int64 }[@@deriving sexp]
+          value: int64 }[@@deriving sexp_of]
         let with_request f ~counter  ~value  = f ({ counter; value } : t)
       end
     module Create_alarm =
@@ -9368,7 +9425,7 @@ module Sync =
           value: int64 option ;
           test_type: Testtype_enum.t option ;
           delta: int64 option ;
-          events: u32 option }[@@deriving sexp]
+          events: u32 option }[@@deriving sexp_of]
         let with_request f ~id  ?counter  ?value_type  ?value  ?test_type 
           ?delta  ?events  () =
           f
@@ -9387,7 +9444,7 @@ module Sync =
           value: int64 option ;
           test_type: Testtype_enum.t option ;
           delta: int64 option ;
-          events: u32 option }[@@deriving sexp]
+          events: u32 option }[@@deriving sexp_of]
         let with_request f ~id  ?counter  ?value_type  ?value  ?test_type 
           ?delta  ?events  () =
           f
@@ -9398,14 +9455,14 @@ module Sync =
       struct
         let name = "DestroyAlarm"
         let opcode = 11
-        type t = alarm[@@deriving sexp]
+        type t = alarm[@@deriving sexp_of]
         let with_request f alarm = f (alarm : t)
       end
     module Query_alarm =
       struct
         let name = "QueryAlarm"
         let opcode = 10
-        type t = alarm[@@deriving sexp]
+        type t = alarm[@@deriving sexp_of]
         let with_request f alarm = f (alarm : t)
         module Reply =
           struct
@@ -9414,7 +9471,7 @@ module Sync =
               trigger: trigger ;
               delta: int64 ;
               events: bool ;
-              state: Alarmstate_enum.t }[@@deriving sexp]
+              state: Alarmstate_enum.t }[@@deriving sexp_of]
           end
       end
     module Set_priority =
@@ -9423,16 +9480,16 @@ module Sync =
         let opcode = 12
         type t = {
           id: u32 ;
-          priority: i32 }[@@deriving sexp]
+          priority: i32 }[@@deriving sexp_of]
         let with_request f ~id  ~priority  = f ({ id; priority } : t)
       end
     module Get_priority =
       struct
         let name = "GetPriority"
         let opcode = 13
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f id = f (id : t)
-        module Reply = struct type t = i32[@@deriving sexp] end
+        module Reply = struct type t = i32[@@deriving sexp_of] end
       end
     module Create_fence =
       struct
@@ -9442,7 +9499,7 @@ module Sync =
           {
           drawable: Core.drawable ;
           fence: fence ;
-          initially_triggered: bool }[@@deriving sexp]
+          initially_triggered: bool }[@@deriving sexp_of]
         let with_request f ~drawable  ~fence  ~initially_triggered  =
           f ({ drawable; fence; initially_triggered } : t)
       end
@@ -9450,36 +9507,36 @@ module Sync =
       struct
         let name = "TriggerFence"
         let opcode = 15
-        type t = fence[@@deriving sexp]
+        type t = fence[@@deriving sexp_of]
         let with_request f fence = f (fence : t)
       end
     module Reset_fence =
       struct
         let name = "ResetFence"
         let opcode = 16
-        type t = fence[@@deriving sexp]
+        type t = fence[@@deriving sexp_of]
         let with_request f fence = f (fence : t)
       end
     module Destroy_fence =
       struct
         let name = "DestroyFence"
         let opcode = 17
-        type t = fence[@@deriving sexp]
+        type t = fence[@@deriving sexp_of]
         let with_request f fence = f (fence : t)
       end
     module Query_fence =
       struct
         let name = "QueryFence"
         let opcode = 18
-        type t = fence[@@deriving sexp]
+        type t = fence[@@deriving sexp_of]
         let with_request f fence = f (fence : t)
-        module Reply = struct type t = bool[@@deriving sexp] end
+        module Reply = struct type t = bool[@@deriving sexp_of] end
       end
     module Await_fence =
       struct
         let name = "AwaitFence"
         let opcode = 19
-        type t = fence list[@@deriving sexp]
+        type t = fence list[@@deriving sexp_of]
         let with_request f fence_list = f (fence_list : t)
       end
   end
@@ -9495,7 +9552,7 @@ module Present =
       struct
         type t =
           [ `Configure_notify  | `Complete_notify  | `Idle_notify 
-          | `Redirect_notify ][@@deriving sexp]
+          | `Redirect_notify ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Configure_notify
@@ -9540,7 +9597,7 @@ module Present =
       end
     module Complete_kind_enum =
       struct
-        type t = [ `Pixmap  | `Notify_msc ][@@deriving sexp]
+        type t = [ `Pixmap  | `Notify_msc ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Pixmap
@@ -9554,7 +9611,7 @@ module Present =
     module Complete_mode_enum =
       struct
         type t = [ `Copy  | `Flip  | `Skip  | `Suboptimal_copy ][@@deriving
-                                                                  sexp]
+                                                                  sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Copy
@@ -9573,8 +9630,8 @@ module Present =
       end
     type notify = {
       window: Core.window ;
-      serial: u32 }[@@deriving sexp]
-    type event = xid[@@deriving sexp]
+      serial: u32 }[@@deriving sexp_of]
+    type event = xid[@@deriving sexp_of]
     module Event =
       struct
         module Generic =
@@ -9583,7 +9640,7 @@ module Present =
               extension: u8 ;
               length: u32 ;
               evtype: u16 ;
-              event: event }[@@deriving sexp]
+              event: event }[@@deriving sexp_of]
             let name = "Generic"
             let number = 0
           end
@@ -9601,7 +9658,7 @@ module Present =
               off_y: i16 ;
               pixmap_width: u16 ;
               pixmap_height: u16 ;
-              pixmap_flags: u32 }[@@deriving sexp]
+              pixmap_flags: u32 }[@@deriving sexp_of]
             let name = "ConfigureNotify"
             let number = 0
           end
@@ -9615,7 +9672,7 @@ module Present =
               window: Core.window ;
               serial: u32 ;
               ust: u64 ;
-              msc: u64 }[@@deriving sexp]
+              msc: u64 }[@@deriving sexp_of]
             let name = "CompleteNotify"
             let number = 1
           end
@@ -9627,7 +9684,7 @@ module Present =
               window: Core.window ;
               serial: u32 ;
               pixmap: Core.pixmap ;
-              idle_fence: Sync.fence }[@@deriving sexp]
+              idle_fence: Sync.fence }[@@deriving sexp_of]
             let name = "IdleNotify"
             let number = 2
           end
@@ -9654,7 +9711,7 @@ module Present =
               target_msc: u64 ;
               divisor: u64 ;
               remainder: u64 ;
-              notifies: notify list }[@@deriving sexp]
+              notifies: notify list }[@@deriving sexp_of]
             let name = "RedirectNotify"
             let number = 3
           end
@@ -9662,23 +9719,23 @@ module Present =
           [ `Generic of Generic.t  | `Configure_notify of Configure_notify.t 
           | `Complete_notify of Complete_notify.t 
           | `Idle_notify of Idle_notify.t 
-          | `Redirect_notify of Redirect_notify.t ][@@deriving sexp]
+          | `Redirect_notify of Redirect_notify.t ][@@deriving sexp_of]
       end
-    module Error = struct type t = [][@@deriving sexp] end
+    module Error = struct type t = [][@@deriving sexp_of] end
     module Query_version =
       struct
         let name = "QueryVersion"
         let opcode = 0
         type t = {
           major_version: u32 ;
-          minor_version: u32 }[@@deriving sexp]
+          minor_version: u32 }[@@deriving sexp_of]
         let with_request f ~major_version  ~minor_version  =
           f ({ major_version; minor_version } : t)
         module Reply =
           struct
             type t = {
               major_version: u32 ;
-              minor_version: u32 }[@@deriving sexp]
+              minor_version: u32 }[@@deriving sexp_of]
           end
       end
     module Pixmap =
@@ -9701,7 +9758,7 @@ module Present =
           target_msc: u64 ;
           divisor: u64 ;
           remainder: u64 ;
-          notifies: notify list }[@@deriving sexp]
+          notifies: notify list }[@@deriving sexp_of]
         let with_request f ~window  ~pixmap  ~serial  ~valid  ~update  ~x_off
            ~y_off  ~target_crtc  ~wait_fence  ~idle_fence  ~options 
           ~target_msc  ~divisor  ~remainder  ~notifies  =
@@ -9734,7 +9791,7 @@ module Present =
           serial: u32 ;
           target_msc: u64 ;
           divisor: u64 ;
-          remainder: u64 }[@@deriving sexp]
+          remainder: u64 }[@@deriving sexp_of]
         let with_request f ~window  ~serial  ~target_msc  ~divisor 
           ~remainder  =
           f ({ window; serial; target_msc; divisor; remainder } : t)
@@ -9746,7 +9803,7 @@ module Present =
         type t = {
           eid: event ;
           window: Core.window ;
-          event_mask: Event_mask.t }[@@deriving sexp]
+          event_mask: Event_mask.t }[@@deriving sexp_of]
         let with_request f ~eid  ~window  ~event_mask  =
           f ({ eid; window; event_mask } : t)
       end
@@ -9754,9 +9811,9 @@ module Present =
       struct
         let name = "QueryCapabilities"
         let opcode = 4
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f target = f (target : t)
-        module Reply = struct type t = u32[@@deriving sexp] end
+        module Reply = struct type t = u32[@@deriving sexp_of] end
       end
   end
 module Record =
@@ -9767,16 +9824,16 @@ module Record =
         let version = (1, 13)
         let query_name = "RECORD"
       end
-    type context = xid[@@deriving sexp]
+    type context = xid[@@deriving sexp_of]
     type range8 = {
       first: u8 ;
-      last: u8 }[@@deriving sexp]
+      last: u8 }[@@deriving sexp_of]
     type range16 = {
       first: u16 ;
-      last: u16 }[@@deriving sexp]
+      last: u16 }[@@deriving sexp_of]
     type ext_range = {
       major: range8 ;
-      minor: range16 }[@@deriving sexp]
+      minor: range16 }[@@deriving sexp_of]
     type range =
       {
       core_requests: range8 ;
@@ -9787,8 +9844,8 @@ module Record =
       device_events: range8 ;
       errors: range8 ;
       client_started: bool ;
-      client_died: bool }[@@deriving sexp]
-    type element_header = u8[@@deriving sexp]
+      client_died: bool }[@@deriving sexp_of]
+    type element_header = u8[@@deriving sexp_of]
     module H_type_mask =
       struct
         include (Mask_impl)(struct  end)
@@ -9796,11 +9853,11 @@ module Record =
         let (from_client_time : t) = of_int32 (bit 1)
         let (from_client_sequence : t) = of_int32 (bit 2)
       end
-    type client_spec = u32[@@deriving sexp]
+    type client_spec = u32[@@deriving sexp_of]
     module Cs_enum =
       struct
         type t = [ `Current_clients  | `Future_clients  | `All_clients ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 1 -> `Current_clients
@@ -9816,17 +9873,17 @@ module Record =
       end
     type client_info = {
       client_resource: client_spec ;
-      ranges: range list }[@@deriving sexp]
-    module Event = struct type t = [][@@deriving sexp] end
+      ranges: range list }[@@deriving sexp_of]
+    module Event = struct type t = [][@@deriving sexp_of] end
     module Error =
       struct
         module Bad_context =
           struct
-            type t = u32[@@deriving sexp]
+            type t = u32[@@deriving sexp_of]
             let name = "BadContext"
             let number = 0
           end
-        type t = [ `Bad_context of Bad_context.t ][@@deriving sexp]
+        type t = [ `Bad_context of Bad_context.t ][@@deriving sexp_of]
       end
     module Query_version =
       struct
@@ -9834,14 +9891,14 @@ module Record =
         let opcode = 0
         type t = {
           major_version: u16 ;
-          minor_version: u16 }[@@deriving sexp]
+          minor_version: u16 }[@@deriving sexp_of]
         let with_request f ~major_version  ~minor_version  =
           f ({ major_version; minor_version } : t)
         module Reply =
           struct
             type t = {
               major_version: u16 ;
-              minor_version: u16 }[@@deriving sexp]
+              minor_version: u16 }[@@deriving sexp_of]
           end
       end
     module Create_context =
@@ -9853,7 +9910,7 @@ module Record =
           context: context ;
           element_header: element_header ;
           client_specs: client_spec list ;
-          ranges: range list }[@@deriving sexp]
+          ranges: range list }[@@deriving sexp_of]
         let with_request f ~context  ~element_header  ~client_specs  ~ranges 
           = f ({ context; element_header; client_specs; ranges } : t)
       end
@@ -9866,7 +9923,7 @@ module Record =
           context: context ;
           element_header: element_header ;
           client_specs: client_spec list ;
-          ranges: range list }[@@deriving sexp]
+          ranges: range list }[@@deriving sexp_of]
         let with_request f ~context  ~element_header  ~client_specs  ~ranges 
           = f ({ context; element_header; client_specs; ranges } : t)
       end
@@ -9876,7 +9933,7 @@ module Record =
         let opcode = 3
         type t = {
           context: context ;
-          client_specs: client_spec list }[@@deriving sexp]
+          client_specs: client_spec list }[@@deriving sexp_of]
         let with_request f ~context  ~client_specs  =
           f ({ context; client_specs } : t)
       end
@@ -9884,7 +9941,7 @@ module Record =
       struct
         let name = "GetContext"
         let opcode = 4
-        type t = context[@@deriving sexp]
+        type t = context[@@deriving sexp_of]
         let with_request f context = f (context : t)
         module Reply =
           struct
@@ -9892,14 +9949,14 @@ module Record =
               {
               enabled: bool ;
               element_header: element_header ;
-              intercepted_clients: client_info list }[@@deriving sexp]
+              intercepted_clients: client_info list }[@@deriving sexp_of]
           end
       end
     module Enable_context =
       struct
         let name = "EnableContext"
         let opcode = 5
-        type t = context[@@deriving sexp]
+        type t = context[@@deriving sexp_of]
         let with_request f context = f (context : t)
         module Reply =
           struct
@@ -9911,21 +9968,21 @@ module Record =
               xid_base: u32 ;
               server_time: u32 ;
               rec_sequence_num: u32 ;
-              data: byte list }[@@deriving sexp]
+              data: byte list }[@@deriving sexp_of]
           end
       end
     module Disable_context =
       struct
         let name = "DisableContext"
         let opcode = 6
-        type t = context[@@deriving sexp]
+        type t = context[@@deriving sexp_of]
         let with_request f context = f (context : t)
       end
     module Free_context =
       struct
         let name = "FreeContext"
         let opcode = 7
-        type t = context[@@deriving sexp]
+        type t = context[@@deriving sexp_of]
         let with_request f context = f (context : t)
       end
   end
@@ -9939,10 +9996,10 @@ module Res =
       end
     type client = {
       resource_base: u32 ;
-      resource_mask: u32 }[@@deriving sexp]
+      resource_mask: u32 }[@@deriving sexp_of]
     type type_ = {
       resource_type: Core.atom ;
-      count: u32 }[@@deriving sexp]
+      count: u32 }[@@deriving sexp_of]
     module Client_id_mask =
       struct
         include (Mask_impl)(struct  end)
@@ -9951,78 +10008,78 @@ module Res =
       end
     type client_id_spec = {
       client: u32 ;
-      mask: Client_id_mask.t }[@@deriving sexp]
+      mask: Client_id_mask.t }[@@deriving sexp_of]
     type client_id_value = {
       spec: client_id_spec ;
-      value: u32 list }[@@deriving sexp]
+      value: u32 list }[@@deriving sexp_of]
     type resource_id_spec = {
       resource: u32 ;
-      type_: u32 }[@@deriving sexp]
+      type_: u32 }[@@deriving sexp_of]
     type resource_size_spec =
       {
       spec: resource_id_spec ;
       bytes: u32 ;
       ref_count: u32 ;
-      use_count: u32 }[@@deriving sexp]
+      use_count: u32 }[@@deriving sexp_of]
     type resource_size_value =
       {
       size: resource_size_spec ;
-      cross_references: resource_size_spec list }[@@deriving sexp]
-    module Event = struct type t = [][@@deriving sexp] end
-    module Error = struct type t = [][@@deriving sexp] end
+      cross_references: resource_size_spec list }[@@deriving sexp_of]
+    module Event = struct type t = [][@@deriving sexp_of] end
+    module Error = struct type t = [][@@deriving sexp_of] end
     module Query_version =
       struct
         let name = "QueryVersion"
         let opcode = 0
         type t = {
           client_major: u8 ;
-          client_minor: u8 }[@@deriving sexp]
+          client_minor: u8 }[@@deriving sexp_of]
         let with_request f ~client_major  ~client_minor  =
           f ({ client_major; client_minor } : t)
         module Reply =
           struct
             type t = {
               server_major: u16 ;
-              server_minor: u16 }[@@deriving sexp]
+              server_minor: u16 }[@@deriving sexp_of]
           end
       end
     module Query_clients =
       struct
         let name = "QueryClients"
         let opcode = 1
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = client list[@@deriving sexp] end
+        module Reply = struct type t = client list[@@deriving sexp_of] end
       end
     module Query_client_resources =
       struct
         let name = "QueryClientResources"
         let opcode = 2
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f xid = f (xid : t)
-        module Reply = struct type t = type_ list[@@deriving sexp] end
+        module Reply = struct type t = type_ list[@@deriving sexp_of] end
       end
     module Query_client_pixmap_bytes =
       struct
         let name = "QueryClientPixmapBytes"
         let opcode = 3
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f xid = f (xid : t)
         module Reply =
           struct
             type t = {
               bytes: u32 ;
-              bytes_overflow: u32 }[@@deriving sexp]
+              bytes_overflow: u32 }[@@deriving sexp_of]
           end
       end
     module Query_client_ids =
       struct
         let name = "QueryClientIds"
         let opcode = 4
-        type t = client_id_spec list[@@deriving sexp]
+        type t = client_id_spec list[@@deriving sexp_of]
         let with_request f specs = f (specs : t)
         module Reply =
-          struct type t = client_id_value list[@@deriving sexp] end
+          struct type t = client_id_value list[@@deriving sexp_of] end
       end
     module Query_resource_bytes =
       struct
@@ -10030,10 +10087,10 @@ module Res =
         let opcode = 5
         type t = {
           client: u32 ;
-          specs: resource_id_spec list }[@@deriving sexp]
+          specs: resource_id_spec list }[@@deriving sexp_of]
         let with_request f ~client  ~specs  = f ({ client; specs } : t)
         module Reply =
-          struct type t = resource_size_value list[@@deriving sexp] end
+          struct type t = resource_size_value list[@@deriving sexp_of] end
       end
   end
 module Screensaver =
@@ -10046,7 +10103,7 @@ module Screensaver =
       end
     module Kind_enum =
       struct
-        type t = [ `Blanked  | `Internal  | `External_ ][@@deriving sexp]
+        type t = [ `Blanked  | `Internal  | `External_ ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Blanked
@@ -10066,7 +10123,7 @@ module Screensaver =
       end
     module State_enum =
       struct
-        type t = [ `Off  | `On  | `Cycle  | `Disabled ][@@deriving sexp]
+        type t = [ `Off  | `On  | `Cycle  | `Disabled ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Off
@@ -10090,34 +10147,34 @@ module Screensaver =
               root: Core.window ;
               window: Core.window ;
               kind: Kind_enum.t ;
-              forced: bool }[@@deriving sexp]
+              forced: bool }[@@deriving sexp_of]
             let name = "Notify"
             let number = 0
           end
-        type t = [ `Notify of Notify.t ][@@deriving sexp]
+        type t = [ `Notify of Notify.t ][@@deriving sexp_of]
       end
-    module Error = struct type t = [][@@deriving sexp] end
+    module Error = struct type t = [][@@deriving sexp_of] end
     module Query_version =
       struct
         let name = "QueryVersion"
         let opcode = 0
         type t = {
           client_major_version: u8 ;
-          client_minor_version: u8 }[@@deriving sexp]
+          client_minor_version: u8 }[@@deriving sexp_of]
         let with_request f ~client_major_version  ~client_minor_version  =
           f ({ client_major_version; client_minor_version } : t)
         module Reply =
           struct
             type t = {
               server_major_version: u16 ;
-              server_minor_version: u16 }[@@deriving sexp]
+              server_minor_version: u16 }[@@deriving sexp_of]
           end
       end
     module Query_info =
       struct
         let name = "QueryInfo"
         let opcode = 1
-        type t = Core.drawable[@@deriving sexp]
+        type t = Core.drawable[@@deriving sexp_of]
         let with_request f drawable = f (drawable : t)
         module Reply =
           struct
@@ -10128,7 +10185,7 @@ module Screensaver =
               ms_until_server: u32 ;
               ms_since_user_input: u32 ;
               event_mask: u32 ;
-              kind: Kind_enum.t }[@@deriving sexp]
+              kind: Kind_enum.t }[@@deriving sexp_of]
           end
       end
     module Select_input =
@@ -10137,7 +10194,7 @@ module Screensaver =
         let opcode = 2
         type t = {
           drawable: Core.drawable ;
-          event_mask: Event_mask.t }[@@deriving sexp]
+          event_mask: Event_mask.t }[@@deriving sexp_of]
         let with_request f ~drawable  ~event_mask  =
           f ({ drawable; event_mask } : t)
       end
@@ -10172,7 +10229,7 @@ module Screensaver =
           do_not_propogate_mask: Core.Event_mask.t option ;
           colormap: [ | Core.Colormap_enum.t | Core.colormap alt] option ;
           cursor: [ | Core.Cursor_enum.t | Core.cursor alt] option }[@@deriving
-                                                                    sexp]
+                                                                    sexp_of]
         let with_request f ~drawable  ~x  ~y  ~width  ~height  ~border_width 
           ~class_  ~depth  ~visual  ?background_pixmap  ?background_pixel 
           ?border_pixmap  ?border_pixel  ?bit_gravity  ?win_gravity 
@@ -10211,14 +10268,14 @@ module Screensaver =
       struct
         let name = "UnsetAttributes"
         let opcode = 4
-        type t = Core.drawable[@@deriving sexp]
+        type t = Core.drawable[@@deriving sexp_of]
         let with_request f drawable = f (drawable : t)
       end
     module Suspend =
       struct
         let name = "Suspend"
         let opcode = 5
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f suspend = f (suspend : t)
       end
   end
@@ -10230,7 +10287,7 @@ module Shm =
         let version = (1, 2)
         let query_name = "MIT-SHM"
       end
-    type seg = xid[@@deriving sexp]
+    type seg = xid[@@deriving sexp_of]
     module Event =
       struct
         module Completion =
@@ -10241,27 +10298,27 @@ module Shm =
               minor_event: u16 ;
               major_event: byte ;
               shmseg: seg ;
-              offset: u32 }[@@deriving sexp]
+              offset: u32 }[@@deriving sexp_of]
             let name = "Completion"
             let number = 0
           end
-        type t = [ `Completion of Completion.t ][@@deriving sexp]
+        type t = [ `Completion of Completion.t ][@@deriving sexp_of]
       end
     module Error =
       struct
         module Bad_seg =
           struct
-            type t = Core.Error.Value.t[@@deriving sexp]
+            type t = Core.Error.Value.t[@@deriving sexp_of]
             let name = "BadSeg"
             let number = 0
           end
-        type t = [ `Bad_seg of Bad_seg.t ][@@deriving sexp]
+        type t = [ `Bad_seg of Bad_seg.t ][@@deriving sexp_of]
       end
     module Query_version =
       struct
         let name = "QueryVersion"
         let opcode = 0
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
           struct
@@ -10272,7 +10329,7 @@ module Shm =
               minor_version: u16 ;
               uid: u16 ;
               gid: u16 ;
-              pixmap_format: u8 }[@@deriving sexp]
+              pixmap_format: u8 }[@@deriving sexp_of]
           end
       end
     module Attach =
@@ -10282,7 +10339,7 @@ module Shm =
         type t = {
           shmseg: seg ;
           shmid: u32 ;
-          read_only: bool }[@@deriving sexp]
+          read_only: bool }[@@deriving sexp_of]
         let with_request f ~shmseg  ~shmid  ~read_only  =
           f ({ shmseg; shmid; read_only } : t)
       end
@@ -10290,7 +10347,7 @@ module Shm =
       struct
         let name = "Detach"
         let opcode = 2
-        type t = seg[@@deriving sexp]
+        type t = seg[@@deriving sexp_of]
         let with_request f shmseg = f (shmseg : t)
       end
     module Put_image =
@@ -10313,7 +10370,7 @@ module Shm =
           format: u8 ;
           send_event: bool ;
           shmseg: seg ;
-          offset: u32 }[@@deriving sexp]
+          offset: u32 }[@@deriving sexp_of]
         let with_request f ~drawable  ~gc  ~total_width  ~total_height 
           ~src_x  ~src_y  ~src_width  ~src_height  ~dst_x  ~dst_y  ~depth 
           ~format  ~send_event  ~shmseg  ~offset  =
@@ -10350,7 +10407,7 @@ module Shm =
           plane_mask: u32 ;
           format: u8 ;
           shmseg: seg ;
-          offset: u32 }[@@deriving sexp]
+          offset: u32 }[@@deriving sexp_of]
         let with_request f ~drawable  ~x  ~y  ~width  ~height  ~plane_mask 
           ~format  ~shmseg  ~offset  =
           f
@@ -10370,7 +10427,7 @@ module Shm =
             type t = {
               depth: u8 ;
               visual: Core.visualid ;
-              size: u32 }[@@deriving sexp]
+              size: u32 }[@@deriving sexp_of]
           end
       end
     module Create_pixmap =
@@ -10385,7 +10442,7 @@ module Shm =
           height: u16 ;
           depth: u8 ;
           shmseg: seg ;
-          offset: u32 }[@@deriving sexp]
+          offset: u32 }[@@deriving sexp_of]
         let with_request f ~pid  ~drawable  ~width  ~height  ~depth  ~shmseg 
           ~offset  =
           f ({ pid; drawable; width; height; depth; shmseg; offset } : t)
@@ -10397,7 +10454,7 @@ module Shm =
         type t = {
           shmseg: seg ;
           shm_fd: file_descr ;
-          read_only: bool }[@@deriving sexp]
+          read_only: bool }[@@deriving sexp_of]
         let with_request f ~shmseg  ~shm_fd  ~read_only  =
           f ({ shmseg; shm_fd; read_only } : t)
       end
@@ -10408,13 +10465,15 @@ module Shm =
         type t = {
           shmseg: seg ;
           size: u32 ;
-          read_only: bool }[@@deriving sexp]
+          read_only: bool }[@@deriving sexp_of]
         let with_request f ~shmseg  ~size  ~read_only  =
           f ({ shmseg; size; read_only } : t)
         module Reply =
-          struct type t = {
-                   nfd: u8 ;
-                   shm_fd: file_descr }[@@deriving sexp] end
+          struct
+            type t = {
+              nfd: u8 ;
+              shm_fd: file_descr }[@@deriving sexp_of]
+          end
       end
   end
 module Xc_misc =
@@ -10425,42 +10484,44 @@ module Xc_misc =
         let version = (1, 1)
         let query_name = "XC-MISC"
       end
-    module Event = struct type t = [][@@deriving sexp] end
-    module Error = struct type t = [][@@deriving sexp] end
+    module Event = struct type t = [][@@deriving sexp_of] end
+    module Error = struct type t = [][@@deriving sexp_of] end
     module Get_version =
       struct
         let name = "GetVersion"
         let opcode = 0
         type t = {
           client_major_version: u16 ;
-          client_minor_version: u16 }[@@deriving sexp]
+          client_minor_version: u16 }[@@deriving sexp_of]
         let with_request f ~client_major_version  ~client_minor_version  =
           f ({ client_major_version; client_minor_version } : t)
         module Reply =
           struct
             type t = {
               server_major_version: u16 ;
-              server_minor_version: u16 }[@@deriving sexp]
+              server_minor_version: u16 }[@@deriving sexp_of]
           end
       end
     module Get_xid_range =
       struct
         let name = "GetXIDRange"
         let opcode = 1
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
-          struct type t = {
-                   start_id: u32 ;
-                   count: u32 }[@@deriving sexp] end
+          struct
+            type t = {
+              start_id: u32 ;
+              count: u32 }[@@deriving sexp_of]
+          end
       end
     module Get_xid_list =
       struct
         let name = "GetXIDList"
         let opcode = 2
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f count = f (count : t)
-        module Reply = struct type t = u32 list[@@deriving sexp] end
+        module Reply = struct type t = u32 list[@@deriving sexp_of] end
       end
   end
 module Xevie =
@@ -10473,7 +10534,7 @@ module Xevie =
       end
     module Datatype_enum =
       struct
-        type t = [ `Unmodified  | `Modified ][@@deriving sexp]
+        type t = [ `Unmodified  | `Modified ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Unmodified
@@ -10484,40 +10545,40 @@ module Xevie =
         let to_int : [< t] -> int =
           function | `Unmodified -> 0 | `Modified -> 1
       end
-    type event = unit[@@deriving sexp]
-    module Event = struct type t = [][@@deriving sexp] end
-    module Error = struct type t = [][@@deriving sexp] end
+    type event = unit[@@deriving sexp_of]
+    module Event = struct type t = [][@@deriving sexp_of] end
+    module Error = struct type t = [][@@deriving sexp_of] end
     module Query_version =
       struct
         let name = "QueryVersion"
         let opcode = 0
         type t = {
           client_major_version: u16 ;
-          client_minor_version: u16 }[@@deriving sexp]
+          client_minor_version: u16 }[@@deriving sexp_of]
         let with_request f ~client_major_version  ~client_minor_version  =
           f ({ client_major_version; client_minor_version } : t)
         module Reply =
           struct
             type t = {
               server_major_version: u16 ;
-              server_minor_version: u16 }[@@deriving sexp]
+              server_minor_version: u16 }[@@deriving sexp_of]
           end
       end
     module Start =
       struct
         let name = "Start"
         let opcode = 1
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f screen = f (screen : t)
-        module Reply = struct type t = unit[@@deriving sexp] end
+        module Reply = struct type t = unit[@@deriving sexp_of] end
       end
     module End_ =
       struct
         let name = "End"
         let opcode = 2
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f cmap = f (cmap : t)
-        module Reply = struct type t = unit[@@deriving sexp] end
+        module Reply = struct type t = unit[@@deriving sexp_of] end
       end
     module Send =
       struct
@@ -10525,17 +10586,17 @@ module Xevie =
         let opcode = 3
         type t = {
           event: event ;
-          data_type: u32 }[@@deriving sexp]
+          data_type: u32 }[@@deriving sexp_of]
         let with_request f ~event  ~data_type  = f ({ event; data_type } : t)
-        module Reply = struct type t = unit[@@deriving sexp] end
+        module Reply = struct type t = unit[@@deriving sexp_of] end
       end
     module Select_input =
       struct
         let name = "SelectInput"
         let opcode = 4
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f event_mask = f (event_mask : t)
-        module Reply = struct type t = unit[@@deriving sexp] end
+        module Reply = struct type t = unit[@@deriving sexp_of] end
       end
   end
 module Xf86dri =
@@ -10550,14 +10611,14 @@ module Xf86dri =
       x1: i16 ;
       y1: i16 ;
       x2: i16 ;
-      x3: i16 }[@@deriving sexp]
-    module Event = struct type t = [][@@deriving sexp] end
-    module Error = struct type t = [][@@deriving sexp] end
+      x3: i16 }[@@deriving sexp_of]
+    module Event = struct type t = [][@@deriving sexp_of] end
+    module Error = struct type t = [][@@deriving sexp_of] end
     module Query_version =
       struct
         let name = "QueryVersion"
         let opcode = 0
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
           struct
@@ -10565,22 +10626,22 @@ module Xf86dri =
               {
               dri_major_version: u16 ;
               dri_minor_version: u16 ;
-              dri_minor_patch: u32 }[@@deriving sexp]
+              dri_minor_patch: u32 }[@@deriving sexp_of]
           end
       end
     module Query_direct_rendering_capable =
       struct
         let name = "QueryDirectRenderingCapable"
         let opcode = 1
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f screen = f (screen : t)
-        module Reply = struct type t = bool[@@deriving sexp] end
+        module Reply = struct type t = bool[@@deriving sexp_of] end
       end
     module Open_connection =
       struct
         let name = "OpenConnection"
         let opcode = 2
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f screen = f (screen : t)
         module Reply =
           struct
@@ -10588,21 +10649,21 @@ module Xf86dri =
               {
               sarea_handle_low: u32 ;
               sarea_handle_high: u32 ;
-              bus_id: string }[@@deriving sexp]
+              bus_id: string }[@@deriving sexp_of]
           end
       end
     module Close_connection =
       struct
         let name = "CloseConnection"
         let opcode = 3
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f screen = f (screen : t)
       end
     module Get_client_driver_name =
       struct
         let name = "GetClientDriverName"
         let opcode = 4
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f screen = f (screen : t)
         module Reply =
           struct
@@ -10611,7 +10672,7 @@ module Xf86dri =
               client_driver_major_version: u32 ;
               client_driver_minor_version: u32 ;
               client_driver_patch_version: u32 ;
-              client_driver_name: string }[@@deriving sexp]
+              client_driver_name: string }[@@deriving sexp_of]
           end
       end
     module Create_context =
@@ -10621,10 +10682,10 @@ module Xf86dri =
         type t = {
           screen: u32 ;
           visual: u32 ;
-          context: u32 }[@@deriving sexp]
+          context: u32 }[@@deriving sexp_of]
         let with_request f ~screen  ~visual  ~context  =
           f ({ screen; visual; context } : t)
-        module Reply = struct type t = u32[@@deriving sexp] end
+        module Reply = struct type t = u32[@@deriving sexp_of] end
       end
     module Destroy_context =
       struct
@@ -10632,7 +10693,7 @@ module Xf86dri =
         let opcode = 6
         type t = {
           screen: u32 ;
-          context: u32 }[@@deriving sexp]
+          context: u32 }[@@deriving sexp_of]
         let with_request f ~screen  ~context  = f ({ screen; context } : t)
       end
     module Create_drawable =
@@ -10641,9 +10702,9 @@ module Xf86dri =
         let opcode = 7
         type t = {
           screen: u32 ;
-          drawable: u32 }[@@deriving sexp]
+          drawable: u32 }[@@deriving sexp_of]
         let with_request f ~screen  ~drawable  = f ({ screen; drawable } : t)
-        module Reply = struct type t = u32[@@deriving sexp] end
+        module Reply = struct type t = u32[@@deriving sexp_of] end
       end
     module Destroy_drawable =
       struct
@@ -10651,7 +10712,7 @@ module Xf86dri =
         let opcode = 8
         type t = {
           screen: u32 ;
-          drawable: u32 }[@@deriving sexp]
+          drawable: u32 }[@@deriving sexp_of]
         let with_request f ~screen  ~drawable  = f ({ screen; drawable } : t)
       end
     module Get_drawable_info =
@@ -10660,7 +10721,7 @@ module Xf86dri =
         let opcode = 9
         type t = {
           screen: u32 ;
-          drawable: u32 }[@@deriving sexp]
+          drawable: u32 }[@@deriving sexp_of]
         let with_request f ~screen  ~drawable  = f ({ screen; drawable } : t)
         module Reply =
           struct
@@ -10675,14 +10736,14 @@ module Xf86dri =
               back_x: i16 ;
               back_y: i16 ;
               clip_rects: drm_clip_rect list ;
-              back_clip_rects: drm_clip_rect list }[@@deriving sexp]
+              back_clip_rects: drm_clip_rect list }[@@deriving sexp_of]
           end
       end
     module Get_device_info =
       struct
         let name = "GetDeviceInfo"
         let opcode = 10
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f screen = f (screen : t)
         module Reply =
           struct
@@ -10693,7 +10754,7 @@ module Xf86dri =
               framebuffer_origin_offset: u32 ;
               framebuffer_size: u32 ;
               framebuffer_stride: u32 ;
-              device_private: u32 list }[@@deriving sexp]
+              device_private: u32 list }[@@deriving sexp_of]
           end
       end
     module Auth_connection =
@@ -10702,9 +10763,9 @@ module Xf86dri =
         let opcode = 11
         type t = {
           screen: u32 ;
-          magic: u32 }[@@deriving sexp]
+          magic: u32 }[@@deriving sexp_of]
         let with_request f ~screen  ~magic  = f ({ screen; magic } : t)
-        module Reply = struct type t = u32[@@deriving sexp] end
+        module Reply = struct type t = u32[@@deriving sexp_of] end
       end
   end
 module Xf86vidmode =
@@ -10715,8 +10776,8 @@ module Xf86vidmode =
         let version = (2, 2)
         let query_name = "XFree86-VidModeExtension"
       end
-    type syncrange = u32[@@deriving sexp]
-    type dotclock = u32[@@deriving sexp]
+    type syncrange = u32[@@deriving sexp_of]
+    type dotclock = u32[@@deriving sexp_of]
     module Mode_flag_mask =
       struct
         include (Mask_impl)(struct  end)
@@ -10758,49 +10819,49 @@ module Xf86vidmode =
       vsyncend: u16 ;
       vtotal: u16 ;
       flags: Mode_flag_mask.t ;
-      privsize: u32 }[@@deriving sexp]
-    module Event = struct type t = [][@@deriving sexp] end
+      privsize: u32 }[@@deriving sexp_of]
+    module Event = struct type t = [][@@deriving sexp_of] end
     module Error =
       struct
         module Bad_clock =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "BadClock"
             let number = 0
           end
         module Bad_h_timings =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "BadHTimings"
             let number = 1
           end
         module Bad_v_timings =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "BadVTimings"
             let number = 2
           end
         module Mode_unsuitable =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "ModeUnsuitable"
             let number = 3
           end
         module Extension_disabled =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "ExtensionDisabled"
             let number = 4
           end
         module Client_not_local =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "ClientNotLocal"
             let number = 5
           end
         module Zoom_locked =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "ZoomLocked"
             let number = 6
           end
@@ -10810,26 +10871,26 @@ module Xf86vidmode =
           | `Mode_unsuitable of Mode_unsuitable.t 
           | `Extension_disabled of Extension_disabled.t 
           | `Client_not_local of Client_not_local.t 
-          | `Zoom_locked of Zoom_locked.t ][@@deriving sexp]
+          | `Zoom_locked of Zoom_locked.t ][@@deriving sexp_of]
       end
     module Query_version =
       struct
         let name = "QueryVersion"
         let opcode = 0
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
           struct
             type t = {
               major_version: u16 ;
-              minor_version: u16 }[@@deriving sexp]
+              minor_version: u16 }[@@deriving sexp_of]
           end
       end
     module Get_mode_line =
       struct
         let name = "GetModeLine"
         let opcode = 1
-        type t = u16[@@deriving sexp]
+        type t = u16[@@deriving sexp_of]
         let with_request f screen = f (screen : t)
         module Reply =
           struct
@@ -10846,7 +10907,7 @@ module Xf86vidmode =
               vsyncend: u16 ;
               vtotal: u16 ;
               flags: Mode_flag_mask.t ;
-              private_: u8 list }[@@deriving sexp]
+              private_: u8 list }[@@deriving sexp_of]
           end
       end
     module Mod_mode_line =
@@ -10866,7 +10927,7 @@ module Xf86vidmode =
           vsyncend: u16 ;
           vtotal: u16 ;
           flags: Mode_flag_mask.t ;
-          private_: u8 list }[@@deriving sexp]
+          private_: u8 list }[@@deriving sexp_of]
         let with_request f ~screen  ~hdisplay  ~hsyncstart  ~hsyncend 
           ~htotal  ~hskew  ~vdisplay  ~vsyncstart  ~vsyncend  ~vtotal  ~flags
            ~private_  =
@@ -10892,14 +10953,14 @@ module Xf86vidmode =
         let opcode = 3
         type t = {
           screen: u16 ;
-          zoom: u16 }[@@deriving sexp]
+          zoom: u16 }[@@deriving sexp_of]
         let with_request f ~screen  ~zoom  = f ({ screen; zoom } : t)
       end
     module Get_monitor =
       struct
         let name = "GetMonitor"
         let opcode = 4
-        type t = u16[@@deriving sexp]
+        type t = u16[@@deriving sexp_of]
         let with_request f screen = f (screen : t)
         module Reply =
           struct
@@ -10909,7 +10970,7 @@ module Xf86vidmode =
               vsync: syncrange list ;
               vendor: string ;
               alignment_pad: string ;
-              model: string }[@@deriving sexp]
+              model: string }[@@deriving sexp_of]
           end
       end
     module Lock_mode_switch =
@@ -10918,16 +10979,16 @@ module Xf86vidmode =
         let opcode = 5
         type t = {
           screen: u16 ;
-          lock: u16 }[@@deriving sexp]
+          lock: u16 }[@@deriving sexp_of]
         let with_request f ~screen  ~lock  = f ({ screen; lock } : t)
       end
     module Get_all_mode_lines =
       struct
         let name = "GetAllModeLines"
         let opcode = 6
-        type t = u16[@@deriving sexp]
+        type t = u16[@@deriving sexp_of]
         let with_request f screen = f (screen : t)
-        module Reply = struct type t = mode_info list[@@deriving sexp] end
+        module Reply = struct type t = mode_info list[@@deriving sexp_of] end
       end
     module Add_mode_line =
       struct
@@ -10958,7 +11019,7 @@ module Xf86vidmode =
           after_vsyncend: u16 ;
           after_vtotal: u16 ;
           after_flags: Mode_flag_mask.t ;
-          private_: u8 list }[@@deriving sexp]
+          private_: u8 list }[@@deriving sexp_of]
         let with_request f ~screen  ~dotclock  ~hdisplay  ~hsyncstart 
           ~hsyncend  ~htotal  ~hskew  ~vdisplay  ~vsyncstart  ~vsyncend 
           ~vtotal  ~flags  ~after_dotclock  ~after_hdisplay 
@@ -11011,7 +11072,7 @@ module Xf86vidmode =
           vsyncend: u16 ;
           vtotal: u16 ;
           flags: Mode_flag_mask.t ;
-          private_: u8 list }[@@deriving sexp]
+          private_: u8 list }[@@deriving sexp_of]
         let with_request f ~screen  ~dotclock  ~hdisplay  ~hsyncstart 
           ~hsyncend  ~htotal  ~hskew  ~vdisplay  ~vsyncstart  ~vsyncend 
           ~vtotal  ~flags  ~private_  =
@@ -11050,7 +11111,7 @@ module Xf86vidmode =
           vsyncend: u16 ;
           vtotal: u16 ;
           flags: Mode_flag_mask.t ;
-          private_: u8 list }[@@deriving sexp]
+          private_: u8 list }[@@deriving sexp_of]
         let with_request f ~screen  ~dotclock  ~hdisplay  ~hsyncstart 
           ~hsyncend  ~htotal  ~hskew  ~vdisplay  ~vsyncstart  ~vsyncend 
           ~vtotal  ~flags  ~private_  =
@@ -11070,7 +11131,7 @@ module Xf86vidmode =
                flags;
                private_
              } : t)
-        module Reply = struct type t = u32[@@deriving sexp] end
+        module Reply = struct type t = u32[@@deriving sexp_of] end
       end
     module Switch_to_mode =
       struct
@@ -11090,7 +11151,7 @@ module Xf86vidmode =
           vsyncend: u16 ;
           vtotal: u16 ;
           flags: Mode_flag_mask.t ;
-          private_: u8 list }[@@deriving sexp]
+          private_: u8 list }[@@deriving sexp_of]
         let with_request f ~screen  ~dotclock  ~hdisplay  ~hsyncstart 
           ~hsyncend  ~htotal  ~hskew  ~vdisplay  ~vsyncstart  ~vsyncend 
           ~vtotal  ~flags  ~private_  =
@@ -11115,11 +11176,12 @@ module Xf86vidmode =
       struct
         let name = "GetViewPort"
         let opcode = 11
-        type t = u16[@@deriving sexp]
+        type t = u16[@@deriving sexp_of]
         let with_request f screen = f (screen : t)
-        module Reply = struct type t = {
-                                x: u32 ;
-                                y: u32 }[@@deriving sexp] end
+        module Reply =
+          struct type t = {
+                   x: u32 ;
+                   y: u32 }[@@deriving sexp_of] end
       end
     module Set_view_port =
       struct
@@ -11128,14 +11190,14 @@ module Xf86vidmode =
         type t = {
           screen: u16 ;
           x: u32 ;
-          y: u32 }[@@deriving sexp]
+          y: u32 }[@@deriving sexp_of]
         let with_request f ~screen  ~x  ~y  = f ({ screen; x; y } : t)
       end
     module Get_dot_clocks =
       struct
         let name = "GetDotClocks"
         let opcode = 13
-        type t = u16[@@deriving sexp]
+        type t = u16[@@deriving sexp_of]
         let with_request f screen = f (screen : t)
         module Reply =
           struct
@@ -11144,7 +11206,7 @@ module Xf86vidmode =
               flags: Clock_flag_mask.t ;
               clocks: u32 ;
               maxclocks: u32 ;
-              clock: u32 list }[@@deriving sexp]
+              clock: u32 list }[@@deriving sexp_of]
           end
       end
     module Set_client_version =
@@ -11153,7 +11215,7 @@ module Xf86vidmode =
         let opcode = 14
         type t = {
           major: u16 ;
-          minor: u16 }[@@deriving sexp]
+          minor: u16 }[@@deriving sexp_of]
         let with_request f ~major  ~minor  = f ({ major; minor } : t)
       end
     module Set_gamma =
@@ -11164,7 +11226,7 @@ module Xf86vidmode =
           screen: u16 ;
           red: u32 ;
           green: u32 ;
-          blue: u32 }[@@deriving sexp]
+          blue: u32 }[@@deriving sexp_of]
         let with_request f ~screen  ~red  ~green  ~blue  =
           f ({ screen; red; green; blue } : t)
       end
@@ -11172,14 +11234,14 @@ module Xf86vidmode =
       struct
         let name = "GetGamma"
         let opcode = 16
-        type t = u16[@@deriving sexp]
+        type t = u16[@@deriving sexp_of]
         let with_request f screen = f (screen : t)
         module Reply =
           struct
             type t = {
               red: u32 ;
               green: u32 ;
-              blue: u32 }[@@deriving sexp]
+              blue: u32 }[@@deriving sexp_of]
           end
       end
     module Get_gamma_ramp =
@@ -11188,7 +11250,7 @@ module Xf86vidmode =
         let opcode = 17
         type t = {
           screen: u16 ;
-          size: u16 }[@@deriving sexp]
+          size: u16 }[@@deriving sexp_of]
         let with_request f ~screen  ~size  = f ({ screen; size } : t)
         module Reply =
           struct
@@ -11197,7 +11259,7 @@ module Xf86vidmode =
               size: u16 ;
               red: u16 list ;
               green: u16 list ;
-              blue: u16 list }[@@deriving sexp]
+              blue: u16 list }[@@deriving sexp_of]
           end
       end
     module Set_gamma_ramp =
@@ -11210,7 +11272,7 @@ module Xf86vidmode =
           size: u16 ;
           red: u16 list ;
           green: u16 list ;
-          blue: u16 list }[@@deriving sexp]
+          blue: u16 list }[@@deriving sexp_of]
         let with_request f ~screen  ~size  ~red  ~green  ~blue  =
           f ({ screen; size; red; green; blue } : t)
       end
@@ -11218,17 +11280,18 @@ module Xf86vidmode =
       struct
         let name = "GetGammaRampSize"
         let opcode = 19
-        type t = u16[@@deriving sexp]
+        type t = u16[@@deriving sexp_of]
         let with_request f screen = f (screen : t)
-        module Reply = struct type t = u16[@@deriving sexp] end
+        module Reply = struct type t = u16[@@deriving sexp_of] end
       end
     module Get_permissions =
       struct
         let name = "GetPermissions"
         let opcode = 20
-        type t = u16[@@deriving sexp]
+        type t = u16[@@deriving sexp_of]
         let with_request f screen = f (screen : t)
-        module Reply = struct type t = Permission_mask.t[@@deriving sexp] end
+        module Reply =
+          struct type t = Permission_mask.t[@@deriving sexp_of] end
       end
   end
 module Xinerama =
@@ -11243,46 +11306,46 @@ module Xinerama =
       x_org: i16 ;
       y_org: i16 ;
       width: u16 ;
-      height: u16 }[@@deriving sexp]
-    module Event = struct type t = [][@@deriving sexp] end
-    module Error = struct type t = [][@@deriving sexp] end
+      height: u16 }[@@deriving sexp_of]
+    module Event = struct type t = [][@@deriving sexp_of] end
+    module Error = struct type t = [][@@deriving sexp_of] end
     module Query_version =
       struct
         let name = "QueryVersion"
         let opcode = 0
         type t = {
           major: u8 ;
-          minor: u8 }[@@deriving sexp]
+          minor: u8 }[@@deriving sexp_of]
         let with_request f ~major  ~minor  = f ({ major; minor } : t)
         module Reply =
           struct type t = {
                    major: u16 ;
-                   minor: u16 }[@@deriving sexp] end
+                   minor: u16 }[@@deriving sexp_of] end
       end
     module Get_state =
       struct
         let name = "GetState"
         let opcode = 1
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
         module Reply =
           struct
             type t = {
               state: byte ;
-              window: Core.window }[@@deriving sexp]
+              window: Core.window }[@@deriving sexp_of]
           end
       end
     module Get_screen_count =
       struct
         let name = "GetScreenCount"
         let opcode = 2
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
         module Reply =
           struct
             type t = {
               screen_count: byte ;
-              window: Core.window }[@@deriving sexp]
+              window: Core.window }[@@deriving sexp_of]
           end
       end
     module Get_screen_size =
@@ -11291,7 +11354,7 @@ module Xinerama =
         let opcode = 3
         type t = {
           window: Core.window ;
-          screen: u32 }[@@deriving sexp]
+          screen: u32 }[@@deriving sexp_of]
         let with_request f ~window  ~screen  = f ({ window; screen } : t)
         module Reply =
           struct
@@ -11300,24 +11363,25 @@ module Xinerama =
               width: u32 ;
               height: u32 ;
               window: Core.window ;
-              screen: u32 }[@@deriving sexp]
+              screen: u32 }[@@deriving sexp_of]
           end
       end
     module Is_active =
       struct
         let name = "IsActive"
         let opcode = 4
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = u32[@@deriving sexp] end
+        module Reply = struct type t = u32[@@deriving sexp_of] end
       end
     module Query_screens =
       struct
         let name = "QueryScreens"
         let opcode = 5
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = screen_info list[@@deriving sexp] end
+        module Reply =
+          struct type t = screen_info list[@@deriving sexp_of] end
       end
   end
 module Xinput =
@@ -11328,19 +11392,19 @@ module Xinput =
         let version = (2, 3)
         let query_name = "XInputExtension"
       end
-    type event_class = u32[@@deriving sexp]
-    type key_code = u8[@@deriving sexp]
-    type device_id = u16[@@deriving sexp]
-    type fp1616 = i32[@@deriving sexp]
+    type event_class = u32[@@deriving sexp_of]
+    type key_code = u8[@@deriving sexp_of]
+    type device_id = u16[@@deriving sexp_of]
+    type fp1616 = i32[@@deriving sexp_of]
     type fp3232 = {
       integral: i32 ;
-      frac: u32 }[@@deriving sexp]
+      frac: u32 }[@@deriving sexp_of]
     module Device_use_enum =
       struct
         type t =
           [ `Is_x_pointer  | `Is_x_keyboard  | `Is_x_extension_device 
           | `Is_x_extension_keyboard  | `Is_x_extension_pointer ][@@deriving
-                                                                   sexp]
+                                                                   sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Is_x_pointer
@@ -11363,7 +11427,7 @@ module Xinput =
       struct
         type t =
           [ `Key  | `Button  | `Valuator  | `Feedback  | `Proximity 
-          | `Focus  | `Other ][@@deriving sexp]
+          | `Focus  | `Other ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Key
@@ -11388,7 +11452,7 @@ module Xinput =
       end
     module Valuator_mode_enum =
       struct
-        type t = [ `Relative  | `Absolute ][@@deriving sexp]
+        type t = [ `Relative  | `Absolute ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Relative
@@ -11404,57 +11468,57 @@ module Xinput =
       device_type: Core.atom ;
       device_id: u8 ;
       num_class_info: u8 ;
-      device_use: Device_use_enum.t }[@@deriving sexp]
+      device_use: Device_use_enum.t }[@@deriving sexp_of]
     type key_info =
       {
       class_id: Input_class_enum.t ;
       len: u8 ;
       min_keycode: key_code ;
       max_keycode: key_code ;
-      num_keys: u16 }[@@deriving sexp]
+      num_keys: u16 }[@@deriving sexp_of]
     type button_info =
       {
       class_id: Input_class_enum.t ;
       len: u8 ;
-      num_buttons: u16 }[@@deriving sexp]
+      num_buttons: u16 }[@@deriving sexp_of]
     type axis_info = {
       resolution: u32 ;
       minimum: i32 ;
-      maximum: i32 }[@@deriving sexp]
+      maximum: i32 }[@@deriving sexp_of]
     type valuator_info =
       {
       class_id: Input_class_enum.t ;
       len: u8 ;
       mode: Valuator_mode_enum.t ;
       motion_size: u32 ;
-      axes: axis_info list }[@@deriving sexp]
+      axes: axis_info list }[@@deriving sexp_of]
     module Input_class =
       struct
         type key =
           {
           min_keycode: key_code ;
           max_keycode: key_code ;
-          num_keys: u16 }[@@deriving sexp]
+          num_keys: u16 }[@@deriving sexp_of]
         type valuator =
           {
           mode: Valuator_mode_enum.t ;
           motion_size: u32 ;
-          axes: axis_info list }[@@deriving sexp]
+          axes: axis_info list }[@@deriving sexp_of]
         type t = [ `Key of key  | `Button of u16  | `Valuator of valuator ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
       end
     type input_info = {
       len: u8 ;
-      info: Input_class.t }[@@deriving sexp]
-    type device_name = string[@@deriving sexp]
-    type event_type_base = u8[@@deriving sexp]
+      info: Input_class.t }[@@deriving sexp_of]
+    type device_name = string[@@deriving sexp_of]
+    type event_type_base = u8[@@deriving sexp_of]
     type input_class_info =
       {
       class_id: Input_class_enum.t ;
-      event_type_base: event_type_base }[@@deriving sexp]
+      event_type_base: event_type_base }[@@deriving sexp_of]
     module Propagate_mode_enum =
       struct
-        type t = [ `Add_to_list  | `Delete_from_list ][@@deriving sexp]
+        type t = [ `Add_to_list  | `Delete_from_list ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Add_to_list
@@ -11467,10 +11531,10 @@ module Xinput =
       end
     type device_time_coord = {
       time: Core.timestamp ;
-      axisvalues: i32 list }[@@deriving sexp]
+      axisvalues: i32 list }[@@deriving sexp_of]
     module Modifier_device_enum =
       struct
-        type t = [ `Use_x_keyboard ][@@deriving sexp]
+        type t = [ `Use_x_keyboard ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 255 -> `Use_x_keyboard
@@ -11485,7 +11549,7 @@ module Xinput =
         type t =
           [ `Async_this_device  | `Sync_this_device  | `Replay_this_device 
           | `Async_other_devices  | `Async_all  | `Sync_all ][@@deriving
-                                                               sexp]
+                                                               sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Async_this_device
@@ -11511,7 +11575,7 @@ module Xinput =
       struct
         type t =
           [ `Keyboard  | `Pointer  | `String  | `Integer  | `Led  | `Bell ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Keyboard
@@ -11544,7 +11608,7 @@ module Xinput =
       global_auto_repeat: bool ;
       click: u8 ;
       percent: u8 ;
-      auto_repeats: u8 list }[@@deriving sexp]
+      auto_repeats: u8 list }[@@deriving sexp_of]
     type ptr_feedback_state =
       {
       class_id: Feedback_class_enum.t ;
@@ -11552,7 +11616,7 @@ module Xinput =
       len: u16 ;
       accel_num: u16 ;
       accel_denom: u16 ;
-      threshold: u16 }[@@deriving sexp]
+      threshold: u16 }[@@deriving sexp_of]
     type integer_feedback_state =
       {
       class_id: Feedback_class_enum.t ;
@@ -11560,14 +11624,14 @@ module Xinput =
       len: u16 ;
       resolution: u32 ;
       min_value: i32 ;
-      max_value: i32 }[@@deriving sexp]
+      max_value: i32 }[@@deriving sexp_of]
     type string_feedback_state =
       {
       class_id: Feedback_class_enum.t ;
       feedback_id: u8 ;
       len: u16 ;
       max_symbols: u16 ;
-      keysyms: Core.keysym list }[@@deriving sexp]
+      keysyms: Core.keysym list }[@@deriving sexp_of]
     type bell_feedback_state =
       {
       class_id: Feedback_class_enum.t ;
@@ -11575,14 +11639,14 @@ module Xinput =
       len: u16 ;
       percent: u8 ;
       pitch: u16 ;
-      duration: u16 }[@@deriving sexp]
+      duration: u16 }[@@deriving sexp_of]
     type led_feedback_state =
       {
       class_id: Feedback_class_enum.t ;
       feedback_id: u8 ;
       len: u16 ;
       led_mask: u32 ;
-      led_values: u32 }[@@deriving sexp]
+      led_values: u32 }[@@deriving sexp_of]
     module Feedback_class =
       struct
         type keyboard =
@@ -11594,35 +11658,35 @@ module Xinput =
           global_auto_repeat: bool ;
           click: u8 ;
           percent: u8 ;
-          auto_repeats: u8 list }[@@deriving sexp]
+          auto_repeats: u8 list }[@@deriving sexp_of]
         type pointer = {
           accel_num: u16 ;
           accel_denom: u16 ;
-          threshold: u16 }[@@deriving sexp]
+          threshold: u16 }[@@deriving sexp_of]
         type string = {
           max_symbols: u16 ;
-          keysyms: Core.keysym list }[@@deriving sexp]
+          keysyms: Core.keysym list }[@@deriving sexp_of]
         type integer = {
           resolution: u32 ;
           min_value: i32 ;
-          max_value: i32 }[@@deriving sexp]
+          max_value: i32 }[@@deriving sexp_of]
         type led = {
           led_mask: u32 ;
-          led_values: u32 }[@@deriving sexp]
+          led_values: u32 }[@@deriving sexp_of]
         type bell = {
           percent: u8 ;
           pitch: u16 ;
-          duration: u16 }[@@deriving sexp]
+          duration: u16 }[@@deriving sexp_of]
         type t =
           [ `Keyboard of keyboard  | `Pointer of pointer 
           | `String of string  | `Integer of integer  | `Led of led 
-          | `Bell of bell ][@@deriving sexp]
+          | `Bell of bell ][@@deriving sexp_of]
       end
     type feedback_state =
       {
       feedback_id: u8 ;
       len: u16 ;
-      data: Feedback_class.t }[@@deriving sexp]
+      data: Feedback_class.t }[@@deriving sexp_of]
     type kbd_feedback_ctl =
       {
       class_id: Feedback_class_enum.t ;
@@ -11635,7 +11699,7 @@ module Xinput =
       bell_pitch: i16 ;
       bell_duration: i16 ;
       led_mask: u32 ;
-      led_values: u32 }[@@deriving sexp]
+      led_values: u32 }[@@deriving sexp_of]
     type ptr_feedback_ctl =
       {
       class_id: Feedback_class_enum.t ;
@@ -11643,19 +11707,19 @@ module Xinput =
       len: u16 ;
       num: i16 ;
       denom: i16 ;
-      threshold: i16 }[@@deriving sexp]
+      threshold: i16 }[@@deriving sexp_of]
     type integer_feedback_ctl =
       {
       class_id: Feedback_class_enum.t ;
       feedback_id: u8 ;
       len: u16 ;
-      int_to_display: i32 }[@@deriving sexp]
+      int_to_display: i32 }[@@deriving sexp_of]
     type string_feedback_ctl =
       {
       class_id: Feedback_class_enum.t ;
       feedback_id: u8 ;
       len: u16 ;
-      keysyms: Core.keysym list }[@@deriving sexp]
+      keysyms: Core.keysym list }[@@deriving sexp_of]
     type bell_feedback_ctl =
       {
       class_id: Feedback_class_enum.t ;
@@ -11663,18 +11727,18 @@ module Xinput =
       len: u16 ;
       percent: i8 ;
       pitch: i16 ;
-      duration: i16 }[@@deriving sexp]
+      duration: i16 }[@@deriving sexp_of]
     type led_feedback_ctl =
       {
       class_id: Feedback_class_enum.t ;
       feedback_id: u8 ;
       len: u16 ;
       led_mask: u32 ;
-      led_values: u32 }[@@deriving sexp]
+      led_values: u32 }[@@deriving sexp_of]
     type feedback_ctl = {
       feedback_id: u8 ;
       len: u16 ;
-      data: Feedback_class.t }[@@deriving sexp]
+      data: Feedback_class.t }[@@deriving sexp_of]
     module Change_feedback_control_mask =
       struct
         include (Mask_impl)(struct  end)
@@ -11697,13 +11761,13 @@ module Xinput =
       class_id: Input_class_enum.t ;
       len: u8 ;
       num_keys: u8 ;
-      keys: u8 list }[@@deriving sexp]
+      keys: u8 list }[@@deriving sexp_of]
     type button_state =
       {
       class_id: Input_class_enum.t ;
       len: u8 ;
       num_buttons: u8 ;
-      buttons: u8 list }[@@deriving sexp]
+      buttons: u8 list }[@@deriving sexp_of]
     module Valuator_state_mode_mask =
       struct
         include (Mask_impl)(struct  end)
@@ -11715,15 +11779,15 @@ module Xinput =
       class_id: Input_class_enum.t ;
       len: u8 ;
       mode: Valuator_state_mode_mask.t ;
-      valuators: i32 list }[@@deriving sexp]
+      valuators: i32 list }[@@deriving sexp_of]
     type input_state = {
       len: u8 ;
-      data: Input_class.t }[@@deriving sexp]
+      data: Input_class.t }[@@deriving sexp_of]
     module Device_control_enum =
       struct
         type t =
           [ `Resolution  | `Abs_calib  | `Core  | `Enable  | `Abs_area ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 1 -> `Resolution
@@ -11748,7 +11812,7 @@ module Xinput =
       len: u16 ;
       resolution_values: u32 list ;
       resolution_min: u32 list ;
-      resolution_max: u32 list }[@@deriving sexp]
+      resolution_max: u32 list }[@@deriving sexp_of]
     type device_abs_calib_state =
       {
       control_id: Device_control_enum.t ;
@@ -11760,7 +11824,7 @@ module Xinput =
       flip_x: u32 ;
       flip_y: u32 ;
       rotation: u32 ;
-      button_threshold: u32 }[@@deriving sexp]
+      button_threshold: u32 }[@@deriving sexp_of]
     type device_abs_area_state =
       {
       control_id: Device_control_enum.t ;
@@ -11770,25 +11834,25 @@ module Xinput =
       width: u32 ;
       height: u32 ;
       screen: u32 ;
-      following: u32 }[@@deriving sexp]
+      following: u32 }[@@deriving sexp_of]
     type device_core_state =
       {
       control_id: Device_control_enum.t ;
       len: u16 ;
       status: u8 ;
-      iscore: u8 }[@@deriving sexp]
+      iscore: u8 }[@@deriving sexp_of]
     type device_enable_state =
       {
       control_id: Device_control_enum.t ;
       len: u16 ;
-      enable: u8 }[@@deriving sexp]
+      enable: u8 }[@@deriving sexp_of]
     module Device_control =
       struct
         type resolution =
           {
           resolution_values: u32 list ;
           resolution_min: u32 list ;
-          resolution_max: u32 list }[@@deriving sexp]
+          resolution_max: u32 list }[@@deriving sexp_of]
         type abs_calib =
           {
           min_x: i32 ;
@@ -11798,10 +11862,10 @@ module Xinput =
           flip_x: u32 ;
           flip_y: u32 ;
           rotation: u32 ;
-          button_threshold: u32 }[@@deriving sexp]
+          button_threshold: u32 }[@@deriving sexp_of]
         type core = {
           status: u8 ;
-          iscore: u8 }[@@deriving sexp]
+          iscore: u8 }[@@deriving sexp_of]
         type abs_area =
           {
           offset_x: u32 ;
@@ -11809,21 +11873,21 @@ module Xinput =
           width: u32 ;
           height: u32 ;
           screen: u32 ;
-          following: u32 }[@@deriving sexp]
+          following: u32 }[@@deriving sexp_of]
         type t =
           [ `Resolution of resolution  | `Abs_calib of abs_calib 
           | `Core of core  | `Enable of u8  | `Abs_area of abs_area ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
       end
     type device_state = {
       len: u16 ;
-      data: Device_control.t }[@@deriving sexp]
+      data: Device_control.t }[@@deriving sexp_of]
     type device_resolution_ctl =
       {
       control_id: Device_control_enum.t ;
       len: u16 ;
       first_valuator: u8 ;
-      resolution_values: u32 list }[@@deriving sexp]
+      resolution_values: u32 list }[@@deriving sexp_of]
     type device_abs_calib_ctl =
       {
       control_id: Device_control_enum.t ;
@@ -11835,7 +11899,7 @@ module Xinput =
       flip_x: u32 ;
       flip_y: u32 ;
       rotation: u32 ;
-      button_threshold: u32 }[@@deriving sexp]
+      button_threshold: u32 }[@@deriving sexp_of]
     type device_abs_area_ctrl =
       {
       control_id: Device_control_enum.t ;
@@ -11845,23 +11909,23 @@ module Xinput =
       width: i32 ;
       height: i32 ;
       screen: i32 ;
-      following: u32 }[@@deriving sexp]
+      following: u32 }[@@deriving sexp_of]
     type device_core_ctrl =
       {
       control_id: Device_control_enum.t ;
       len: u16 ;
-      status: u8 }[@@deriving sexp]
+      status: u8 }[@@deriving sexp_of]
     type device_enable_ctrl =
       {
       control_id: Device_control_enum.t ;
       len: u16 ;
-      enable: u8 }[@@deriving sexp]
+      enable: u8 }[@@deriving sexp_of]
     type device_ctl = {
       len: u16 ;
-      data: Device_control.t }[@@deriving sexp]
+      data: Device_control.t }[@@deriving sexp_of]
     module Property_format_enum =
       struct
-        type t = [ `D8_bits  | `D16_bits  | `D32_bits ][@@deriving sexp]
+        type t = [ `D8_bits  | `D16_bits  | `D32_bits ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 8 -> `D8_bits
@@ -11878,11 +11942,11 @@ module Xinput =
       struct
         type t =
           [ `Property_8_bits of u8 list  | `Property_16_bits of u16 list 
-          | `Property_32_bits of u32 list ][@@deriving sexp]
+          | `Property_32_bits of u32 list ][@@deriving sexp_of]
       end
     module Device_enum =
       struct
-        type t = [ `All  | `All_master ][@@deriving sexp]
+        type t = [ `All  | `All_master ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `All
@@ -11896,18 +11960,18 @@ module Xinput =
       base: u8 ;
       latched: u8 ;
       locked: u8 ;
-      effective: u8 }[@@deriving sexp]
+      effective: u8 }[@@deriving sexp_of]
     type modifier_info =
       {
       base: u32 ;
       latched: u32 ;
       locked: u32 ;
-      effective: u32 }[@@deriving sexp]
+      effective: u32 }[@@deriving sexp_of]
     module Hierarchy_change_type_enum =
       struct
         type t =
           [ `Add_master  | `Remove_master  | `Attach_slave  | `Detach_slave ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 1 -> `Add_master
@@ -11927,7 +11991,7 @@ module Xinput =
       end
     module Change_mode_enum =
       struct
-        type t = [ `Attach  | `Float ][@@deriving sexp]
+        type t = [ `Attach  | `Float ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 1 -> `Attach
@@ -11943,7 +12007,7 @@ module Xinput =
       len: u16 ;
       send_core: bool ;
       enable: bool ;
-      name: string }[@@deriving sexp]
+      name: string }[@@deriving sexp_of]
     type remove_master =
       {
       type_: Hierarchy_change_type_enum.t ;
@@ -11951,44 +12015,45 @@ module Xinput =
       deviceid: [ | Device_enum.t | device_id alt] ;
       return_mode: Change_mode_enum.t ;
       return_pointer: [ | Device_enum.t | device_id alt] ;
-      return_keyboard: [ | Device_enum.t | device_id alt] }[@@deriving sexp]
+      return_keyboard: [ | Device_enum.t | device_id alt] }[@@deriving
+                                                             sexp_of]
     type attach_slave =
       {
       type_: Hierarchy_change_type_enum.t ;
       len: u16 ;
       deviceid: [ | Device_enum.t | device_id alt] ;
-      master: [ | Device_enum.t | device_id alt] }[@@deriving sexp]
+      master: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
     type detach_slave =
       {
       type_: Hierarchy_change_type_enum.t ;
       len: u16 ;
-      deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp]
+      deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
     module Hierarchy_change_type =
       struct
         type add_master = {
           send_core: bool ;
           enable: bool ;
-          name: string }[@@deriving sexp]
+          name: string }[@@deriving sexp_of]
         type remove_master =
           {
           deviceid: [ | Device_enum.t | device_id alt] ;
           return_mode: Change_mode_enum.t ;
           return_pointer: [ | Device_enum.t | device_id alt] ;
           return_keyboard: [ | Device_enum.t | device_id alt] }[@@deriving
-                                                                 sexp]
+                                                                 sexp_of]
         type attach_slave =
           {
           deviceid: [ | Device_enum.t | device_id alt] ;
-          master: [ | Device_enum.t | device_id alt] }[@@deriving sexp]
+          master: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
         type t =
           [ `Add_master of add_master  | `Remove_master of remove_master 
           | `Attach_slave of attach_slave 
           | `Detach_slave of [ | Device_enum.t | device_id alt] ][@@deriving
-                                                                   sexp]
+                                                                   sexp_of]
       end
     type hierarchy_change = {
       len: u16 ;
-      data: Hierarchy_change_type.t }[@@deriving sexp]
+      data: Hierarchy_change_type.t }[@@deriving sexp_of]
     module Xi_event_mask =
       struct
         include (Mask_impl)(struct  end)
@@ -12022,11 +12087,11 @@ module Xinput =
     type event_mask =
       {
       deviceid: [ | Device_enum.t | device_id alt] ;
-      mask: Xi_event_mask.t list }[@@deriving sexp]
+      mask: Xi_event_mask.t list }[@@deriving sexp_of]
     module Device_class_type_enum =
       struct
         type t = [ `Key  | `Button  | `Valuator  | `Scroll  | `Touch ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Key
@@ -12050,7 +12115,7 @@ module Xinput =
       struct
         type t =
           [ `Master_pointer  | `Master_keyboard  | `Slave_pointer 
-          | `Slave_keyboard  | `Floating_slave ][@@deriving sexp]
+          | `Slave_keyboard  | `Floating_slave ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 1 -> `Master_pointer
@@ -12077,7 +12142,7 @@ module Xinput =
       end
     module Scroll_type_enum =
       struct
-        type t = [ `Vertical  | `Horizontal ][@@deriving sexp]
+        type t = [ `Vertical  | `Horizontal ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 1 -> `Vertical
@@ -12090,7 +12155,7 @@ module Xinput =
       end
     module Touch_mode_enum =
       struct
-        type t = [ `Direct  | `Dependent ][@@deriving sexp]
+        type t = [ `Direct  | `Dependent ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 1 -> `Direct
@@ -12106,13 +12171,13 @@ module Xinput =
       len: u16 ;
       sourceid: device_id ;
       state: u32 list ;
-      labels: Core.atom list }[@@deriving sexp]
+      labels: Core.atom list }[@@deriving sexp_of]
     type key_class =
       {
       type_: Device_class_type_enum.t ;
       len: u16 ;
       sourceid: device_id ;
-      keys: u32 list }[@@deriving sexp]
+      keys: u32 list }[@@deriving sexp_of]
     type scroll_class =
       {
       type_: Device_class_type_enum.t ;
@@ -12121,14 +12186,14 @@ module Xinput =
       number: u16 ;
       scroll_type: Scroll_type_enum.t ;
       flags: Scroll_flags_mask.t ;
-      increment: fp3232 }[@@deriving sexp]
+      increment: fp3232 }[@@deriving sexp_of]
     type touch_class =
       {
       type_: Device_class_type_enum.t ;
       len: u16 ;
       sourceid: device_id ;
       mode: Touch_mode_enum.t ;
-      num_touches: u8 }[@@deriving sexp]
+      num_touches: u8 }[@@deriving sexp_of]
     type valuator_class =
       {
       type_: Device_class_type_enum.t ;
@@ -12140,12 +12205,12 @@ module Xinput =
       max: fp3232 ;
       value: fp3232 ;
       resolution: u32 ;
-      mode: Valuator_mode_enum.t }[@@deriving sexp]
+      mode: Valuator_mode_enum.t }[@@deriving sexp_of]
     module Device_class_type =
       struct
         type button = {
           state: u32 list ;
-          labels: Core.atom list }[@@deriving sexp]
+          labels: Core.atom list }[@@deriving sexp_of]
         type valuator =
           {
           number: u16 ;
@@ -12154,25 +12219,25 @@ module Xinput =
           max: fp3232 ;
           value: fp3232 ;
           resolution: u32 ;
-          mode: Valuator_mode_enum.t }[@@deriving sexp]
+          mode: Valuator_mode_enum.t }[@@deriving sexp_of]
         type scroll =
           {
           number: u16 ;
           scroll_type: Scroll_type_enum.t ;
           flags: Scroll_flags_mask.t ;
-          increment: fp3232 }[@@deriving sexp]
+          increment: fp3232 }[@@deriving sexp_of]
         type touch = {
           mode: Touch_mode_enum.t ;
-          num_touches: u8 }[@@deriving sexp]
+          num_touches: u8 }[@@deriving sexp_of]
         type t =
           [ `Key of u32 list  | `Button of button  | `Valuator of valuator 
-          | `Scroll of scroll  | `Touch of touch ][@@deriving sexp]
+          | `Scroll of scroll  | `Touch of touch ][@@deriving sexp_of]
       end
     type device_class =
       {
       len: u16 ;
       sourceid: device_id ;
-      data: Device_class_type.t }[@@deriving sexp]
+      data: Device_class_type.t }[@@deriving sexp_of]
     type xi_device_info =
       {
       deviceid: [ | Device_enum.t | device_id alt] ;
@@ -12180,10 +12245,10 @@ module Xinput =
       attachment: [ | Device_enum.t | device_id alt] ;
       enabled: bool ;
       name: string ;
-      classes: device_class list }[@@deriving sexp]
+      classes: device_class list }[@@deriving sexp_of]
     module Grab_owner_enum =
       struct
-        type t = [ `No_owner  | `Owner ][@@deriving sexp]
+        type t = [ `No_owner  | `Owner ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `No_owner
@@ -12198,7 +12263,7 @@ module Xinput =
         type t =
           [ `Async_device  | `Sync_device  | `Replay_device 
           | `Async_paired_device  | `Async_pair  | `Sync_pair 
-          | `Accept_touch  | `Reject_touch ][@@deriving sexp]
+          | `Accept_touch  | `Reject_touch ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Async_device
@@ -12225,7 +12290,7 @@ module Xinput =
       end
     module Grab_mode22_enum =
       struct
-        type t = [ `Sync  | `Async  | `Touch ][@@deriving sexp]
+        type t = [ `Sync  | `Async  | `Touch ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Sync
@@ -12241,7 +12306,7 @@ module Xinput =
       struct
         type t =
           [ `Button  | `Keycode  | `Enter  | `Focus_in  | `Touch_begin ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Button
@@ -12268,12 +12333,12 @@ module Xinput =
     type grab_modifier_info =
       {
       modifiers: Modifier_mask.t ;
-      status: Core.Grab_status_enum.t }[@@deriving sexp]
+      status: Core.Grab_status_enum.t }[@@deriving sexp_of]
     type barrier_release_pointer_info =
       {
       deviceid: device_id ;
       barrier: Xfixes.barrier ;
-      eventid: u32 }[@@deriving sexp]
+      eventid: u32 }[@@deriving sexp_of]
     module More_events_mask =
       struct
         include (Mask_impl)(struct  end)
@@ -12290,7 +12355,7 @@ module Xinput =
       end
     module Change_device_enum =
       struct
-        type t = [ `New_pointer  | `New_keyboard ][@@deriving sexp]
+        type t = [ `New_pointer  | `New_keyboard ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `New_pointer
@@ -12305,7 +12370,7 @@ module Xinput =
       struct
         type t =
           [ `Added  | `Removed  | `Enabled  | `Disabled  | `Unrecoverable 
-          | `Control_changed ][@@deriving sexp]
+          | `Control_changed ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Added
@@ -12328,7 +12393,7 @@ module Xinput =
       end
     module Change_reason_enum =
       struct
-        type t = [ `Slave_switch  | `Device_change ][@@deriving sexp]
+        type t = [ `Slave_switch  | `Device_change ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 1 -> `Slave_switch
@@ -12353,7 +12418,7 @@ module Xinput =
       struct
         type t =
           [ `Normal  | `Grab  | `Ungrab  | `While_grabbed  | `Passive_grab 
-          | `Passive_ungrab ][@@deriving sexp]
+          | `Passive_ungrab ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Normal
@@ -12379,7 +12444,7 @@ module Xinput =
         type t =
           [ `Ancestor  | `Virtual_  | `Inferior  | `Nonlinear 
           | `Nonlinear_virtual  | `Pointer  | `Pointer_root  | `None ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Ancestor
@@ -12422,10 +12487,10 @@ module Xinput =
       attachment: [ | Device_enum.t | device_id alt] ;
       type_: Device_type_enum.t ;
       enabled: bool ;
-      flags: Hierarchy_mask.t }[@@deriving sexp]
+      flags: Hierarchy_mask.t }[@@deriving sexp_of]
     module Property_flag_enum =
       struct
-        type t = [ `Deleted  | `Created  | `Modified ][@@deriving sexp]
+        type t = [ `Deleted  | `Created  | `Modified ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Deleted
@@ -12445,7 +12510,7 @@ module Xinput =
       end
     module Touch_ownership_flags_enum =
       struct
-        type t = [ `None ][@@deriving sexp]
+        type t = [ `None ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `None
@@ -12471,7 +12536,7 @@ module Xinput =
               device_state: u16 ;
               num_valuators: u8 ;
               first_valuator: u8 ;
-              valuators: i32 list }[@@deriving sexp]
+              valuators: i32 list }[@@deriving sexp_of]
             let name = "DeviceValuator"
             let number = 0
           end
@@ -12490,31 +12555,31 @@ module Xinput =
               event_y: i16 ;
               state: Core.Key_but_mask.t ;
               same_screen: bool ;
-              device_id: More_events_mask.t }[@@deriving sexp]
+              device_id: More_events_mask.t }[@@deriving sexp_of]
             let name = "DeviceKeyPress"
             let number = 1
           end
         module Device_key_release =
           struct
-            type t = Device_key_press.t[@@deriving sexp]
+            type t = Device_key_press.t[@@deriving sexp_of]
             let name = "DeviceKeyRelease"
             let number = 2
           end
         module Device_button_press =
           struct
-            type t = Device_key_press.t[@@deriving sexp]
+            type t = Device_key_press.t[@@deriving sexp_of]
             let name = "DeviceButtonPress"
             let number = 3
           end
         module Device_button_release =
           struct
-            type t = Device_key_press.t[@@deriving sexp]
+            type t = Device_key_press.t[@@deriving sexp_of]
             let name = "DeviceButtonRelease"
             let number = 4
           end
         module Device_motion_notify =
           struct
-            type t = Device_key_press.t[@@deriving sexp]
+            type t = Device_key_press.t[@@deriving sexp_of]
             let name = "DeviceMotionNotify"
             let number = 5
           end
@@ -12526,25 +12591,25 @@ module Xinput =
               time: Core.timestamp ;
               window: Core.window ;
               mode: Core.Notify_mode_enum.t ;
-              device_id: u8 }[@@deriving sexp]
+              device_id: u8 }[@@deriving sexp_of]
             let name = "DeviceFocusIn"
             let number = 6
           end
         module Device_focus_out =
           struct
-            type t = Device_focus_in.t[@@deriving sexp]
+            type t = Device_focus_in.t[@@deriving sexp_of]
             let name = "DeviceFocusOut"
             let number = 7
           end
         module Proximity_in =
           struct
-            type t = Device_key_press.t[@@deriving sexp]
+            type t = Device_key_press.t[@@deriving sexp_of]
             let name = "ProximityIn"
             let number = 8
           end
         module Proximity_out =
           struct
-            type t = Device_key_press.t[@@deriving sexp]
+            type t = Device_key_press.t[@@deriving sexp_of]
             let name = "ProximityOut"
             let number = 9
           end
@@ -12560,7 +12625,7 @@ module Xinput =
               classes_reported: Classes_reported_mask.t ;
               buttons: u8 list ;
               keys: u8 list ;
-              valuators: u32 list }[@@deriving sexp]
+              valuators: u32 list }[@@deriving sexp_of]
             let name = "DeviceStateNotify"
             let number = 10
           end
@@ -12572,7 +12637,7 @@ module Xinput =
               request: Core.Mapping_enum.t ;
               first_keycode: key_code ;
               count: u8 ;
-              time: Core.timestamp }[@@deriving sexp]
+              time: Core.timestamp }[@@deriving sexp_of]
             let name = "DeviceMappingNotify"
             let number = 11
           end
@@ -12582,7 +12647,7 @@ module Xinput =
               {
               device_id: byte ;
               time: Core.timestamp ;
-              request: Change_device_enum.t }[@@deriving sexp]
+              request: Change_device_enum.t }[@@deriving sexp_of]
             let name = "ChangeDeviceNotify"
             let number = 12
           end
@@ -12590,7 +12655,7 @@ module Xinput =
           struct
             type t = {
               device_id: More_events_mask.t ;
-              keys: u8 list }[@@deriving sexp]
+              keys: u8 list }[@@deriving sexp_of]
             let name = "DeviceKeyStateNotify"
             let number = 13
           end
@@ -12598,7 +12663,7 @@ module Xinput =
           struct
             type t = {
               device_id: More_events_mask.t ;
-              buttons: u8 list }[@@deriving sexp]
+              buttons: u8 list }[@@deriving sexp_of]
             let name = "DeviceButtonStateNotify"
             let number = 14
           end
@@ -12609,7 +12674,7 @@ module Xinput =
               time: Core.timestamp ;
               devchange: Device_change_enum.t ;
               device_id: byte ;
-              control: u16 }[@@deriving sexp]
+              control: u16 }[@@deriving sexp_of]
             let name = "DevicePresenceNotify"
             let number = 15
           end
@@ -12620,7 +12685,7 @@ module Xinput =
               state: Core.Property_enum.t ;
               time: Core.timestamp ;
               property: Core.atom ;
-              device_id: u8 }[@@deriving sexp]
+              device_id: u8 }[@@deriving sexp_of]
             let name = "DevicePropertyNotify"
             let number = 16
           end
@@ -12632,7 +12697,7 @@ module Xinput =
               time: [ | Core.Time_enum.t | Core.timestamp alt] ;
               sourceid: [ | Device_enum.t | device_id alt] ;
               reason: Change_reason_enum.t ;
-              classes: device_class list }[@@deriving sexp]
+              classes: device_class list }[@@deriving sexp_of]
             let name = "DeviceChanged"
             let number = 1
           end
@@ -12656,13 +12721,13 @@ module Xinput =
               group: group_info ;
               button_mask: u32 list ;
               valuator_mask: u32 list ;
-              axisvalues: fp3232 list }[@@deriving sexp]
+              axisvalues: fp3232 list }[@@deriving sexp_of]
             let name = "KeyPress"
             let number = 2
           end
         module Key_release =
           struct
-            type t = Key_press.t[@@deriving sexp]
+            type t = Key_press.t[@@deriving sexp_of]
             let name = "KeyRelease"
             let number = 3
           end
@@ -12686,19 +12751,19 @@ module Xinput =
               group: group_info ;
               button_mask: u32 list ;
               valuator_mask: u32 list ;
-              axisvalues: fp3232 list }[@@deriving sexp]
+              axisvalues: fp3232 list }[@@deriving sexp_of]
             let name = "ButtonPress"
             let number = 4
           end
         module Button_release =
           struct
-            type t = Button_press.t[@@deriving sexp]
+            type t = Button_press.t[@@deriving sexp_of]
             let name = "ButtonRelease"
             let number = 5
           end
         module Motion =
           struct
-            type t = Button_press.t[@@deriving sexp]
+            type t = Button_press.t[@@deriving sexp_of]
             let name = "Motion"
             let number = 6
           end
@@ -12722,25 +12787,25 @@ module Xinput =
               focus: bool ;
               mods: modifier_info ;
               group: group_info ;
-              buttons: u32 list }[@@deriving sexp]
+              buttons: u32 list }[@@deriving sexp_of]
             let name = "Enter"
             let number = 7
           end
         module Leave =
           struct
-            type t = Enter.t[@@deriving sexp]
+            type t = Enter.t[@@deriving sexp_of]
             let name = "Leave"
             let number = 8
           end
         module Focus_in =
           struct
-            type t = Enter.t[@@deriving sexp]
+            type t = Enter.t[@@deriving sexp_of]
             let name = "FocusIn"
             let number = 9
           end
         module Focus_out =
           struct
-            type t = Enter.t[@@deriving sexp]
+            type t = Enter.t[@@deriving sexp_of]
             let name = "FocusOut"
             let number = 10
           end
@@ -12751,7 +12816,7 @@ module Xinput =
               deviceid: [ | Device_enum.t | device_id alt] ;
               time: [ | Core.Time_enum.t | Core.timestamp alt] ;
               flags: Hierarchy_mask.t ;
-              infos: hierarchy_info list }[@@deriving sexp]
+              infos: hierarchy_info list }[@@deriving sexp_of]
             let name = "Hierarchy"
             let number = 11
           end
@@ -12762,7 +12827,7 @@ module Xinput =
               deviceid: [ | Device_enum.t | device_id alt] ;
               time: [ | Core.Time_enum.t | Core.timestamp alt] ;
               property: Core.atom ;
-              what: Property_flag_enum.t }[@@deriving sexp]
+              what: Property_flag_enum.t }[@@deriving sexp_of]
             let name = "Property"
             let number = 12
           end
@@ -12777,13 +12842,13 @@ module Xinput =
               flags: Key_event_flags_mask.t ;
               valuator_mask: u32 list ;
               axisvalues: fp3232 list ;
-              axisvalues_raw: fp3232 list }[@@deriving sexp]
+              axisvalues_raw: fp3232 list }[@@deriving sexp_of]
             let name = "RawKeyPress"
             let number = 13
           end
         module Raw_key_release =
           struct
-            type t = Raw_key_press.t[@@deriving sexp]
+            type t = Raw_key_press.t[@@deriving sexp_of]
             let name = "RawKeyRelease"
             let number = 14
           end
@@ -12798,19 +12863,19 @@ module Xinput =
               flags: Pointer_event_flags_mask.t ;
               valuator_mask: u32 list ;
               axisvalues: fp3232 list ;
-              axisvalues_raw: fp3232 list }[@@deriving sexp]
+              axisvalues_raw: fp3232 list }[@@deriving sexp_of]
             let name = "RawButtonPress"
             let number = 15
           end
         module Raw_button_release =
           struct
-            type t = Raw_button_press.t[@@deriving sexp]
+            type t = Raw_button_press.t[@@deriving sexp_of]
             let name = "RawButtonRelease"
             let number = 16
           end
         module Raw_motion =
           struct
-            type t = Raw_button_press.t[@@deriving sexp]
+            type t = Raw_button_press.t[@@deriving sexp_of]
             let name = "RawMotion"
             let number = 17
           end
@@ -12834,19 +12899,19 @@ module Xinput =
               group: group_info ;
               button_mask: u32 list ;
               valuator_mask: u32 list ;
-              axisvalues: fp3232 list }[@@deriving sexp]
+              axisvalues: fp3232 list }[@@deriving sexp_of]
             let name = "TouchBegin"
             let number = 18
           end
         module Touch_update =
           struct
-            type t = Touch_begin.t[@@deriving sexp]
+            type t = Touch_begin.t[@@deriving sexp_of]
             let name = "TouchUpdate"
             let number = 19
           end
         module Touch_end =
           struct
-            type t = Touch_begin.t[@@deriving sexp]
+            type t = Touch_begin.t[@@deriving sexp_of]
             let name = "TouchEnd"
             let number = 20
           end
@@ -12861,7 +12926,7 @@ module Xinput =
               event: Core.window ;
               child: Core.window ;
               sourceid: [ | Device_enum.t | device_id alt] ;
-              flags: Touch_ownership_flags_enum.t }[@@deriving sexp]
+              flags: Touch_ownership_flags_enum.t }[@@deriving sexp_of]
             let name = "TouchOwnership"
             let number = 21
           end
@@ -12876,19 +12941,19 @@ module Xinput =
               flags: Touch_event_flags_mask.t ;
               valuator_mask: u32 list ;
               axisvalues: fp3232 list ;
-              axisvalues_raw: fp3232 list }[@@deriving sexp]
+              axisvalues_raw: fp3232 list }[@@deriving sexp_of]
             let name = "RawTouchBegin"
             let number = 22
           end
         module Raw_touch_update =
           struct
-            type t = Raw_touch_begin.t[@@deriving sexp]
+            type t = Raw_touch_begin.t[@@deriving sexp_of]
             let name = "RawTouchUpdate"
             let number = 23
           end
         module Raw_touch_end =
           struct
-            type t = Raw_touch_begin.t[@@deriving sexp]
+            type t = Raw_touch_begin.t[@@deriving sexp_of]
             let name = "RawTouchEnd"
             let number = 24
           end
@@ -12908,13 +12973,13 @@ module Xinput =
               root_x: fp1616 ;
               root_y: fp1616 ;
               dx: fp3232 ;
-              dy: fp3232 }[@@deriving sexp]
+              dy: fp3232 }[@@deriving sexp_of]
             let name = "BarrierHit"
             let number = 25
           end
         module Barrier_leave =
           struct
-            type t = Barrier_hit.t[@@deriving sexp]
+            type t = Barrier_hit.t[@@deriving sexp_of]
             let name = "BarrierLeave"
             let number = 26
           end
@@ -12953,7 +13018,7 @@ module Xinput =
           | `Raw_touch_update of Raw_touch_update.t 
           | `Raw_touch_end of Raw_touch_end.t 
           | `Barrier_hit of Barrier_hit.t 
-          | `Barrier_leave of Barrier_leave.t ][@@deriving sexp]
+          | `Barrier_leave of Barrier_leave.t ][@@deriving sexp_of]
       end
     module Event_for_send_enum =
       struct
@@ -12975,50 +13040,50 @@ module Xinput =
           | `Device_button_state_notify of Event.Device_button_state_notify.t 
           | `Device_presence_notify of Event.Device_presence_notify.t 
           | `Device_property_notify of Event.Device_property_notify.t ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
       end
     module Error =
       struct
         module Device =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "Device"
             let number = 0
           end
         module Event =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "Event"
             let number = 1
           end
         module Mode =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "Mode"
             let number = 2
           end
         module Device_busy =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "DeviceBusy"
             let number = 3
           end
         module Class_ =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "Class"
             let number = 4
           end
         type t =
           [ `Device of Device.t  | `Event of Event.t  | `Mode of Mode.t 
           | `Device_busy of Device_busy.t  | `Class_ of Class_.t ][@@deriving
-                                                                    sexp]
+                                                                    sexp_of]
       end
     module Get_extension_version =
       struct
         let name = "GetExtensionVersion"
         let opcode = 1
-        type t = string[@@deriving sexp]
+        type t = string[@@deriving sexp_of]
         let with_request f name = f (name : t)
         module Reply =
           struct
@@ -13027,14 +13092,14 @@ module Xinput =
               xi_reply_type: u8 ;
               server_major: u16 ;
               server_minor: u16 ;
-              present: bool }[@@deriving sexp]
+              present: bool }[@@deriving sexp_of]
           end
       end
     module List_input_devices =
       struct
         let name = "ListInputDevices"
         let opcode = 2
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
           struct
@@ -13043,27 +13108,27 @@ module Xinput =
               xi_reply_type: u8 ;
               devices: device_info list ;
               infos: input_info list ;
-              names: Core.str list }[@@deriving sexp]
+              names: Core.str list }[@@deriving sexp_of]
           end
       end
     module Open_device =
       struct
         let name = "OpenDevice"
         let opcode = 3
-        type t = u8[@@deriving sexp]
+        type t = u8[@@deriving sexp_of]
         let with_request f device_id = f (device_id : t)
         module Reply =
           struct
             type t = {
               xi_reply_type: u8 ;
-              class_info: input_class_info list }[@@deriving sexp]
+              class_info: input_class_info list }[@@deriving sexp_of]
           end
       end
     module Close_device =
       struct
         let name = "CloseDevice"
         let opcode = 4
-        type t = u8[@@deriving sexp]
+        type t = u8[@@deriving sexp_of]
         let with_request f device_id = f (device_id : t)
       end
     module Set_device_mode =
@@ -13072,13 +13137,13 @@ module Xinput =
         let opcode = 5
         type t = {
           device_id: u8 ;
-          mode: Valuator_mode_enum.t }[@@deriving sexp]
+          mode: Valuator_mode_enum.t }[@@deriving sexp_of]
         let with_request f ~device_id  ~mode  = f ({ device_id; mode } : t)
         module Reply =
           struct
             type t = {
               xi_reply_type: u8 ;
-              status: Core.Grab_status_enum.t }[@@deriving sexp]
+              status: Core.Grab_status_enum.t }[@@deriving sexp_of]
           end
       end
     module Select_extension_event =
@@ -13087,14 +13152,14 @@ module Xinput =
         let opcode = 6
         type t = {
           window: Core.window ;
-          classes: event_class list }[@@deriving sexp]
+          classes: event_class list }[@@deriving sexp_of]
         let with_request f ~window  ~classes  = f ({ window; classes } : t)
       end
     module Get_selected_extension_events =
       struct
         let name = "GetSelectedExtensionEvents"
         let opcode = 7
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
         module Reply =
           struct
@@ -13102,7 +13167,7 @@ module Xinput =
               {
               xi_reply_type: u8 ;
               this_classes: event_class list ;
-              all_classes: event_class list }[@@deriving sexp]
+              all_classes: event_class list }[@@deriving sexp_of]
           end
       end
     module Change_device_dont_propagate_list =
@@ -13113,7 +13178,7 @@ module Xinput =
           {
           window: Core.window ;
           mode: Propagate_mode_enum.t ;
-          classes: event_class list }[@@deriving sexp]
+          classes: event_class list }[@@deriving sexp_of]
         let with_request f ~window  ~mode  ~classes  =
           f ({ window; mode; classes } : t)
       end
@@ -13121,13 +13186,13 @@ module Xinput =
       struct
         let name = "GetDeviceDontPropagateList"
         let opcode = 9
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
         module Reply =
           struct
             type t = {
               xi_reply_type: u8 ;
-              classes: event_class list }[@@deriving sexp]
+              classes: event_class list }[@@deriving sexp_of]
           end
       end
     module Get_device_motion_events =
@@ -13138,7 +13203,7 @@ module Xinput =
           {
           start: Core.timestamp ;
           stop: [ | Core.Time_enum.t | Core.timestamp alt] ;
-          device_id: u8 }[@@deriving sexp]
+          device_id: u8 }[@@deriving sexp_of]
         let with_request f ~start  ~stop  ~device_id  =
           f ({ start; stop; device_id } : t)
         module Reply =
@@ -13148,20 +13213,20 @@ module Xinput =
               xi_reply_type: u8 ;
               num_axes: u8 ;
               device_mode: Valuator_mode_enum.t ;
-              events: device_time_coord list }[@@deriving sexp]
+              events: device_time_coord list }[@@deriving sexp_of]
           end
       end
     module Change_keyboard_device =
       struct
         let name = "ChangeKeyboardDevice"
         let opcode = 11
-        type t = u8[@@deriving sexp]
+        type t = u8[@@deriving sexp_of]
         let with_request f device_id = f (device_id : t)
         module Reply =
           struct
             type t = {
               xi_reply_type: u8 ;
-              status: Core.Grab_status_enum.t }[@@deriving sexp]
+              status: Core.Grab_status_enum.t }[@@deriving sexp_of]
           end
       end
     module Change_pointer_device =
@@ -13171,14 +13236,14 @@ module Xinput =
         type t = {
           x_axis: u8 ;
           y_axis: u8 ;
-          device_id: u8 }[@@deriving sexp]
+          device_id: u8 }[@@deriving sexp_of]
         let with_request f ~x_axis  ~y_axis  ~device_id  =
           f ({ x_axis; y_axis; device_id } : t)
         module Reply =
           struct
             type t = {
               xi_reply_type: u8 ;
-              status: Core.Grab_status_enum.t }[@@deriving sexp]
+              status: Core.Grab_status_enum.t }[@@deriving sexp_of]
           end
       end
     module Grab_device =
@@ -13193,7 +13258,7 @@ module Xinput =
           other_device_mode: Core.Grab_mode_enum.t ;
           owner_events: bool ;
           device_id: u8 ;
-          classes: event_class list }[@@deriving sexp]
+          classes: event_class list }[@@deriving sexp_of]
         let with_request f ~grab_window  ~time  ~this_device_mode 
           ~other_device_mode  ~owner_events  ~device_id  ~classes  =
           f
@@ -13210,7 +13275,7 @@ module Xinput =
           struct
             type t = {
               xi_reply_type: u8 ;
-              status: Core.Grab_status_enum.t }[@@deriving sexp]
+              status: Core.Grab_status_enum.t }[@@deriving sexp_of]
           end
       end
     module Ungrab_device =
@@ -13220,7 +13285,7 @@ module Xinput =
         type t =
           {
           time: [ | Core.Time_enum.t | Core.timestamp alt] ;
-          device_id: u8 }[@@deriving sexp]
+          device_id: u8 }[@@deriving sexp_of]
         let with_request f ~time  ~device_id  = f ({ time; device_id } : t)
       end
     module Grab_device_key =
@@ -13237,7 +13302,7 @@ module Xinput =
           this_device_mode: Core.Grab_mode_enum.t ;
           other_device_mode: Core.Grab_mode_enum.t ;
           owner_events: bool ;
-          classes: event_class list }[@@deriving sexp]
+          classes: event_class list }[@@deriving sexp_of]
         let with_request f ~grab_window  ~modifiers  ~modifier_device 
           ~grabbed_device  ~key  ~this_device_mode  ~other_device_mode 
           ~owner_events  ~classes  =
@@ -13264,7 +13329,7 @@ module Xinput =
           modifiers: Core.Mod_mask.t ;
           modifier_device: [ | Modifier_device_enum.t | u8 alt] ;
           key: [ | Core.Grab_enum.t | u8 alt] ;
-          grabbed_device: u8 }[@@deriving sexp]
+          grabbed_device: u8 }[@@deriving sexp_of]
         let with_request f ~grab_window  ~modifiers  ~modifier_device  ~key 
           ~grabbed_device  =
           f
@@ -13285,7 +13350,7 @@ module Xinput =
           other_device_mode: Core.Grab_mode_enum.t ;
           button: [ | Core.Grab_enum.t | u8 alt] ;
           owner_events: bool ;
-          classes: event_class list }[@@deriving sexp]
+          classes: event_class list }[@@deriving sexp_of]
         let with_request f ~grab_window  ~grabbed_device  ~modifier_device 
           ~modifiers  ~this_device_mode  ~other_device_mode  ~button 
           ~owner_events  ~classes  =
@@ -13312,7 +13377,7 @@ module Xinput =
           modifiers: Core.Mod_mask.t ;
           modifier_device: [ | Modifier_device_enum.t | u8 alt] ;
           button: [ | Core.Grab_enum.t | u8 alt] ;
-          grabbed_device: u8 }[@@deriving sexp]
+          grabbed_device: u8 }[@@deriving sexp_of]
         let with_request f ~grab_window  ~modifiers  ~modifier_device 
           ~button  ~grabbed_device  =
           f
@@ -13332,7 +13397,7 @@ module Xinput =
           {
           time: [ | Core.Time_enum.t | Core.timestamp alt] ;
           mode: Device_input_mode_enum.t ;
-          device_id: u8 }[@@deriving sexp]
+          device_id: u8 }[@@deriving sexp_of]
         let with_request f ~time  ~mode  ~device_id  =
           f ({ time; mode; device_id } : t)
       end
@@ -13340,7 +13405,7 @@ module Xinput =
       struct
         let name = "GetDeviceFocus"
         let opcode = 20
-        type t = u8[@@deriving sexp]
+        type t = u8[@@deriving sexp_of]
         let with_request f device_id = f (device_id : t)
         module Reply =
           struct
@@ -13349,7 +13414,7 @@ module Xinput =
               xi_reply_type: u8 ;
               focus: [ | Core.Input_focus_enum.t | Core.window alt] ;
               time: Core.timestamp ;
-              revert_to: Core.Input_focus_enum.t }[@@deriving sexp]
+              revert_to: Core.Input_focus_enum.t }[@@deriving sexp_of]
           end
       end
     module Set_device_focus =
@@ -13361,7 +13426,7 @@ module Xinput =
           focus: [ | Core.Input_focus_enum.t | Core.window alt] ;
           time: [ | Core.Time_enum.t | Core.timestamp alt] ;
           revert_to: Core.Input_focus_enum.t ;
-          device_id: u8 }[@@deriving sexp]
+          device_id: u8 }[@@deriving sexp_of]
         let with_request f ~focus  ~time  ~revert_to  ~device_id  =
           f ({ focus; time; revert_to; device_id } : t)
       end
@@ -13369,13 +13434,13 @@ module Xinput =
       struct
         let name = "GetFeedbackControl"
         let opcode = 22
-        type t = u8[@@deriving sexp]
+        type t = u8[@@deriving sexp_of]
         let with_request f device_id = f (device_id : t)
         module Reply =
           struct
             type t = {
               xi_reply_type: u8 ;
-              feedbacks: feedback_state list }[@@deriving sexp]
+              feedbacks: feedback_state list }[@@deriving sexp_of]
           end
       end
     module Change_feedback_control =
@@ -13387,7 +13452,7 @@ module Xinput =
           mask: Change_feedback_control_mask.t ;
           device_id: u8 ;
           feedback_id: u8 ;
-          feedback: feedback_ctl }[@@deriving sexp]
+          feedback: feedback_ctl }[@@deriving sexp_of]
         let with_request f ~mask  ~device_id  ~feedback_id  ~feedback  =
           f ({ mask; device_id; feedback_id; feedback } : t)
       end
@@ -13398,7 +13463,7 @@ module Xinput =
         type t = {
           device_id: u8 ;
           first_keycode: key_code ;
-          count: u8 }[@@deriving sexp]
+          count: u8 }[@@deriving sexp_of]
         let with_request f ~device_id  ~first_keycode  ~count  =
           f ({ device_id; first_keycode; count } : t)
         module Reply =
@@ -13407,7 +13472,7 @@ module Xinput =
               {
               xi_reply_type: u8 ;
               keysyms_per_keycode: u8 ;
-              keysyms: Core.keysym list }[@@deriving sexp]
+              keysyms: Core.keysym list }[@@deriving sexp_of]
           end
       end
     module Change_device_key_mapping =
@@ -13420,7 +13485,7 @@ module Xinput =
           first_keycode: key_code ;
           keysyms_per_keycode: u8 ;
           keycode_count: u8 ;
-          keysyms: Core.keysym list }[@@deriving sexp]
+          keysyms: Core.keysym list }[@@deriving sexp_of]
         let with_request f ~device_id  ~first_keycode  ~keysyms_per_keycode 
           ~keycode_count  ~keysyms  =
           f
@@ -13436,13 +13501,13 @@ module Xinput =
       struct
         let name = "GetDeviceModifierMapping"
         let opcode = 26
-        type t = u8[@@deriving sexp]
+        type t = u8[@@deriving sexp_of]
         let with_request f device_id = f (device_id : t)
         module Reply =
           struct
             type t = {
               xi_reply_type: u8 ;
-              keymaps: u8 list }[@@deriving sexp]
+              keymaps: u8 list }[@@deriving sexp_of]
           end
       end
     module Set_device_modifier_mapping =
@@ -13451,27 +13516,27 @@ module Xinput =
         let opcode = 27
         type t = {
           device_id: u8 ;
-          keymaps: u8 list }[@@deriving sexp]
+          keymaps: u8 list }[@@deriving sexp_of]
         let with_request f ~device_id  ~keymaps  =
           f ({ device_id; keymaps } : t)
         module Reply =
           struct
             type t = {
               xi_reply_type: u8 ;
-              status: Core.Mapping_status_enum.t }[@@deriving sexp]
+              status: Core.Mapping_status_enum.t }[@@deriving sexp_of]
           end
       end
     module Get_device_button_mapping =
       struct
         let name = "GetDeviceButtonMapping"
         let opcode = 28
-        type t = u8[@@deriving sexp]
+        type t = u8[@@deriving sexp_of]
         let with_request f device_id = f (device_id : t)
         module Reply =
           struct
             type t = {
               xi_reply_type: u8 ;
-              map: u8 list }[@@deriving sexp]
+              map: u8 list }[@@deriving sexp_of]
           end
       end
     module Set_device_button_mapping =
@@ -13480,26 +13545,26 @@ module Xinput =
         let opcode = 29
         type t = {
           device_id: u8 ;
-          map: u8 list }[@@deriving sexp]
+          map: u8 list }[@@deriving sexp_of]
         let with_request f ~device_id  ~map  = f ({ device_id; map } : t)
         module Reply =
           struct
             type t = {
               xi_reply_type: u8 ;
-              status: Core.Mapping_status_enum.t }[@@deriving sexp]
+              status: Core.Mapping_status_enum.t }[@@deriving sexp_of]
           end
       end
     module Query_device_state =
       struct
         let name = "QueryDeviceState"
         let opcode = 30
-        type t = u8[@@deriving sexp]
+        type t = u8[@@deriving sexp_of]
         let with_request f device_id = f (device_id : t)
         module Reply =
           struct
             type t = {
               xi_reply_type: u8 ;
-              classes: input_state list }[@@deriving sexp]
+              classes: input_state list }[@@deriving sexp_of]
           end
       end
     module Device_bell =
@@ -13511,7 +13576,7 @@ module Xinput =
           device_id: u8 ;
           feedback_id: u8 ;
           feedback_class: u8 ;
-          percent: i8 }[@@deriving sexp]
+          percent: i8 }[@@deriving sexp_of]
         let with_request f ~device_id  ~feedback_id  ~feedback_class 
           ~percent  =
           f ({ device_id; feedback_id; feedback_class; percent } : t)
@@ -13523,14 +13588,14 @@ module Xinput =
         type t = {
           device_id: u8 ;
           first_valuator: u8 ;
-          valuators: i32 list }[@@deriving sexp]
+          valuators: i32 list }[@@deriving sexp_of]
         let with_request f ~device_id  ~first_valuator  ~valuators  =
           f ({ device_id; first_valuator; valuators } : t)
         module Reply =
           struct
             type t = {
               xi_reply_type: u8 ;
-              status: Core.Grab_status_enum.t }[@@deriving sexp]
+              status: Core.Grab_status_enum.t }[@@deriving sexp_of]
           end
       end
     module Get_device_control =
@@ -13539,7 +13604,7 @@ module Xinput =
         let opcode = 34
         type t = {
           control_id: Device_control_enum.t ;
-          device_id: u8 }[@@deriving sexp]
+          device_id: u8 }[@@deriving sexp_of]
         let with_request f ~control_id  ~device_id  =
           f ({ control_id; device_id } : t)
         module Reply =
@@ -13548,7 +13613,7 @@ module Xinput =
               {
               xi_reply_type: u8 ;
               status: [ | Core.Grab_status_enum.t | u8 alt] ;
-              control: device_state }[@@deriving sexp]
+              control: device_state }[@@deriving sexp_of]
           end
       end
     module Change_device_control =
@@ -13559,7 +13624,7 @@ module Xinput =
           {
           control_id: Device_control_enum.t ;
           device_id: u8 ;
-          control: device_ctl }[@@deriving sexp]
+          control: device_ctl }[@@deriving sexp_of]
         let with_request f ~control_id  ~device_id  ~control  =
           f ({ control_id; device_id; control } : t)
         module Reply =
@@ -13568,20 +13633,20 @@ module Xinput =
               {
               xi_reply_type: u8 ;
               status: [ | Core.Grab_status_enum.t | u8 alt] }[@@deriving
-                                                               sexp]
+                                                               sexp_of]
           end
       end
     module List_device_properties =
       struct
         let name = "ListDeviceProperties"
         let opcode = 36
-        type t = u8[@@deriving sexp]
+        type t = u8[@@deriving sexp_of]
         let with_request f device_id = f (device_id : t)
         module Reply =
           struct
             type t = {
               xi_reply_type: u8 ;
-              atoms: Core.atom list }[@@deriving sexp]
+              atoms: Core.atom list }[@@deriving sexp_of]
           end
       end
     module Change_device_property =
@@ -13595,7 +13660,7 @@ module Xinput =
           device_id: u8 ;
           mode: Core.Prop_mode_enum.t ;
           num_items: u32 ;
-          items: Property_format.t }[@@deriving sexp]
+          items: Property_format.t }[@@deriving sexp_of]
         let with_request f ~property  ~type_  ~device_id  ~mode  ~num_items 
           ~items  =
           f ({ property; type_; device_id; mode; num_items; items } : t)
@@ -13606,7 +13671,7 @@ module Xinput =
         let opcode = 38
         type t = {
           property: Core.atom ;
-          device_id: u8 }[@@deriving sexp]
+          device_id: u8 }[@@deriving sexp_of]
         let with_request f ~property  ~device_id  =
           f ({ property; device_id } : t)
       end
@@ -13621,7 +13686,7 @@ module Xinput =
           offset: u32 ;
           len: u32 ;
           device_id: u8 ;
-          delete: bool }[@@deriving sexp]
+          delete: bool }[@@deriving sexp_of]
         let with_request f ~property  ~type_  ~offset  ~len  ~device_id 
           ~delete  =
           f ({ property; type_; offset; len; device_id; delete } : t)
@@ -13634,7 +13699,7 @@ module Xinput =
               bytes_after: u32 ;
               num_items: u32 ;
               device_id: u8 ;
-              items: Property_format.t }[@@deriving sexp]
+              items: Property_format.t }[@@deriving sexp_of]
           end
       end
     module Xi_query_pointer =
@@ -13644,7 +13709,7 @@ module Xinput =
         type t =
           {
           window: Core.window ;
-          deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp]
+          deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
         let with_request f ~window  ~deviceid  = f ({ window; deviceid } : t)
         module Reply =
           struct
@@ -13659,7 +13724,7 @@ module Xinput =
               same_screen: bool ;
               mods: modifier_info ;
               group: group_info ;
-              buttons: u32 list }[@@deriving sexp]
+              buttons: u32 list }[@@deriving sexp_of]
           end
       end
     module Xi_warp_pointer =
@@ -13676,7 +13741,7 @@ module Xinput =
           src_height: u16 ;
           dst_x: fp1616 ;
           dst_y: fp1616 ;
-          deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp]
+          deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
         let with_request f ~src_win  ~dst_win  ~src_x  ~src_y  ~src_width 
           ~src_height  ~dst_x  ~dst_y  ~deviceid  =
           f
@@ -13700,7 +13765,7 @@ module Xinput =
           {
           window: Core.window ;
           cursor: Core.cursor ;
-          deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp]
+          deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
         let with_request f ~window  ~cursor  ~deviceid  =
           f ({ window; cursor; deviceid } : t)
       end
@@ -13708,7 +13773,7 @@ module Xinput =
       struct
         let name = "XIChangeHierarchy"
         let opcode = 43
-        type t = hierarchy_change list[@@deriving sexp]
+        type t = hierarchy_change list[@@deriving sexp_of]
         let with_request f changes = f (changes : t)
       end
     module Xi_set_client_pointer =
@@ -13718,21 +13783,22 @@ module Xinput =
         type t =
           {
           window: Core.window ;
-          deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp]
+          deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
         let with_request f ~window  ~deviceid  = f ({ window; deviceid } : t)
       end
     module Xi_get_client_pointer =
       struct
         let name = "XIGetClientPointer"
         let opcode = 45
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
         module Reply =
           struct
             type t =
               {
               set: bool ;
-              deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp]
+              deviceid: [ | Device_enum.t | device_id alt] }[@@deriving
+                                                              sexp_of]
           end
       end
     module Xi_select_events =
@@ -13741,7 +13807,7 @@ module Xinput =
         let opcode = 46
         type t = {
           window: Core.window ;
-          masks: event_mask list }[@@deriving sexp]
+          masks: event_mask list }[@@deriving sexp_of]
         let with_request f ~window  ~masks  = f ({ window; masks } : t)
       end
     module Xi_query_version =
@@ -13750,24 +13816,24 @@ module Xinput =
         let opcode = 47
         type t = {
           major_version: u16 ;
-          minor_version: u16 }[@@deriving sexp]
+          minor_version: u16 }[@@deriving sexp_of]
         let with_request f ~major_version  ~minor_version  =
           f ({ major_version; minor_version } : t)
         module Reply =
           struct
             type t = {
               major_version: u16 ;
-              minor_version: u16 }[@@deriving sexp]
+              minor_version: u16 }[@@deriving sexp_of]
           end
       end
     module Xi_query_device =
       struct
         let name = "XIQueryDevice"
         let opcode = 48
-        type t = [ | Device_enum.t | device_id alt][@@deriving sexp]
+        type t = [ | Device_enum.t | device_id alt][@@deriving sexp_of]
         let with_request f deviceid = f (deviceid : t)
         module Reply =
-          struct type t = xi_device_info list[@@deriving sexp] end
+          struct type t = xi_device_info list[@@deriving sexp_of] end
       end
     module Xi_set_focus =
       struct
@@ -13777,7 +13843,7 @@ module Xinput =
           {
           window: Core.window ;
           time: [ | Core.Time_enum.t | Core.timestamp alt] ;
-          deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp]
+          deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
         let with_request f ~window  ~time  ~deviceid  =
           f ({ window; time; deviceid } : t)
       end
@@ -13785,9 +13851,9 @@ module Xinput =
       struct
         let name = "XIGetFocus"
         let opcode = 50
-        type t = [ | Device_enum.t | device_id alt][@@deriving sexp]
+        type t = [ | Device_enum.t | device_id alt][@@deriving sexp_of]
         let with_request f deviceid = f (deviceid : t)
-        module Reply = struct type t = Core.window[@@deriving sexp] end
+        module Reply = struct type t = Core.window[@@deriving sexp_of] end
       end
     module Xi_grab_device =
       struct
@@ -13802,7 +13868,7 @@ module Xinput =
           mode: Core.Grab_mode_enum.t ;
           paired_device_mode: Core.Grab_mode_enum.t ;
           owner_events: Grab_owner_enum.t ;
-          mask: u32 list }[@@deriving sexp]
+          mask: u32 list }[@@deriving sexp_of]
         let with_request f ~window  ~time  ~cursor  ~deviceid  ~mode 
           ~paired_device_mode  ~owner_events  ~mask  =
           f
@@ -13817,7 +13883,7 @@ module Xinput =
                mask
              } : t)
         module Reply =
-          struct type t = Core.Grab_status_enum.t[@@deriving sexp] end
+          struct type t = Core.Grab_status_enum.t[@@deriving sexp_of] end
       end
     module Xi_ungrab_device =
       struct
@@ -13826,7 +13892,7 @@ module Xinput =
         type t =
           {
           time: [ | Core.Time_enum.t | Core.timestamp alt] ;
-          deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp]
+          deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
         let with_request f ~time  ~deviceid  = f ({ time; deviceid } : t)
       end
     module Xi_allow_events =
@@ -13839,7 +13905,7 @@ module Xinput =
           deviceid: [ | Device_enum.t | device_id alt] ;
           event_mode: Event_mode_enum.t ;
           touchid: u32 ;
-          grab_window: Core.window }[@@deriving sexp]
+          grab_window: Core.window }[@@deriving sexp_of]
         let with_request f ~time  ~deviceid  ~event_mode  ~touchid 
           ~grab_window  =
           f ({ time; deviceid; event_mode; touchid; grab_window } : t)
@@ -13860,7 +13926,7 @@ module Xinput =
           paired_device_mode: Core.Grab_mode_enum.t ;
           owner_events: Grab_owner_enum.t ;
           mask: u32 list ;
-          modifiers: u32 list }[@@deriving sexp]
+          modifiers: u32 list }[@@deriving sexp_of]
         let with_request f ~time  ~grab_window  ~cursor  ~detail  ~deviceid 
           ~grab_type  ~grab_mode  ~paired_device_mode  ~owner_events  ~mask 
           ~modifiers  =
@@ -13879,7 +13945,7 @@ module Xinput =
                modifiers
              } : t)
         module Reply =
-          struct type t = grab_modifier_info list[@@deriving sexp] end
+          struct type t = grab_modifier_info list[@@deriving sexp_of] end
       end
     module Xi_passive_ungrab_device =
       struct
@@ -13891,7 +13957,7 @@ module Xinput =
           detail: u32 ;
           deviceid: [ | Device_enum.t | device_id alt] ;
           grab_type: Grab_type_enum.t ;
-          modifiers: u32 list }[@@deriving sexp]
+          modifiers: u32 list }[@@deriving sexp_of]
         let with_request f ~grab_window  ~detail  ~deviceid  ~grab_type 
           ~modifiers  =
           f ({ grab_window; detail; deviceid; grab_type; modifiers } : t)
@@ -13900,9 +13966,9 @@ module Xinput =
       struct
         let name = "XIListProperties"
         let opcode = 56
-        type t = [ | Device_enum.t | device_id alt][@@deriving sexp]
+        type t = [ | Device_enum.t | device_id alt][@@deriving sexp_of]
         let with_request f deviceid = f (deviceid : t)
-        module Reply = struct type t = Core.atom list[@@deriving sexp] end
+        module Reply = struct type t = Core.atom list[@@deriving sexp_of] end
       end
     module Xi_change_property =
       struct
@@ -13915,7 +13981,7 @@ module Xinput =
           property: Core.atom ;
           type_: Core.atom ;
           num_items: u32 ;
-          items: Property_format.t }[@@deriving sexp]
+          items: Property_format.t }[@@deriving sexp_of]
         let with_request f ~deviceid  ~mode  ~property  ~type_  ~num_items 
           ~items  =
           f ({ deviceid; mode; property; type_; num_items; items } : t)
@@ -13927,7 +13993,7 @@ module Xinput =
         type t =
           {
           deviceid: [ | Device_enum.t | device_id alt] ;
-          property: Core.atom }[@@deriving sexp]
+          property: Core.atom }[@@deriving sexp_of]
         let with_request f ~deviceid  ~property  =
           f ({ deviceid; property } : t)
       end
@@ -13942,7 +14008,7 @@ module Xinput =
           property: Core.atom ;
           type_: Core.atom ;
           offset: u32 ;
-          len: u32 }[@@deriving sexp]
+          len: u32 }[@@deriving sexp_of]
         let with_request f ~deviceid  ~delete  ~property  ~type_  ~offset 
           ~len  = f ({ deviceid; delete; property; type_; offset; len } : t)
         module Reply =
@@ -13952,22 +14018,23 @@ module Xinput =
               type_: Core.atom ;
               bytes_after: u32 ;
               num_items: u32 ;
-              items: Property_format.t }[@@deriving sexp]
+              items: Property_format.t }[@@deriving sexp_of]
           end
       end
     module Xi_get_selected_events =
       struct
         let name = "XIGetSelectedEvents"
         let opcode = 60
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
-        module Reply = struct type t = event_mask list[@@deriving sexp] end
+        module Reply =
+          struct type t = event_mask list[@@deriving sexp_of] end
       end
     module Xi_barrier_release_pointer =
       struct
         let name = "XIBarrierReleasePointer"
         let opcode = 61
-        type t = barrier_release_pointer_info list[@@deriving sexp]
+        type t = barrier_release_pointer_info list[@@deriving sexp_of]
         let with_request f barriers = f (barriers : t)
       end
     module Send_extension_event =
@@ -13980,7 +14047,7 @@ module Xinput =
           device_id: u8 ;
           propagate: bool ;
           events: Event_for_send_enum.t list ;
-          classes: event_class list }[@@deriving sexp]
+          classes: event_class list }[@@deriving sexp_of]
         let with_request f ~destination  ~device_id  ~propagate  ~events 
           ~classes  =
           f ({ destination; device_id; propagate; events; classes } : t)
@@ -13994,14 +14061,14 @@ module Xprint =
         let version = (1, 0)
         let query_name = "XpExtension"
       end
-    type string8 = char[@@deriving sexp]
+    type string8 = char[@@deriving sexp_of]
     type printer = {
       name: string ;
-      description: string }[@@deriving sexp]
-    type pcontext = xid[@@deriving sexp]
+      description: string }[@@deriving sexp_of]
+    type pcontext = xid[@@deriving sexp_of]
     module Get_doc_enum =
       struct
-        type t = [ `Finished  | `Second_consumer ][@@deriving sexp]
+        type t = [ `Finished  | `Second_consumer ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Finished
@@ -14024,7 +14091,7 @@ module Xprint =
         type t =
           [ `Start_job_notify  | `End_job_notify  | `Start_doc_notify 
           | `End_doc_notify  | `Start_page_notify  | `End_page_notify ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 1 -> `Start_job_notify
@@ -14049,7 +14116,8 @@ module Xprint =
       struct
         type t =
           [ `Job_attr  | `Doc_attr  | `Page_attr  | `Printer_attr 
-          | `Server_attr  | `Medium_attr  | `Spooler_attr ][@@deriving sexp]
+          | `Server_attr  | `Medium_attr  | `Spooler_attr ][@@deriving
+                                                             sexp_of]
         let of_int : int -> [> t] =
           function
           | 1 -> `Job_attr
@@ -14079,7 +14147,7 @@ module Xprint =
             type t = {
               detail: u8 ;
               context: pcontext ;
-              cancel: bool }[@@deriving sexp]
+              cancel: bool }[@@deriving sexp_of]
             let name = "Notify"
             let number = 0
           end
@@ -14087,43 +14155,43 @@ module Xprint =
           struct
             type t = {
               detail: u8 ;
-              context: pcontext }[@@deriving sexp]
+              context: pcontext }[@@deriving sexp_of]
             let name = "AttributNotify"
             let number = 1
           end
         type t =
           [ `Notify of Notify.t  | `Attribut_notify of Attribut_notify.t ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
       end
     module Error =
       struct
         module Bad_context =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "BadContext"
             let number = 0
           end
         module Bad_sequence =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "BadSequence"
             let number = 1
           end
         type t =
           [ `Bad_context of Bad_context.t 
-          | `Bad_sequence of Bad_sequence.t ][@@deriving sexp]
+          | `Bad_sequence of Bad_sequence.t ][@@deriving sexp_of]
       end
     module Print_query_version =
       struct
         let name = "PrintQueryVersion"
         let opcode = 0
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
           struct
             type t = {
               major_version: u16 ;
-              minor_version: u16 }[@@deriving sexp]
+              minor_version: u16 }[@@deriving sexp_of]
           end
       end
     module Print_get_printer_list =
@@ -14132,16 +14200,16 @@ module Xprint =
         let opcode = 1
         type t = {
           printer_name: string ;
-          locale: string }[@@deriving sexp]
+          locale: string }[@@deriving sexp_of]
         let with_request f ~printer_name  ~locale  =
           f ({ printer_name; locale } : t)
-        module Reply = struct type t = printer list[@@deriving sexp] end
+        module Reply = struct type t = printer list[@@deriving sexp_of] end
       end
     module Print_rehash_printer_list =
       struct
         let name = "PrintRehashPrinterList"
         let opcode = 20
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
       end
     module Create_context =
@@ -14151,7 +14219,7 @@ module Xprint =
         type t = {
           context_id: u32 ;
           printer_name: string ;
-          locale: string }[@@deriving sexp]
+          locale: string }[@@deriving sexp_of]
         let with_request f ~context_id  ~printer_name  ~locale  =
           f ({ context_id; printer_name; locale } : t)
       end
@@ -14159,58 +14227,58 @@ module Xprint =
       struct
         let name = "PrintSetContext"
         let opcode = 3
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f context = f (context : t)
       end
     module Print_get_context =
       struct
         let name = "PrintGetContext"
         let opcode = 4
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = u32[@@deriving sexp] end
+        module Reply = struct type t = u32[@@deriving sexp_of] end
       end
     module Print_destroy_context =
       struct
         let name = "PrintDestroyContext"
         let opcode = 5
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f context = f (context : t)
       end
     module Print_get_screen_of_context =
       struct
         let name = "PrintGetScreenOfContext"
         let opcode = 6
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = Core.window[@@deriving sexp] end
+        module Reply = struct type t = Core.window[@@deriving sexp_of] end
       end
     module Print_start_job =
       struct
         let name = "PrintStartJob"
         let opcode = 7
-        type t = u8[@@deriving sexp]
+        type t = u8[@@deriving sexp_of]
         let with_request f output_mode = f (output_mode : t)
       end
     module Print_end_job =
       struct
         let name = "PrintEndJob"
         let opcode = 8
-        type t = bool[@@deriving sexp]
+        type t = bool[@@deriving sexp_of]
         let with_request f cancel = f (cancel : t)
       end
     module Print_start_doc =
       struct
         let name = "PrintStartDoc"
         let opcode = 9
-        type t = u8[@@deriving sexp]
+        type t = u8[@@deriving sexp_of]
         let with_request f driver_mode = f (driver_mode : t)
       end
     module Print_end_doc =
       struct
         let name = "PrintEndDoc"
         let opcode = 10
-        type t = bool[@@deriving sexp]
+        type t = bool[@@deriving sexp_of]
         let with_request f cancel = f (cancel : t)
       end
     module Print_put_document_data =
@@ -14222,7 +14290,7 @@ module Xprint =
           drawable: Core.drawable ;
           data: byte list ;
           doc_format: string ;
-          options: string }[@@deriving sexp]
+          options: string }[@@deriving sexp_of]
         let with_request f ~drawable  ~data  ~doc_format  ~options  =
           f ({ drawable; data; doc_format; options } : t)
       end
@@ -14232,7 +14300,7 @@ module Xprint =
         let opcode = 12
         type t = {
           context: pcontext ;
-          max_bytes: u32 }[@@deriving sexp]
+          max_bytes: u32 }[@@deriving sexp_of]
         let with_request f ~context  ~max_bytes  =
           f ({ context; max_bytes } : t)
         module Reply =
@@ -14240,21 +14308,21 @@ module Xprint =
             type t = {
               status_code: u32 ;
               finished_flag: u32 ;
-              data: byte list }[@@deriving sexp]
+              data: byte list }[@@deriving sexp_of]
           end
       end
     module Print_start_page =
       struct
         let name = "PrintStartPage"
         let opcode = 13
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
       end
     module Print_end_page =
       struct
         let name = "PrintEndPage"
         let opcode = 14
-        type t = bool[@@deriving sexp]
+        type t = bool[@@deriving sexp_of]
         let with_request f cancel = f (cancel : t)
       end
     module Print_select_input =
@@ -14263,7 +14331,7 @@ module Xprint =
         let opcode = 15
         type t = {
           context: pcontext ;
-          event_mask: u32 }[@@deriving sexp]
+          event_mask: u32 }[@@deriving sexp_of]
         let with_request f ~context  ~event_mask  =
           f ({ context; event_mask } : t)
       end
@@ -14271,13 +14339,13 @@ module Xprint =
       struct
         let name = "PrintInputSelected"
         let opcode = 16
-        type t = pcontext[@@deriving sexp]
+        type t = pcontext[@@deriving sexp_of]
         let with_request f context = f (context : t)
         module Reply =
           struct
             type t = {
               event_mask: u32 ;
-              all_events_mask: u32 }[@@deriving sexp]
+              all_events_mask: u32 }[@@deriving sexp_of]
           end
       end
     module Print_get_attributes =
@@ -14286,9 +14354,9 @@ module Xprint =
         let opcode = 17
         type t = {
           context: pcontext ;
-          pool: u8 }[@@deriving sexp]
+          pool: u8 }[@@deriving sexp_of]
         let with_request f ~context  ~pool  = f ({ context; pool } : t)
-        module Reply = struct type t = string[@@deriving sexp] end
+        module Reply = struct type t = string[@@deriving sexp_of] end
       end
     module Print_get_one_attributes =
       struct
@@ -14297,10 +14365,10 @@ module Xprint =
         type t = {
           context: pcontext ;
           pool: u8 ;
-          name: string }[@@deriving sexp]
+          name: string }[@@deriving sexp_of]
         let with_request f ~context  ~pool  ~name  =
           f ({ context; pool; name } : t)
-        module Reply = struct type t = string[@@deriving sexp] end
+        module Reply = struct type t = string[@@deriving sexp_of] end
       end
     module Print_set_attributes =
       struct
@@ -14312,7 +14380,7 @@ module Xprint =
           string_len: u32 ;
           pool: u8 ;
           rule: u8 ;
-          attributes: string }[@@deriving sexp]
+          attributes: string }[@@deriving sexp_of]
         let with_request f ~context  ~string_len  ~pool  ~rule  ~attributes 
           = f ({ context; string_len; pool; rule; attributes } : t)
       end
@@ -14320,7 +14388,7 @@ module Xprint =
       struct
         let name = "PrintGetPageDimensions"
         let opcode = 21
-        type t = pcontext[@@deriving sexp]
+        type t = pcontext[@@deriving sexp_of]
         let with_request f context = f (context : t)
         module Reply =
           struct
@@ -14331,16 +14399,17 @@ module Xprint =
               offset_x: u16 ;
               offset_y: u16 ;
               reproducible_width: u16 ;
-              reproducible_height: u16 }[@@deriving sexp]
+              reproducible_height: u16 }[@@deriving sexp_of]
           end
       end
     module Print_query_screens =
       struct
         let name = "PrintQueryScreens"
         let opcode = 22
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = Core.window list[@@deriving sexp] end
+        module Reply =
+          struct type t = Core.window list[@@deriving sexp_of] end
       end
     module Print_set_image_resolution =
       struct
@@ -14348,23 +14417,23 @@ module Xprint =
         let opcode = 23
         type t = {
           context: pcontext ;
-          image_resolution: u16 }[@@deriving sexp]
+          image_resolution: u16 }[@@deriving sexp_of]
         let with_request f ~context  ~image_resolution  =
           f ({ context; image_resolution } : t)
         module Reply =
           struct
             type t = {
               status: bool ;
-              previous_resolutions: u16 }[@@deriving sexp]
+              previous_resolutions: u16 }[@@deriving sexp_of]
           end
       end
     module Print_get_image_resolution =
       struct
         let name = "PrintGetImageResolution"
         let opcode = 24
-        type t = pcontext[@@deriving sexp]
+        type t = pcontext[@@deriving sexp_of]
         let with_request f context = f (context : t)
-        module Reply = struct type t = u16[@@deriving sexp] end
+        module Reply = struct type t = u16[@@deriving sexp_of] end
       end
   end
 module Xselinux =
@@ -14379,39 +14448,39 @@ module Xselinux =
       {
       name: Core.atom ;
       object_context: string ;
-      data_context: string }[@@deriving sexp]
-    module Event = struct type t = [][@@deriving sexp] end
-    module Error = struct type t = [][@@deriving sexp] end
+      data_context: string }[@@deriving sexp_of]
+    module Event = struct type t = [][@@deriving sexp_of] end
+    module Error = struct type t = [][@@deriving sexp_of] end
     module Query_version =
       struct
         let name = "QueryVersion"
         let opcode = 0
         type t = {
           client_major: u8 ;
-          client_minor: u8 }[@@deriving sexp]
+          client_minor: u8 }[@@deriving sexp_of]
         let with_request f ~client_major  ~client_minor  =
           f ({ client_major; client_minor } : t)
         module Reply =
           struct
             type t = {
               server_major: u16 ;
-              server_minor: u16 }[@@deriving sexp]
+              server_minor: u16 }[@@deriving sexp_of]
           end
       end
     module Set_device_create_context =
       struct
         let name = "SetDeviceCreateContext"
         let opcode = 1
-        type t = string[@@deriving sexp]
+        type t = string[@@deriving sexp_of]
         let with_request f context = f (context : t)
       end
     module Get_device_create_context =
       struct
         let name = "GetDeviceCreateContext"
         let opcode = 2
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = string[@@deriving sexp] end
+        module Reply = struct type t = string[@@deriving sexp_of] end
       end
     module Set_device_context =
       struct
@@ -14419,69 +14488,69 @@ module Xselinux =
         let opcode = 3
         type t = {
           device: u32 ;
-          context: string }[@@deriving sexp]
+          context: string }[@@deriving sexp_of]
         let with_request f ~device  ~context  = f ({ device; context } : t)
       end
     module Get_device_context =
       struct
         let name = "GetDeviceContext"
         let opcode = 4
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f device = f (device : t)
-        module Reply = struct type t = string[@@deriving sexp] end
+        module Reply = struct type t = string[@@deriving sexp_of] end
       end
     module Set_window_create_context =
       struct
         let name = "SetWindowCreateContext"
         let opcode = 5
-        type t = string[@@deriving sexp]
+        type t = string[@@deriving sexp_of]
         let with_request f context = f (context : t)
       end
     module Get_window_create_context =
       struct
         let name = "GetWindowCreateContext"
         let opcode = 6
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = string[@@deriving sexp] end
+        module Reply = struct type t = string[@@deriving sexp_of] end
       end
     module Get_window_context =
       struct
         let name = "GetWindowContext"
         let opcode = 7
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
-        module Reply = struct type t = string[@@deriving sexp] end
+        module Reply = struct type t = string[@@deriving sexp_of] end
       end
     module Set_property_create_context =
       struct
         let name = "SetPropertyCreateContext"
         let opcode = 8
-        type t = string[@@deriving sexp]
+        type t = string[@@deriving sexp_of]
         let with_request f context = f (context : t)
       end
     module Get_property_create_context =
       struct
         let name = "GetPropertyCreateContext"
         let opcode = 9
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = string[@@deriving sexp] end
+        module Reply = struct type t = string[@@deriving sexp_of] end
       end
     module Set_property_use_context =
       struct
         let name = "SetPropertyUseContext"
         let opcode = 10
-        type t = string[@@deriving sexp]
+        type t = string[@@deriving sexp_of]
         let with_request f context = f (context : t)
       end
     module Get_property_use_context =
       struct
         let name = "GetPropertyUseContext"
         let opcode = 11
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = string[@@deriving sexp] end
+        module Reply = struct type t = string[@@deriving sexp_of] end
       end
     module Get_property_context =
       struct
@@ -14489,9 +14558,9 @@ module Xselinux =
         let opcode = 12
         type t = {
           window: Core.window ;
-          property: Core.atom }[@@deriving sexp]
+          property: Core.atom }[@@deriving sexp_of]
         let with_request f ~window  ~property  = f ({ window; property } : t)
-        module Reply = struct type t = string[@@deriving sexp] end
+        module Reply = struct type t = string[@@deriving sexp_of] end
       end
     module Get_property_data_context =
       struct
@@ -14499,79 +14568,79 @@ module Xselinux =
         let opcode = 13
         type t = {
           window: Core.window ;
-          property: Core.atom }[@@deriving sexp]
+          property: Core.atom }[@@deriving sexp_of]
         let with_request f ~window  ~property  = f ({ window; property } : t)
-        module Reply = struct type t = string[@@deriving sexp] end
+        module Reply = struct type t = string[@@deriving sexp_of] end
       end
     module List_properties =
       struct
         let name = "ListProperties"
         let opcode = 14
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
-        module Reply = struct type t = list_item list[@@deriving sexp] end
+        module Reply = struct type t = list_item list[@@deriving sexp_of] end
       end
     module Set_selection_create_context =
       struct
         let name = "SetSelectionCreateContext"
         let opcode = 15
-        type t = string[@@deriving sexp]
+        type t = string[@@deriving sexp_of]
         let with_request f context = f (context : t)
       end
     module Get_selection_create_context =
       struct
         let name = "GetSelectionCreateContext"
         let opcode = 16
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = string[@@deriving sexp] end
+        module Reply = struct type t = string[@@deriving sexp_of] end
       end
     module Set_selection_use_context =
       struct
         let name = "SetSelectionUseContext"
         let opcode = 17
-        type t = string[@@deriving sexp]
+        type t = string[@@deriving sexp_of]
         let with_request f context = f (context : t)
       end
     module Get_selection_use_context =
       struct
         let name = "GetSelectionUseContext"
         let opcode = 18
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = string[@@deriving sexp] end
+        module Reply = struct type t = string[@@deriving sexp_of] end
       end
     module Get_selection_context =
       struct
         let name = "GetSelectionContext"
         let opcode = 19
-        type t = Core.atom[@@deriving sexp]
+        type t = Core.atom[@@deriving sexp_of]
         let with_request f selection = f (selection : t)
-        module Reply = struct type t = string[@@deriving sexp] end
+        module Reply = struct type t = string[@@deriving sexp_of] end
       end
     module Get_selection_data_context =
       struct
         let name = "GetSelectionDataContext"
         let opcode = 20
-        type t = Core.atom[@@deriving sexp]
+        type t = Core.atom[@@deriving sexp_of]
         let with_request f selection = f (selection : t)
-        module Reply = struct type t = string[@@deriving sexp] end
+        module Reply = struct type t = string[@@deriving sexp_of] end
       end
     module List_selections =
       struct
         let name = "ListSelections"
         let opcode = 21
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
-        module Reply = struct type t = list_item list[@@deriving sexp] end
+        module Reply = struct type t = list_item list[@@deriving sexp_of] end
       end
     module Get_client_context =
       struct
         let name = "GetClientContext"
         let opcode = 22
-        type t = u32[@@deriving sexp]
+        type t = u32[@@deriving sexp_of]
         let with_request f resource = f (resource : t)
-        module Reply = struct type t = string[@@deriving sexp] end
+        module Reply = struct type t = string[@@deriving sexp_of] end
       end
   end
 module Xtest =
@@ -14584,7 +14653,7 @@ module Xtest =
       end
     module Cursor_enum =
       struct
-        type t = [ `None  | `Current ][@@deriving sexp]
+        type t = [ `None  | `Current ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `None
@@ -14594,22 +14663,22 @@ module Xtest =
                 ("Invalid enum value for Cursor: " ^ (string_of_int n))
         let to_int : [< t] -> int = function | `None -> 0 | `Current -> 1
       end
-    module Event = struct type t = [][@@deriving sexp] end
-    module Error = struct type t = [][@@deriving sexp] end
+    module Event = struct type t = [][@@deriving sexp_of] end
+    module Error = struct type t = [][@@deriving sexp_of] end
     module Get_version =
       struct
         let name = "GetVersion"
         let opcode = 0
         type t = {
           major_version: u8 ;
-          minor_version: u16 }[@@deriving sexp]
+          minor_version: u16 }[@@deriving sexp_of]
         let with_request f ~major_version  ~minor_version  =
           f ({ major_version; minor_version } : t)
         module Reply =
           struct
             type t = {
               major_version: u8 ;
-              minor_version: u16 }[@@deriving sexp]
+              minor_version: u16 }[@@deriving sexp_of]
           end
       end
     module Compare_cursor =
@@ -14618,9 +14687,9 @@ module Xtest =
         let opcode = 1
         type t = {
           window: Core.window ;
-          cursor: Core.cursor }[@@deriving sexp]
+          cursor: Core.cursor }[@@deriving sexp_of]
         let with_request f ~window  ~cursor  = f ({ window; cursor } : t)
-        module Reply = struct type t = bool[@@deriving sexp] end
+        module Reply = struct type t = bool[@@deriving sexp_of] end
       end
     module Fake_input =
       struct
@@ -14634,7 +14703,7 @@ module Xtest =
           root: Core.window ;
           root_x: i16 ;
           root_y: i16 ;
-          deviceid: u8 }[@@deriving sexp]
+          deviceid: u8 }[@@deriving sexp_of]
         let with_request f ~type_  ~detail  ~time  ~root  ~root_x  ~root_y 
           ~deviceid  =
           f ({ type_; detail; time; root; root_x; root_y; deviceid } : t)
@@ -14643,7 +14712,7 @@ module Xtest =
       struct
         let name = "GrabControl"
         let opcode = 3
-        type t = bool[@@deriving sexp]
+        type t = bool[@@deriving sexp_of]
         let with_request f impervious = f (impervious : t)
       end
   end
@@ -14655,8 +14724,8 @@ module Xv =
         let version = (2, 2)
         let query_name = "XVideo"
       end
-    type port = xid[@@deriving sexp]
-    type encoding = xid[@@deriving sexp]
+    type port = xid[@@deriving sexp_of]
+    type encoding = xid[@@deriving sexp_of]
     module Type_mask =
       struct
         include (Mask_impl)(struct  end)
@@ -14668,7 +14737,7 @@ module Xv =
       end
     module Image_format_info_type_enum =
       struct
-        type t = [ `Rgb  | `Yuv ][@@deriving sexp]
+        type t = [ `Rgb  | `Yuv ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Rgb
@@ -14681,7 +14750,7 @@ module Xv =
       end
     module Image_format_info_format_enum =
       struct
-        type t = [ `Packed  | `Planar ][@@deriving sexp]
+        type t = [ `Packed  | `Planar ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Packed
@@ -14702,7 +14771,7 @@ module Xv =
       struct
         type t =
           [ `Started  | `Stopped  | `Busy  | `Preempted  | `Hard_error ]
-        [@@deriving sexp]
+        [@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Started
@@ -14724,7 +14793,7 @@ module Xv =
       end
     module Scanline_order_enum =
       struct
-        type t = [ `Top_to_bottom  | `Bottom_to_top ][@@deriving sexp]
+        type t = [ `Top_to_bottom  | `Bottom_to_top ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Top_to_bottom
@@ -14739,7 +14808,7 @@ module Xv =
       struct
         type t =
           [ `Success  | `Bad_extension  | `Already_grabbed  | `Invalid_time 
-          | `Bad_reply  | `Bad_alloc ][@@deriving sexp]
+          | `Bad_reply  | `Bad_alloc ][@@deriving sexp_of]
         let of_int : int -> [> t] =
           function
           | 0 -> `Success
@@ -14763,24 +14832,24 @@ module Xv =
       end
     type rational = {
       numerator: i32 ;
-      denominator: i32 }[@@deriving sexp]
+      denominator: i32 }[@@deriving sexp_of]
     type format = {
       visual: Core.visualid ;
-      depth: u8 }[@@deriving sexp]
+      depth: u8 }[@@deriving sexp_of]
     type adaptor_info =
       {
       base_id: port ;
       num_ports: u16 ;
       type_: Type_mask.t ;
       name: string ;
-      formats: format list }[@@deriving sexp]
+      formats: format list }[@@deriving sexp_of]
     type encoding_info =
       {
       encoding: encoding ;
       width: u16 ;
       height: u16 ;
       rate: rational ;
-      name: string }[@@deriving sexp]
+      name: string }[@@deriving sexp_of]
     type image =
       {
       id: u32 ;
@@ -14788,13 +14857,13 @@ module Xv =
       height: u16 ;
       pitches: u32 list ;
       offsets: u32 list ;
-      data: u8 list }[@@deriving sexp]
+      data: u8 list }[@@deriving sexp_of]
     type attribute_info =
       {
       flags: Attribute_flag_mask.t ;
       min: i32 ;
       max: i32 ;
-      name: string }[@@deriving sexp]
+      name: string }[@@deriving sexp_of]
     type image_format_info =
       {
       id: u32 ;
@@ -14818,7 +14887,7 @@ module Xv =
       vvert_u_period: u32 ;
       vvert_v_period: u32 ;
       vcomp_order: u8 list ;
-      vscanline_order: Scanline_order_enum.t }[@@deriving sexp]
+      vscanline_order: Scanline_order_enum.t }[@@deriving sexp_of]
     module Event =
       struct
         module Video_notify =
@@ -14828,7 +14897,7 @@ module Xv =
               reason: Video_notify_reason_enum.t ;
               time: Core.timestamp ;
               drawable: Core.drawable ;
-              port: port }[@@deriving sexp]
+              port: port }[@@deriving sexp_of]
             let name = "VideoNotify"
             let number = 0
           end
@@ -14839,65 +14908,66 @@ module Xv =
               time: Core.timestamp ;
               port: port ;
               attribute: Core.atom ;
-              value: i32 }[@@deriving sexp]
+              value: i32 }[@@deriving sexp_of]
             let name = "PortNotify"
             let number = 1
           end
         type t =
           [ `Video_notify of Video_notify.t 
-          | `Port_notify of Port_notify.t ][@@deriving sexp]
+          | `Port_notify of Port_notify.t ][@@deriving sexp_of]
       end
     module Error =
       struct
         module Bad_port =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "BadPort"
             let number = 0
           end
         module Bad_encoding =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "BadEncoding"
             let number = 1
           end
         module Bad_control =
           struct
-            type t = unit[@@deriving sexp]
+            type t = unit[@@deriving sexp_of]
             let name = "BadControl"
             let number = 2
           end
         type t =
           [ `Bad_port of Bad_port.t  | `Bad_encoding of Bad_encoding.t 
-          | `Bad_control of Bad_control.t ][@@deriving sexp]
+          | `Bad_control of Bad_control.t ][@@deriving sexp_of]
       end
     module Query_extension =
       struct
         let name = "QueryExtension"
         let opcode = 0
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
           struct type t = {
                    major: u16 ;
-                   minor: u16 }[@@deriving sexp] end
+                   minor: u16 }[@@deriving sexp_of] end
       end
     module Query_adaptors =
       struct
         let name = "QueryAdaptors"
         let opcode = 1
-        type t = Core.window[@@deriving sexp]
+        type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
-        module Reply = struct type t = adaptor_info list[@@deriving sexp] end
+        module Reply =
+          struct type t = adaptor_info list[@@deriving sexp_of] end
       end
     module Query_encodings =
       struct
         let name = "QueryEncodings"
         let opcode = 2
-        type t = port[@@deriving sexp]
+        type t = port[@@deriving sexp_of]
         let with_request f port = f (port : t)
         module Reply =
-          struct type t = encoding_info list[@@deriving sexp] end
+          struct type t = encoding_info list[@@deriving sexp_of] end
       end
     module Grab_port =
       struct
@@ -14906,10 +14976,11 @@ module Xv =
         type t =
           {
           port: port ;
-          time: [ | Core.Time_enum.t | Core.timestamp alt] }[@@deriving sexp]
+          time: [ | Core.Time_enum.t | Core.timestamp alt] }[@@deriving
+                                                              sexp_of]
         let with_request f ~port  ~time  = f ({ port; time } : t)
         module Reply =
-          struct type t = Grab_port_status_enum.t[@@deriving sexp] end
+          struct type t = Grab_port_status_enum.t[@@deriving sexp_of] end
       end
     module Ungrab_port =
       struct
@@ -14918,7 +14989,8 @@ module Xv =
         type t =
           {
           port: port ;
-          time: [ | Core.Time_enum.t | Core.timestamp alt] }[@@deriving sexp]
+          time: [ | Core.Time_enum.t | Core.timestamp alt] }[@@deriving
+                                                              sexp_of]
         let with_request f ~port  ~time  = f ({ port; time } : t)
       end
     module Put_video =
@@ -14937,7 +15009,7 @@ module Xv =
           drw_x: i16 ;
           drw_y: i16 ;
           drw_w: u16 ;
-          drw_h: u16 }[@@deriving sexp]
+          drw_h: u16 }[@@deriving sexp_of]
         let with_request f ~port  ~drawable  ~gc  ~vid_x  ~vid_y  ~vid_w 
           ~vid_h  ~drw_x  ~drw_y  ~drw_w  ~drw_h  =
           f
@@ -14971,7 +15043,7 @@ module Xv =
           drw_x: i16 ;
           drw_y: i16 ;
           drw_w: u16 ;
-          drw_h: u16 }[@@deriving sexp]
+          drw_h: u16 }[@@deriving sexp_of]
         let with_request f ~port  ~drawable  ~gc  ~vid_x  ~vid_y  ~vid_w 
           ~vid_h  ~drw_x  ~drw_y  ~drw_w  ~drw_h  =
           f
@@ -15005,7 +15077,7 @@ module Xv =
           drw_x: i16 ;
           drw_y: i16 ;
           drw_w: u16 ;
-          drw_h: u16 }[@@deriving sexp]
+          drw_h: u16 }[@@deriving sexp_of]
         let with_request f ~port  ~drawable  ~gc  ~vid_x  ~vid_y  ~vid_w 
           ~vid_h  ~drw_x  ~drw_y  ~drw_w  ~drw_h  =
           f
@@ -15039,7 +15111,7 @@ module Xv =
           drw_x: i16 ;
           drw_y: i16 ;
           drw_w: u16 ;
-          drw_h: u16 }[@@deriving sexp]
+          drw_h: u16 }[@@deriving sexp_of]
         let with_request f ~port  ~drawable  ~gc  ~vid_x  ~vid_y  ~vid_w 
           ~vid_h  ~drw_x  ~drw_y  ~drw_w  ~drw_h  =
           f
@@ -15063,7 +15135,7 @@ module Xv =
         let opcode = 9
         type t = {
           port: port ;
-          drawable: Core.drawable }[@@deriving sexp]
+          drawable: Core.drawable }[@@deriving sexp_of]
         let with_request f ~port  ~drawable  = f ({ port; drawable } : t)
       end
     module Select_video_notify =
@@ -15072,7 +15144,7 @@ module Xv =
         let opcode = 10
         type t = {
           drawable: Core.drawable ;
-          onoff: bool }[@@deriving sexp]
+          onoff: bool }[@@deriving sexp_of]
         let with_request f ~drawable  ~onoff  = f ({ drawable; onoff } : t)
       end
     module Select_port_notify =
@@ -15081,7 +15153,7 @@ module Xv =
         let opcode = 11
         type t = {
           port: port ;
-          onoff: bool }[@@deriving sexp]
+          onoff: bool }[@@deriving sexp_of]
         let with_request f ~port  ~onoff  = f ({ port; onoff } : t)
       end
     module Query_best_size =
@@ -15095,14 +15167,14 @@ module Xv =
           vid_h: u16 ;
           drw_w: u16 ;
           drw_h: u16 ;
-          motion: bool }[@@deriving sexp]
+          motion: bool }[@@deriving sexp_of]
         let with_request f ~port  ~vid_w  ~vid_h  ~drw_w  ~drw_h  ~motion  =
           f ({ port; vid_w; vid_h; drw_w; drw_h; motion } : t)
         module Reply =
           struct
             type t = {
               actual_width: u16 ;
-              actual_height: u16 }[@@deriving sexp]
+              actual_height: u16 }[@@deriving sexp_of]
           end
       end
     module Set_port_attribute =
@@ -15112,7 +15184,7 @@ module Xv =
         type t = {
           port: port ;
           attribute: Core.atom ;
-          value: i32 }[@@deriving sexp]
+          value: i32 }[@@deriving sexp_of]
         let with_request f ~port  ~attribute  ~value  =
           f ({ port; attribute; value } : t)
       end
@@ -15122,31 +15194,31 @@ module Xv =
         let opcode = 14
         type t = {
           port: port ;
-          attribute: Core.atom }[@@deriving sexp]
+          attribute: Core.atom }[@@deriving sexp_of]
         let with_request f ~port  ~attribute  = f ({ port; attribute } : t)
-        module Reply = struct type t = i32[@@deriving sexp] end
+        module Reply = struct type t = i32[@@deriving sexp_of] end
       end
     module Query_port_attributes =
       struct
         let name = "QueryPortAttributes"
         let opcode = 15
-        type t = port[@@deriving sexp]
+        type t = port[@@deriving sexp_of]
         let with_request f port = f (port : t)
         module Reply =
           struct
             type t = {
               text_size: u32 ;
-              attributes: attribute_info list }[@@deriving sexp]
+              attributes: attribute_info list }[@@deriving sexp_of]
           end
       end
     module List_image_formats =
       struct
         let name = "ListImageFormats"
         let opcode = 16
-        type t = port[@@deriving sexp]
+        type t = port[@@deriving sexp_of]
         let with_request f port = f (port : t)
         module Reply =
-          struct type t = image_format_info list[@@deriving sexp] end
+          struct type t = image_format_info list[@@deriving sexp_of] end
       end
     module Query_image_attributes =
       struct
@@ -15156,7 +15228,7 @@ module Xv =
           port: port ;
           id: u32 ;
           width: u16 ;
-          height: u16 }[@@deriving sexp]
+          height: u16 }[@@deriving sexp_of]
         let with_request f ~port  ~id  ~width  ~height  =
           f ({ port; id; width; height } : t)
         module Reply =
@@ -15167,7 +15239,7 @@ module Xv =
               width: u16 ;
               height: u16 ;
               pitches: u32 list ;
-              offsets: u32 list }[@@deriving sexp]
+              offsets: u32 list }[@@deriving sexp_of]
           end
       end
     module Put_image =
@@ -15190,7 +15262,7 @@ module Xv =
           drw_h: u16 ;
           width: u16 ;
           height: u16 ;
-          data: u8 list }[@@deriving sexp]
+          data: u8 list }[@@deriving sexp_of]
         let with_request f ~port  ~drawable  ~gc  ~id  ~src_x  ~src_y  ~src_w
            ~src_h  ~drw_x  ~drw_y  ~drw_w  ~drw_h  ~width  ~height  ~data  =
           f
@@ -15234,7 +15306,7 @@ module Xv =
           drw_h: u16 ;
           width: u16 ;
           height: u16 ;
-          send_event: u8 }[@@deriving sexp]
+          send_event: u8 }[@@deriving sexp_of]
         let with_request f ~port  ~drawable  ~gc  ~shmseg  ~id  ~offset 
           ~src_x  ~src_y  ~src_w  ~src_h  ~drw_x  ~drw_y  ~drw_w  ~drw_h 
           ~width  ~height  ~send_event  =
@@ -15268,9 +15340,9 @@ module Xvmc =
         let version = (1, 1)
         let query_name = "XVideo-MotionCompensation"
       end
-    type context = xid[@@deriving sexp]
-    type surface = xid[@@deriving sexp]
-    type subpicture = xid[@@deriving sexp]
+    type context = xid[@@deriving sexp_of]
+    type surface = xid[@@deriving sexp_of]
+    type subpicture = xid[@@deriving sexp_of]
     type surface_info =
       {
       id: surface ;
@@ -15281,27 +15353,28 @@ module Xvmc =
       subpicture_max_width: u16 ;
       subpicture_max_height: u16 ;
       mc_type: u32 ;
-      flags: u32 }[@@deriving sexp]
-    module Event = struct type t = [][@@deriving sexp] end
-    module Error = struct type t = [][@@deriving sexp] end
+      flags: u32 }[@@deriving sexp_of]
+    module Event = struct type t = [][@@deriving sexp_of] end
+    module Error = struct type t = [][@@deriving sexp_of] end
     module Query_version =
       struct
         let name = "QueryVersion"
         let opcode = 0
-        type t = unit[@@deriving sexp]
+        type t = unit[@@deriving sexp_of]
         let with_request f () = f (() : t)
         module Reply =
           struct type t = {
                    major: u32 ;
-                   minor: u32 }[@@deriving sexp] end
+                   minor: u32 }[@@deriving sexp_of] end
       end
     module List_surface_types =
       struct
         let name = "ListSurfaceTypes"
         let opcode = 1
-        type t = Xv.port[@@deriving sexp]
+        type t = Xv.port[@@deriving sexp_of]
         let with_request f port_id = f (port_id : t)
-        module Reply = struct type t = surface_info list[@@deriving sexp] end
+        module Reply =
+          struct type t = surface_info list[@@deriving sexp_of] end
       end
     module Create_context =
       struct
@@ -15314,7 +15387,7 @@ module Xvmc =
           surface_id: surface ;
           width: u16 ;
           height: u16 ;
-          flags: u32 }[@@deriving sexp]
+          flags: u32 }[@@deriving sexp_of]
         let with_request f ~context_id  ~port_id  ~surface_id  ~width 
           ~height  ~flags  =
           f ({ context_id; port_id; surface_id; width; height; flags } : t)
@@ -15325,14 +15398,14 @@ module Xvmc =
               width_actual: u16 ;
               height_actual: u16 ;
               flags_return: u32 ;
-              priv_data: u32 list }[@@deriving sexp]
+              priv_data: u32 list }[@@deriving sexp_of]
           end
       end
     module Destroy_context =
       struct
         let name = "DestroyContext"
         let opcode = 3
-        type t = context[@@deriving sexp]
+        type t = context[@@deriving sexp_of]
         let with_request f context_id = f (context_id : t)
       end
     module Create_surface =
@@ -15341,16 +15414,16 @@ module Xvmc =
         let opcode = 4
         type t = {
           surface_id: surface ;
-          context_id: context }[@@deriving sexp]
+          context_id: context }[@@deriving sexp_of]
         let with_request f ~surface_id  ~context_id  =
           f ({ surface_id; context_id } : t)
-        module Reply = struct type t = u32 list[@@deriving sexp] end
+        module Reply = struct type t = u32 list[@@deriving sexp_of] end
       end
     module Destroy_surface =
       struct
         let name = "DestroySurface"
         let opcode = 5
-        type t = surface[@@deriving sexp]
+        type t = surface[@@deriving sexp_of]
         let with_request f surface_id = f (surface_id : t)
       end
     module Create_subpicture =
@@ -15363,7 +15436,7 @@ module Xvmc =
           context: context ;
           xvimage_id: u32 ;
           width: u16 ;
-          height: u16 }[@@deriving sexp]
+          height: u16 }[@@deriving sexp_of]
         let with_request f ~subpicture_id  ~context  ~xvimage_id  ~width 
           ~height  =
           f ({ subpicture_id; context; xvimage_id; width; height } : t)
@@ -15376,14 +15449,14 @@ module Xvmc =
               num_palette_entries: u16 ;
               entry_bytes: u16 ;
               component_order: u8 list ;
-              priv_data: u32 list }[@@deriving sexp]
+              priv_data: u32 list }[@@deriving sexp_of]
           end
       end
     module Destroy_subpicture =
       struct
         let name = "DestroySubpicture"
         let opcode = 7
-        type t = subpicture[@@deriving sexp]
+        type t = subpicture[@@deriving sexp_of]
         let with_request f subpicture_id = f (subpicture_id : t)
       end
     module List_subpicture_types =
@@ -15392,10 +15465,10 @@ module Xvmc =
         let opcode = 8
         type t = {
           port_id: Xv.port ;
-          surface_id: surface }[@@deriving sexp]
+          surface_id: surface }[@@deriving sexp_of]
         let with_request f ~port_id  ~surface_id  =
           f ({ port_id; surface_id } : t)
         module Reply =
-          struct type t = Xv.image_format_info list[@@deriving sexp] end
+          struct type t = Xv.image_format_info list[@@deriving sexp_of] end
       end
   end
