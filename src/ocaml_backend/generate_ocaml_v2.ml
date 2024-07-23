@@ -562,46 +562,46 @@ module Type = struct
 
   let str_requests ~ctx ~loc decls =
     List.filter_map (stri_request ~ctx ~loc) decls
-end
 
-let stri_module ~loc module_ =
-  let declarations, ctx =
+  let stri_module ~loc module_ =
+    let declarations, ctx =
+      match module_ with
+      | Core decls -> (decls, "xproto")
+      | Extension { declarations; file_name; _ } -> (declarations, file_name)
+    in
+    let ctx = Cm ctx in
+    let decls = List.concat_map (stri_decl ~ctx ~loc) declarations in
+    let events = stri_events ~ctx ~loc declarations in
+    let errors = stri_errors ~ctx ~loc declarations in
+    let event_structs = str_event_structs ~ctx ~loc declarations in
+    let requests = List.filter_map (stri_request ~ctx ~loc) declarations in
+    let header =
+      [%str
+        [@@@ocaml.warning "-12"]
+        [@@@ocaml.warning "-73"]
+        [@@@ocaml.warning "-11"]
+
+        open Types [@@ocaml.warning "-33"]
+        open Sexplib.Conv [@@ocaml.warning "-33"]
+        open Util [@@ocaml.warning "-33"]]
+    in
+    let body = decls @ [ events ] @ event_structs @ [ errors ] @ requests in
     match module_ with
-    | Core decls -> (decls, "xproto")
-    | Extension { declarations; file_name; _ } -> (declarations, file_name)
-  in
-  let ctx = Cm ctx in
-  let decls = List.concat_map (Type.stri_decl ~ctx ~loc) declarations in
-  let events = Type.stri_events ~ctx ~loc declarations in
-  let errors = Type.stri_errors ~ctx ~loc declarations in
-  let event_structs = Type.str_event_structs ~ctx ~loc declarations in
-  let requests = List.filter_map (Type.stri_request ~ctx ~loc) declarations in
-  let header =
-    [%str
-      [@@@ocaml.warning "-12"]
-      [@@@ocaml.warning "-73"]
-      [@@@ocaml.warning "-11"]
+    | Core _declarations -> header @ body
+    | Extension { name; query_name; version = major, minor; _ } ->
+        let name_t =
+          let name = with_loc ~loc name in
+          let name = Ast_helper.Rf.mk ~loc (Rtag (name, true, [])) in
+          Ast_helper.Typ.variant ~loc [ name ] Closed None
+        in
+        let meta =
+          [%str
+            module Meta = struct
+              type t = [%t name_t]
 
-      open Types [@@ocaml.warning "-33"]
-      open Sexplib.Conv [@@ocaml.warning "-33"]
-      open Util [@@ocaml.warning "-33"]]
-  in
-  let body = decls @ [ events ] @ event_structs @ [ errors ] @ requests in
-  match module_ with
-  | Core _declarations -> header @ body
-  | Extension { name; query_name; version = major, minor; _ } ->
-      let name_t =
-        let name = with_loc ~loc name in
-        let name = Ast_helper.Rf.mk ~loc (Rtag (name, true, [])) in
-        Ast_helper.Typ.variant ~loc [ name ] Closed None
-      in
-      let meta =
-        [%str
-          module Meta = struct
-            type t = [%t name_t]
-
-            let version = ([%e e_int major], [%e e_int minor])
-            let query_name = [%e e_str ~loc query_name]
-          end]
-      in
-      header @ meta @ body
+              let version = ([%e e_int major], [%e e_int minor])
+              let query_name = [%e e_str ~loc query_name]
+            end]
+        in
+        header @ meta @ body
+end
