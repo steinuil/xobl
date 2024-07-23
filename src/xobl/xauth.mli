@@ -40,4 +40,3 @@ val select_best :
   entry list ->
   auth option
 (** Find an authentication entry matching [family], [address] and [display]. *)
-

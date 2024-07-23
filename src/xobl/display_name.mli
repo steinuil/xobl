@@ -16,4 +16,3 @@ val parse : string -> t option
 
 val from_env : unit -> t option
 (** Shortcut to get the DISPLAY env variable and parse it into a Display_name.t *)
-
