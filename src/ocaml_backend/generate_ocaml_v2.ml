@@ -617,6 +617,7 @@ module Protocol = struct
              stri_module ~loc name body)
     in
     [%str
+      [@@@ocamlformat "disable"]
       [@@@ocaml.warning "-12"]
       [@@@ocaml.warning "-73"]
       [@@@ocaml.warning "-11"]

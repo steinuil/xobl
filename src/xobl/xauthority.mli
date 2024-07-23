@@ -1,3 +1,5 @@
+(** Functions for handling Xauthority files and entries. *)
+
 val path_from_env : unit -> string option
 (** Get the path of the .Xauthority file from (in order of precedence):
     - $XAUTHORITY
@@ -28,15 +30,11 @@ type entry = {
 
 val parse : string -> entry list
 
-type auth = { auth_name : string; auth_data : string }
-
-val default_auth : auth
-
 val select_best :
   family:Family.t ->
   address:string ->
-  display:int option ->
+  ?display:int ->
   ?types:string list ->
   entry list ->
-  auth option
-(** Find an authentication entry matching [family], [address] and [display]. *)
+  Authorization.t option
+(** Find an Authorization entry matching [family], [address] and [display]. *)

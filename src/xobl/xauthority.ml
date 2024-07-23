@@ -129,12 +129,9 @@ let%expect_test _ =
       (xau_type MIT-MAGIC-COOKIE-1)
       (xau_data "?\2465iW\231?\232\176%\017kcu\198\144"))) |}]
 
-type auth = { auth_name : string; auth_data : string }
-
-let default_auth = { auth_name = ""; auth_data = "" }
 let mit_magic_cookie_1 = "MIT-MAGIC-COOKIE-1"
 
-let select_best ~family ~address ~display ?(types = [ mit_magic_cookie_1 ])
+let select_best ~family ~address ?display ?(types = [ mit_magic_cookie_1 ])
     entries =
   assert (List.length types > 0);
   let matches =
@@ -158,5 +155,5 @@ let select_best ~family ~address ~display ?(types = [ mit_magic_cookie_1 ])
   ListLabels.find_map types ~f:(fun typ ->
       ListLabels.find_map matches ~f:(fun { xau_type; xau_data; _ } ->
           if typ = xau_type then
-            Some { auth_name = xau_type; auth_data = xau_data }
+            Some Authorization.{ name = xau_type; data = xau_data }
           else None))
