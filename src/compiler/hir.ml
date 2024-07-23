@@ -130,6 +130,15 @@ type mask_additional_value =
 
 type enum_item = string * int64 [@@deriving show, sexp]
 
+type request = {
+  name : string;
+  opcode : int;
+  combine_adjacent : bool;
+  fields : field list;
+  reply : field list option;
+}
+[@@deriving show, sexp]
+
 type declaration =
   | Type_alias of { name : string; type_ : type_ }
   | Struct of {
@@ -165,13 +174,7 @@ type declaration =
       fields : field list;
     }
   | Error of { name : string; number : int; fields : field list }
-  | Request of {
-      name : string;
-      opcode : int;
-      combine_adjacent : bool;
-      fields : field list;
-      reply : field list option;
-    }
+  | Request of request
 [@@deriving show, sexp]
 
 type xcb =
