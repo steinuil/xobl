@@ -52,13 +52,8 @@ let list ~item ~len buf =
   in
   loop [] len
 
-(* let decode_enum :
-        't.
-        decode:(Buf.t -> 't) ->
-        int_of_t:('t -> int) ->
-        enum_of_int:(int -> 'enum) ->
-        Buf.t ->
-        'enum =
-   fun ~decode ~int_of_t ~enum_of_int buf ->
-    let t = decode buf in
-    enum_of_int (int_of_t t) *)
+let alt_enum ~int_of_t ~enum_of_int t =
+  let i = int_of_t t in
+  match enum_of_int i with
+  | enum -> enum
+  | exception Invalid_argument _ -> `Alt t
