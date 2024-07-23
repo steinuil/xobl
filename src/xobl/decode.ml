@@ -25,8 +25,8 @@ let i32 cur = decode Bytes.get_int32_le ~size:4 cur
 let u32 cur = decode Bytes.get_int32_le ~size:4 cur
 let i64 = decode Bytes.get_int64_le ~size:8
 let u64 = decode Bytes.get_int64_le ~size:8
-let float cur = i64 cur |> Int64.float_of_bits
-let double = float
+let float cur = i32 cur |> Int32.float_of_bits
+let double cur = i64 cur |> Int64.float_of_bits
 let char = decode Bytes.get ~size:1
 let void = decode Bytes.get ~size:1
 let byte = char
@@ -51,9 +51,3 @@ let list ~item ~len cur =
       loop (v :: ls) (len - 1)
   in
   loop [] len
-
-let alt_enum ~int_of_t ~enum_of_int t =
-  let i = int_of_t t in
-  match enum_of_int i with
-  | enum -> enum
-  | exception Invalid_argument _ -> `Alt t
