@@ -129,8 +129,60 @@ type mask_additional_value =
 [@@deriving show, sexp]
 
 type enum_item = string * int64 [@@deriving show, sexp]
+type type_alias = { name : string; type_ : type_ } [@@deriving show, sexp]
 
-type request = {
+type struct_decl = {
+  name : string;
+  fields : field list;
+  external_params : external_param list;
+}
+[@@deriving show, sexp]
+
+type event_struct_decl = { name : string; events : ident list }
+[@@deriving show, sexp]
+
+type variant_decl = {
+  name : string;
+  items : variant_item list;
+  external_params : external_param list;
+}
+[@@deriving show, sexp]
+
+type enum_decl = { name : string; items : enum_item list }
+[@@deriving show, sexp]
+
+type mask_decl = {
+  name : string;
+  items : (string * int) list;
+  additional_values : mask_additional_value;
+}
+[@@deriving show, sexp]
+
+type event_copy_decl = {
+  name : string;
+  event : ident;
+  number : int;
+  is_serializable : bool;
+}
+[@@deriving show, sexp]
+
+type error_copy_decl = { name : string; error : ident; number : int }
+[@@deriving show, sexp]
+
+type event_decl = {
+  name : string;
+  number : int;
+  is_generic : bool;
+  is_serializable : bool;
+  no_sequence_number : bool;
+  fields : field list;
+}
+[@@deriving show, sexp]
+
+type error_decl = { name : string; number : int; fields : field list }
+[@@deriving show, sexp]
+
+type request_decl = {
   name : string;
   opcode : int;
   combine_adjacent : bool;
@@ -140,41 +192,17 @@ type request = {
 [@@deriving show, sexp]
 
 type declaration =
-  | Type_alias of { name : string; type_ : type_ }
-  | Struct of {
-      name : string;
-      fields : field list;
-      external_params : external_param list;
-    }
-  | Event_struct of { name : string; events : ident list }
-  | Variant of {
-      name : string;
-      items : variant_item list;
-      external_params : external_param list;
-    }
-  | Enum of { name : string; items : enum_item list }
-  | Mask of {
-      name : string;
-      items : (string * int) list;
-      additional_values : mask_additional_value;
-    }
-  | Event_copy of {
-      name : string;
-      event : ident;
-      number : int;
-      is_serializable : bool;
-    }
-  | Error_copy of { name : string; error : ident; number : int }
-  | Event of {
-      name : string;
-      number : int;
-      is_generic : bool;
-      is_serializable : bool;
-      no_sequence_number : bool;
-      fields : field list;
-    }
-  | Error of { name : string; number : int; fields : field list }
-  | Request of request
+  | Type_alias of type_alias
+  | Struct of struct_decl
+  | Event_struct of event_struct_decl
+  | Variant of variant_decl
+  | Enum of enum_decl
+  | Mask of mask_decl
+  | Event_copy of event_copy_decl
+  | Error_copy of error_copy_decl
+  | Event of event_decl
+  | Error of error_decl
+  | Request of request_decl
 [@@deriving show, sexp]
 
 type xcb =
