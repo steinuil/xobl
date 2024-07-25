@@ -24,7 +24,7 @@ type u64 = int64 [@@deriving sexp]
 type nonrec float = float [@@deriving sexp]
 type double = float [@@deriving sexp]
 type file_descr = File_descr of int [@@deriving sexp]
-type xid = Xid of int32 [@@deriving sexp]
+type xid = Xid of u32 [@@deriving sexp]
 
 (** A string where characters are two bytes *)
 type utf16_string = Utf16_string of string [@@deriving sexp]

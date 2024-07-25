@@ -46,6 +46,13 @@ let primitive_of_type = function
   | Type_ref (_, prim) -> prim
   | Type_union _ -> Some Xid
 
+let prim_of_type_exn = function
+  | Type_primitive prim | Type_ref (_, Some prim) -> prim
+  | Type_union _ -> Xid
+  | Type_ref (ident, None) ->
+      Format.kasprintf unexpected "not a primitive: %a" Sexplib.Sexp.pp_hum
+        (sexp_of_ident ident)
+
 let prim_to_string = function
   | Void -> "void"
   | Char -> "char"
@@ -156,6 +163,13 @@ let t_poly ~loc items =
   let items = List.map (rf_poly_item ~loc) items in
   Ast_helper.Typ.variant ~loc items Closed None
 
+let stri_module ?suffix ~loc name body =
+  let name = Ident.caml ?suffix name in
+  Ast_helper.Str.module_ ~loc
+    (Ast_helper.Mb.mk ~loc
+       (Some name |> with_loc ~loc)
+       (Ast_helper.Mod.structure ~loc body))
+
 module Protocol = struct
   let a_deriving_sexp ~loc =
     Ast_helper.Attr.mk (with_loc ~loc "deriving") (PStr [%str sexp_of])
@@ -252,13 +266,6 @@ module Protocol = struct
     | Struct { name; fields; _ } ->
         stri_record ~ctx ~loc name fields |> Option.some
     | _ -> None
-
-  let stri_module ?suffix ~loc name body =
-    let name = Ident.caml ?suffix name in
-    Ast_helper.Str.module_ ~loc
-      (Ast_helper.Mb.mk ~loc
-         (Some name |> with_loc ~loc)
-         (Ast_helper.Mod.structure ~loc body))
 
   let rf_enum_item ~loc (name, _) =
     let name = Ident.caml name |> with_loc ~loc in
@@ -628,15 +635,167 @@ module Protocol = struct
     @ protocols
 end
 
-(* module Codecs = struct
-     let stri_module ~loc module_ =
-       let declarations, ctx =
-         match module_ with
-         | Core decls -> (decls, "xproto")
-         | Extension { declarations; file_name; _ } -> (declarations, file_name)
-       in
-       let ctx = Cm ctx in
+module Codecs = struct
+  let e_prim ~loc = function
+    | Bool -> [%expr Decode.bool]
+    | Int8 -> [%expr Decode.i8]
+    | Card8 -> [%expr Decode.u8]
+    | Int16 -> [%expr Decode.i16]
+    | Card16 -> [%expr Decode.u16]
+    | Int32 -> [%expr Decode.i32]
+    | Card32 -> [%expr Decode.u32]
+    | Card64 -> [%expr Decode.u64]
+    | Void -> [%expr Decode.void]
+    | Char -> [%expr Decode.char]
+    | Byte -> [%expr Decode.byte]
+    | Float -> [%expr Decode.float]
+    | Double -> [%expr Decode.double]
+    | Fd -> [%expr Decode.file_descr]
+    | Xid -> [%expr Decode.xid]
 
-       [%str
-       ]
-   end *)
+  let e_prim_to_int ~loc = function
+    | Bool -> [%expr Conv.To_int.bool]
+    | Int8 -> [%expr Conv.To_int.i8]
+    | Card8 -> [%expr Conv.To_int.u8]
+    | Int16 -> [%expr Conv.To_int.i16]
+    | Card16 -> [%expr Conv.To_int.u16]
+    | Int32 -> [%expr Conv.To_int.i32]
+    | Card32 -> [%expr Conv.To_int.u32]
+    | Card64 -> [%expr Conv.To_int.u64]
+    | Void -> [%expr Conv.To_int.void]
+    | Char -> [%expr Conv.To_int.char]
+    | Byte -> [%expr Conv.To_int.byte]
+    | Float -> [%expr Conv.To_int.float]
+    | Double -> [%expr Conv.To_int.double]
+    | Fd -> [%expr Conv.To_int.file_descr]
+    | Xid -> [%expr Conv.To_int.xid]
+
+  let e_prim_to_int64 ~loc = function
+    | Bool -> [%expr Conv.To_int64.bool]
+    | Int8 -> [%expr Conv.To_int64.i8]
+    | Card8 -> [%expr Conv.To_int64.u8]
+    | Int16 -> [%expr Conv.To_int64.i16]
+    | Card16 -> [%expr Conv.To_int64.u16]
+    | Int32 -> [%expr Conv.To_int64.i32]
+    | Card32 -> [%expr Conv.To_int64.u32]
+    | Card64 -> [%expr Conv.To_int64.u64]
+    | Void -> [%expr Conv.To_int64.void]
+    | Char -> [%expr Conv.To_int64.char]
+    | Byte -> [%expr Conv.To_int64.byte]
+    | Float -> [%expr Conv.To_int64.float]
+    | Double -> [%expr Conv.To_int64.double]
+    | Fd -> [%expr Conv.To_int64.file_descr]
+    | Xid -> [%expr Conv.To_int64.xid]
+
+  let e_type ~ctx ~loc = function
+    | Type_primitive prim | Type_ref (_, Some prim) -> e_prim ~loc prim
+    | Type_union _ -> e_prim ~loc Xid
+    | Type_ref (ident, _) -> e_ident ~prefix:"decode" ~ctx ~loc ident
+
+  let e_field_type ~ctx:(Cm current_module as ctx) ~loc { ft_type; ft_allowed }
+      =
+    let decode_t = e_type ~ctx ~loc ft_type in
+    match ft_allowed with
+    | None -> [%expr [%e decode_t] buf]
+    | Some (Allowed_enum enum) ->
+        let int_of_t = prim_of_type_exn ft_type |> e_prim ~loc in
+        let enum_of_int =
+          let id =
+            if current_module = enum.id_module then
+              Ldot (Lident (Ident.caml ~suffix:"enum" enum.id_name), "of_int")
+            else
+              Ldot
+                ( Ldot
+                    ( Lident (Ident.caml (xproto_to_core enum.id_module)),
+                      Ident.caml ~suffix:"enum" enum.id_name ),
+                  "of_int" )
+          in
+          id |> with_loc ~loc |> Exp.ident ~loc
+        in
+        [%expr [%e enum_of_int] ([%e int_of_t] ([%e decode_t] buf))]
+    | Some (Allowed_alt_enum enum) ->
+        let int_of_t = prim_of_type_exn ft_type |> e_prim ~loc in
+        let enum_of_int =
+          let id =
+            if current_module = enum.id_module then
+              Ldot (Lident (Ident.caml ~suffix:"enum" enum.id_name), "of_int")
+            else
+              Ldot
+                ( Ldot
+                    ( Lident (Ident.caml (xproto_to_core enum.id_module)),
+                      Ident.caml ~suffix:"enum" enum.id_name ),
+                  "of_int" )
+          in
+          id |> with_loc ~loc |> Exp.ident ~loc
+        in
+        [%expr
+          Conv.alt_enum ~enum_of_int:[%e enum_of_int] ~int_of_t:[%e int_of_t]
+            ([%e decode_t] buf)]
+    | Some (Allowed_mask mask | Allowed_alt_mask mask) ->
+        let int64_of_t = prim_of_type_exn ft_type |> e_prim ~loc in
+        let mask_of_int64 =
+          let id =
+            if current_module = mask.id_module then
+              Ldot (Lident (Ident.caml ~suffix:"mask" mask.id_name), "of_int64")
+            else
+              Ldot
+                ( Ldot
+                    ( Lident (Ident.caml (xproto_to_core mask.id_module)),
+                      Ident.caml ~suffix:"mask" mask.id_name ),
+                  "of_int64" )
+          in
+          id |> with_loc ~loc |> Exp.ident ~loc
+        in
+        [%expr [%e mask_of_int64] ([%e int64_of_t] ([%e decode_t] buf))]
+
+  let e_field ~ctx ~loc = function
+    | Field { name; type_ } ->
+        let body = e_field_type ~ctx ~loc type_ in
+        [ `Let (name, body) ]
+    | Field_pad { pad = Pad_bytes n; _ } ->
+        [ `Seq [%expr Decode.pad buf [%e e_int n]] ]
+    | f -> Printf.ksprintf unexpected "field: %s" (show_field f)
+
+  let stri_declaration ~ctx ~loc = function
+    | Struct { name; fields = _; _ } ->
+        [%stri let [%p p_id ~loc ~prefix:"decode" name] = fun _buf -> ()] :: []
+    | Type_alias { name; type_ } when primitive_of_type type_ = None ->
+        let body = e_type ~ctx ~loc type_ in
+        [%stri let [%p p_id ~loc ~prefix:"decode" name] = [%e body]] :: []
+    | _ -> []
+
+  let stri_protocol ~loc proto =
+    let declarations, ctx =
+      match proto with
+      | Core decls -> (decls, "xproto")
+      | Extension { declarations; file_name; _ } -> (declarations, file_name)
+    in
+    let ctx = Cm ctx in
+    List.concat_map (stri_declaration ~ctx ~loc) declarations
+
+  let str_protocols ~loc protos =
+    let protos =
+      protos
+      |> List.map (fun proto ->
+             let name, t_name =
+               match proto with
+               | Core _ -> ("Core_codec", "Core")
+               | Extension { file_name; _ } ->
+                   ( String.capitalize_ascii file_name ^ "_codec",
+                     String.capitalize_ascii file_name )
+             in
+             let body = stri_protocol ~loc proto in
+             let open_ =
+               Ldot (Lident "Protocol", String.capitalize_ascii t_name)
+               |> with_loc ~loc |> Mod.ident |> Opn.mk |> Str.open_
+             in
+             stri_module ~loc name (open_ :: body))
+    in
+    [%str
+      [@@@ocamlformat "disable"]
+      [@@@ocaml.warning "-33"]
+      (* [@@@ocaml.warning "-12"] *)
+      (* [@@@ocaml.warning "-73"] *)
+      (* [@@@ocaml.warning "-11"] *)]
+    @ protos
+end

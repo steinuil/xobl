@@ -9,6 +9,7 @@
   decode
   encode
   protocol
+  codec
   authorization
   xauthority
   display_name
@@ -18,7 +19,7 @@
 
 (rule
  (mode promote)
- (targets protocol.ml)
+ (targets protocol.ml codec.ml)
  (deps
   %{project_root}/xml-xcb/xproto.xml
   %{project_root}/xml-xcb/bigreq.xml
