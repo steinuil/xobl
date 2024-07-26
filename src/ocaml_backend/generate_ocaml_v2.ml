@@ -846,6 +846,17 @@ module Codecs = struct
         | _ -> not_implemented "multiple param_refs")
     | f -> Printf.ksprintf unexpected "field: %s" (show_field f)
 
+  let e_result_fields_record ~loc fields =
+    let fields = names_of_visible_fields fields in
+    match fields with
+    | [] -> [%expr ()]
+    | [ name ] -> e_id ~loc name
+    | _ ->
+        let fields =
+          List.map (fun name -> (lid ~loc name, e_id ~loc name)) fields
+        in
+        Ast_helper.Exp.record ~loc fields None
+
   let e_fields ~ctx ~loc fields result =
     let fields = List.concat_map (e_field ~ctx ~loc) fields in
     ListLabels.fold_right fields ~init:result ~f:(fun field expr ->
@@ -855,14 +866,53 @@ module Codecs = struct
             Ast_helper.Exp.let_ ~loc Nonrecursive [ binding ] expr
         | `Seq body -> Ast_helper.Exp.sequence ~loc body expr)
 
+  let e_variant ~ctx ~loc name items external_params =
+    let type_ = t_id ~parent:(Ident.caml name) ~loc "t" in
+    let items =
+      ListLabels.map items ~f:(fun { vi_name; vi_tag; vi_fields; _ } ->
+          let result =
+            Ast_helper.Exp.variant ~loc
+              (Ident.caml ~sanitize:"Property_" vi_name)
+              (Some (e_result_fields_record ~loc vi_fields))
+          in
+          Ast_helper.Exp.case
+            (p_int ~loc (Int64.to_int vi_tag))
+            (e_fields ~ctx ~loc vi_fields result))
+    in
+    let items =
+      items
+      @ [
+          Ast_helper.Exp.case
+            [%pat? n]
+            [%expr invalid_arg ("Invalid enum value: " ^ string_of_int n)];
+        ]
+    in
+    let body = Ast_helper.Exp.match_ ~loc (e_id ~loc "tag") items in
+    match external_params with
+    | [] -> [%expr fun buf ~tag : [%t type_] -> [%e body]]
+    | [ param ] ->
+        let param = p_id ~loc ~prefix:"ext" param.ep_name in
+        [%expr fun buf ~tag [%p param] : [%t type_] -> [%e body]]
+    | _ -> not_implemented "multiple param_refs"
+
   let stri_declaration ~ctx ~loc = function
     | Struct { name; fields; external_params = [] } ->
-        let body = e_fields ~ctx ~loc fields [%expr ()] in
-        [%stri let [%p p_id ~loc ~prefix:"decode" name] = fun buf -> [%e body]]
+        let result = e_result_fields_record ~loc fields in
+        let body = e_fields ~ctx ~loc fields result in
+        let result_t = t_id ~loc name in
+        [%stri
+          let [%p p_id ~loc ~prefix:"decode" name] =
+           fun buf : [%t result_t] -> [%e body]]
         :: []
     | Type_alias { name; type_ } when primitive_of_type type_ = None ->
         let body = e_type ~ctx ~loc type_ in
         [%stri let [%p p_id ~loc ~prefix:"decode" name] = [%e body]] :: []
+    | Variant { name; items; external_params } ->
+        let variant = e_variant ~ctx ~loc name items external_params in
+        [%stri
+          let [%p p_id ~loc ~prefix:"decode" ~suffix:"variant" name] =
+            [%e variant]]
+        :: []
     | _ -> []
 
   let stri_protocol ~loc proto =
