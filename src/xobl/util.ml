@@ -25,4 +25,4 @@ module Mask_impl () : Types.Mask = struct
   let t_of_sexp n = int32_of_sexp n |> Optint.of_unsigned_int32
 end
 
-let ( %> ) f g x = g (f x)
+let[@inline] ( %> ) f g x = g (f x)
