@@ -670,22 +670,30 @@ module Codecs = struct
     | Fd -> [%expr Conv.To_int.file_descr]
     | Xid -> [%expr Conv.To_int.xid]
 
-  let e_prim_to_int64 ~loc = function
-    | Bool -> [%expr Conv.To_int64.bool]
-    | Int8 -> [%expr Conv.To_int64.i8]
-    | Card8 -> [%expr Conv.To_int64.u8]
-    | Int16 -> [%expr Conv.To_int64.i16]
-    | Card16 -> [%expr Conv.To_int64.u16]
-    | Int32 -> [%expr Conv.To_int64.i32]
-    | Card32 -> [%expr Conv.To_int64.u32]
-    | Card64 -> [%expr Conv.To_int64.u64]
-    | Void -> [%expr Conv.To_int64.void]
-    | Char -> [%expr Conv.To_int64.char]
-    | Byte -> [%expr Conv.To_int64.byte]
-    | Float -> [%expr Conv.To_int64.float]
-    | Double -> [%expr Conv.To_int64.double]
-    | Fd -> [%expr Conv.To_int64.file_descr]
-    | Xid -> [%expr Conv.To_int64.xid]
+  let e_prim_to_i32 ~loc = function
+    | Bool -> [%expr Conv.To_i32.bool]
+    | Int8 -> [%expr Conv.To_i32.i8]
+    | Card8 -> [%expr Conv.To_i32.u8]
+    | Int16 -> [%expr Conv.To_i32.i16]
+    | Card16 -> [%expr Conv.To_i32.u16]
+    | Int32 -> [%expr Conv.To_i32.i32]
+    | Card32 -> [%expr Conv.To_i32.u32]
+    | Card64 -> [%expr Conv.To_i32.u64]
+    | Void -> [%expr Conv.To_i32.void]
+    | Char -> [%expr Conv.To_i32.char]
+    | Byte -> [%expr Conv.To_i32.byte]
+    | Float -> [%expr Conv.To_i32.float]
+    | Double -> [%expr Conv.To_i32.double]
+    | Fd -> [%expr Conv.To_i32.file_descr]
+    | Xid -> [%expr Conv.To_i32.xid]
+
+  let e_ident ?prefix ?suffix ~ctx:(Cm current_module) ~loc
+      { id_module; id_name } =
+    if current_module = id_module then e_id ?prefix ?suffix ~loc id_name
+    else
+      e_id ?prefix ?suffix
+        ~parent:(Ident.caml (xproto_to_core id_module) ^ "_codec")
+        ~loc id_name
 
   let e_type ~ctx ~loc = function
     | Type_primitive prim | Type_ref (_, Some prim) -> e_prim ~loc prim
@@ -696,9 +704,9 @@ module Codecs = struct
       =
     let decode_t = e_type ~ctx ~loc ft_type in
     match ft_allowed with
-    | None -> [%expr [%e decode_t] buf]
+    | None -> decode_t
     | Some (Allowed_enum enum) ->
-        let int_of_t = prim_of_type_exn ft_type |> e_prim ~loc in
+        let int_of_t = prim_of_type_exn ft_type |> e_prim_to_int ~loc in
         let enum_of_int =
           let id =
             if current_module = enum.id_module then
@@ -712,9 +720,9 @@ module Codecs = struct
           in
           id |> with_loc ~loc |> Exp.ident ~loc
         in
-        [%expr [%e enum_of_int] ([%e int_of_t] ([%e decode_t] buf))]
+        [%expr [%e decode_t] %> [%e int_of_t] %> [%e enum_of_int]]
     | Some (Allowed_alt_enum enum) ->
-        let int_of_t = prim_of_type_exn ft_type |> e_prim ~loc in
+        let int_of_t = prim_of_type_exn ft_type |> e_prim_to_int ~loc in
         let enum_of_int =
           let id =
             if current_module = enum.id_module then
@@ -729,36 +737,129 @@ module Codecs = struct
           id |> with_loc ~loc |> Exp.ident ~loc
         in
         [%expr
-          Conv.alt_enum ~enum_of_int:[%e enum_of_int] ~int_of_t:[%e int_of_t]
-            ([%e decode_t] buf)]
+          [%e decode_t]
+          %> Conv.alt_enum ~enum_of_int:[%e enum_of_int] ~int_of_t:[%e int_of_t]]
     | Some (Allowed_mask mask | Allowed_alt_mask mask) ->
-        let int64_of_t = prim_of_type_exn ft_type |> e_prim ~loc in
-        let mask_of_int64 =
+        let i32_of_t = prim_of_type_exn ft_type |> e_prim_to_i32 ~loc in
+        let mask_of_int32 =
           let id =
             if current_module = mask.id_module then
-              Ldot (Lident (Ident.caml ~suffix:"mask" mask.id_name), "of_int64")
+              Ldot (Lident (Ident.caml ~suffix:"mask" mask.id_name), "of_int32")
             else
               Ldot
                 ( Ldot
                     ( Lident (Ident.caml (xproto_to_core mask.id_module)),
                       Ident.caml ~suffix:"mask" mask.id_name ),
-                  "of_int64" )
+                  "of_int32" )
           in
           id |> with_loc ~loc |> Exp.ident ~loc
         in
-        [%expr [%e mask_of_int64] ([%e int64_of_t] ([%e decode_t] buf))]
+        [%expr [%e decode_t] %> [%e i32_of_t] %> [%e mask_of_int32]]
+
+  let e_list_type ~ctx ~loc = function
+    | {
+        ft_type = Type_ref ({ id_module = "xproto"; id_name = "CHAR2B" }, None);
+        ft_allowed = None;
+      } ->
+        [%expr Decode.utf16_string]
+    | t -> (
+        match primitive_of_type t.ft_type with
+        | Some Char | Some Void -> [%expr Decode.string]
+        | Some _ | None ->
+            let decode_t = e_field_type ~ctx ~loc t in
+            [%expr Decode.list ~item:[%e decode_t]])
+
+  let e_binop ~loc = function
+    | Add -> [%expr ( + )]
+    | Sub -> [%expr ( - )]
+    | Div -> [%expr ( / )]
+    | Mul -> [%expr ( * )]
+    | Bit_and -> [%expr ( land )]
+    | Bit_left_shift -> [%expr ( lsl )]
+
+  let rec e_expression ?it ~loc = function
+    | Binop (op, e1, e2) ->
+        [%expr
+          [%e e_binop ~loc op] [%e e_expression ?it ~loc e1]
+            [%e e_expression ?it ~loc e2]]
+    | Unop (Bit_not, e) -> [%expr lnot [%e e_expression ?it ~loc e]]
+    | Field_ref f -> (
+        match it with None -> e_id ~loc f | Some it -> e_id ~loc ~parent:it f)
+    | List_element_ref -> (
+        match it with
+        | None -> unexpected "List_element_ref outside of a Sum_of expression"
+        | Some it -> e_id ~loc it)
+    | Enum_ref _ -> unexpected "Enum_ref"
+    | Param_ref { param = name; type_ = _ } -> e_id ~prefix:"ext" ~loc name
+    | Pop_count e -> [%expr pop_count [%e e_expression ?it ~loc e]]
+    | Expr_value v -> e_int (Int64.to_int v)
+    | Expr_bit b -> [%expr 1 lsl [%e e_int b]]
+    | Sum_of { field; by_expr = None } ->
+        [%expr List.fold_left ( + ) 0 [%e e_id ~loc field]]
+    | Sum_of { field; by_expr = Some by_expr } ->
+        [%expr
+          sum_of_expr
+            (fun list_element_ref ->
+              [%e e_expression ~it:"list_element_ref" ~loc by_expr])
+            [%e e_id ~loc field]]
 
   let e_field ~ctx ~loc = function
     | Field { name; type_ } ->
         let body = e_field_type ~ctx ~loc type_ in
-        [ `Let (name, body) ]
+        [ `Let (name, [%expr [%e body] buf]) ]
     | Field_pad { pad = Pad_bytes n; _ } ->
         [ `Seq [%expr Decode.pad buf [%e e_int n]] ]
+    | Field_pad { pad = Pad_align n; _ } ->
+        [ `Seq [%expr Decode.pad buf [%e e_int n]] ]
+    | Field_list_simple { name; type_; length } ->
+        let decode_ls = e_list_type ~ctx ~loc type_ in
+        let len = e_id ~loc length in
+        [ `Let (name, [%expr [%e decode_ls] ~len:[%e len] buf]) ]
+    | Field_list_length { name; type_; expr = None; _ } ->
+        let body = e_type ~ctx ~loc type_ in
+        let int_of_t = prim_of_type_exn type_ |> e_prim_to_int ~loc in
+        [ `Let (name, [%expr [%e int_of_t] ([%e body] buf)]) ]
+    | Field_list_length { name; type_; expr = Some expr; _ } ->
+        let body = e_type ~ctx ~loc type_ in
+        let int_of_t = prim_of_type_exn type_ |> e_prim_to_int ~loc in
+        [
+          `Let (name, [%expr [%e int_of_t] ([%e body] buf)]);
+          `Let (name, e_expression ~loc expr);
+        ]
+    | Field_list { name; type_; length = Some length } ->
+        let len = e_expression ~loc length in
+        let body = e_list_type ~ctx ~loc type_ in
+        [ `Let (name, [%expr [%e body] ~len:[%e len] buf]) ]
+    | Field_variant_tag { field_name; variant = _; type_ } ->
+        let body = e_type ~ctx ~loc type_ in
+        [ `Let (field_name ^ "_tag", [%expr [%e body] buf]) ]
+    | Field_variant { name; variant; external_params } -> (
+        let body =
+          e_ident ~prefix:"decode" ~suffix:"variant" ~ctx ~loc variant
+        in
+        let tag = e_id ~suffix:"tag" ~loc name in
+        match external_params with
+        | [] -> [ `Let (name, [%expr [%e body] ~tag:[%e tag] buf]) ]
+        | [ param ] ->
+            let param = e_id ~loc param.ep_name in
+            [ `Let (name, [%expr [%e body] ~tag:[%e tag] buf [%e param]]) ]
+        | _ -> not_implemented "multiple param_refs")
     | f -> Printf.ksprintf unexpected "field: %s" (show_field f)
 
+  let e_fields ~ctx ~loc fields result =
+    let fields = List.concat_map (e_field ~ctx ~loc) fields in
+    ListLabels.fold_right fields ~init:result ~f:(fun field expr ->
+        match field with
+        | `Let (name, body) ->
+            let binding = vb ~loc name body in
+            Ast_helper.Exp.let_ ~loc Nonrecursive [ binding ] expr
+        | `Seq body -> Ast_helper.Exp.sequence ~loc body expr)
+
   let stri_declaration ~ctx ~loc = function
-    | Struct { name; fields = _; _ } ->
-        [%stri let [%p p_id ~loc ~prefix:"decode" name] = fun _buf -> ()] :: []
+    | Struct { name; fields; external_params = [] } ->
+        let body = e_fields ~ctx ~loc fields [%expr ()] in
+        [%stri let [%p p_id ~loc ~prefix:"decode" name] = fun buf -> [%e body]]
+        :: []
     | Type_alias { name; type_ } when primitive_of_type type_ = None ->
         let body = e_type ~ctx ~loc type_ in
         [%stri let [%p p_id ~loc ~prefix:"decode" name] = [%e body]] :: []
@@ -794,6 +895,9 @@ module Codecs = struct
     [%str
       [@@@ocamlformat "disable"]
       [@@@ocaml.warning "-33"]
+
+      open Util
+      open Protocol
       (* [@@@ocaml.warning "-12"] *)
       (* [@@@ocaml.warning "-73"] *)
       (* [@@@ocaml.warning "-11"] *)]
