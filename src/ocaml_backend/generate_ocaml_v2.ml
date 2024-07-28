@@ -913,6 +913,13 @@ module Codecs = struct
           let [%p p_id ~loc ~prefix:"decode" ~suffix:"variant" name] =
             [%e variant]]
         :: []
+    (* | Event { name; fields; _ } ->
+        let result = e_result_fields_record ~loc fields in
+        let body = e_fields ~ctx ~loc fields result in
+        [%stri
+          let [%p p_id ~loc ~prefix:"decode" ~suffix:"event" name] =
+           fun buf -> [%e body]]
+        :: [] *)
     | _ -> []
 
   let stri_protocol ~loc proto =
@@ -947,9 +954,6 @@ module Codecs = struct
       [@@@ocaml.warning "-33"]
 
       open Util
-      open Protocol
-      (* [@@@ocaml.warning "-12"] *)
-      (* [@@@ocaml.warning "-73"] *)
-      (* [@@@ocaml.warning "-11"] *)]
+      open Protocol]
     @ protos
 end
