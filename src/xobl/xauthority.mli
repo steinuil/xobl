@@ -32,6 +32,8 @@ val to_authorization : entry -> Authorization.t
 
 val parse : string -> entry list
 
+val to_string : entry -> string
+
 val select_best :
   family:Family.t ->
   address:string ->

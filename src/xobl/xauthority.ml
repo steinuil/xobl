@@ -48,6 +48,18 @@ module Family = struct
     | 252 -> Local_host
     | 0xFFFF -> Wild
     | f -> Printf.ksprintf invalid_arg "Unknown family: %#x" f
+
+  let to_int = function
+    | Internet -> 0
+    | Decnet -> 1
+    | Chaos -> 2
+    | Server_interpreted -> 5
+    | Internet6 -> 6
+    | Local -> 256
+    | Netname -> 254
+    | Krb5_principal -> 253
+    | Local_host -> 252
+    | Wild -> 0xFFFF
 end
 
 type entry = {
@@ -131,6 +143,32 @@ let%expect_test _ =
      ((xau_family Wild) (xau_address sick-hack) (xau_dpynum ())
       (xau_type MIT-MAGIC-COOKIE-1)
       (xau_data "?\2465iW\231?\232\176%\017kcu\198\144"))) |}]
+
+let to_string { xau_family; xau_address; xau_dpynum; xau_type; xau_data } =
+  let open Buffer in
+  let buf = create 256 in
+  add_uint16_le buf (Family.to_int xau_family);
+  add_uint16_le buf (String.length xau_address);
+  add_string buf xau_address;
+  (match xau_dpynum with
+  | Some dpynum ->
+      let dpynum = string_of_int dpynum in
+      add_uint16_le buf (String.length dpynum);
+      add_string buf dpynum
+  | None -> add_uint16_le buf 0);
+  add_uint16_le buf (String.length xau_type);
+  add_string buf xau_type;
+  add_uint16_le buf (String.length xau_data);
+  add_string buf xau_data;
+  contents buf
+
+let%test _ =
+  let data =
+    "\x01\x00\x00\tsick-hack\x00\x00\x00\x12MIT-MAGIC-COOKIE-1\x00\x10?\xF65iW\xE7?\xE8\xB0%\x11kcu\xC6\x90\xFF\xFF\x00\tsick-hack\x00\x00\x00\x12MIT-MAGIC-COOKIE-1\x00\x10?\xF65iW\xE7?\xE8\xB0%\x11kcu\xC6\x90"
+  in
+  let auth = parse data in
+  let entry = List.map to_string auth |> String.concat "" in
+  data = entry
 
 let mit_magic_cookie_1 = "MIT-MAGIC-COOKIE-1"
 
