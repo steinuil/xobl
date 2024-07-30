@@ -84,11 +84,9 @@ let read_byte inp =
   Char.code byte
 
 let read_string inp len =
-  try
-    let str = String.sub inp.data inp.pos len in
-    inp.pos <- inp.pos + len;
-    str
-  with Invalid_argument _ -> raise End_of_file
+  let str = String.sub inp.data inp.pos len in
+  inp.pos <- inp.pos + len;
+  str
 
 let read_uint16_be inp =
   let b0 = read_byte inp in
@@ -127,13 +125,13 @@ let rec read_all_entries stream acc =
   if cursor_is_empty stream then List.rev acc else read_all_entries stream acc
 
 let read_all_entries stream = read_all_entries stream []
-let parse data = read_all_entries { data; pos = 0 }
+let of_string data = read_all_entries { data; pos = 0 }
 
 let%expect_test _ =
   let data =
     "\x01\x00\x00\tsick-hack\x00\x00\x00\x12MIT-MAGIC-COOKIE-1\x00\x10?\xF65iW\xE7?\xE8\xB0%\x11kcu\xC6\x90\xFF\xFF\x00\tsick-hack\x00\x00\x00\x12MIT-MAGIC-COOKIE-1\x00\x10?\xF65iW\xE7?\xE8\xB0%\x11kcu\xC6\x90"
   in
-  let auth = parse data in
+  let auth = of_string data in
   print_string @@ Sexplib.Sexp.to_string_hum @@ sexp_of_list sexp_of_entry auth;
   [%expect
     {|
@@ -166,7 +164,7 @@ let%test _ =
   let data =
     "\x01\x00\x00\tsick-hack\x00\x00\x00\x12MIT-MAGIC-COOKIE-1\x00\x10?\xF65iW\xE7?\xE8\xB0%\x11kcu\xC6\x90\xFF\xFF\x00\tsick-hack\x00\x00\x00\x12MIT-MAGIC-COOKIE-1\x00\x10?\xF65iW\xE7?\xE8\xB0%\x11kcu\xC6\x90"
   in
-  let auth = parse data in
+  let auth = of_string data in
   let entry = List.map to_string auth |> String.concat "" in
   data = entry
 

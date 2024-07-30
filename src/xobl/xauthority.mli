@@ -30,9 +30,14 @@ type entry = {
 
 val to_authorization : entry -> Authorization.t
 
-val parse : string -> entry list
+val of_string : string -> entry list
+(** Parse a string containing a list of Xauthority entries.
+    @raises Invalid_argument *)
 
 val to_string : entry -> string
+(** Serialize an Xauthority entry to a string.
+    To serialize a list of Xauthority entries, serialize all entries
+    to a list of strings and concat them. *)
 
 val select_best :
   family:Family.t ->
