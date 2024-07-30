@@ -28,6 +28,8 @@ type entry = {
   xau_data : string;
 }
 
+val to_authorization : entry -> Authorization.t
+
 val parse : string -> entry list
 
 val select_best :

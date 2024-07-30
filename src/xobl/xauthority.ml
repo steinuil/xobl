@@ -59,6 +59,9 @@ type entry = {
 }
 [@@deriving sexp]
 
+let to_authorization { xau_type; xau_data; _ } =
+  Authorization.{ name = xau_type; data = xau_data }
+
 type cursor = { data : string; mutable pos : int }
 
 let cursor_is_empty { data; pos } = pos >= String.length data
@@ -153,7 +156,5 @@ let select_best ~family ~address ?display ?(types = [ mit_magic_cookie_1 ])
       entries
   in
   ListLabels.find_map types ~f:(fun typ ->
-      ListLabels.find_map matches ~f:(fun { xau_type; xau_data; _ } ->
-          if typ = xau_type then
-            Some Authorization.{ name = xau_type; data = xau_data }
-          else None))
+      ListLabels.find_map matches ~f:(fun entry ->
+          if typ = entry.xau_type then Some (to_authorization entry) else None))
