@@ -193,7 +193,7 @@ module Protocol = struct
     | Some (Allowed_alt_enum enum) ->
         let type_ = t_type ~ctx ~loc ft_type in
         let enum = t_module_ident ~suffix:"enum" ~ctx ~loc enum "t" in
-        [%type: [ [%t enum] | [%t type_] alt ]]
+        [%type: [ [%t enum] | `Alt of [%t type_] ]]
     | Some (Allowed_alt_mask mask) ->
         t_module_ident ~suffix:"mask" ~ctx ~loc mask "t"
 

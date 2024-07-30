@@ -1512,7 +1512,7 @@ module Core =
               time: timestamp ;
               root: window ;
               event: window ;
-              child: [ | Window_enum.t | window alt] ;
+              child: [ | Window_enum.t | `Alt of window ] ;
               root_x: i16 ;
               root_y: i16 ;
               event_x: i16 ;
@@ -1536,7 +1536,7 @@ module Core =
               time: timestamp ;
               root: window ;
               event: window ;
-              child: [ | Window_enum.t | window alt] ;
+              child: [ | Window_enum.t | `Alt of window ] ;
               root_x: i16 ;
               root_y: i16 ;
               event_x: i16 ;
@@ -1560,7 +1560,7 @@ module Core =
               time: timestamp ;
               root: window ;
               event: window ;
-              child: [ | Window_enum.t | window alt] ;
+              child: [ | Window_enum.t | `Alt of window ] ;
               root_x: i16 ;
               root_y: i16 ;
               event_x: i16 ;
@@ -1578,7 +1578,7 @@ module Core =
               time: timestamp ;
               root: window ;
               event: window ;
-              child: [ | Window_enum.t | window alt] ;
+              child: [ | Window_enum.t | `Alt of window ] ;
               root_x: i16 ;
               root_y: i16 ;
               event_x: i16 ;
@@ -1732,7 +1732,7 @@ module Core =
               {
               event: window ;
               window: window ;
-              above_sibling: [ | Window_enum.t | window alt] ;
+              above_sibling: [ | Window_enum.t | `Alt of window ] ;
               x: i16 ;
               y: i16 ;
               width: u16 ;
@@ -1749,7 +1749,7 @@ module Core =
               stack_mode: Stack_mode_enum.t ;
               parent: window ;
               window: window ;
-              sibling: [ | Window_enum.t | window alt] ;
+              sibling: [ | Window_enum.t | `Alt of window ] ;
               x: i16 ;
               y: i16 ;
               width: u16 ;
@@ -1817,12 +1817,13 @@ module Core =
           struct
             type t =
               {
-              time: [ | Time_enum.t | timestamp alt] ;
+              time: [ | Time_enum.t | `Alt of timestamp ] ;
               owner: window ;
               requestor: window ;
               selection: atom ;
               target: atom ;
-              property: [ | Atom_enum.t | atom alt] }[@@deriving sexp_of]
+              property: [ | Atom_enum.t | `Alt of atom ] }[@@deriving
+                                                            sexp_of]
             let name = "SelectionRequest"
             let number = 30
           end
@@ -1830,11 +1831,12 @@ module Core =
           struct
             type t =
               {
-              time: [ | Time_enum.t | timestamp alt] ;
+              time: [ | Time_enum.t | `Alt of timestamp ] ;
               requestor: window ;
               selection: atom ;
               target: atom ;
-              property: [ | Atom_enum.t | atom alt] }[@@deriving sexp_of]
+              property: [ | Atom_enum.t | `Alt of atom ] }[@@deriving
+                                                            sexp_of]
             let name = "SelectionNotify"
             let number = 31
           end
@@ -1843,7 +1845,7 @@ module Core =
             type t =
               {
               window: window ;
-              colormap: [ | Colormap_enum.t | colormap alt] ;
+              colormap: [ | Colormap_enum.t | `Alt of colormap ] ;
               new_: bool ;
               state: Colormap_state_enum.t }[@@deriving sexp_of]
             let name = "ColormapNotify"
@@ -2036,9 +2038,9 @@ module Core =
           border_width: u16 ;
           class_: Window_class_enum.t ;
           visual: visualid ;
-          background_pixmap: [ | Back_pixmap_enum.t | pixmap alt] option ;
+          background_pixmap: [ | Back_pixmap_enum.t | `Alt of pixmap ] option ;
           background_pixel: u32 option ;
-          border_pixmap: [ | Pixmap_enum.t | pixmap alt] option ;
+          border_pixmap: [ | Pixmap_enum.t | `Alt of pixmap ] option ;
           border_pixel: u32 option ;
           bit_gravity: Bit_gravity_enum.t option ;
           win_gravity: Win_gravity_enum.t option ;
@@ -2049,9 +2051,9 @@ module Core =
           save_under: bool32 option ;
           event_mask: Event_mask.t option ;
           do_not_propogate_mask: Event_mask.t option ;
-          colormap: [ | Colormap_enum.t | colormap alt] option ;
-          cursor: [ | Cursor_enum.t | cursor alt] option }[@@deriving
-                                                            sexp_of]
+          colormap: [ | Colormap_enum.t | `Alt of colormap ] option ;
+          cursor: [ | Cursor_enum.t | `Alt of cursor ] option }[@@deriving
+                                                                 sexp_of]
         let with_request f ~depth  ~wid  ~parent  ~x  ~y  ~width  ~height 
           ~border_width  ~class_  ~visual  ?background_pixmap 
           ?background_pixel  ?border_pixmap  ?border_pixel  ?bit_gravity 
@@ -2094,9 +2096,9 @@ module Core =
         type t =
           {
           window: window ;
-          background_pixmap: [ | Back_pixmap_enum.t | pixmap alt] option ;
+          background_pixmap: [ | Back_pixmap_enum.t | `Alt of pixmap ] option ;
           background_pixel: u32 option ;
-          border_pixmap: [ | Pixmap_enum.t | pixmap alt] option ;
+          border_pixmap: [ | Pixmap_enum.t | `Alt of pixmap ] option ;
           border_pixel: u32 option ;
           bit_gravity: Bit_gravity_enum.t option ;
           win_gravity: Win_gravity_enum.t option ;
@@ -2107,9 +2109,9 @@ module Core =
           save_under: bool32 option ;
           event_mask: Event_mask.t option ;
           do_not_propogate_mask: Event_mask.t option ;
-          colormap: [ | Colormap_enum.t | colormap alt] option ;
-          cursor: [ | Cursor_enum.t | cursor alt] option }[@@deriving
-                                                            sexp_of]
+          colormap: [ | Colormap_enum.t | `Alt of colormap ] option ;
+          cursor: [ | Cursor_enum.t | `Alt of cursor ] option }[@@deriving
+                                                                 sexp_of]
         let with_request f ~window  ?background_pixmap  ?background_pixel 
           ?border_pixmap  ?border_pixel  ?bit_gravity  ?win_gravity 
           ?backing_store  ?backing_planes  ?backing_pixel  ?override_redirect
@@ -2156,7 +2158,7 @@ module Core =
               map_is_installed: bool ;
               map_state: Map_state_enum.t ;
               override_redirect: bool ;
-              colormap: [ | Colormap_enum.t | colormap alt] ;
+              colormap: [ | Colormap_enum.t | `Alt of colormap ] ;
               all_event_masks: Event_mask.t ;
               your_event_mask: Event_mask.t ;
               do_not_propagate_mask: Event_mask.t }[@@deriving sexp_of]
@@ -2237,7 +2239,7 @@ module Core =
           width: u32 option ;
           height: u32 option ;
           border_width: u32 option ;
-          sibling: [ | Window_enum.t | window alt] option ;
+          sibling: [ | Window_enum.t | `Alt of window ] option ;
           stack_mode: Stack_mode_enum.t option }[@@deriving sexp_of]
         let with_request f ~window  ?x  ?y  ?width  ?height  ?border_width 
           ?sibling  ?stack_mode  () =
@@ -2285,7 +2287,7 @@ module Core =
             type t =
               {
               root: window ;
-              parent: [ | Window_enum.t | window alt] ;
+              parent: [ | Window_enum.t | `Alt of window ] ;
               children: window list }[@@deriving sexp_of]
           end
       end
@@ -2299,7 +2301,9 @@ module Core =
         let with_request f ~only_if_exists  ~name  =
           f ({ only_if_exists; name } : t)
         module Reply =
-          struct type t = [ | Atom_enum.t | atom alt][@@deriving sexp_of] end
+          struct
+            type t = [ | Atom_enum.t | `Alt of atom ][@@deriving sexp_of]
+          end
       end
     module Get_atom_name =
       struct
@@ -2344,7 +2348,7 @@ module Core =
           delete: bool ;
           window: window ;
           property: atom ;
-          type_: [ | Get_property_type_enum.t | atom alt] ;
+          type_: [ | Get_property_type_enum.t | `Alt of atom ] ;
           long_offset: u32 ;
           long_length: u32 }[@@deriving sexp_of]
         let with_request f ~delete  ~window  ~property  ~type_  ~long_offset 
@@ -2377,9 +2381,9 @@ module Core =
         let opcode = 22
         type t =
           {
-          owner: [ | Window_enum.t | window alt] ;
+          owner: [ | Window_enum.t | `Alt of window ] ;
           selection: atom ;
-          time: [ | Time_enum.t | timestamp alt] }[@@deriving sexp_of]
+          time: [ | Time_enum.t | `Alt of timestamp ] }[@@deriving sexp_of]
         let with_request f ~owner  ~selection  ~time  =
           f ({ owner; selection; time } : t)
       end
@@ -2391,7 +2395,7 @@ module Core =
         let with_request f selection = f (selection : t)
         module Reply =
           struct
-            type t = [ | Window_enum.t | window alt][@@deriving sexp_of]
+            type t = [ | Window_enum.t | `Alt of window ][@@deriving sexp_of]
           end
       end
     module Convert_selection =
@@ -2403,8 +2407,8 @@ module Core =
           requestor: window ;
           selection: atom ;
           target: atom ;
-          property: [ | Atom_enum.t | atom alt] ;
-          time: [ | Time_enum.t | timestamp alt] }[@@deriving sexp_of]
+          property: [ | Atom_enum.t | `Alt of atom ] ;
+          time: [ | Time_enum.t | `Alt of timestamp ] }[@@deriving sexp_of]
         let with_request f ~requestor  ~selection  ~target  ~property  ~time 
           = f ({ requestor; selection; target; property; time } : t)
       end
@@ -2415,7 +2419,7 @@ module Core =
         type t =
           {
           propagate: bool ;
-          destination: [ | Send_event_dest_enum.t | window alt] ;
+          destination: [ | Send_event_dest_enum.t | `Alt of window ] ;
           event_mask: Event_mask.t ;
           event: string }[@@deriving sexp_of]
         let with_request f ~propagate  ~destination  ~event_mask  ~event  =
@@ -2432,9 +2436,9 @@ module Core =
           event_mask: Event_mask.t ;
           pointer_mode: Grab_mode_enum.t ;
           keyboard_mode: Grab_mode_enum.t ;
-          confine_to: [ | Window_enum.t | window alt] ;
-          cursor: [ | Cursor_enum.t | cursor alt] ;
-          time: [ | Time_enum.t | timestamp alt] }[@@deriving sexp_of]
+          confine_to: [ | Window_enum.t | `Alt of window ] ;
+          cursor: [ | Cursor_enum.t | `Alt of cursor ] ;
+          time: [ | Time_enum.t | `Alt of timestamp ] }[@@deriving sexp_of]
         let with_request f ~owner_events  ~grab_window  ~event_mask 
           ~pointer_mode  ~keyboard_mode  ~confine_to  ~cursor  ~time  =
           f
@@ -2455,7 +2459,7 @@ module Core =
       struct
         let name = "UngrabPointer"
         let opcode = 27
-        type t = [ | Time_enum.t | timestamp alt][@@deriving sexp_of]
+        type t = [ | Time_enum.t | `Alt of timestamp ][@@deriving sexp_of]
         let with_request f time = f (time : t)
       end
     module Grab_button =
@@ -2469,8 +2473,8 @@ module Core =
           event_mask: Event_mask.t ;
           pointer_mode: Grab_mode_enum.t ;
           keyboard_mode: Grab_mode_enum.t ;
-          confine_to: [ | Window_enum.t | window alt] ;
-          cursor: [ | Cursor_enum.t | cursor alt] ;
+          confine_to: [ | Window_enum.t | `Alt of window ] ;
+          cursor: [ | Cursor_enum.t | `Alt of cursor ] ;
           button: Button_index_enum.t ;
           modifiers: Mod_mask.t }[@@deriving sexp_of]
         let with_request f ~owner_events  ~grab_window  ~event_mask 
@@ -2507,8 +2511,8 @@ module Core =
         let opcode = 30
         type t =
           {
-          cursor: [ | Cursor_enum.t | cursor alt] ;
-          time: [ | Time_enum.t | timestamp alt] ;
+          cursor: [ | Cursor_enum.t | `Alt of cursor ] ;
+          time: [ | Time_enum.t | `Alt of timestamp ] ;
           event_mask: Event_mask.t }[@@deriving sexp_of]
         let with_request f ~cursor  ~time  ~event_mask  =
           f ({ cursor; time; event_mask } : t)
@@ -2521,7 +2525,7 @@ module Core =
           {
           owner_events: bool ;
           grab_window: window ;
-          time: [ | Time_enum.t | timestamp alt] ;
+          time: [ | Time_enum.t | `Alt of timestamp ] ;
           pointer_mode: Grab_mode_enum.t ;
           keyboard_mode: Grab_mode_enum.t }[@@deriving sexp_of]
         let with_request f ~owner_events  ~grab_window  ~time  ~pointer_mode 
@@ -2536,7 +2540,7 @@ module Core =
       struct
         let name = "UngrabKeyboard"
         let opcode = 32
-        type t = [ | Time_enum.t | timestamp alt][@@deriving sexp_of]
+        type t = [ | Time_enum.t | `Alt of timestamp ][@@deriving sexp_of]
         let with_request f time = f (time : t)
       end
     module Grab_key =
@@ -2548,7 +2552,7 @@ module Core =
           owner_events: bool ;
           grab_window: window ;
           modifiers: Mod_mask.t ;
-          key: [ | Grab_enum.t | keycode alt] ;
+          key: [ | Grab_enum.t | `Alt of keycode ] ;
           pointer_mode: Grab_mode_enum.t ;
           keyboard_mode: Grab_mode_enum.t }[@@deriving sexp_of]
         let with_request f ~owner_events  ~grab_window  ~modifiers  ~key 
@@ -2569,7 +2573,7 @@ module Core =
         let opcode = 34
         type t =
           {
-          key: [ | Grab_enum.t | keycode alt] ;
+          key: [ | Grab_enum.t | `Alt of keycode ] ;
           grab_window: window ;
           modifiers: Mod_mask.t }[@@deriving sexp_of]
         let with_request f ~key  ~grab_window  ~modifiers  =
@@ -2582,7 +2586,7 @@ module Core =
         type t =
           {
           mode: Allow_enum.t ;
-          time: [ | Time_enum.t | timestamp alt] }[@@deriving sexp_of]
+          time: [ | Time_enum.t | `Alt of timestamp ] }[@@deriving sexp_of]
         let with_request f ~mode  ~time  = f ({ mode; time } : t)
       end
     module Grab_server =
@@ -2611,7 +2615,7 @@ module Core =
               {
               same_screen: bool ;
               root: window ;
-              child: [ | Window_enum.t | window alt] ;
+              child: [ | Window_enum.t | `Alt of window ] ;
               root_x: i16 ;
               root_y: i16 ;
               win_x: i16 ;
@@ -2626,8 +2630,8 @@ module Core =
         type t =
           {
           window: window ;
-          start: [ | Time_enum.t | timestamp alt] ;
-          stop: [ | Time_enum.t | timestamp alt] }[@@deriving sexp_of]
+          start: [ | Time_enum.t | `Alt of timestamp ] ;
+          stop: [ | Time_enum.t | `Alt of timestamp ] }[@@deriving sexp_of]
         let with_request f ~window  ~start  ~stop  =
           f ({ window; start; stop } : t)
         module Reply = struct type t = timecoord list[@@deriving sexp_of] end
@@ -2649,7 +2653,7 @@ module Core =
             type t =
               {
               same_screen: bool ;
-              child: [ | Window_enum.t | window alt] ;
+              child: [ | Window_enum.t | `Alt of window ] ;
               dst_x: i16 ;
               dst_y: i16 }[@@deriving sexp_of]
           end
@@ -2660,8 +2664,8 @@ module Core =
         let opcode = 41
         type t =
           {
-          src_window: [ | Window_enum.t | window alt] ;
-          dst_window: [ | Window_enum.t | window alt] ;
+          src_window: [ | Window_enum.t | `Alt of window ] ;
+          dst_window: [ | Window_enum.t | `Alt of window ] ;
           src_x: i16 ;
           src_y: i16 ;
           src_width: u16 ;
@@ -2689,8 +2693,8 @@ module Core =
         type t =
           {
           revert_to: Input_focus_enum.t ;
-          focus: [ | Input_focus_enum.t | window alt] ;
-          time: [ | Time_enum.t | timestamp alt] }[@@deriving sexp_of]
+          focus: [ | Input_focus_enum.t | `Alt of window ] ;
+          time: [ | Time_enum.t | `Alt of timestamp ] }[@@deriving sexp_of]
         let with_request f ~revert_to  ~focus  ~time  =
           f ({ revert_to; focus; time } : t)
       end
@@ -2705,8 +2709,8 @@ module Core =
             type t =
               {
               revert_to: Input_focus_enum.t ;
-              focus: [ | Input_focus_enum.t | window alt] }[@@deriving
-                                                             sexp_of]
+              focus: [ | Input_focus_enum.t | `Alt of window ] }[@@deriving
+                                                                  sexp_of]
           end
       end
     module Query_keymap =
@@ -2874,16 +2878,16 @@ module Core =
           join_style: Join_style_enum.t option ;
           fill_style: Fill_style_enum.t option ;
           fill_rule: Fill_rule_enum.t option ;
-          tile: [ | Pixmap_enum.t | pixmap alt] option ;
-          stipple: [ | Pixmap_enum.t | pixmap alt] option ;
+          tile: [ | Pixmap_enum.t | `Alt of pixmap ] option ;
+          stipple: [ | Pixmap_enum.t | `Alt of pixmap ] option ;
           tile_stipple_x_origin: i32 option ;
           tile_stipple_y_origin: i32 option ;
-          font: [ | Font_enum.t | font alt] option ;
+          font: [ | Font_enum.t | `Alt of font ] option ;
           subwindow_mode: Subwindow_mode_enum.t option ;
           graphics_exposures: bool32 option ;
           clip_x_origin: i32 option ;
           clip_y_origin: i32 option ;
-          clip_mask: [ | Pixmap_enum.t | pixmap alt] option ;
+          clip_mask: [ | Pixmap_enum.t | `Alt of pixmap ] option ;
           dash_offset: u32 option ;
           dashes: u32 option ;
           arc_mode: Arc_mode_enum.t option }[@@deriving sexp_of]
@@ -2939,16 +2943,16 @@ module Core =
           join_style: Join_style_enum.t option ;
           fill_style: Fill_style_enum.t option ;
           fill_rule: Fill_rule_enum.t option ;
-          tile: [ | Pixmap_enum.t | pixmap alt] option ;
-          stipple: [ | Pixmap_enum.t | pixmap alt] option ;
+          tile: [ | Pixmap_enum.t | `Alt of pixmap ] option ;
+          stipple: [ | Pixmap_enum.t | `Alt of pixmap ] option ;
           tile_stipple_x_origin: i32 option ;
           tile_stipple_y_origin: i32 option ;
-          font: [ | Font_enum.t | font alt] option ;
+          font: [ | Font_enum.t | `Alt of font ] option ;
           subwindow_mode: Subwindow_mode_enum.t option ;
           graphics_exposures: bool32 option ;
           clip_x_origin: i32 option ;
           clip_y_origin: i32 option ;
-          clip_mask: [ | Pixmap_enum.t | pixmap alt] option ;
+          clip_mask: [ | Pixmap_enum.t | `Alt of pixmap ] option ;
           dash_offset: u32 option ;
           dashes: u32 option ;
           arc_mode: Arc_mode_enum.t option }[@@deriving sexp_of]
@@ -3522,7 +3526,7 @@ module Core =
           {
           cid: cursor ;
           source: pixmap ;
-          mask: [ | Pixmap_enum.t | pixmap alt] ;
+          mask: [ | Pixmap_enum.t | `Alt of pixmap ] ;
           fore_red: u16 ;
           fore_green: u16 ;
           fore_blue: u16 ;
@@ -3556,7 +3560,7 @@ module Core =
           {
           cid: cursor ;
           source_font: font ;
-          mask_font: [ | Font_enum.t | font alt] ;
+          mask_font: [ | Font_enum.t | `Alt of font ] ;
           source_char: u16 ;
           mask_char: u16 ;
           fore_red: u16 ;
@@ -3854,7 +3858,7 @@ module Core =
       struct
         let name = "KillClient"
         let opcode = 113
-        type t = [ | Kill_enum.t | u32 alt][@@deriving sexp_of]
+        type t = [ | Kill_enum.t | `Alt of u32 ][@@deriving sexp_of]
         let with_request f resource = f (resource : t)
       end
     module Rotate_properties =
@@ -4466,7 +4470,7 @@ module Render =
           {
           op: Pict_op_enum.t ;
           src: picture ;
-          mask: [ | Picture_enum.t | picture alt] ;
+          mask: [ | Picture_enum.t | `Alt of picture ] ;
           dst: picture ;
           src_x: i16 ;
           src_y: i16 ;
@@ -4928,8 +4932,8 @@ module Shape =
           destination_window: Core.window ;
           x_offset: i16 ;
           y_offset: i16 ;
-          source_bitmap: [ | Core.Pixmap_enum.t | Core.pixmap alt] }[@@deriving
-                                                                    sexp_of]
+          source_bitmap: [ | Core.Pixmap_enum.t | `Alt of Core.pixmap ] }
+        [@@deriving sexp_of]
         let with_request f ~operation  ~destination_kind  ~destination_window
            ~x_offset  ~y_offset  ~source_bitmap  =
           f
@@ -5174,8 +5178,8 @@ module Xfixes =
               window: Core.window ;
               cursor_serial: u32 ;
               timestamp: Core.timestamp ;
-              name: [ | Core.Atom_enum.t | Core.atom alt] }[@@deriving
-                                                             sexp_of]
+              name: [ | Core.Atom_enum.t | `Alt of Core.atom ] }[@@deriving
+                                                                  sexp_of]
             let name = "CursorNotify"
             let number = 1
           end
@@ -5426,7 +5430,7 @@ module Xfixes =
         type t =
           {
           gc: Core.gcontext ;
-          region: [ | Region_enum.t | region alt] ;
+          region: [ | Region_enum.t | `Alt of region ] ;
           x_origin: i16 ;
           y_origin: i16 }[@@deriving sexp_of]
         let with_request f ~gc  ~region  ~x_origin  ~y_origin  =
@@ -5442,7 +5446,7 @@ module Xfixes =
           dest_kind: Shape.Sk_enum.t ;
           x_offset: i16 ;
           y_offset: i16 ;
-          region: [ | Region_enum.t | region alt] }[@@deriving sexp_of]
+          region: [ | Region_enum.t | `Alt of region ] }[@@deriving sexp_of]
         let with_request f ~dest  ~dest_kind  ~x_offset  ~y_offset  ~region 
           = f ({ dest; dest_kind; x_offset; y_offset; region } : t)
       end
@@ -5453,7 +5457,7 @@ module Xfixes =
         type t =
           {
           picture: Render.picture ;
-          region: [ | Region_enum.t | region alt] ;
+          region: [ | Region_enum.t | `Alt of region ] ;
           x_origin: i16 ;
           y_origin: i16 }[@@deriving sexp_of]
         let with_request f ~picture  ~region  ~x_origin  ~y_origin  =
@@ -5478,7 +5482,7 @@ module Xfixes =
           struct
             type t =
               {
-              atom: [ | Core.Atom_enum.t | Core.atom alt] ;
+              atom: [ | Core.Atom_enum.t | `Alt of Core.atom ] ;
               name: string }[@@deriving sexp_of]
           end
       end
@@ -5499,7 +5503,7 @@ module Xfixes =
               xhot: u16 ;
               yhot: u16 ;
               cursor_serial: u32 ;
-              cursor_atom: [ | Core.Atom_enum.t | Core.atom alt] ;
+              cursor_atom: [ | Core.Atom_enum.t | `Alt of Core.atom ] ;
               cursor_image: u32 list ;
               name: string }[@@deriving sexp_of]
           end
@@ -5786,9 +5790,9 @@ module Damage =
         type t =
           {
           damage: damage ;
-          repair: [ | Xfixes.Region_enum.t | Xfixes.region alt] ;
-          parts: [ | Xfixes.Region_enum.t | Xfixes.region alt] }[@@deriving
-                                                                  sexp_of]
+          repair: [ | Xfixes.Region_enum.t | `Alt of Xfixes.region ] ;
+          parts: [ | Xfixes.Region_enum.t | `Alt of Xfixes.region ] }
+        [@@deriving sexp_of]
         let with_request f ~damage  ~repair  ~parts  =
           f ({ damage; repair; parts } : t)
       end
@@ -8670,7 +8674,7 @@ module Randr =
           {
           output: output ;
           property: Core.atom ;
-          type_: [ | Core.Get_property_type_enum.t | Core.atom alt] ;
+          type_: [ | Core.Get_property_type_enum.t | `Alt of Core.atom ] ;
           long_offset: u32 ;
           long_length: u32 ;
           delete: bool ;
@@ -8692,7 +8696,7 @@ module Randr =
             type t =
               {
               format: u8 ;
-              type_: [ | Core.Atom_enum.t | Core.atom alt] ;
+              type_: [ | Core.Atom_enum.t | `Alt of Core.atom ] ;
               bytes_after: u32 ;
               num_items: u32 ;
               data: byte list }[@@deriving sexp_of]
@@ -10214,9 +10218,10 @@ module Screensaver =
           depth: u8 ;
           visual: Core.visualid ;
           background_pixmap:
-            [ | Core.Back_pixmap_enum.t | Core.pixmap alt] option ;
+            [ | Core.Back_pixmap_enum.t | `Alt of Core.pixmap ] option ;
           background_pixel: u32 option ;
-          border_pixmap: [ | Core.Pixmap_enum.t | Core.pixmap alt] option ;
+          border_pixmap:
+            [ | Core.Pixmap_enum.t | `Alt of Core.pixmap ] option ;
           border_pixel: u32 option ;
           bit_gravity: Core.Bit_gravity_enum.t option ;
           win_gravity: Core.Win_gravity_enum.t option ;
@@ -10227,9 +10232,9 @@ module Screensaver =
           save_under: Core.bool32 option ;
           event_mask: Core.Event_mask.t option ;
           do_not_propogate_mask: Core.Event_mask.t option ;
-          colormap: [ | Core.Colormap_enum.t | Core.colormap alt] option ;
-          cursor: [ | Core.Cursor_enum.t | Core.cursor alt] option }[@@deriving
-                                                                    sexp_of]
+          colormap: [ | Core.Colormap_enum.t | `Alt of Core.colormap ] option ;
+          cursor: [ | Core.Cursor_enum.t | `Alt of Core.cursor ] option }
+        [@@deriving sexp_of]
         let with_request f ~drawable  ~x  ~y  ~width  ~height  ~border_width 
           ~class_  ~depth  ~visual  ?background_pixmap  ?background_pixel 
           ?border_pixmap  ?border_pixel  ?bit_gravity  ?win_gravity 
@@ -12012,22 +12017,22 @@ module Xinput =
       {
       type_: Hierarchy_change_type_enum.t ;
       len: u16 ;
-      deviceid: [ | Device_enum.t | device_id alt] ;
+      deviceid: [ | Device_enum.t | `Alt of device_id ] ;
       return_mode: Change_mode_enum.t ;
-      return_pointer: [ | Device_enum.t | device_id alt] ;
-      return_keyboard: [ | Device_enum.t | device_id alt] }[@@deriving
-                                                             sexp_of]
+      return_pointer: [ | Device_enum.t | `Alt of device_id ] ;
+      return_keyboard: [ | Device_enum.t | `Alt of device_id ] }[@@deriving
+                                                                  sexp_of]
     type attach_slave =
       {
       type_: Hierarchy_change_type_enum.t ;
       len: u16 ;
-      deviceid: [ | Device_enum.t | device_id alt] ;
-      master: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
+      deviceid: [ | Device_enum.t | `Alt of device_id ] ;
+      master: [ | Device_enum.t | `Alt of device_id ] }[@@deriving sexp_of]
     type detach_slave =
       {
       type_: Hierarchy_change_type_enum.t ;
       len: u16 ;
-      deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
+      deviceid: [ | Device_enum.t | `Alt of device_id ] }[@@deriving sexp_of]
     module Hierarchy_change_type =
       struct
         type add_master = {
@@ -12036,20 +12041,21 @@ module Xinput =
           name: string }[@@deriving sexp_of]
         type remove_master =
           {
-          deviceid: [ | Device_enum.t | device_id alt] ;
+          deviceid: [ | Device_enum.t | `Alt of device_id ] ;
           return_mode: Change_mode_enum.t ;
-          return_pointer: [ | Device_enum.t | device_id alt] ;
-          return_keyboard: [ | Device_enum.t | device_id alt] }[@@deriving
-                                                                 sexp_of]
+          return_pointer: [ | Device_enum.t | `Alt of device_id ] ;
+          return_keyboard: [ | Device_enum.t | `Alt of device_id ] }[@@deriving
+                                                                    sexp_of]
         type attach_slave =
           {
-          deviceid: [ | Device_enum.t | device_id alt] ;
-          master: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
+          deviceid: [ | Device_enum.t | `Alt of device_id ] ;
+          master: [ | Device_enum.t | `Alt of device_id ] }[@@deriving
+                                                             sexp_of]
         type t =
           [ `Add_master of add_master  | `Remove_master of remove_master 
           | `Attach_slave of attach_slave 
-          | `Detach_slave of [ | Device_enum.t | device_id alt] ][@@deriving
-                                                                   sexp_of]
+          | `Detach_slave of [ | Device_enum.t | `Alt of device_id ] ]
+        [@@deriving sexp_of]
       end
     type hierarchy_change = {
       len: u16 ;
@@ -12086,7 +12092,7 @@ module Xinput =
       end
     type event_mask =
       {
-      deviceid: [ | Device_enum.t | device_id alt] ;
+      deviceid: [ | Device_enum.t | `Alt of device_id ] ;
       mask: Xi_event_mask.t list }[@@deriving sexp_of]
     module Device_class_type_enum =
       struct
@@ -12240,9 +12246,9 @@ module Xinput =
       data: Device_class_type.t }[@@deriving sexp_of]
     type xi_device_info =
       {
-      deviceid: [ | Device_enum.t | device_id alt] ;
+      deviceid: [ | Device_enum.t | `Alt of device_id ] ;
       type_: Device_type_enum.t ;
-      attachment: [ | Device_enum.t | device_id alt] ;
+      attachment: [ | Device_enum.t | `Alt of device_id ] ;
       enabled: bool ;
       name: string ;
       classes: device_class list }[@@deriving sexp_of]
@@ -12483,8 +12489,8 @@ module Xinput =
       end
     type hierarchy_info =
       {
-      deviceid: [ | Device_enum.t | device_id alt] ;
-      attachment: [ | Device_enum.t | device_id alt] ;
+      deviceid: [ | Device_enum.t | `Alt of device_id ] ;
+      attachment: [ | Device_enum.t | `Alt of device_id ] ;
       type_: Device_type_enum.t ;
       enabled: bool ;
       flags: Hierarchy_mask.t }[@@deriving sexp_of]
@@ -12548,7 +12554,7 @@ module Xinput =
               time: Core.timestamp ;
               root: Core.window ;
               event: Core.window ;
-              child: [ | Core.Window_enum.t | Core.window alt] ;
+              child: [ | Core.Window_enum.t | `Alt of Core.window ] ;
               root_x: i16 ;
               root_y: i16 ;
               event_x: i16 ;
@@ -12693,9 +12699,9 @@ module Xinput =
           struct
             type t =
               {
-              deviceid: [ | Device_enum.t | device_id alt] ;
-              time: [ | Core.Time_enum.t | Core.timestamp alt] ;
-              sourceid: [ | Device_enum.t | device_id alt] ;
+              deviceid: [ | Device_enum.t | `Alt of device_id ] ;
+              time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
+              sourceid: [ | Device_enum.t | `Alt of device_id ] ;
               reason: Change_reason_enum.t ;
               classes: device_class list }[@@deriving sexp_of]
             let name = "DeviceChanged"
@@ -12705,8 +12711,8 @@ module Xinput =
           struct
             type t =
               {
-              deviceid: [ | Device_enum.t | device_id alt] ;
-              time: [ | Core.Time_enum.t | Core.timestamp alt] ;
+              deviceid: [ | Device_enum.t | `Alt of device_id ] ;
+              time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
               detail: u32 ;
               root: Core.window ;
               event: Core.window ;
@@ -12715,7 +12721,7 @@ module Xinput =
               root_y: fp1616 ;
               event_x: fp1616 ;
               event_y: fp1616 ;
-              sourceid: [ | Device_enum.t | device_id alt] ;
+              sourceid: [ | Device_enum.t | `Alt of device_id ] ;
               flags: Key_event_flags_mask.t ;
               mods: modifier_info ;
               group: group_info ;
@@ -12735,8 +12741,8 @@ module Xinput =
           struct
             type t =
               {
-              deviceid: [ | Device_enum.t | device_id alt] ;
-              time: [ | Core.Time_enum.t | Core.timestamp alt] ;
+              deviceid: [ | Device_enum.t | `Alt of device_id ] ;
+              time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
               detail: u32 ;
               root: Core.window ;
               event: Core.window ;
@@ -12745,7 +12751,7 @@ module Xinput =
               root_y: fp1616 ;
               event_x: fp1616 ;
               event_y: fp1616 ;
-              sourceid: [ | Device_enum.t | device_id alt] ;
+              sourceid: [ | Device_enum.t | `Alt of device_id ] ;
               flags: Pointer_event_flags_mask.t ;
               mods: modifier_info ;
               group: group_info ;
@@ -12771,9 +12777,9 @@ module Xinput =
           struct
             type t =
               {
-              deviceid: [ | Device_enum.t | device_id alt] ;
-              time: [ | Core.Time_enum.t | Core.timestamp alt] ;
-              sourceid: [ | Device_enum.t | device_id alt] ;
+              deviceid: [ | Device_enum.t | `Alt of device_id ] ;
+              time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
+              sourceid: [ | Device_enum.t | `Alt of device_id ] ;
               mode: Notify_mode_enum.t ;
               detail: Notify_detail_enum.t ;
               root: Core.window ;
@@ -12813,8 +12819,8 @@ module Xinput =
           struct
             type t =
               {
-              deviceid: [ | Device_enum.t | device_id alt] ;
-              time: [ | Core.Time_enum.t | Core.timestamp alt] ;
+              deviceid: [ | Device_enum.t | `Alt of device_id ] ;
+              time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
               flags: Hierarchy_mask.t ;
               infos: hierarchy_info list }[@@deriving sexp_of]
             let name = "Hierarchy"
@@ -12824,8 +12830,8 @@ module Xinput =
           struct
             type t =
               {
-              deviceid: [ | Device_enum.t | device_id alt] ;
-              time: [ | Core.Time_enum.t | Core.timestamp alt] ;
+              deviceid: [ | Device_enum.t | `Alt of device_id ] ;
+              time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
               property: Core.atom ;
               what: Property_flag_enum.t }[@@deriving sexp_of]
             let name = "Property"
@@ -12835,8 +12841,8 @@ module Xinput =
           struct
             type t =
               {
-              deviceid: [ | Device_enum.t | device_id alt] ;
-              time: [ | Core.Time_enum.t | Core.timestamp alt] ;
+              deviceid: [ | Device_enum.t | `Alt of device_id ] ;
+              time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
               detail: u32 ;
               sourceid: device_id ;
               flags: Key_event_flags_mask.t ;
@@ -12856,8 +12862,8 @@ module Xinput =
           struct
             type t =
               {
-              deviceid: [ | Device_enum.t | device_id alt] ;
-              time: [ | Core.Time_enum.t | Core.timestamp alt] ;
+              deviceid: [ | Device_enum.t | `Alt of device_id ] ;
+              time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
               detail: u32 ;
               sourceid: device_id ;
               flags: Pointer_event_flags_mask.t ;
@@ -12883,8 +12889,8 @@ module Xinput =
           struct
             type t =
               {
-              deviceid: [ | Device_enum.t | device_id alt] ;
-              time: [ | Core.Time_enum.t | Core.timestamp alt] ;
+              deviceid: [ | Device_enum.t | `Alt of device_id ] ;
+              time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
               detail: u32 ;
               root: Core.window ;
               event: Core.window ;
@@ -12893,7 +12899,7 @@ module Xinput =
               root_y: fp1616 ;
               event_x: fp1616 ;
               event_y: fp1616 ;
-              sourceid: [ | Device_enum.t | device_id alt] ;
+              sourceid: [ | Device_enum.t | `Alt of device_id ] ;
               flags: Touch_event_flags_mask.t ;
               mods: modifier_info ;
               group: group_info ;
@@ -12919,13 +12925,13 @@ module Xinput =
           struct
             type t =
               {
-              deviceid: [ | Device_enum.t | device_id alt] ;
-              time: [ | Core.Time_enum.t | Core.timestamp alt] ;
+              deviceid: [ | Device_enum.t | `Alt of device_id ] ;
+              time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
               touchid: u32 ;
               root: Core.window ;
               event: Core.window ;
               child: Core.window ;
-              sourceid: [ | Device_enum.t | device_id alt] ;
+              sourceid: [ | Device_enum.t | `Alt of device_id ] ;
               flags: Touch_ownership_flags_enum.t }[@@deriving sexp_of]
             let name = "TouchOwnership"
             let number = 21
@@ -12934,8 +12940,8 @@ module Xinput =
           struct
             type t =
               {
-              deviceid: [ | Device_enum.t | device_id alt] ;
-              time: [ | Core.Time_enum.t | Core.timestamp alt] ;
+              deviceid: [ | Device_enum.t | `Alt of device_id ] ;
+              time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
               detail: u32 ;
               sourceid: device_id ;
               flags: Touch_event_flags_mask.t ;
@@ -12961,15 +12967,15 @@ module Xinput =
           struct
             type t =
               {
-              deviceid: [ | Device_enum.t | device_id alt] ;
-              time: [ | Core.Time_enum.t | Core.timestamp alt] ;
+              deviceid: [ | Device_enum.t | `Alt of device_id ] ;
+              time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
               eventid: u32 ;
               root: Core.window ;
               event: Core.window ;
               barrier: Xfixes.barrier ;
               dtime: u32 ;
               flags: Barrier_flags_mask.t ;
-              sourceid: [ | Device_enum.t | device_id alt] ;
+              sourceid: [ | Device_enum.t | `Alt of device_id ] ;
               root_x: fp1616 ;
               root_y: fp1616 ;
               dx: fp3232 ;
@@ -13202,7 +13208,7 @@ module Xinput =
         type t =
           {
           start: Core.timestamp ;
-          stop: [ | Core.Time_enum.t | Core.timestamp alt] ;
+          stop: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
           device_id: u8 }[@@deriving sexp_of]
         let with_request f ~start  ~stop  ~device_id  =
           f ({ start; stop; device_id } : t)
@@ -13253,7 +13259,7 @@ module Xinput =
         type t =
           {
           grab_window: Core.window ;
-          time: [ | Core.Time_enum.t | Core.timestamp alt] ;
+          time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
           this_device_mode: Core.Grab_mode_enum.t ;
           other_device_mode: Core.Grab_mode_enum.t ;
           owner_events: bool ;
@@ -13284,7 +13290,7 @@ module Xinput =
         let opcode = 14
         type t =
           {
-          time: [ | Core.Time_enum.t | Core.timestamp alt] ;
+          time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
           device_id: u8 }[@@deriving sexp_of]
         let with_request f ~time  ~device_id  = f ({ time; device_id } : t)
       end
@@ -13296,9 +13302,9 @@ module Xinput =
           {
           grab_window: Core.window ;
           modifiers: Core.Mod_mask.t ;
-          modifier_device: [ | Modifier_device_enum.t | u8 alt] ;
+          modifier_device: [ | Modifier_device_enum.t | `Alt of u8 ] ;
           grabbed_device: u8 ;
-          key: [ | Core.Grab_enum.t | u8 alt] ;
+          key: [ | Core.Grab_enum.t | `Alt of u8 ] ;
           this_device_mode: Core.Grab_mode_enum.t ;
           other_device_mode: Core.Grab_mode_enum.t ;
           owner_events: bool ;
@@ -13327,8 +13333,8 @@ module Xinput =
           {
           grab_window: Core.window ;
           modifiers: Core.Mod_mask.t ;
-          modifier_device: [ | Modifier_device_enum.t | u8 alt] ;
-          key: [ | Core.Grab_enum.t | u8 alt] ;
+          modifier_device: [ | Modifier_device_enum.t | `Alt of u8 ] ;
+          key: [ | Core.Grab_enum.t | `Alt of u8 ] ;
           grabbed_device: u8 }[@@deriving sexp_of]
         let with_request f ~grab_window  ~modifiers  ~modifier_device  ~key 
           ~grabbed_device  =
@@ -13344,11 +13350,11 @@ module Xinput =
           {
           grab_window: Core.window ;
           grabbed_device: u8 ;
-          modifier_device: [ | Modifier_device_enum.t | u8 alt] ;
+          modifier_device: [ | Modifier_device_enum.t | `Alt of u8 ] ;
           modifiers: Core.Mod_mask.t ;
           this_device_mode: Core.Grab_mode_enum.t ;
           other_device_mode: Core.Grab_mode_enum.t ;
-          button: [ | Core.Grab_enum.t | u8 alt] ;
+          button: [ | Core.Grab_enum.t | `Alt of u8 ] ;
           owner_events: bool ;
           classes: event_class list }[@@deriving sexp_of]
         let with_request f ~grab_window  ~grabbed_device  ~modifier_device 
@@ -13375,8 +13381,8 @@ module Xinput =
           {
           grab_window: Core.window ;
           modifiers: Core.Mod_mask.t ;
-          modifier_device: [ | Modifier_device_enum.t | u8 alt] ;
-          button: [ | Core.Grab_enum.t | u8 alt] ;
+          modifier_device: [ | Modifier_device_enum.t | `Alt of u8 ] ;
+          button: [ | Core.Grab_enum.t | `Alt of u8 ] ;
           grabbed_device: u8 }[@@deriving sexp_of]
         let with_request f ~grab_window  ~modifiers  ~modifier_device 
           ~button  ~grabbed_device  =
@@ -13395,7 +13401,7 @@ module Xinput =
         let opcode = 19
         type t =
           {
-          time: [ | Core.Time_enum.t | Core.timestamp alt] ;
+          time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
           mode: Device_input_mode_enum.t ;
           device_id: u8 }[@@deriving sexp_of]
         let with_request f ~time  ~mode  ~device_id  =
@@ -13412,7 +13418,7 @@ module Xinput =
             type t =
               {
               xi_reply_type: u8 ;
-              focus: [ | Core.Input_focus_enum.t | Core.window alt] ;
+              focus: [ | Core.Input_focus_enum.t | `Alt of Core.window ] ;
               time: Core.timestamp ;
               revert_to: Core.Input_focus_enum.t }[@@deriving sexp_of]
           end
@@ -13423,8 +13429,8 @@ module Xinput =
         let opcode = 21
         type t =
           {
-          focus: [ | Core.Input_focus_enum.t | Core.window alt] ;
-          time: [ | Core.Time_enum.t | Core.timestamp alt] ;
+          focus: [ | Core.Input_focus_enum.t | `Alt of Core.window ] ;
+          time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
           revert_to: Core.Input_focus_enum.t ;
           device_id: u8 }[@@deriving sexp_of]
         let with_request f ~focus  ~time  ~revert_to  ~device_id  =
@@ -13612,7 +13618,7 @@ module Xinput =
             type t =
               {
               xi_reply_type: u8 ;
-              status: [ | Core.Grab_status_enum.t | u8 alt] ;
+              status: [ | Core.Grab_status_enum.t | `Alt of u8 ] ;
               control: device_state }[@@deriving sexp_of]
           end
       end
@@ -13632,8 +13638,8 @@ module Xinput =
             type t =
               {
               xi_reply_type: u8 ;
-              status: [ | Core.Grab_status_enum.t | u8 alt] }[@@deriving
-                                                               sexp_of]
+              status: [ | Core.Grab_status_enum.t | `Alt of u8 ] }[@@deriving
+                                                                    sexp_of]
           end
       end
     module List_device_properties =
@@ -13709,7 +13715,8 @@ module Xinput =
         type t =
           {
           window: Core.window ;
-          deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
+          deviceid: [ | Device_enum.t | `Alt of device_id ] }[@@deriving
+                                                               sexp_of]
         let with_request f ~window  ~deviceid  = f ({ window; deviceid } : t)
         module Reply =
           struct
@@ -13741,7 +13748,8 @@ module Xinput =
           src_height: u16 ;
           dst_x: fp1616 ;
           dst_y: fp1616 ;
-          deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
+          deviceid: [ | Device_enum.t | `Alt of device_id ] }[@@deriving
+                                                               sexp_of]
         let with_request f ~src_win  ~dst_win  ~src_x  ~src_y  ~src_width 
           ~src_height  ~dst_x  ~dst_y  ~deviceid  =
           f
@@ -13765,7 +13773,8 @@ module Xinput =
           {
           window: Core.window ;
           cursor: Core.cursor ;
-          deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
+          deviceid: [ | Device_enum.t | `Alt of device_id ] }[@@deriving
+                                                               sexp_of]
         let with_request f ~window  ~cursor  ~deviceid  =
           f ({ window; cursor; deviceid } : t)
       end
@@ -13783,7 +13792,8 @@ module Xinput =
         type t =
           {
           window: Core.window ;
-          deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
+          deviceid: [ | Device_enum.t | `Alt of device_id ] }[@@deriving
+                                                               sexp_of]
         let with_request f ~window  ~deviceid  = f ({ window; deviceid } : t)
       end
     module Get_client_pointer =
@@ -13797,8 +13807,8 @@ module Xinput =
             type t =
               {
               set: bool ;
-              deviceid: [ | Device_enum.t | device_id alt] }[@@deriving
-                                                              sexp_of]
+              deviceid: [ | Device_enum.t | `Alt of device_id ] }[@@deriving
+                                                                   sexp_of]
           end
       end
     module Select_events =
@@ -13830,7 +13840,7 @@ module Xinput =
       struct
         let name = "QueryDevice"
         let opcode = 48
-        type t = [ | Device_enum.t | device_id alt][@@deriving sexp_of]
+        type t = [ | Device_enum.t | `Alt of device_id ][@@deriving sexp_of]
         let with_request f deviceid = f (deviceid : t)
         module Reply =
           struct type t = xi_device_info list[@@deriving sexp_of] end
@@ -13842,8 +13852,9 @@ module Xinput =
         type t =
           {
           window: Core.window ;
-          time: [ | Core.Time_enum.t | Core.timestamp alt] ;
-          deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
+          time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
+          deviceid: [ | Device_enum.t | `Alt of device_id ] }[@@deriving
+                                                               sexp_of]
         let with_request f ~window  ~time  ~deviceid  =
           f ({ window; time; deviceid } : t)
       end
@@ -13851,7 +13862,7 @@ module Xinput =
       struct
         let name = "GetFocus"
         let opcode = 50
-        type t = [ | Device_enum.t | device_id alt][@@deriving sexp_of]
+        type t = [ | Device_enum.t | `Alt of device_id ][@@deriving sexp_of]
         let with_request f deviceid = f (deviceid : t)
         module Reply = struct type t = Core.window[@@deriving sexp_of] end
       end
@@ -13862,9 +13873,9 @@ module Xinput =
         type t =
           {
           window: Core.window ;
-          time: [ | Core.Time_enum.t | Core.timestamp alt] ;
+          time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
           cursor: Core.cursor ;
-          deviceid: [ | Device_enum.t | device_id alt] ;
+          deviceid: [ | Device_enum.t | `Alt of device_id ] ;
           mode: Core.Grab_mode_enum.t ;
           paired_device_mode: Core.Grab_mode_enum.t ;
           owner_events: Grab_owner_enum.t ;
@@ -13891,8 +13902,9 @@ module Xinput =
         let opcode = 52
         type t =
           {
-          time: [ | Core.Time_enum.t | Core.timestamp alt] ;
-          deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
+          time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
+          deviceid: [ | Device_enum.t | `Alt of device_id ] }[@@deriving
+                                                               sexp_of]
         let with_request f ~time  ~deviceid  = f ({ time; deviceid } : t)
       end
     module Allow_events =
@@ -13901,8 +13913,8 @@ module Xinput =
         let opcode = 53
         type t =
           {
-          time: [ | Core.Time_enum.t | Core.timestamp alt] ;
-          deviceid: [ | Device_enum.t | device_id alt] ;
+          time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
+          deviceid: [ | Device_enum.t | `Alt of device_id ] ;
           event_mode: Event_mode_enum.t ;
           touchid: u32 ;
           grab_window: Core.window }[@@deriving sexp_of]
@@ -13916,11 +13928,11 @@ module Xinput =
         let opcode = 54
         type t =
           {
-          time: [ | Core.Time_enum.t | Core.timestamp alt] ;
+          time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] ;
           grab_window: Core.window ;
           cursor: Core.cursor ;
           detail: u32 ;
-          deviceid: [ | Device_enum.t | device_id alt] ;
+          deviceid: [ | Device_enum.t | `Alt of device_id ] ;
           grab_type: Grab_type_enum.t ;
           grab_mode: Grab_mode22_enum.t ;
           paired_device_mode: Core.Grab_mode_enum.t ;
@@ -13955,7 +13967,7 @@ module Xinput =
           {
           grab_window: Core.window ;
           detail: u32 ;
-          deviceid: [ | Device_enum.t | device_id alt] ;
+          deviceid: [ | Device_enum.t | `Alt of device_id ] ;
           grab_type: Grab_type_enum.t ;
           modifiers: u32 list }[@@deriving sexp_of]
         let with_request f ~grab_window  ~detail  ~deviceid  ~grab_type 
@@ -13966,7 +13978,7 @@ module Xinput =
       struct
         let name = "ListProperties"
         let opcode = 56
-        type t = [ | Device_enum.t | device_id alt][@@deriving sexp_of]
+        type t = [ | Device_enum.t | `Alt of device_id ][@@deriving sexp_of]
         let with_request f deviceid = f (deviceid : t)
         module Reply = struct type t = Core.atom list[@@deriving sexp_of] end
       end
@@ -13976,7 +13988,7 @@ module Xinput =
         let opcode = 57
         type t =
           {
-          deviceid: [ | Device_enum.t | device_id alt] ;
+          deviceid: [ | Device_enum.t | `Alt of device_id ] ;
           mode: Core.Prop_mode_enum.t ;
           property: Core.atom ;
           type_: Core.atom ;
@@ -13992,7 +14004,7 @@ module Xinput =
         let opcode = 58
         type t =
           {
-          deviceid: [ | Device_enum.t | device_id alt] ;
+          deviceid: [ | Device_enum.t | `Alt of device_id ] ;
           property: Core.atom }[@@deriving sexp_of]
         let with_request f ~deviceid  ~property  =
           f ({ deviceid; property } : t)
@@ -14003,7 +14015,7 @@ module Xinput =
         let opcode = 59
         type t =
           {
-          deviceid: [ | Device_enum.t | device_id alt] ;
+          deviceid: [ | Device_enum.t | `Alt of device_id ] ;
           delete: bool ;
           property: Core.atom ;
           type_: Core.atom ;
@@ -14976,8 +14988,8 @@ module Xv =
         type t =
           {
           port: port ;
-          time: [ | Core.Time_enum.t | Core.timestamp alt] }[@@deriving
-                                                              sexp_of]
+          time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] }[@@deriving
+                                                                   sexp_of]
         let with_request f ~port  ~time  = f ({ port; time } : t)
         module Reply =
           struct type t = Grab_port_status_enum.t[@@deriving sexp_of] end
@@ -14989,8 +15001,8 @@ module Xv =
         type t =
           {
           port: port ;
-          time: [ | Core.Time_enum.t | Core.timestamp alt] }[@@deriving
-                                                              sexp_of]
+          time: [ | Core.Time_enum.t | `Alt of Core.timestamp ] }[@@deriving
+                                                                   sexp_of]
         let with_request f ~port  ~time  = f ({ port; time } : t)
       end
     module Put_video =

@@ -15181,7 +15181,7 @@
         (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))))
      (external_params ())))
    (Request
-    ((name XIQueryPointer) (opcode 40) (combine_adjacent true)
+    ((name QueryPointer) (opcode 40) (combine_adjacent true)
      (fields
       ((Field (name window)
         (type_
@@ -15238,7 +15238,7 @@
          (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
          (length buttons_len)))))))
    (Request
-    ((name XIWarpPointer) (opcode 41) (combine_adjacent true)
+    ((name WarpPointer) (opcode 41) (combine_adjacent true)
      (fields
       ((Field (name src_win)
         (type_
@@ -15277,7 +15277,7 @@
        (Field_pad (pad (Pad_bytes 2)) (serialize false))))
      (reply ())))
    (Request
-    ((name XIChangeCursor) (opcode 42) (combine_adjacent true)
+    ((name ChangeCursor) (opcode 42) (combine_adjacent true)
      (fields
       ((Field (name window)
         (type_
@@ -15478,7 +15478,7 @@
         (external_params ()))))
      (external_params ())))
    (Request
-    ((name XIChangeHierarchy) (opcode 43) (combine_adjacent true)
+    ((name ChangeHierarchy) (opcode 43) (combine_adjacent true)
      (fields
       ((Field_list_length (name num_changes) (type_ (Type_primitive Card8))
         (expr ()) (list changes)
@@ -15493,7 +15493,7 @@
         (length num_changes))))
      (reply ())))
    (Request
-    ((name XISetClientPointer) (opcode 44) (combine_adjacent true)
+    ((name SetClientPointer) (opcode 44) (combine_adjacent true)
      (fields
       ((Field (name window)
         (type_
@@ -15508,7 +15508,7 @@
        (Field_pad (pad (Pad_bytes 2)) (serialize false))))
      (reply ())))
    (Request
-    ((name XIGetClientPointer) (opcode 45) (combine_adjacent true)
+    ((name GetClientPointer) (opcode 45) (combine_adjacent true)
      (fields
       ((Field (name window)
         (type_
@@ -15556,7 +15556,7 @@
         (length mask_len))))
      (external_params ())))
    (Request
-    ((name XISelectEvents) (opcode 46) (combine_adjacent true)
+    ((name SelectEvents) (opcode 46) (combine_adjacent true)
      (fields
       ((Field (name window)
         (type_
@@ -15573,7 +15573,7 @@
         (length num_mask))))
      (reply ())))
    (Request
-    ((name XIQueryVersion) (opcode 47) (combine_adjacent true)
+    ((name QueryVersion) (opcode 47) (combine_adjacent true)
      (fields
       ((Field (name major_version)
         (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
@@ -15890,7 +15890,7 @@
         (length num_classes))))
      (external_params ())))
    (Request
-    ((name XIQueryDevice) (opcode 48) (combine_adjacent true)
+    ((name QueryDevice) (opcode 48) (combine_adjacent true)
      (fields
       ((Field (name deviceid)
         (type_
@@ -15913,7 +15913,7 @@
            (ft_allowed ())))
          (length num_infos)))))))
    (Request
-    ((name XISetFocus) (opcode 49) (combine_adjacent true)
+    ((name SetFocus) (opcode 49) (combine_adjacent true)
      (fields
       ((Field (name window)
         (type_
@@ -15934,7 +15934,7 @@
        (Field_pad (pad (Pad_bytes 2)) (serialize false))))
      (reply ())))
    (Request
-    ((name XIGetFocus) (opcode 50) (combine_adjacent true)
+    ((name GetFocus) (opcode 50) (combine_adjacent true)
      (fields
       ((Field (name deviceid)
         (type_
@@ -16026,7 +16026,7 @@
       ((AsyncDevice 0) (SyncDevice 1) (ReplayDevice 2) (AsyncPairedDevice 3)
        (AsyncPair 4) (SyncPair 5) (AcceptTouch 6) (RejectTouch 7)))))
    (Request
-    ((name XIAllowEvents) (opcode 53) (combine_adjacent true)
+    ((name AllowEvents) (opcode 53) (combine_adjacent true)
      (fields
       ((Field (name time)
         (type_
@@ -16076,7 +16076,7 @@
        (Field_pad (pad (Pad_bytes 3)) (serialize false))))
      (external_params ())))
    (Request
-    ((name XIPassiveGrabDevice) (opcode 54) (combine_adjacent true)
+    ((name PassiveGrabDevice) (opcode 54) (combine_adjacent true)
      (fields
       ((Field (name time)
         (type_
@@ -16146,7 +16146,7 @@
            (ft_allowed ())))
          (length num_modifiers)))))))
    (Request
-    ((name XIPassiveUngrabDevice) (opcode 55) (combine_adjacent true)
+    ((name PassiveUngrabDevice) (opcode 55) (combine_adjacent true)
      (fields
       ((Field (name grab_window)
         (type_
@@ -16174,7 +16174,7 @@
         (length num_modifiers))))
      (reply ())))
    (Request
-    ((name XIListProperties) (opcode 56) (combine_adjacent true)
+    ((name ListProperties) (opcode 56) (combine_adjacent true)
      (fields
       ((Field (name deviceid)
         (type_
@@ -16195,7 +16195,7 @@
            (ft_allowed ())))
          (length num_properties)))))))
    (Request
-    ((name XIChangeProperty) (opcode 57) (combine_adjacent true)
+    ((name ChangeProperty) (opcode 57) (combine_adjacent true)
      (fields
       ((Field (name deviceid)
         (type_
@@ -16227,7 +16227,7 @@
          (((ep_name num_items) (ep_type (Type_primitive Card32))))))))
      (reply ())))
    (Request
-    ((name XIDeleteProperty) (opcode 58) (combine_adjacent true)
+    ((name DeleteProperty) (opcode 58) (combine_adjacent true)
      (fields
       ((Field (name deviceid)
         (type_
@@ -16242,7 +16242,7 @@
           (ft_allowed ()))))))
      (reply ())))
    (Request
-    ((name XIGetProperty) (opcode 59) (combine_adjacent true)
+    ((name GetProperty) (opcode 59) (combine_adjacent true)
      (fields
       ((Field (name deviceid)
         (type_
@@ -16284,7 +16284,7 @@
          (external_params
           (((ep_name num_items) (ep_type (Type_primitive Card32)))))))))))
    (Request
-    ((name XIGetSelectedEvents) (opcode 60) (combine_adjacent true)
+    ((name GetSelectedEvents) (opcode 60) (combine_adjacent true)
      (fields
       ((Field (name window)
         (type_
@@ -16318,7 +16318,7 @@
         (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))))
      (external_params ())))
    (Request
-    ((name XIBarrierReleasePointer) (opcode 61) (combine_adjacent true)
+    ((name BarrierReleasePointer) (opcode 61) (combine_adjacent true)
      (fields
       ((Field_list_length (name num_barriers) (type_ (Type_primitive Card32))
         (expr ()) (list barriers)
