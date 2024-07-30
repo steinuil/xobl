@@ -6,6 +6,7 @@ end
 
 open Cursor
 
+let reset cur = cur.pos <- cur.start
 let[@inline] pad cur bytes = cur.pos <- cur.pos + bytes
 
 let[@inline] align cur size =

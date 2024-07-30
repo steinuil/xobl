@@ -107,10 +107,10 @@ module Core_codec =
         Decode.pad buf 2;
         (let authorization_protocol_name =
            Decode.string ~len:authorization_protocol_name_len buf in
-         Decode.pad buf 4;
+         Decode.align buf 4;
          (let authorization_protocol_data =
             Decode.string ~len:authorization_protocol_data_len buf in
-          Decode.pad buf 4;
+          Decode.align buf 4;
           {
             byte_order;
             protocol_major_version;
@@ -163,7 +163,7 @@ module Core_codec =
         let max_keycode = Decode.u8 buf in
         Decode.pad buf 4;
         (let vendor = Decode.string ~len:vendor_len buf in
-         Decode.pad buf 4;
+         Decode.align buf 4;
          (let pixmap_formats =
             (Decode.list ~item:decode_format) ~len:pixmap_formats_len buf in
           let roots = (Decode.list ~item:decode_screen) ~len:roots_len buf in
@@ -200,6 +200,27 @@ module Core_codec =
            `Data32 data32
        | n -> invalid_arg ("Invalid enum value: " ^ (string_of_int n)) : 
       Client_message_data_format.t)
+    let decode_request_error buf =
+      (let bad_value = Decode.u32 buf in
+       Decode.pad buf 4; Decode.align buf 32; bad_value : Error.Request.t)
+    let decode_value_error buf =
+      (let bad_value = Decode.u32 buf in
+       Decode.pad buf 4; Decode.align buf 32; bad_value : Error.Value.t)
+    let decode_window_error = decode_value_error
+    let decode_pixmap_error = decode_value_error
+    let decode_atom_error = decode_value_error
+    let decode_cursor_error = decode_value_error
+    let decode_font_error = decode_value_error
+    let decode_match_error = decode_request_error
+    let decode_drawable_error = decode_value_error
+    let decode_access_error = decode_request_error
+    let decode_alloc_error = decode_request_error
+    let decode_colormap_error = decode_value_error
+    let decode_g_context_error = decode_value_error
+    let decode_id_choice_error = decode_value_error
+    let decode_name_error = decode_request_error
+    let decode_length_error = decode_request_error
+    let decode_implementation_error = decode_request_error
     let decode_timecoord buf =
       (let time = Decode.u32 buf in
        let x = Decode.i16 buf in let y = Decode.i16 buf in { time; x; y } : 
@@ -248,12 +269,53 @@ module Core_codec =
        Decode.pad buf 1;
        (let address_len = Conv.To_int.u16 (Decode.u16 buf) in
         let address = (Decode.list ~item:Decode.byte) ~len:address_len buf in
-        Decode.pad buf 4; { family; address }) : host)
+        Decode.align buf 4; { family; address }) : host)
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | 1 -> let error = decode_request_error buf in `Request error
+        | 2 -> let error = decode_value_error buf in `Value error
+        | 3 -> let error = decode_window_error buf in `Window error
+        | 4 -> let error = decode_pixmap_error buf in `Pixmap error
+        | 5 -> let error = decode_atom_error buf in `Atom error
+        | 6 -> let error = decode_cursor_error buf in `Cursor error
+        | 7 -> let error = decode_font_error buf in `Font error
+        | 8 -> let error = decode_match_error buf in `Match_ error
+        | 9 -> let error = decode_drawable_error buf in `Drawable error
+        | 10 -> let error = decode_access_error buf in `Access error
+        | 11 -> let error = decode_alloc_error buf in `Alloc error
+        | 12 -> let error = decode_colormap_error buf in `Colormap error
+        | 13 -> let error = decode_g_context_error buf in `G_context error
+        | 14 -> let error = decode_id_choice_error buf in `Id_choice error
+        | 15 -> let error = decode_name_error buf in `Name error
+        | 16 -> let error = decode_length_error buf in `Length error
+        | 17 ->
+            let error = decode_implementation_error buf in
+            `Implementation error
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
   end
-module Bigreq_codec = struct open Protocol.Bigreq end
+module Bigreq_codec =
+  struct
+    open Protocol.Bigreq
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
+  end
 module Render_codec =
   struct
     open Protocol.Render
+    let decode_pict_format_error buf =
+      (Decode.align buf 32; () : Error.Pict_format.t)
+    let decode_picture_error buf =
+      (Decode.align buf 32; () : Error.Picture.t)
+    let decode_pict_op_error buf =
+      (Decode.align buf 32; () : Error.Pict_op.t)
+    let decode_glyph_set_error buf =
+      (Decode.align buf 32; () : Error.Glyph_set.t)
+    let decode_glyph_error buf = (Decode.align buf 32; () : Error.Glyph.t)
     let decode_directformat buf =
       (let red_shift = Decode.u16 buf in
        let red_mask = Decode.u16 buf in
@@ -365,12 +427,68 @@ module Render_codec =
     let decode_trap buf =
       (let top = decode_spanfix buf in
        let bot = decode_spanfix buf in { top; bot } : trap)
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | 0 -> let error = decode_pict_format_error buf in `Pict_format error
+        | 1 -> let error = decode_picture_error buf in `Picture error
+        | 2 -> let error = decode_pict_op_error buf in `Pict_op error
+        | 3 -> let error = decode_glyph_set_error buf in `Glyph_set error
+        | 4 -> let error = decode_glyph_error buf in `Glyph error
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
   end
-module Shape_codec = struct open Protocol.Shape end
-module Xfixes_codec = struct open Protocol.Xfixes end
-module Composite_codec = struct open Protocol.Composite end
-module Damage_codec = struct open Protocol.Damage end
-module Dpms_codec = struct open Protocol.Dpms end
+module Shape_codec =
+  struct
+    open Protocol.Shape
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
+  end
+module Xfixes_codec =
+  struct
+    open Protocol.Xfixes
+    let decode_bad_region_error buf =
+      (Decode.align buf 32; () : Error.Bad_region.t)
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | 0 -> let error = decode_bad_region_error buf in `Bad_region error
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
+  end
+module Composite_codec =
+  struct
+    open Protocol.Composite
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
+  end
+module Damage_codec =
+  struct
+    open Protocol.Damage
+    let decode_bad_damage_error buf =
+      (Decode.align buf 32; () : Error.Bad_damage.t)
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | 0 -> let error = decode_bad_damage_error buf in `Bad_damage error
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
+  end
+module Dpms_codec =
+  struct
+    open Protocol.Dpms
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
+  end
 module Dri2_codec =
   struct
     open Protocol.Dri2
@@ -386,13 +504,102 @@ module Dri2_codec =
       (let attachment =
          ((Decode.u32 %> Conv.To_int.u32) %> Attachment_enum.of_int) buf in
        let format = Decode.u32 buf in { attachment; format } : attach_format)
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
   end
-module Dri3_codec = struct open Protocol.Dri3 end
-module Ge_codec = struct open Protocol.Ge end
-module Glx_codec = struct open Protocol.Glx end
+module Dri3_codec =
+  struct
+    open Protocol.Dri3
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
+  end
+module Ge_codec =
+  struct
+    open Protocol.Ge
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
+  end
+module Glx_codec =
+  struct
+    open Protocol.Glx
+    let decode_generic_error buf =
+      (let bad_value = Decode.u32 buf in
+       Decode.pad buf 24; Decode.align buf 32; bad_value : Error.Generic.t)
+    let decode_bad_context_error = decode_generic_error
+    let decode_bad_context_state_error = decode_generic_error
+    let decode_bad_drawable_error = decode_generic_error
+    let decode_bad_pixmap_error = decode_generic_error
+    let decode_bad_context_tag_error = decode_generic_error
+    let decode_bad_current_window_error = decode_generic_error
+    let decode_bad_render_request_error = decode_generic_error
+    let decode_bad_large_request_error = decode_generic_error
+    let decode_unsupported_private_request_error = decode_generic_error
+    let decode_bad_fb_config_error = decode_generic_error
+    let decode_bad_pbuffer_error = decode_generic_error
+    let decode_bad_current_drawable_error = decode_generic_error
+    let decode_bad_window_error = decode_generic_error
+    let decode_glx_bad_profile_arb_error = decode_generic_error
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | (-1) -> let error = decode_generic_error buf in `Generic error
+        | 0 -> let error = decode_bad_context_error buf in `Bad_context error
+        | 1 ->
+            let error = decode_bad_context_state_error buf in
+            `Bad_context_state error
+        | 2 ->
+            let error = decode_bad_drawable_error buf in `Bad_drawable error
+        | 3 -> let error = decode_bad_pixmap_error buf in `Bad_pixmap error
+        | 4 ->
+            let error = decode_bad_context_tag_error buf in
+            `Bad_context_tag error
+        | 5 ->
+            let error = decode_bad_current_window_error buf in
+            `Bad_current_window error
+        | 6 ->
+            let error = decode_bad_render_request_error buf in
+            `Bad_render_request error
+        | 7 ->
+            let error = decode_bad_large_request_error buf in
+            `Bad_large_request error
+        | 8 ->
+            let error = decode_unsupported_private_request_error buf in
+            `Unsupported_private_request error
+        | 9 ->
+            let error = decode_bad_fb_config_error buf in
+            `Bad_fb_config error
+        | 10 ->
+            let error = decode_bad_pbuffer_error buf in `Bad_pbuffer error
+        | 11 ->
+            let error = decode_bad_current_drawable_error buf in
+            `Bad_current_drawable error
+        | 12 -> let error = decode_bad_window_error buf in `Bad_window error
+        | 13 ->
+            let error = decode_glx_bad_profile_arb_error buf in
+            `Glx_bad_profile_arb error
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
+  end
 module Randr_codec =
   struct
     open Protocol.Randr
+    let decode_bad_output_error buf =
+      (Decode.align buf 32; () : Error.Bad_output.t)
+    let decode_bad_crtc_error buf =
+      (Decode.align buf 32; () : Error.Bad_crtc.t)
+    let decode_bad_mode_error buf =
+      (Decode.align buf 32; () : Error.Bad_mode.t)
+    let decode_bad_provider_error buf =
+      (Decode.align buf 32; () : Error.Bad_provider.t)
     let decode_screen_size buf =
       (let width = Decode.u16 buf in
        let height = Decode.u16 buf in
@@ -538,6 +745,16 @@ module Randr_codec =
        | 6 -> let lc = decode_lease_notify buf in `Lease lc
        | n -> invalid_arg ("Invalid enum value: " ^ (string_of_int n)) : 
       Notify.t)
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | 0 -> let error = decode_bad_output_error buf in `Bad_output error
+        | 1 -> let error = decode_bad_crtc_error buf in `Bad_crtc error
+        | 2 -> let error = decode_bad_mode_error buf in `Bad_mode error
+        | 3 ->
+            let error = decode_bad_provider_error buf in `Bad_provider error
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
   end
 module Sync_codec =
   struct
@@ -550,7 +767,7 @@ module Sync_codec =
        let resolution = decode_int64 buf in
        let name_len = Conv.To_int.u16 (Decode.u16 buf) in
        let name = Decode.string ~len:name_len buf in
-       Decode.pad buf 4; { counter; resolution; name } : systemcounter)
+       Decode.align buf 4; { counter; resolution; name } : systemcounter)
     let decode_trigger buf =
       (let counter = Decode.xid buf in
        let wait_type =
@@ -563,6 +780,19 @@ module Sync_codec =
       (let trigger = decode_trigger buf in
        let event_threshold = decode_int64 buf in { trigger; event_threshold } : 
       waitcondition)
+    let decode_counter_error buf =
+      (let bad_counter = Decode.u32 buf in
+       Decode.pad buf 3; Decode.align buf 32; bad_counter : Error.Counter.t)
+    let decode_alarm_error buf =
+      (let bad_alarm = Decode.u32 buf in
+       Decode.pad buf 3; Decode.align buf 32; bad_alarm : Error.Alarm.t)
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | 0 -> let error = decode_counter_error buf in `Counter error
+        | 1 -> let error = decode_alarm_error buf in `Alarm error
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
   end
 module Present_codec =
   struct
@@ -570,6 +800,11 @@ module Present_codec =
     let decode_notify buf =
       (let window = Decode.xid buf in
        let serial = Decode.u32 buf in { window; serial } : notify)
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
   end
 module Record_codec =
   struct
@@ -609,6 +844,15 @@ module Record_codec =
        let num_ranges = Conv.To_int.u32 (Decode.u32 buf) in
        let ranges = (Decode.list ~item:decode_range) ~len:num_ranges buf in
        { client_resource; ranges } : client_info)
+    let decode_bad_context_error buf =
+      (let invalid_record = Decode.u32 buf in
+       Decode.align buf 32; invalid_record : Error.Bad_context.t)
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | 0 -> let error = decode_bad_context_error buf in `Bad_context error
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
   end
 module Res_codec =
   struct
@@ -647,14 +891,50 @@ module Res_codec =
          (Decode.list ~item:decode_resource_size_spec)
            ~len:num_cross_references buf in
        { size; cross_references } : resource_size_value)
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
   end
-module Screensaver_codec = struct open Protocol.Screensaver end
-module Shm_codec = struct open Protocol.Shm end
-module Xc_misc_codec = struct open Protocol.Xc_misc end
+module Screensaver_codec =
+  struct
+    open Protocol.Screensaver
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
+  end
+module Shm_codec =
+  struct
+    open Protocol.Shm
+    let decode_bad_seg_error = Core_codec.decode_value_error
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | 0 -> let error = decode_bad_seg_error buf in `Bad_seg error
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
+  end
+module Xc_misc_codec =
+  struct
+    open Protocol.Xc_misc
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
+  end
 module Xevie_codec =
   struct
     open Protocol.Xevie
     let decode_event buf = (Decode.pad buf 32; () : event)
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
   end
 module Xf86dri_codec =
   struct
@@ -664,6 +944,11 @@ module Xf86dri_codec =
        let y1 = Decode.i16 buf in
        let x2 = Decode.i16 buf in
        let x3 = Decode.i16 buf in { x1; y1; x2; x3 } : drm_clip_rect)
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
   end
 module Xf86vidmode_codec =
   struct
@@ -698,6 +983,42 @@ module Xf86vidmode_codec =
            flags;
            privsize
          })) : mode_info)
+    let decode_bad_clock_error buf =
+      (Decode.align buf 32; () : Error.Bad_clock.t)
+    let decode_bad_h_timings_error buf =
+      (Decode.align buf 32; () : Error.Bad_h_timings.t)
+    let decode_bad_v_timings_error buf =
+      (Decode.align buf 32; () : Error.Bad_v_timings.t)
+    let decode_mode_unsuitable_error buf =
+      (Decode.align buf 32; () : Error.Mode_unsuitable.t)
+    let decode_extension_disabled_error buf =
+      (Decode.align buf 32; () : Error.Extension_disabled.t)
+    let decode_client_not_local_error buf =
+      (Decode.align buf 32; () : Error.Client_not_local.t)
+    let decode_zoom_locked_error buf =
+      (Decode.align buf 32; () : Error.Zoom_locked.t)
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | 0 -> let error = decode_bad_clock_error buf in `Bad_clock error
+        | 1 ->
+            let error = decode_bad_h_timings_error buf in
+            `Bad_h_timings error
+        | 2 ->
+            let error = decode_bad_v_timings_error buf in
+            `Bad_v_timings error
+        | 3 ->
+            let error = decode_mode_unsuitable_error buf in
+            `Mode_unsuitable error
+        | 4 ->
+            let error = decode_extension_disabled_error buf in
+            `Extension_disabled error
+        | 5 ->
+            let error = decode_client_not_local_error buf in
+            `Client_not_local error
+        | 6 -> let error = decode_zoom_locked_error buf in `Zoom_locked error
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
   end
 module Xinerama_codec =
   struct
@@ -708,6 +1029,11 @@ module Xinerama_codec =
        let width = Decode.u16 buf in
        let height = Decode.u16 buf in { x_org; y_org; width; height } : 
       screen_info)
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
   end
 module Xinput_codec =
   struct
@@ -1218,10 +1544,10 @@ module Xinput_codec =
       (match tag with
        | 8 ->
            let data8 = (Decode.list ~item:Decode.u8) ~len:ext_num_items buf in
-           (Decode.pad buf 4; `Property_8_bits data8)
+           (Decode.align buf 4; `Property_8_bits data8)
        | 16 ->
            let data16 = (Decode.list ~item:Decode.u16) ~len:ext_num_items buf in
-           (Decode.pad buf 4; `Property_16_bits data16)
+           (Decode.align buf 4; `Property_16_bits data16)
        | 32 ->
            let data32 = (Decode.list ~item:Decode.u32) ~len:ext_num_items buf in
            `Property_32_bits data32
@@ -1248,7 +1574,8 @@ module Xinput_codec =
        let send_core = Decode.bool buf in
        let enable = Decode.bool buf in
        let name = Decode.string ~len:name_len buf in
-       Decode.pad buf 4; { type_; len; send_core; enable; name } : add_master)
+       Decode.align buf 4; { type_; len; send_core; enable; name } : 
+      add_master)
     let decode_remove_master buf =
       (let type_ =
          ((Decode.u16 %> Conv.To_int.u16) %>
@@ -1302,7 +1629,7 @@ module Xinput_codec =
            let send_core = Decode.bool buf in
            let enable = Decode.bool buf in
            let name = Decode.string ~len:name_len buf in
-           (Decode.pad buf 4; `Add_master { send_core; enable; name })
+           (Decode.align buf 4; `Add_master { send_core; enable; name })
        | 2 ->
            let deviceid =
              (Decode.u16 %>
@@ -1489,7 +1816,7 @@ module Xinput_codec =
        let enabled = Decode.bool buf in
        Decode.pad buf 1;
        (let name = Decode.string ~len:name_len buf in
-        Decode.pad buf 4;
+        Decode.align buf 4;
         (let classes =
            (Decode.list ~item:decode_device_class) ~len:num_classes buf in
          { deviceid; type_; attachment; enabled; name; classes })) : 
@@ -1522,6 +1849,22 @@ module Xinput_codec =
        (let flags =
           ((Decode.u32 %> Conv.To_i32.u32) %> Hierarchy_mask.of_int32) buf in
         { deviceid; attachment; type_; enabled; flags }) : hierarchy_info)
+    let decode_device_error buf = (Decode.align buf 32; () : Error.Device.t)
+    let decode_event_error buf = (Decode.align buf 32; () : Error.Event.t)
+    let decode_mode_error buf = (Decode.align buf 32; () : Error.Mode.t)
+    let decode_device_busy_error buf =
+      (Decode.align buf 32; () : Error.Device_busy.t)
+    let decode_class_error buf = (Decode.align buf 32; () : Error.Class_.t)
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | 0 -> let error = decode_device_error buf in `Device error
+        | 1 -> let error = decode_event_error buf in `Event error
+        | 2 -> let error = decode_mode_error buf in `Mode error
+        | 3 -> let error = decode_device_busy_error buf in `Device_busy error
+        | 4 -> let error = decode_class_error buf in `Class_ error
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
   end
 module Xprint_codec =
   struct
@@ -1529,10 +1872,22 @@ module Xprint_codec =
     let decode_printer buf =
       (let name_len = Conv.To_int.u32 (Decode.u32 buf) in
        let name = Decode.string ~len:name_len buf in
-       Decode.pad buf 4;
+       Decode.align buf 4;
        (let desc_len = Conv.To_int.u32 (Decode.u32 buf) in
         let description = Decode.string ~len:desc_len buf in
-        Decode.pad buf 4; { name; description }) : printer)
+        Decode.align buf 4; { name; description }) : printer)
+    let decode_bad_context_error buf =
+      (Decode.align buf 32; () : Error.Bad_context.t)
+    let decode_bad_sequence_error buf =
+      (Decode.align buf 32; () : Error.Bad_sequence.t)
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | 0 -> let error = decode_bad_context_error buf in `Bad_context error
+        | 1 ->
+            let error = decode_bad_sequence_error buf in `Bad_sequence error
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
   end
 module Xselinux_codec =
   struct
@@ -1542,11 +1897,25 @@ module Xselinux_codec =
        let object_context_len = Conv.To_int.u32 (Decode.u32 buf) in
        let data_context_len = Conv.To_int.u32 (Decode.u32 buf) in
        let object_context = Decode.string ~len:object_context_len buf in
-       Decode.pad buf 4;
+       Decode.align buf 4;
        (let data_context = Decode.string ~len:data_context_len buf in
-        Decode.pad buf 4; { name; object_context; data_context }) : list_item)
+        Decode.align buf 4; { name; object_context; data_context }) : 
+      list_item)
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
   end
-module Xtest_codec = struct open Protocol.Xtest end
+module Xtest_codec =
+  struct
+    open Protocol.Xtest
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
+  end
 module Xv_codec =
   struct
     open Protocol.Xv
@@ -1566,7 +1935,7 @@ module Xv_codec =
        let type_ = ((Decode.u8 %> Conv.To_i32.u8) %> Type_mask.of_int32) buf in
        Decode.pad buf 1;
        (let name = Decode.string ~len:name_size buf in
-        Decode.pad buf 4;
+        Decode.align buf 4;
         (let formats = (Decode.list ~item:decode_format) ~len:num_formats buf in
          { base_id; num_ports; type_; name; formats })) : adaptor_info)
     let decode_encoding_info buf =
@@ -1577,7 +1946,7 @@ module Xv_codec =
        Decode.pad buf 2;
        (let rate = decode_rational buf in
         let name = Decode.string ~len:name_size buf in
-        Decode.pad buf 4; { encoding; width; height; rate; name }) : 
+        Decode.align buf 4; { encoding; width; height; rate; name }) : 
       encoding_info)
     let decode_image buf =
       (let id = Decode.u32 buf in
@@ -1597,7 +1966,7 @@ module Xv_codec =
        let max = Decode.i32 buf in
        let size = Conv.To_int.u32 (Decode.u32 buf) in
        let name = Decode.string ~len:size buf in
-       Decode.pad buf 4; { flags; min; max; name } : attribute_info)
+       Decode.align buf 4; { flags; min; max; name } : attribute_info)
     let decode_image_format_info buf =
       (let id = Decode.u32 buf in
        let type_ =
@@ -1657,6 +2026,21 @@ module Xv_codec =
              vcomp_order;
              vscanline_order
            })))) : image_format_info)
+    let decode_bad_port_error buf =
+      (Decode.align buf 32; () : Error.Bad_port.t)
+    let decode_bad_encoding_error buf =
+      (Decode.align buf 32; () : Error.Bad_encoding.t)
+    let decode_bad_control_error buf =
+      (Decode.align buf 32; () : Error.Bad_control.t)
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | 0 -> let error = decode_bad_port_error buf in `Bad_port error
+        | 1 ->
+            let error = decode_bad_encoding_error buf in `Bad_encoding error
+        | 2 -> let error = decode_bad_control_error buf in `Bad_control error
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
   end
 module Xvmc_codec =
   struct
@@ -1682,4 +2066,91 @@ module Xvmc_codec =
          mc_type;
          flags
        } : surface_info)
+    let decode_error ~number  buf =
+      (Decode.pad buf 4;
+       (match number with
+        | n -> invalid_arg ("Invalid error number: " ^ (string_of_int n))) : 
+      Error.t)
   end
+let decode_error
+  ~extensions:(extensions :
+                (int * (string * Protocol.Core.Query_extension.Reply.t)) list)
+   buf =
+  Decode.pad buf 1;
+  (let number = Decode.u8 buf in
+   Decode.pad buf 6;
+   (let major_opcode = Decode.u16 buf in
+    Decode.reset buf;
+    if major_opcode > 128
+    then (let error = Core_codec.decode_error buf ~number in `Core error)
+    else
+      (let (name, extension) = List.assoc major_opcode extensions in
+       let number = extension.first_error in
+       match name with
+       | "BIG-REQUESTS" ->
+           let error = Bigreq_codec.decode_error ~number buf in `Bigreq error
+       | "RENDER" ->
+           let error = Render_codec.decode_error ~number buf in `Render error
+       | "SHAPE" ->
+           let error = Shape_codec.decode_error ~number buf in `Shape error
+       | "XFIXES" ->
+           let error = Xfixes_codec.decode_error ~number buf in `Xfixes error
+       | "Composite" ->
+           let error = Composite_codec.decode_error ~number buf in
+           `Composite error
+       | "DAMAGE" ->
+           let error = Damage_codec.decode_error ~number buf in `Damage error
+       | "DPMS" ->
+           let error = Dpms_codec.decode_error ~number buf in `Dpms error
+       | "DRI2" ->
+           let error = Dri2_codec.decode_error ~number buf in `Dri2 error
+       | "DRI3" ->
+           let error = Dri3_codec.decode_error ~number buf in `Dri3 error
+       | "Generic Event Extension" ->
+           let error = Ge_codec.decode_error ~number buf in `Ge error
+       | "GLX" ->
+           let error = Glx_codec.decode_error ~number buf in `Glx error
+       | "RANDR" ->
+           let error = Randr_codec.decode_error ~number buf in `Randr error
+       | "SYNC" ->
+           let error = Sync_codec.decode_error ~number buf in `Sync error
+       | "Present" ->
+           let error = Present_codec.decode_error ~number buf in
+           `Present error
+       | "RECORD" ->
+           let error = Record_codec.decode_error ~number buf in `Record error
+       | "X-Resource" ->
+           let error = Res_codec.decode_error ~number buf in `Res error
+       | "MIT-SCREEN-SAVER" ->
+           let error = Screensaver_codec.decode_error ~number buf in
+           `Screensaver error
+       | "MIT-SHM" ->
+           let error = Shm_codec.decode_error ~number buf in `Shm error
+       | "XC-MISC" ->
+           let error = Xc_misc_codec.decode_error ~number buf in
+           `Xc_misc error
+       | "XEVIE" ->
+           let error = Xevie_codec.decode_error ~number buf in `Xevie error
+       | "XFree86-DRI" ->
+           let error = Xf86dri_codec.decode_error ~number buf in
+           `Xf86dri error
+       | "XFree86-VidModeExtension" ->
+           let error = Xf86vidmode_codec.decode_error ~number buf in
+           `Xf86vidmode error
+       | "XINERAMA" ->
+           let error = Xinerama_codec.decode_error ~number buf in
+           `Xinerama error
+       | "XInputExtension" ->
+           let error = Xinput_codec.decode_error ~number buf in `Xinput error
+       | "XpExtension" ->
+           let error = Xprint_codec.decode_error ~number buf in `Xprint error
+       | "SELinux" ->
+           let error = Xselinux_codec.decode_error ~number buf in
+           `Xselinux error
+       | "XTEST" ->
+           let error = Xtest_codec.decode_error ~number buf in `Xtest error
+       | "XVideo" ->
+           let error = Xv_codec.decode_error ~number buf in `Xv error
+       | "XVideo-MotionCompensation" ->
+           let error = Xvmc_codec.decode_error ~number buf in `Xvmc error
+       | str -> invalid_arg ("Unknown extension name: " ^ str))))

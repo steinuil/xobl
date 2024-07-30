@@ -55,3 +55,20 @@ module type Error = sig
   val name : string
   val number : int
 end
+
+module type Extension = sig
+  module Meta : sig
+    type t
+
+    val version : int * int
+    val query_name : string
+  end
+
+  module Error : sig
+    type t
+  end
+
+  module Event : sig
+    type t
+  end
+end

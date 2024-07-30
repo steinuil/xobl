@@ -810,7 +810,7 @@ module Codecs = struct
     | Field_pad { pad = Pad_bytes n; _ } ->
         [ `Seq [%expr Decode.pad buf [%e e_int n]] ]
     | Field_pad { pad = Pad_align n; _ } ->
-        [ `Seq [%expr Decode.pad buf [%e e_int n]] ]
+        [ `Seq [%expr Decode.align buf [%e e_int n]] ]
     | Field_list_simple { name; type_; length } ->
         let decode_ls = e_list_type ~ctx ~loc type_ in
         let len = e_id ~loc length in
@@ -866,6 +866,53 @@ module Codecs = struct
             Ast_helper.Exp.let_ ~loc Nonrecursive [ binding ] expr
         | `Seq body -> Ast_helper.Exp.sequence ~loc body expr)
 
+  let e_struct_fields ~ctx ~loc fields =
+    let result = e_result_fields_record ~loc fields in
+    e_fields ~ctx ~loc fields result
+
+  let pad_field size = Field_pad { pad = Pad_bytes size; serialize = false }
+  let pad_align size = Field_pad { pad = Pad_align size; serialize = false }
+
+  let collapse_padding fields =
+    let leftover, fields =
+      ListLabels.fold_left fields ~init:(0, [])
+        ~f:(fun (padding, fields) field ->
+          match field with
+          | Field_pad { pad = Pad_bytes n; serialize = false } ->
+              (padding + n, fields)
+          | f when padding > 0 -> (0, f :: pad_field padding :: fields)
+          | f -> (0, f :: fields))
+    in
+    let fields =
+      if leftover > 0 then pad_field leftover :: fields else fields
+    in
+    List.rev fields
+
+  let e_error ~ctx ~loc name fields =
+    let type_ =
+      Ldot (Ldot (Lident "Error", Ident.caml name), "t") |> with_loc ~loc
+    in
+    match fields with
+    | _ when visible_fields fields = [] ->
+        [%expr
+          fun buf : [%t Typ.constr type_ []] ->
+            Decode.align buf 32;
+            ()]
+    | [] -> Printf.ksprintf unexpected "error with no fields: %s" name
+    | fields ->
+        (* Errors include:
+           - a 0x0 byte to indicate that this is an error
+           - the error code (1 byte)
+           - the 2 LSB of the request sequence number (2 bytes)
+           - a field (4 bytes)
+           - minor opcode (2 bytes)
+           - major opcode (1 byte)
+           The first four bytes are not specified so we add some padding.
+        *)
+        let fields = fields @ [ pad_align 32 ] |> collapse_padding in
+        let fields = e_struct_fields ~ctx ~loc fields in
+        [%expr fun buf : [%t Typ.constr type_ []] -> [%e fields]]
+
   let e_variant ~ctx ~loc name items external_params =
     let type_ = t_id ~parent:(Ident.caml name) ~loc "t" in
     let items =
@@ -913,6 +960,16 @@ module Codecs = struct
           let [%p p_id ~loc ~prefix:"decode" ~suffix:"variant" name] =
             [%e variant]]
         :: []
+    | Error { name; fields; _ } ->
+        let error = e_error ~ctx ~loc name fields in
+        [%stri
+          let [%p p_id ~loc ~prefix:"decode" ~suffix:"error" name] = [%e error]]
+        :: []
+    | Error_copy { name; error; _ } ->
+        let body = e_ident ~ctx ~loc ~prefix:"decode" ~suffix:"error" error in
+        [%stri
+          let [%p p_id ~loc ~prefix:"decode" ~suffix:"error" name] = [%e body]]
+        :: []
     (* | Event { name; fields; _ } ->
         let result = e_result_fields_record ~loc fields in
         let body = e_fields ~ctx ~loc fields result in
@@ -931,29 +988,131 @@ module Codecs = struct
     let ctx = Cm ctx in
     List.concat_map (stri_declaration ~ctx ~loc) declarations
 
+  (* This is fine for decoding errors when we already know
+      the extension's opcode, but to use the correct decoder
+      we need to:
+      1. List the extensions
+      2. Query each extension, which gives us the major
+         opcode and base error.
+      We should do this at the connection level.
+
+      let opcodes =
+        ListExtensions
+        |> List.map QueryExtension
+
+     Then we build a (string, Query_extension.Reply.t) Map
+     and generate a function that takes this map, switches
+     on the extension name and calls the corresponding decode
+     function for each case.
+  *)
+  let stri_decode_error ~loc decls =
+    let errors =
+      ListLabels.filter_map decls ~f:(function
+        | Error e -> Some (`Error e)
+        | Error_copy e -> Some (`Error_copy e)
+        | _ -> None)
+    in
+    let body =
+      let items =
+        ListLabels.map errors ~f:(function
+            | `Error { name; number; fields = _ }
+            | `Error_copy { name; number; error = _ }
+            ->
+            let body =
+              Exp.variant ~loc (Ident.caml name) (Some [%expr error])
+            in
+            Exp.case (p_int ~loc number)
+              [%expr
+                let error =
+                  [%e e_id ~loc ~prefix:"decode" ~suffix:"error" name] buf
+                in
+                [%e body]])
+      in
+      let default =
+        Exp.case
+          [%pat? n]
+          [%expr invalid_arg ("Invalid error number: " ^ string_of_int n)]
+      in
+      Exp.match_ ~loc (e_id ~loc "number") (items @ [ default ])
+    in
+    [%stri
+      let decode_error ~number buf : Error.t =
+        Decode.pad buf 4;
+        [%e body]]
+
+  let stri_match_errors ~loc protos : _ =
+    let extensions =
+      ListLabels.filter_map protos ~f:(function
+        | Core _ -> None
+        | Extension { file_name; query_name; _ } -> Some (file_name, query_name))
+    in
+    let body =
+      let items =
+        ListLabels.map extensions ~f:(fun (file_name, query_name) ->
+            let body =
+              Exp.variant ~loc (Ident.caml file_name) (Some [%expr error])
+            in
+            let m =
+              Ldot (Lident (Ident.caml file_name ^ "_codec"), "decode_error")
+              |> with_loc ~loc |> Exp.ident
+            in
+            Exp.case
+              (Pat.constant (Const.string query_name))
+              [%expr
+                let error = [%e m] ~number buf in
+                [%e body]])
+      in
+      let default =
+        Exp.case
+          [%pat? str]
+          [%expr invalid_arg ("Unknown extension name: " ^ str)]
+      in
+      Exp.match_ ~loc (e_id ~loc "name") (items @ [ default ])
+    in
+    [%stri
+      let decode_error
+          ~(extensions :
+             (int * (string * Protocol.Core.Query_extension.Reply.t)) list) buf
+          =
+        Decode.pad buf 1;
+        let number = Decode.u8 buf in
+        Decode.pad buf 6;
+        let major_opcode = Decode.u16 buf in
+        Decode.reset buf;
+        if major_opcode > 128 then
+          let error = Core_codec.decode_error buf ~number in
+          `Core error
+        else
+          let name, extension = List.assoc major_opcode extensions in
+          let number = extension.first_error in
+          [%e body]]
+
   let str_protocols ~loc protos =
-    let protos =
+    let codecs =
       protos
       |> List.map (fun proto ->
-             let name, t_name =
+             let name, t_name, decls =
                match proto with
-               | Core _ -> ("Core_codec", "Core")
-               | Extension { file_name; _ } ->
+               | Core decls -> ("Core_codec", "Core", decls)
+               | Extension { file_name; declarations; _ } ->
                    ( String.capitalize_ascii file_name ^ "_codec",
-                     String.capitalize_ascii file_name )
+                     String.capitalize_ascii file_name,
+                     declarations )
              in
-             let body = stri_protocol ~loc proto in
+             let decode_error = stri_decode_error ~loc decls in
+             let body = stri_protocol ~loc proto @ [ decode_error ] in
              let open_ =
                Ldot (Lident "Protocol", String.capitalize_ascii t_name)
                |> with_loc ~loc |> Mod.ident |> Opn.mk |> Str.open_
              in
              stri_module ~loc name (open_ :: body))
     in
+    let decode_error = stri_match_errors ~loc protos in
     [%str
       [@@@ocamlformat "disable"]
       [@@@ocaml.warning "-33"]
 
       open Util
       open Protocol]
-    @ protos
+    @ codecs @ [ decode_error ]
 end
