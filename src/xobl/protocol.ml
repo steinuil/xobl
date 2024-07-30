@@ -13702,9 +13702,9 @@ module Xinput =
               items: Property_format.t }[@@deriving sexp_of]
           end
       end
-    module Xi_query_pointer =
+    module Query_pointer =
       struct
-        let name = "XIQueryPointer"
+        let name = "QueryPointer"
         let opcode = 40
         type t =
           {
@@ -13727,9 +13727,9 @@ module Xinput =
               buttons: u32 list }[@@deriving sexp_of]
           end
       end
-    module Xi_warp_pointer =
+    module Warp_pointer =
       struct
-        let name = "XIWarpPointer"
+        let name = "WarpPointer"
         let opcode = 41
         type t =
           {
@@ -13757,9 +13757,9 @@ module Xinput =
                deviceid
              } : t)
       end
-    module Xi_change_cursor =
+    module Change_cursor =
       struct
-        let name = "XIChangeCursor"
+        let name = "ChangeCursor"
         let opcode = 42
         type t =
           {
@@ -13769,16 +13769,16 @@ module Xinput =
         let with_request f ~window  ~cursor  ~deviceid  =
           f ({ window; cursor; deviceid } : t)
       end
-    module Xi_change_hierarchy =
+    module Change_hierarchy =
       struct
-        let name = "XIChangeHierarchy"
+        let name = "ChangeHierarchy"
         let opcode = 43
         type t = hierarchy_change list[@@deriving sexp_of]
         let with_request f changes = f (changes : t)
       end
-    module Xi_set_client_pointer =
+    module Set_client_pointer =
       struct
-        let name = "XISetClientPointer"
+        let name = "SetClientPointer"
         let opcode = 44
         type t =
           {
@@ -13786,9 +13786,9 @@ module Xinput =
           deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
         let with_request f ~window  ~deviceid  = f ({ window; deviceid } : t)
       end
-    module Xi_get_client_pointer =
+    module Get_client_pointer =
       struct
-        let name = "XIGetClientPointer"
+        let name = "GetClientPointer"
         let opcode = 45
         type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
@@ -13801,18 +13801,18 @@ module Xinput =
                                                               sexp_of]
           end
       end
-    module Xi_select_events =
+    module Select_events =
       struct
-        let name = "XISelectEvents"
+        let name = "SelectEvents"
         let opcode = 46
         type t = {
           window: Core.window ;
           masks: event_mask list }[@@deriving sexp_of]
         let with_request f ~window  ~masks  = f ({ window; masks } : t)
       end
-    module Xi_query_version =
+    module Query_version =
       struct
-        let name = "XIQueryVersion"
+        let name = "QueryVersion"
         let opcode = 47
         type t = {
           major_version: u16 ;
@@ -13826,18 +13826,18 @@ module Xinput =
               minor_version: u16 }[@@deriving sexp_of]
           end
       end
-    module Xi_query_device =
+    module Query_device =
       struct
-        let name = "XIQueryDevice"
+        let name = "QueryDevice"
         let opcode = 48
         type t = [ | Device_enum.t | device_id alt][@@deriving sexp_of]
         let with_request f deviceid = f (deviceid : t)
         module Reply =
           struct type t = xi_device_info list[@@deriving sexp_of] end
       end
-    module Xi_set_focus =
+    module Set_focus =
       struct
-        let name = "XISetFocus"
+        let name = "SetFocus"
         let opcode = 49
         type t =
           {
@@ -13847,9 +13847,9 @@ module Xinput =
         let with_request f ~window  ~time  ~deviceid  =
           f ({ window; time; deviceid } : t)
       end
-    module Xi_get_focus =
+    module Get_focus =
       struct
-        let name = "XIGetFocus"
+        let name = "GetFocus"
         let opcode = 50
         type t = [ | Device_enum.t | device_id alt][@@deriving sexp_of]
         let with_request f deviceid = f (deviceid : t)
@@ -13895,9 +13895,9 @@ module Xinput =
           deviceid: [ | Device_enum.t | device_id alt] }[@@deriving sexp_of]
         let with_request f ~time  ~deviceid  = f ({ time; deviceid } : t)
       end
-    module Xi_allow_events =
+    module Allow_events =
       struct
-        let name = "XIAllowEvents"
+        let name = "AllowEvents"
         let opcode = 53
         type t =
           {
@@ -13910,9 +13910,9 @@ module Xinput =
           ~grab_window  =
           f ({ time; deviceid; event_mode; touchid; grab_window } : t)
       end
-    module Xi_passive_grab_device =
+    module Passive_grab_device =
       struct
-        let name = "XIPassiveGrabDevice"
+        let name = "PassiveGrabDevice"
         let opcode = 54
         type t =
           {
@@ -13947,9 +13947,9 @@ module Xinput =
         module Reply =
           struct type t = grab_modifier_info list[@@deriving sexp_of] end
       end
-    module Xi_passive_ungrab_device =
+    module Passive_ungrab_device =
       struct
-        let name = "XIPassiveUngrabDevice"
+        let name = "PassiveUngrabDevice"
         let opcode = 55
         type t =
           {
@@ -13962,17 +13962,17 @@ module Xinput =
           ~modifiers  =
           f ({ grab_window; detail; deviceid; grab_type; modifiers } : t)
       end
-    module Xi_list_properties =
+    module List_properties =
       struct
-        let name = "XIListProperties"
+        let name = "ListProperties"
         let opcode = 56
         type t = [ | Device_enum.t | device_id alt][@@deriving sexp_of]
         let with_request f deviceid = f (deviceid : t)
         module Reply = struct type t = Core.atom list[@@deriving sexp_of] end
       end
-    module Xi_change_property =
+    module Change_property =
       struct
-        let name = "XIChangeProperty"
+        let name = "ChangeProperty"
         let opcode = 57
         type t =
           {
@@ -13986,9 +13986,9 @@ module Xinput =
           ~items  =
           f ({ deviceid; mode; property; type_; num_items; items } : t)
       end
-    module Xi_delete_property =
+    module Delete_property =
       struct
-        let name = "XIDeleteProperty"
+        let name = "DeleteProperty"
         let opcode = 58
         type t =
           {
@@ -13997,9 +13997,9 @@ module Xinput =
         let with_request f ~deviceid  ~property  =
           f ({ deviceid; property } : t)
       end
-    module Xi_get_property =
+    module Get_property =
       struct
-        let name = "XIGetProperty"
+        let name = "GetProperty"
         let opcode = 59
         type t =
           {
@@ -14021,18 +14021,18 @@ module Xinput =
               items: Property_format.t }[@@deriving sexp_of]
           end
       end
-    module Xi_get_selected_events =
+    module Get_selected_events =
       struct
-        let name = "XIGetSelectedEvents"
+        let name = "GetSelectedEvents"
         let opcode = 60
         type t = Core.window[@@deriving sexp_of]
         let with_request f window = f (window : t)
         module Reply =
           struct type t = event_mask list[@@deriving sexp_of] end
       end
-    module Xi_barrier_release_pointer =
+    module Barrier_release_pointer =
       struct
-        let name = "XIBarrierReleasePointer"
+        let name = "BarrierReleasePointer"
         let opcode = 61
         type t = barrier_release_pointer_info list[@@deriving sexp_of]
         let with_request f barriers = f (barriers : t)

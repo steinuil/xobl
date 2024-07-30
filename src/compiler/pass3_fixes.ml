@@ -211,6 +211,20 @@ let remove_opcodes_from_errors_in_decl = function
       Parsetree.Error { name; number; fields }
   | d -> d
 
+(* A lot of requests in xinput start with XI and that sucks. *)
+(* TODO we should have an original name field because the request name
+        in the module also gets affected by this change. *)
+let fix_xinput_remove_xi_prefix = function
+  | Parsetree.Request { name = "XIGrabDevice" | "XIUngrabDevice"; _ } as d -> d
+  | Parsetree.Request ({ name; _ } as req)
+    when String.starts_with name ~prefix:"XI" ->
+      Parsetree.Request
+        {
+          req with
+          name = StringLabels.sub name ~pos:2 ~len:(String.length name - 2);
+        }
+  | d -> d
+
 (* Apply the fixes. *)
 let ( %> ) f g x = g (f x)
 
@@ -224,7 +238,8 @@ let apply_fixes = function
       let declarations =
         declarations
         |> apply_to "xinput" file_name
-             (fix_xinput_modifier_mask %> fix_xinput_event_struct)
+             (fix_xinput_modifier_mask %> fix_xinput_event_struct
+            %> fix_xinput_remove_xi_prefix)
         |> apply_to "dri2" file_name fix_dri2_attachments_length
         |> List.map (fix_bit_win_gravity %> remove_opcodes_from_errors_in_decl)
       in
