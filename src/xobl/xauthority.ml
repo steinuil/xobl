@@ -147,18 +147,18 @@ let%expect_test _ =
 let to_string { xau_family; xau_address; xau_dpynum; xau_type; xau_data } =
   let open Buffer in
   let buf = create 256 in
-  add_uint16_le buf (Family.to_int xau_family);
-  add_uint16_le buf (String.length xau_address);
+  add_uint16_be buf (Family.to_int xau_family);
+  add_uint16_be buf (String.length xau_address);
   add_string buf xau_address;
   (match xau_dpynum with
   | Some dpynum ->
       let dpynum = string_of_int dpynum in
-      add_uint16_le buf (String.length dpynum);
+      add_uint16_be buf (String.length dpynum);
       add_string buf dpynum
-  | None -> add_uint16_le buf 0);
-  add_uint16_le buf (String.length xau_type);
+  | None -> add_uint16_be buf 0);
+  add_uint16_be buf (String.length xau_type);
   add_string buf xau_type;
-  add_uint16_le buf (String.length xau_data);
+  add_uint16_be buf (String.length xau_data);
   add_string buf xau_data;
   contents buf
 
