@@ -2,6 +2,7 @@ module Cursor = struct
   type t = { buf : Bytes.t; mutable pos : int; start : int }
 
   let of_bytes ?(pos = 0) buf = { buf; pos; start = pos }
+  (* TODO should add a length to the constructor as well! *)
 end
 
 open Cursor
@@ -51,3 +52,12 @@ let list ~item ~len cur =
       loop (v :: ls) (len - 1)
   in
   loop [] len
+
+let list_no_length ~item cur =
+  let rec loop ls =
+    try
+      let v = item cur in
+      loop (v :: ls)
+    with _ -> List.rev ls
+  in
+  loop []

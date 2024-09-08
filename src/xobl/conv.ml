@@ -56,3 +56,20 @@ end
      let file_descr _ = failwith "should not happen"
      let xid (Types.Xid i) = u32 i
    end *)
+
+let sum = List.fold_left ( + ) 0
+
+(* These two functions only take optints because they're only ever used for masks. *)
+let sum_map ~f ls =
+  List.fold_left (fun acc item -> Optint.add acc (f item)) Optint.zero ls
+  |> Optint.to_int
+
+let pop_count n =
+  let open Optint.Infix in
+  let rec iter pos acc =
+    if pos > Optint.of_int 31 then acc
+    else if n land (Optint.one lsl Optint.to_int pos) <> Optint.zero then
+      iter (pos + Optint.one) acc + Optint.one
+    else iter (pos + Optint.one) acc
+  in
+  iter Optint.zero Optint.zero

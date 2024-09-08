@@ -791,15 +791,14 @@ module Codecs = struct
         | Some it -> e_id ~loc it)
     | Enum_ref _ -> unexpected "Enum_ref"
     | Param_ref { param = name; type_ = _ } -> e_id ~prefix:"ext" ~loc name
-    | Pop_count e -> [%expr pop_count [%e e_expression ?it ~loc e]]
+    | Pop_count e -> [%expr Conv.pop_count [%e e_expression ?it ~loc e]]
     | Expr_value v -> e_int (Int64.to_int v)
     | Expr_bit b -> [%expr 1 lsl [%e e_int b]]
-    | Sum_of { field; by_expr = None } ->
-        [%expr List.fold_left ( + ) 0 [%e e_id ~loc field]]
+    | Sum_of { field; by_expr = None } -> [%expr Conv.sum [%e e_id ~loc field]]
     | Sum_of { field; by_expr = Some by_expr } ->
         [%expr
-          sum_of_expr
-            (fun list_element_ref ->
+          Conv.sum_map
+            ~f:(fun list_element_ref ->
               [%e e_expression ~it:"list_element_ref" ~loc by_expr])
             [%e e_id ~loc field]]
 
@@ -844,6 +843,13 @@ module Codecs = struct
             let param = e_id ~loc param.ep_name in
             [ `Let (name, [%expr [%e body] ~tag:[%e tag] buf [%e param]]) ]
         | _ -> not_implemented "multiple param_refs")
+    | Field_list { name; type_; length = None } ->
+        (* A List field with no specified length has its length defined
+           by the length of the enclosing struct - current position / size of
+           the type.
+           Here we just kind of wing it lol *)
+        let decode_t = e_field_type ~ctx ~loc type_ in
+        [ `Let (name, [%expr Decode.list_no_length ~item:[%e decode_t] buf]) ]
     | f -> Printf.ksprintf unexpected "field: %s" (show_field f)
 
   let e_result_fields_record ~loc fields =
@@ -913,6 +919,13 @@ module Codecs = struct
         let fields = e_struct_fields ~ctx ~loc fields in
         [%expr fun buf : [%t Typ.constr type_ []] -> [%e fields]]
 
+  let e_event ~ctx ~loc name fields =
+    let type_ =
+      Ldot (Ldot (Lident "Event", Ident.caml name), "t") |> with_loc ~loc
+    in
+    let fields = e_struct_fields ~ctx ~loc fields in
+    [%expr fun buf : [%t Typ.constr type_ []] -> [%e fields]]
+
   let e_variant ~ctx ~loc name items external_params =
     let type_ = t_id ~parent:(Ident.caml name) ~loc "t" in
     let items =
@@ -970,13 +983,16 @@ module Codecs = struct
         [%stri
           let [%p p_id ~loc ~prefix:"decode" ~suffix:"error" name] = [%e body]]
         :: []
-    (* | Event { name; fields; _ } ->
-        let result = e_result_fields_record ~loc fields in
-        let body = e_fields ~ctx ~loc fields result in
+    | Event { name; fields; _ } ->
+        let body = e_event ~ctx ~loc name fields in
         [%stri
-          let [%p p_id ~loc ~prefix:"decode" ~suffix:"event" name] =
-           fun buf -> [%e body]]
-        :: [] *)
+          let [%p p_id ~loc ~prefix:"decode" ~suffix:"event" name] = [%e body]]
+        :: []
+    | Event_copy { name; event; _ } ->
+        let body = e_ident ~ctx ~loc ~prefix:"decode" ~suffix:"event" event in
+        [%stri
+          let [%p p_id ~loc ~prefix:"decode" ~suffix:"event" name] = [%e body]]
+        :: []
     | _ -> []
 
   let stri_protocol ~loc proto =

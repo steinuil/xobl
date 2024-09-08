@@ -187,6 +187,359 @@ module Core_codec =
             pixmap_formats;
             roots
           }))) : setup)
+    let decode_key_press_event buf =
+      (let detail = Decode.u8 buf in
+       let time = Decode.u32 buf in
+       let root = Decode.xid buf in
+       let event = Decode.xid buf in
+       let child =
+         (Decode.xid %>
+            (Conv.alt_enum ~enum_of_int:Window_enum.of_int
+               ~int_of_t:Conv.To_int.xid)) buf in
+       let root_x = Decode.i16 buf in
+       let root_y = Decode.i16 buf in
+       let event_x = Decode.i16 buf in
+       let event_y = Decode.i16 buf in
+       let state =
+         ((Decode.u16 %> Conv.To_i32.u16) %> Key_but_mask.of_int32) buf in
+       let same_screen = Decode.bool buf in
+       Decode.pad buf 1;
+       {
+         detail;
+         time;
+         root;
+         event;
+         child;
+         root_x;
+         root_y;
+         event_x;
+         event_y;
+         state;
+         same_screen
+       } : Event.Key_press.t)
+    let decode_key_release_event = decode_key_press_event
+    let decode_button_press_event buf =
+      (let detail = Decode.u8 buf in
+       let time = Decode.u32 buf in
+       let root = Decode.xid buf in
+       let event = Decode.xid buf in
+       let child =
+         (Decode.xid %>
+            (Conv.alt_enum ~enum_of_int:Window_enum.of_int
+               ~int_of_t:Conv.To_int.xid)) buf in
+       let root_x = Decode.i16 buf in
+       let root_y = Decode.i16 buf in
+       let event_x = Decode.i16 buf in
+       let event_y = Decode.i16 buf in
+       let state =
+         ((Decode.u16 %> Conv.To_i32.u16) %> Key_but_mask.of_int32) buf in
+       let same_screen = Decode.bool buf in
+       Decode.pad buf 1;
+       {
+         detail;
+         time;
+         root;
+         event;
+         child;
+         root_x;
+         root_y;
+         event_x;
+         event_y;
+         state;
+         same_screen
+       } : Event.Button_press.t)
+    let decode_button_release_event = decode_button_press_event
+    let decode_motion_notify_event buf =
+      (let detail =
+         ((Decode.byte %> Conv.To_int.byte) %> Motion_enum.of_int) buf in
+       let time = Decode.u32 buf in
+       let root = Decode.xid buf in
+       let event = Decode.xid buf in
+       let child =
+         (Decode.xid %>
+            (Conv.alt_enum ~enum_of_int:Window_enum.of_int
+               ~int_of_t:Conv.To_int.xid)) buf in
+       let root_x = Decode.i16 buf in
+       let root_y = Decode.i16 buf in
+       let event_x = Decode.i16 buf in
+       let event_y = Decode.i16 buf in
+       let state =
+         ((Decode.u16 %> Conv.To_i32.u16) %> Key_but_mask.of_int32) buf in
+       let same_screen = Decode.bool buf in
+       Decode.pad buf 1;
+       {
+         detail;
+         time;
+         root;
+         event;
+         child;
+         root_x;
+         root_y;
+         event_x;
+         event_y;
+         state;
+         same_screen
+       } : Event.Motion_notify.t)
+    let decode_enter_notify_event buf =
+      (let detail =
+         ((Decode.byte %> Conv.To_int.byte) %> Notify_detail_enum.of_int) buf in
+       let time = Decode.u32 buf in
+       let root = Decode.xid buf in
+       let event = Decode.xid buf in
+       let child =
+         (Decode.xid %>
+            (Conv.alt_enum ~enum_of_int:Window_enum.of_int
+               ~int_of_t:Conv.To_int.xid)) buf in
+       let root_x = Decode.i16 buf in
+       let root_y = Decode.i16 buf in
+       let event_x = Decode.i16 buf in
+       let event_y = Decode.i16 buf in
+       let state =
+         ((Decode.u16 %> Conv.To_i32.u16) %> Key_but_mask.of_int32) buf in
+       let mode =
+         ((Decode.byte %> Conv.To_int.byte) %> Notify_mode_enum.of_int) buf in
+       let same_screen_focus = Decode.byte buf in
+       {
+         detail;
+         time;
+         root;
+         event;
+         child;
+         root_x;
+         root_y;
+         event_x;
+         event_y;
+         state;
+         mode;
+         same_screen_focus
+       } : Event.Enter_notify.t)
+    let decode_leave_notify_event = decode_enter_notify_event
+    let decode_focus_in_event buf =
+      (let detail =
+         ((Decode.byte %> Conv.To_int.byte) %> Notify_detail_enum.of_int) buf in
+       let event = Decode.xid buf in
+       let mode =
+         ((Decode.byte %> Conv.To_int.byte) %> Notify_mode_enum.of_int) buf in
+       Decode.pad buf 3; { detail; event; mode } : Event.Focus_in.t)
+    let decode_focus_out_event = decode_focus_in_event
+    let decode_keymap_notify_event buf =
+      (let keys = (Decode.list ~item:Decode.u8) ~len:31 buf in keys : 
+      Event.Keymap_notify.t)
+    let decode_expose_event buf =
+      (Decode.pad buf 1;
+       (let window = Decode.xid buf in
+        let x = Decode.u16 buf in
+        let y = Decode.u16 buf in
+        let width = Decode.u16 buf in
+        let height = Decode.u16 buf in
+        let count = Decode.u16 buf in
+        Decode.pad buf 2; { window; x; y; width; height; count }) : Event.Expose.t)
+    let decode_graphics_exposure_event buf =
+      (Decode.pad buf 1;
+       (let drawable = Decode.xid buf in
+        let x = Decode.u16 buf in
+        let y = Decode.u16 buf in
+        let width = Decode.u16 buf in
+        let height = Decode.u16 buf in
+        let minor_opcode = Decode.u16 buf in
+        let count = Decode.u16 buf in
+        let major_opcode = Decode.u8 buf in
+        Decode.pad buf 3;
+        { drawable; x; y; width; height; minor_opcode; count; major_opcode }) : 
+      Event.Graphics_exposure.t)
+    let decode_no_exposure_event buf =
+      (Decode.pad buf 1;
+       (let drawable = Decode.xid buf in
+        let minor_opcode = Decode.u16 buf in
+        let major_opcode = Decode.u8 buf in
+        Decode.pad buf 1; { drawable; minor_opcode; major_opcode }) : 
+      Event.No_exposure.t)
+    let decode_visibility_notify_event buf =
+      (Decode.pad buf 1;
+       (let window = Decode.xid buf in
+        let state =
+          ((Decode.byte %> Conv.To_int.byte) %> Visibility_enum.of_int) buf in
+        Decode.pad buf 3; { window; state }) : Event.Visibility_notify.t)
+    let decode_create_notify_event buf =
+      (Decode.pad buf 1;
+       (let parent = Decode.xid buf in
+        let window = Decode.xid buf in
+        let x = Decode.i16 buf in
+        let y = Decode.i16 buf in
+        let width = Decode.u16 buf in
+        let height = Decode.u16 buf in
+        let border_width = Decode.u16 buf in
+        let override_redirect = Decode.bool buf in
+        Decode.pad buf 1;
+        {
+          parent;
+          window;
+          x;
+          y;
+          width;
+          height;
+          border_width;
+          override_redirect
+        }) : Event.Create_notify.t)
+    let decode_destroy_notify_event buf =
+      (Decode.pad buf 1;
+       (let event = Decode.xid buf in
+        let window = Decode.xid buf in { event; window }) : Event.Destroy_notify.t)
+    let decode_unmap_notify_event buf =
+      (Decode.pad buf 1;
+       (let event = Decode.xid buf in
+        let window = Decode.xid buf in
+        let from_configure = Decode.bool buf in
+        Decode.pad buf 3; { event; window; from_configure }) : Event.Unmap_notify.t)
+    let decode_map_notify_event buf =
+      (Decode.pad buf 1;
+       (let event = Decode.xid buf in
+        let window = Decode.xid buf in
+        let override_redirect = Decode.bool buf in
+        Decode.pad buf 3; { event; window; override_redirect }) : Event.Map_notify.t)
+    let decode_map_request_event buf =
+      (Decode.pad buf 1;
+       (let parent = Decode.xid buf in
+        let window = Decode.xid buf in { parent; window }) : Event.Map_request.t)
+    let decode_reparent_notify_event buf =
+      (Decode.pad buf 1;
+       (let event = Decode.xid buf in
+        let window = Decode.xid buf in
+        let parent = Decode.xid buf in
+        let x = Decode.i16 buf in
+        let y = Decode.i16 buf in
+        let override_redirect = Decode.bool buf in
+        Decode.pad buf 3; { event; window; parent; x; y; override_redirect }) : 
+      Event.Reparent_notify.t)
+    let decode_configure_notify_event buf =
+      (Decode.pad buf 1;
+       (let event = Decode.xid buf in
+        let window = Decode.xid buf in
+        let above_sibling =
+          (Decode.xid %>
+             (Conv.alt_enum ~enum_of_int:Window_enum.of_int
+                ~int_of_t:Conv.To_int.xid)) buf in
+        let x = Decode.i16 buf in
+        let y = Decode.i16 buf in
+        let width = Decode.u16 buf in
+        let height = Decode.u16 buf in
+        let border_width = Decode.u16 buf in
+        let override_redirect = Decode.bool buf in
+        Decode.pad buf 1;
+        {
+          event;
+          window;
+          above_sibling;
+          x;
+          y;
+          width;
+          height;
+          border_width;
+          override_redirect
+        }) : Event.Configure_notify.t)
+    let decode_configure_request_event buf =
+      (let stack_mode =
+         ((Decode.byte %> Conv.To_int.byte) %> Stack_mode_enum.of_int) buf in
+       let parent = Decode.xid buf in
+       let window = Decode.xid buf in
+       let sibling =
+         (Decode.xid %>
+            (Conv.alt_enum ~enum_of_int:Window_enum.of_int
+               ~int_of_t:Conv.To_int.xid)) buf in
+       let x = Decode.i16 buf in
+       let y = Decode.i16 buf in
+       let width = Decode.u16 buf in
+       let height = Decode.u16 buf in
+       let border_width = Decode.u16 buf in
+       let value_mask =
+         ((Decode.u16 %> Conv.To_i32.u16) %> Config_window_mask.of_int32) buf in
+       {
+         stack_mode;
+         parent;
+         window;
+         sibling;
+         x;
+         y;
+         width;
+         height;
+         border_width;
+         value_mask
+       } : Event.Configure_request.t)
+    let decode_gravity_notify_event buf =
+      (Decode.pad buf 1;
+       (let event = Decode.xid buf in
+        let window = Decode.xid buf in
+        let x = Decode.i16 buf in
+        let y = Decode.i16 buf in { event; window; x; y }) : Event.Gravity_notify.t)
+    let decode_resize_request_event buf =
+      (Decode.pad buf 1;
+       (let window = Decode.xid buf in
+        let width = Decode.u16 buf in
+        let height = Decode.u16 buf in { window; width; height }) : Event.Resize_request.t)
+    let decode_circulate_notify_event buf =
+      (Decode.pad buf 1;
+       (let event = Decode.xid buf in
+        let window = Decode.xid buf in
+        Decode.pad buf 4;
+        (let place =
+           ((Decode.byte %> Conv.To_int.byte) %> Place_enum.of_int) buf in
+         Decode.pad buf 3; { event; window; place })) : Event.Circulate_notify.t)
+    let decode_circulate_request_event = decode_circulate_notify_event
+    let decode_property_notify_event buf =
+      (Decode.pad buf 1;
+       (let window = Decode.xid buf in
+        let atom = Decode.xid buf in
+        let time = Decode.u32 buf in
+        let state =
+          ((Decode.byte %> Conv.To_int.byte) %> Property_enum.of_int) buf in
+        Decode.pad buf 3; { window; atom; time; state }) : Event.Property_notify.t)
+    let decode_selection_clear_event buf =
+      (Decode.pad buf 1;
+       (let time = Decode.u32 buf in
+        let owner = Decode.xid buf in
+        let selection = Decode.xid buf in { time; owner; selection }) : 
+      Event.Selection_clear.t)
+    let decode_selection_request_event buf =
+      (Decode.pad buf 1;
+       (let time =
+          (Decode.u32 %>
+             (Conv.alt_enum ~enum_of_int:Time_enum.of_int
+                ~int_of_t:Conv.To_int.u32)) buf in
+        let owner = Decode.xid buf in
+        let requestor = Decode.xid buf in
+        let selection = Decode.xid buf in
+        let target = Decode.xid buf in
+        let property =
+          (Decode.xid %>
+             (Conv.alt_enum ~enum_of_int:Atom_enum.of_int
+                ~int_of_t:Conv.To_int.xid)) buf in
+        { time; owner; requestor; selection; target; property }) : Event.Selection_request.t)
+    let decode_selection_notify_event buf =
+      (Decode.pad buf 1;
+       (let time =
+          (Decode.u32 %>
+             (Conv.alt_enum ~enum_of_int:Time_enum.of_int
+                ~int_of_t:Conv.To_int.u32)) buf in
+        let requestor = Decode.xid buf in
+        let selection = Decode.xid buf in
+        let target = Decode.xid buf in
+        let property =
+          (Decode.xid %>
+             (Conv.alt_enum ~enum_of_int:Atom_enum.of_int
+                ~int_of_t:Conv.To_int.xid)) buf in
+        { time; requestor; selection; target; property }) : Event.Selection_notify.t)
+    let decode_colormap_notify_event buf =
+      (Decode.pad buf 1;
+       (let window = Decode.xid buf in
+        let colormap =
+          (Decode.xid %>
+             (Conv.alt_enum ~enum_of_int:Colormap_enum.of_int
+                ~int_of_t:Conv.To_int.xid)) buf in
+        let new_ = Decode.bool buf in
+        let state =
+          ((Decode.byte %> Conv.To_int.byte) %> Colormap_state_enum.of_int)
+            buf in
+        Decode.pad buf 2; { window; colormap; new_; state }) : Event.Colormap_notify.t)
     let decode_client_message_data_format_variant buf ~tag  =
       (match tag with
        | 8 ->
@@ -200,6 +553,21 @@ module Core_codec =
            `Data32 data32
        | n -> invalid_arg ("Invalid enum value: " ^ (string_of_int n)) : 
       Client_message_data_format.t)
+    let decode_client_message_event buf =
+      (let data_tag = Decode.u8 buf in
+       let window = Decode.xid buf in
+       let type_ = Decode.xid buf in
+       let data = decode_client_message_data_format_variant ~tag:data_tag buf in
+       { window; type_; data } : Event.Client_message.t)
+    let decode_mapping_notify_event buf =
+      (Decode.pad buf 1;
+       (let request =
+          ((Decode.byte %> Conv.To_int.byte) %> Mapping_enum.of_int) buf in
+        let first_keycode = Decode.u8 buf in
+        let count = Decode.u8 buf in
+        Decode.pad buf 1; { request; first_keycode; count }) : Event.Mapping_notify.t)
+    let decode_ge_generic_event buf =
+      (Decode.pad buf 22; () : Event.Ge_generic.t)
     let decode_request_error buf =
       (let bad_value = Decode.u32 buf in
        Decode.pad buf 4; Decode.align buf 32; bad_value : Error.Request.t)
@@ -441,6 +809,26 @@ module Render_codec =
 module Shape_codec =
   struct
     open Protocol.Shape
+    let decode_notify_event buf =
+      (let shape_kind = ((Decode.u8 %> Conv.To_int.u8) %> Sk_enum.of_int) buf in
+       let affected_window = Decode.xid buf in
+       let extents_x = Decode.i16 buf in
+       let extents_y = Decode.i16 buf in
+       let extents_width = Decode.u16 buf in
+       let extents_height = Decode.u16 buf in
+       let server_time = Decode.u32 buf in
+       let shaped = Decode.bool buf in
+       Decode.pad buf 11;
+       {
+         shape_kind;
+         affected_window;
+         extents_x;
+         extents_y;
+         extents_width;
+         extents_height;
+         server_time;
+         shaped
+       } : Event.Notify.t)
     let decode_error ~number  buf =
       (Decode.pad buf 4;
        (match number with
@@ -450,6 +838,29 @@ module Shape_codec =
 module Xfixes_codec =
   struct
     open Protocol.Xfixes
+    let decode_selection_notify_event buf =
+      (let subtype =
+         ((Decode.u8 %> Conv.To_int.u8) %> Selection_event_enum.of_int) buf in
+       let window = Decode.xid buf in
+       let owner = Decode.xid buf in
+       let selection = Decode.xid buf in
+       let timestamp = Decode.u32 buf in
+       let selection_timestamp = Decode.u32 buf in
+       Decode.pad buf 8;
+       { subtype; window; owner; selection; timestamp; selection_timestamp } : 
+      Event.Selection_notify.t)
+    let decode_cursor_notify_event buf =
+      (let subtype =
+         ((Decode.u8 %> Conv.To_int.u8) %> Cursor_notify_enum.of_int) buf in
+       let window = Decode.xid buf in
+       let cursor_serial = Decode.u32 buf in
+       let timestamp = Decode.u32 buf in
+       let name =
+         (Decode.xid %>
+            (Conv.alt_enum ~enum_of_int:Core.Atom_enum.of_int
+               ~int_of_t:Conv.To_int.xid)) buf in
+       Decode.pad buf 12; { subtype; window; cursor_serial; timestamp; name } : 
+      Event.Cursor_notify.t)
     let decode_bad_region_error buf =
       (Decode.align buf 32; () : Error.Bad_region.t)
     let decode_error ~number  buf =
@@ -473,6 +884,15 @@ module Damage_codec =
     open Protocol.Damage
     let decode_bad_damage_error buf =
       (Decode.align buf 32; () : Error.Bad_damage.t)
+    let decode_notify_event buf =
+      (let level =
+         ((Decode.u8 %> Conv.To_int.u8) %> Report_level_enum.of_int) buf in
+       let drawable = Decode.xid buf in
+       let damage = Decode.xid buf in
+       let timestamp = Decode.u32 buf in
+       let area = Core_codec.decode_rectangle buf in
+       let geometry = Core_codec.decode_rectangle buf in
+       { level; drawable; damage; timestamp; area; geometry } : Event.Notify.t)
     let decode_error ~number  buf =
       (Decode.pad buf 4;
        (match number with
@@ -504,6 +924,22 @@ module Dri2_codec =
       (let attachment =
          ((Decode.u32 %> Conv.To_int.u32) %> Attachment_enum.of_int) buf in
        let format = Decode.u32 buf in { attachment; format } : attach_format)
+    let decode_buffer_swap_complete_event buf =
+      (Decode.pad buf 1;
+       (let event_type =
+          ((Decode.u16 %> Conv.To_int.u16) %> Event_type_enum.of_int) buf in
+        Decode.pad buf 2;
+        (let drawable = Decode.xid buf in
+         let ust_hi = Decode.u32 buf in
+         let ust_lo = Decode.u32 buf in
+         let msc_hi = Decode.u32 buf in
+         let msc_lo = Decode.u32 buf in
+         let sbc = Decode.u32 buf in
+         { event_type; drawable; ust_hi; ust_lo; msc_hi; msc_lo; sbc })) : 
+      Event.Buffer_swap_complete.t)
+    let decode_invalidate_buffers_event buf =
+      (Decode.pad buf 1; (let drawable = Decode.xid buf in drawable) : 
+      Event.Invalidate_buffers.t)
     let decode_error ~number  buf =
       (Decode.pad buf 4;
        (match number with
@@ -548,6 +984,43 @@ module Glx_codec =
     let decode_bad_current_drawable_error = decode_generic_error
     let decode_bad_window_error = decode_generic_error
     let decode_glx_bad_profile_arb_error = decode_generic_error
+    let decode_pbuffer_clobber_event buf =
+      (Decode.pad buf 1;
+       (let event_type = Decode.u16 buf in
+        let draw_type = Decode.u16 buf in
+        let drawable = Decode.xid buf in
+        let b_mask = Decode.u32 buf in
+        let aux_buffer = Decode.u16 buf in
+        let x = Decode.u16 buf in
+        let y = Decode.u16 buf in
+        let width = Decode.u16 buf in
+        let height = Decode.u16 buf in
+        let count = Decode.u16 buf in
+        Decode.pad buf 4;
+        {
+          event_type;
+          draw_type;
+          drawable;
+          b_mask;
+          aux_buffer;
+          x;
+          y;
+          width;
+          height;
+          count
+        }) : Event.Pbuffer_clobber.t)
+    let decode_buffer_swap_complete_event buf =
+      (Decode.pad buf 1;
+       (let event_type = Decode.u16 buf in
+        Decode.pad buf 2;
+        (let drawable = Decode.xid buf in
+         let ust_hi = Decode.u32 buf in
+         let ust_lo = Decode.u32 buf in
+         let msc_hi = Decode.u32 buf in
+         let msc_lo = Decode.u32 buf in
+         let sbc = Decode.u32 buf in
+         { event_type; drawable; ust_hi; ust_lo; msc_hi; msc_lo; sbc })) : 
+      Event.Buffer_swap_complete.t)
     let decode_error ~number  buf =
       (Decode.pad buf 4;
        (match number with
@@ -640,6 +1113,34 @@ module Randr_codec =
          name_len;
          mode_flags
        } : mode_info)
+    let decode_screen_change_notify_event buf =
+      (let rotation =
+         ((Decode.u8 %> Conv.To_i32.u8) %> Rotation_mask.of_int32) buf in
+       let timestamp = Decode.u32 buf in
+       let config_timestamp = Decode.u32 buf in
+       let root = Decode.xid buf in
+       let request_window = Decode.xid buf in
+       let size_id = Decode.u16 buf in
+       let subpixel_order =
+         ((Decode.u16 %> Conv.To_int.u16) %> Render.Sub_pixel_enum.of_int)
+           buf in
+       let width = Decode.u16 buf in
+       let height = Decode.u16 buf in
+       let mwidth = Decode.u16 buf in
+       let mheight = Decode.u16 buf in
+       {
+         rotation;
+         timestamp;
+         config_timestamp;
+         root;
+         request_window;
+         size_id;
+         subpixel_order;
+         width;
+         height;
+         mwidth;
+         mheight
+       } : Event.Screen_change_notify.t)
     let decode_crtc_change buf =
       (let timestamp = Decode.u32 buf in
        let window = Decode.xid buf in
@@ -745,6 +1246,9 @@ module Randr_codec =
        | 6 -> let lc = decode_lease_notify buf in `Lease lc
        | n -> invalid_arg ("Invalid enum value: " ^ (string_of_int n)) : 
       Notify.t)
+    let decode_notify_event buf =
+      (let u_tag = Decode.u8 buf in
+       let u = decode_notify_variant ~tag:u_tag buf in u : Event.Notify.t)
     let decode_error ~number  buf =
       (Decode.pad buf 4;
        (match number with
@@ -786,6 +1290,35 @@ module Sync_codec =
     let decode_alarm_error buf =
       (let bad_alarm = Decode.u32 buf in
        Decode.pad buf 3; Decode.align buf 32; bad_alarm : Error.Alarm.t)
+    let decode_counter_notify_event buf =
+      (let kind = Decode.u8 buf in
+       let counter = Decode.xid buf in
+       let wait_value = decode_int64 buf in
+       let counter_value = decode_int64 buf in
+       let timestamp = Decode.u32 buf in
+       let count = Decode.u16 buf in
+       let destroyed = Decode.bool buf in
+       Decode.pad buf 1;
+       {
+         kind;
+         counter;
+         wait_value;
+         counter_value;
+         timestamp;
+         count;
+         destroyed
+       } : Event.Counter_notify.t)
+    let decode_alarm_notify_event buf =
+      (let kind = Decode.u8 buf in
+       let alarm = Decode.xid buf in
+       let counter_value = decode_int64 buf in
+       let alarm_value = decode_int64 buf in
+       let timestamp = Decode.u32 buf in
+       let state =
+         ((Decode.u8 %> Conv.To_int.u8) %> Alarmstate_enum.of_int) buf in
+       Decode.pad buf 3;
+       { kind; alarm; counter_value; alarm_value; timestamp; state } : 
+      Event.Alarm_notify.t)
     let decode_error ~number  buf =
       (Decode.pad buf 4;
        (match number with
@@ -800,6 +1333,103 @@ module Present_codec =
     let decode_notify buf =
       (let window = Decode.xid buf in
        let serial = Decode.u32 buf in { window; serial } : notify)
+    let decode_generic_event buf =
+      (let extension = Decode.u8 buf in
+       let length = Decode.u32 buf in
+       let evtype = Decode.u16 buf in
+       Decode.pad buf 2;
+       (let event = Decode.xid buf in { extension; length; evtype; event }) : 
+      Event.Generic.t)
+    let decode_configure_notify_event buf =
+      (Decode.pad buf 2;
+       (let event = Decode.xid buf in
+        let window = Decode.xid buf in
+        let x = Decode.i16 buf in
+        let y = Decode.i16 buf in
+        let width = Decode.u16 buf in
+        let height = Decode.u16 buf in
+        let off_x = Decode.i16 buf in
+        let off_y = Decode.i16 buf in
+        let pixmap_width = Decode.u16 buf in
+        let pixmap_height = Decode.u16 buf in
+        let pixmap_flags = Decode.u32 buf in
+        {
+          event;
+          window;
+          x;
+          y;
+          width;
+          height;
+          off_x;
+          off_y;
+          pixmap_width;
+          pixmap_height;
+          pixmap_flags
+        }) : Event.Configure_notify.t)
+    let decode_complete_notify_event buf =
+      (let kind =
+         ((Decode.u8 %> Conv.To_int.u8) %> Complete_kind_enum.of_int) buf in
+       let mode =
+         ((Decode.u8 %> Conv.To_int.u8) %> Complete_mode_enum.of_int) buf in
+       let event = Decode.xid buf in
+       let window = Decode.xid buf in
+       let serial = Decode.u32 buf in
+       let ust = Decode.u64 buf in
+       let msc = Decode.u64 buf in
+       { kind; mode; event; window; serial; ust; msc } : Event.Complete_notify.t)
+    let decode_idle_notify_event buf =
+      (Decode.pad buf 2;
+       (let event = Decode.xid buf in
+        let window = Decode.xid buf in
+        let serial = Decode.u32 buf in
+        let pixmap = Decode.xid buf in
+        let idle_fence = Decode.xid buf in
+        { event; window; serial; pixmap; idle_fence }) : Event.Idle_notify.t)
+    let decode_redirect_notify_event buf =
+      (let update_window = Decode.bool buf in
+       Decode.pad buf 1;
+       (let event = Decode.xid buf in
+        let event_window = Decode.xid buf in
+        let window = Decode.xid buf in
+        let pixmap = Decode.xid buf in
+        let serial = Decode.u32 buf in
+        let valid_region = Decode.xid buf in
+        let update_region = Decode.xid buf in
+        let valid_rect = Core_codec.decode_rectangle buf in
+        let update_rect = Core_codec.decode_rectangle buf in
+        let x_off = Decode.i16 buf in
+        let y_off = Decode.i16 buf in
+        let target_crtc = Decode.xid buf in
+        let wait_fence = Decode.xid buf in
+        let idle_fence = Decode.xid buf in
+        let options = Decode.u32 buf in
+        Decode.pad buf 4;
+        (let target_msc = Decode.u64 buf in
+         let divisor = Decode.u64 buf in
+         let remainder = Decode.u64 buf in
+         let notifies = Decode.list_no_length ~item:decode_notify buf in
+         {
+           update_window;
+           event;
+           event_window;
+           window;
+           pixmap;
+           serial;
+           valid_region;
+           update_region;
+           valid_rect;
+           update_rect;
+           x_off;
+           y_off;
+           target_crtc;
+           wait_fence;
+           idle_fence;
+           options;
+           target_msc;
+           divisor;
+           remainder;
+           notifies
+         })) : Event.Redirect_notify.t)
     let decode_error ~number  buf =
       (Decode.pad buf 4;
        (match number with
@@ -900,6 +1530,16 @@ module Res_codec =
 module Screensaver_codec =
   struct
     open Protocol.Screensaver
+    let decode_notify_event buf =
+      (let state =
+         ((Decode.byte %> Conv.To_int.byte) %> State_enum.of_int) buf in
+       let time = Decode.u32 buf in
+       let root = Decode.xid buf in
+       let window = Decode.xid buf in
+       let kind = ((Decode.byte %> Conv.To_int.byte) %> Kind_enum.of_int) buf in
+       let forced = Decode.bool buf in
+       Decode.pad buf 14; { state; time; root; window; kind; forced } : 
+      Event.Notify.t)
     let decode_error ~number  buf =
       (Decode.pad buf 4;
        (match number with
@@ -909,6 +1549,15 @@ module Screensaver_codec =
 module Shm_codec =
   struct
     open Protocol.Shm
+    let decode_completion_event buf =
+      (Decode.pad buf 1;
+       (let drawable = Decode.xid buf in
+        let minor_event = Decode.u16 buf in
+        let major_event = Decode.byte buf in
+        Decode.pad buf 1;
+        (let shmseg = Decode.xid buf in
+         let offset = Decode.u32 buf in
+         { drawable; minor_event; major_event; shmseg; offset })) : Event.Completion.t)
     let decode_bad_seg_error = Core_codec.decode_value_error
     let decode_error ~number  buf =
       (Decode.pad buf 4;
@@ -1833,6 +2482,320 @@ module Xinput_codec =
        (let barrier = Decode.xid buf in
         let eventid = Decode.u32 buf in { deviceid; barrier; eventid }) : 
       barrier_release_pointer_info)
+    let decode_device_valuator_event buf =
+      (let device_id = Decode.u8 buf in
+       let device_state = Decode.u16 buf in
+       let num_valuators = Decode.u8 buf in
+       let first_valuator = Decode.u8 buf in
+       let valuators = (Decode.list ~item:Decode.i32) ~len:6 buf in
+       { device_id; device_state; num_valuators; first_valuator; valuators } : 
+      Event.Device_valuator.t)
+    let decode_device_key_press_event buf =
+      (let detail = Decode.byte buf in
+       let time = Decode.u32 buf in
+       let root = Decode.xid buf in
+       let event = Decode.xid buf in
+       let child =
+         (Decode.xid %>
+            (Conv.alt_enum ~enum_of_int:Core.Window_enum.of_int
+               ~int_of_t:Conv.To_int.xid)) buf in
+       let root_x = Decode.i16 buf in
+       let root_y = Decode.i16 buf in
+       let event_x = Decode.i16 buf in
+       let event_y = Decode.i16 buf in
+       let state =
+         ((Decode.u16 %> Conv.To_i32.u16) %> Core.Key_but_mask.of_int32) buf in
+       let same_screen = Decode.bool buf in
+       let device_id =
+         ((Decode.u8 %> Conv.To_i32.u8) %> More_events_mask.of_int32) buf in
+       {
+         detail;
+         time;
+         root;
+         event;
+         child;
+         root_x;
+         root_y;
+         event_x;
+         event_y;
+         state;
+         same_screen;
+         device_id
+       } : Event.Device_key_press.t)
+    let decode_device_key_release_event = decode_device_key_press_event
+    let decode_device_button_press_event = decode_device_key_press_event
+    let decode_device_button_release_event = decode_device_key_press_event
+    let decode_device_motion_notify_event = decode_device_key_press_event
+    let decode_device_focus_in_event buf =
+      (let detail =
+         ((Decode.byte %> Conv.To_int.byte) %> Core.Notify_detail_enum.of_int)
+           buf in
+       let time = Decode.u32 buf in
+       let window = Decode.xid buf in
+       let mode =
+         ((Decode.byte %> Conv.To_int.byte) %> Core.Notify_mode_enum.of_int)
+           buf in
+       let device_id = Decode.u8 buf in
+       Decode.pad buf 18; { detail; time; window; mode; device_id } : 
+      Event.Device_focus_in.t)
+    let decode_device_focus_out_event = decode_device_focus_in_event
+    let decode_proximity_in_event = decode_device_key_press_event
+    let decode_proximity_out_event = decode_device_key_press_event
+    let decode_device_state_notify_event buf =
+      (let device_id =
+         ((Decode.byte %> Conv.To_i32.byte) %> More_events_mask.of_int32) buf in
+       let time = Decode.u32 buf in
+       let num_keys = Decode.u8 buf in
+       let num_buttons = Decode.u8 buf in
+       let num_valuators = Decode.u8 buf in
+       let classes_reported =
+         ((Decode.u8 %> Conv.To_i32.u8) %> Classes_reported_mask.of_int32)
+           buf in
+       let buttons = (Decode.list ~item:Decode.u8) ~len:4 buf in
+       let keys = (Decode.list ~item:Decode.u8) ~len:4 buf in
+       let valuators = (Decode.list ~item:Decode.u32) ~len:3 buf in
+       {
+         device_id;
+         time;
+         num_keys;
+         num_buttons;
+         num_valuators;
+         classes_reported;
+         buttons;
+         keys;
+         valuators
+       } : Event.Device_state_notify.t)
+    let decode_device_mapping_notify_event buf =
+      (let device_id = Decode.byte buf in
+       let request =
+         ((Decode.u8 %> Conv.To_int.u8) %> Core.Mapping_enum.of_int) buf in
+       let first_keycode = Decode.u8 buf in
+       let count = Decode.u8 buf in
+       Decode.pad buf 1;
+       (let time = Decode.u32 buf in
+        Decode.pad buf 20; { device_id; request; first_keycode; count; time }) : 
+      Event.Device_mapping_notify.t)
+    let decode_change_device_notify_event buf =
+      (let device_id = Decode.byte buf in
+       let time = Decode.u32 buf in
+       let request =
+         ((Decode.u8 %> Conv.To_int.u8) %> Change_device_enum.of_int) buf in
+       Decode.pad buf 23; { device_id; time; request } : Event.Change_device_notify.t)
+    let decode_device_key_state_notify_event buf =
+      (let device_id =
+         ((Decode.byte %> Conv.To_i32.byte) %> More_events_mask.of_int32) buf in
+       let keys = (Decode.list ~item:Decode.u8) ~len:28 buf in
+       { device_id; keys } : Event.Device_key_state_notify.t)
+    let decode_device_button_state_notify_event buf =
+      (let device_id =
+         ((Decode.byte %> Conv.To_i32.byte) %> More_events_mask.of_int32) buf in
+       let buttons = (Decode.list ~item:Decode.u8) ~len:28 buf in
+       { device_id; buttons } : Event.Device_button_state_notify.t)
+    let decode_device_presence_notify_event buf =
+      (Decode.pad buf 1;
+       (let time = Decode.u32 buf in
+        let devchange =
+          ((Decode.byte %> Conv.To_int.byte) %> Device_change_enum.of_int)
+            buf in
+        let device_id = Decode.byte buf in
+        let control = Decode.u16 buf in
+        Decode.pad buf 20; { time; devchange; device_id; control }) : 
+      Event.Device_presence_notify.t)
+    let decode_device_property_notify_event buf =
+      (let state =
+         ((Decode.byte %> Conv.To_int.byte) %> Core.Property_enum.of_int) buf in
+       let time = Decode.u32 buf in
+       let property = Decode.xid buf in
+       Decode.pad buf 19;
+       (let device_id = Decode.u8 buf in { state; time; property; device_id }) : 
+      Event.Device_property_notify.t)
+    let decode_device_changed_event buf =
+      (let deviceid =
+         (Decode.u16 %>
+            (Conv.alt_enum ~enum_of_int:Device_enum.of_int
+               ~int_of_t:Conv.To_int.u16)) buf in
+       let time =
+         (Decode.u32 %>
+            (Conv.alt_enum ~enum_of_int:Core.Time_enum.of_int
+               ~int_of_t:Conv.To_int.u32)) buf in
+       let num_classes = Conv.To_int.u16 (Decode.u16 buf) in
+       let sourceid =
+         (Decode.u16 %>
+            (Conv.alt_enum ~enum_of_int:Device_enum.of_int
+               ~int_of_t:Conv.To_int.u16)) buf in
+       let reason =
+         ((Decode.u8 %> Conv.To_int.u8) %> Change_reason_enum.of_int) buf in
+       Decode.pad buf 11;
+       (let classes =
+          (Decode.list ~item:decode_device_class) ~len:num_classes buf in
+        { deviceid; time; sourceid; reason; classes }) : Event.Device_changed.t)
+    let decode_key_press_event buf =
+      (let deviceid =
+         (Decode.u16 %>
+            (Conv.alt_enum ~enum_of_int:Device_enum.of_int
+               ~int_of_t:Conv.To_int.u16)) buf in
+       let time =
+         (Decode.u32 %>
+            (Conv.alt_enum ~enum_of_int:Core.Time_enum.of_int
+               ~int_of_t:Conv.To_int.u32)) buf in
+       let detail = Decode.u32 buf in
+       let root = Decode.xid buf in
+       let event = Decode.xid buf in
+       let child = Decode.xid buf in
+       let root_x = Decode.i32 buf in
+       let root_y = Decode.i32 buf in
+       let event_x = Decode.i32 buf in
+       let event_y = Decode.i32 buf in
+       let buttons_len = Conv.To_int.u16 (Decode.u16 buf) in
+       let valuators_len = Conv.To_int.u16 (Decode.u16 buf) in
+       let sourceid =
+         (Decode.u16 %>
+            (Conv.alt_enum ~enum_of_int:Device_enum.of_int
+               ~int_of_t:Conv.To_int.u16)) buf in
+       Decode.pad buf 2;
+       (let flags =
+          ((Decode.u32 %> Conv.To_i32.u32) %> Key_event_flags_mask.of_int32)
+            buf in
+        let mods = decode_modifier_info buf in
+        let group = decode_group_info buf in
+        let button_mask = (Decode.list ~item:Decode.u32) ~len:buttons_len buf in
+        let valuator_mask =
+          (Decode.list ~item:Decode.u32) ~len:valuators_len buf in
+        let axisvalues =
+          (Decode.list ~item:decode_fp3232)
+            ~len:(Conv.sum_map
+                    ~f:(fun list_element_ref ->
+                          Conv.pop_count list_element_ref) valuator_mask) buf in
+        {
+          deviceid;
+          time;
+          detail;
+          root;
+          event;
+          child;
+          root_x;
+          root_y;
+          event_x;
+          event_y;
+          sourceid;
+          flags;
+          mods;
+          group;
+          button_mask;
+          valuator_mask;
+          axisvalues
+        }) : Event.Key_press.t)
+    let decode_key_release_event = decode_key_press_event
+    let decode_button_press_event buf =
+      (let deviceid =
+         (Decode.u16 %>
+            (Conv.alt_enum ~enum_of_int:Device_enum.of_int
+               ~int_of_t:Conv.To_int.u16)) buf in
+       let time =
+         (Decode.u32 %>
+            (Conv.alt_enum ~enum_of_int:Core.Time_enum.of_int
+               ~int_of_t:Conv.To_int.u32)) buf in
+       let detail = Decode.u32 buf in
+       let root = Decode.xid buf in
+       let event = Decode.xid buf in
+       let child = Decode.xid buf in
+       let root_x = Decode.i32 buf in
+       let root_y = Decode.i32 buf in
+       let event_x = Decode.i32 buf in
+       let event_y = Decode.i32 buf in
+       let buttons_len = Conv.To_int.u16 (Decode.u16 buf) in
+       let valuators_len = Conv.To_int.u16 (Decode.u16 buf) in
+       let sourceid =
+         (Decode.u16 %>
+            (Conv.alt_enum ~enum_of_int:Device_enum.of_int
+               ~int_of_t:Conv.To_int.u16)) buf in
+       Decode.pad buf 2;
+       (let flags =
+          ((Decode.u32 %> Conv.To_i32.u32) %>
+             Pointer_event_flags_mask.of_int32) buf in
+        let mods = decode_modifier_info buf in
+        let group = decode_group_info buf in
+        let button_mask = (Decode.list ~item:Decode.u32) ~len:buttons_len buf in
+        let valuator_mask =
+          (Decode.list ~item:Decode.u32) ~len:valuators_len buf in
+        let axisvalues =
+          (Decode.list ~item:decode_fp3232)
+            ~len:(Conv.sum_map
+                    ~f:(fun list_element_ref ->
+                          Conv.pop_count list_element_ref) valuator_mask) buf in
+        {
+          deviceid;
+          time;
+          detail;
+          root;
+          event;
+          child;
+          root_x;
+          root_y;
+          event_x;
+          event_y;
+          sourceid;
+          flags;
+          mods;
+          group;
+          button_mask;
+          valuator_mask;
+          axisvalues
+        }) : Event.Button_press.t)
+    let decode_button_release_event = decode_button_press_event
+    let decode_motion_event = decode_button_press_event
+    let decode_enter_event buf =
+      (let deviceid =
+         (Decode.u16 %>
+            (Conv.alt_enum ~enum_of_int:Device_enum.of_int
+               ~int_of_t:Conv.To_int.u16)) buf in
+       let time =
+         (Decode.u32 %>
+            (Conv.alt_enum ~enum_of_int:Core.Time_enum.of_int
+               ~int_of_t:Conv.To_int.u32)) buf in
+       let sourceid =
+         (Decode.u16 %>
+            (Conv.alt_enum ~enum_of_int:Device_enum.of_int
+               ~int_of_t:Conv.To_int.u16)) buf in
+       let mode =
+         ((Decode.u8 %> Conv.To_int.u8) %> Notify_mode_enum.of_int) buf in
+       let detail =
+         ((Decode.u8 %> Conv.To_int.u8) %> Notify_detail_enum.of_int) buf in
+       let root = Decode.xid buf in
+       let event = Decode.xid buf in
+       let child = Decode.xid buf in
+       let root_x = Decode.i32 buf in
+       let root_y = Decode.i32 buf in
+       let event_x = Decode.i32 buf in
+       let event_y = Decode.i32 buf in
+       let same_screen = Decode.bool buf in
+       let focus = Decode.bool buf in
+       let buttons_len = Conv.To_int.u16 (Decode.u16 buf) in
+       let mods = decode_modifier_info buf in
+       let group = decode_group_info buf in
+       let buttons = (Decode.list ~item:Decode.u32) ~len:buttons_len buf in
+       {
+         deviceid;
+         time;
+         sourceid;
+         mode;
+         detail;
+         root;
+         event;
+         child;
+         root_x;
+         root_y;
+         event_x;
+         event_y;
+         same_screen;
+         focus;
+         mods;
+         group;
+         buttons
+       } : Event.Enter.t)
+    let decode_leave_event = decode_enter_event
+    let decode_focus_in_event = decode_enter_event
+    let decode_focus_out_event = decode_enter_event
     let decode_hierarchy_info buf =
       (let deviceid =
          (Decode.u16 %>
@@ -1849,6 +2812,277 @@ module Xinput_codec =
        (let flags =
           ((Decode.u32 %> Conv.To_i32.u32) %> Hierarchy_mask.of_int32) buf in
         { deviceid; attachment; type_; enabled; flags }) : hierarchy_info)
+    let decode_hierarchy_event buf =
+      (let deviceid =
+         (Decode.u16 %>
+            (Conv.alt_enum ~enum_of_int:Device_enum.of_int
+               ~int_of_t:Conv.To_int.u16)) buf in
+       let time =
+         (Decode.u32 %>
+            (Conv.alt_enum ~enum_of_int:Core.Time_enum.of_int
+               ~int_of_t:Conv.To_int.u32)) buf in
+       let flags =
+         ((Decode.u32 %> Conv.To_i32.u32) %> Hierarchy_mask.of_int32) buf in
+       let num_infos = Conv.To_int.u16 (Decode.u16 buf) in
+       Decode.pad buf 10;
+       (let infos =
+          (Decode.list ~item:decode_hierarchy_info) ~len:num_infos buf in
+        { deviceid; time; flags; infos }) : Event.Hierarchy.t)
+    let decode_property_event buf =
+      (let deviceid =
+         (Decode.u16 %>
+            (Conv.alt_enum ~enum_of_int:Device_enum.of_int
+               ~int_of_t:Conv.To_int.u16)) buf in
+       let time =
+         (Decode.u32 %>
+            (Conv.alt_enum ~enum_of_int:Core.Time_enum.of_int
+               ~int_of_t:Conv.To_int.u32)) buf in
+       let property = Decode.xid buf in
+       let what =
+         ((Decode.u8 %> Conv.To_int.u8) %> Property_flag_enum.of_int) buf in
+       Decode.pad buf 11; { deviceid; time; property; what } : Event.Property.t)
+    let decode_raw_key_press_event buf =
+      (let deviceid =
+         (Decode.u16 %>
+            (Conv.alt_enum ~enum_of_int:Device_enum.of_int
+               ~int_of_t:Conv.To_int.u16)) buf in
+       let time =
+         (Decode.u32 %>
+            (Conv.alt_enum ~enum_of_int:Core.Time_enum.of_int
+               ~int_of_t:Conv.To_int.u32)) buf in
+       let detail = Decode.u32 buf in
+       let sourceid = Decode.u16 buf in
+       let valuators_len = Conv.To_int.u16 (Decode.u16 buf) in
+       let flags =
+         ((Decode.u32 %> Conv.To_i32.u32) %> Key_event_flags_mask.of_int32)
+           buf in
+       Decode.pad buf 4;
+       (let valuator_mask =
+          (Decode.list ~item:Decode.u32) ~len:valuators_len buf in
+        let axisvalues =
+          (Decode.list ~item:decode_fp3232)
+            ~len:(Conv.sum_map
+                    ~f:(fun list_element_ref ->
+                          Conv.pop_count list_element_ref) valuator_mask) buf in
+        let axisvalues_raw =
+          (Decode.list ~item:decode_fp3232)
+            ~len:(Conv.sum_map
+                    ~f:(fun list_element_ref ->
+                          Conv.pop_count list_element_ref) valuator_mask) buf in
+        {
+          deviceid;
+          time;
+          detail;
+          sourceid;
+          flags;
+          valuator_mask;
+          axisvalues;
+          axisvalues_raw
+        }) : Event.Raw_key_press.t)
+    let decode_raw_key_release_event = decode_raw_key_press_event
+    let decode_raw_button_press_event buf =
+      (let deviceid =
+         (Decode.u16 %>
+            (Conv.alt_enum ~enum_of_int:Device_enum.of_int
+               ~int_of_t:Conv.To_int.u16)) buf in
+       let time =
+         (Decode.u32 %>
+            (Conv.alt_enum ~enum_of_int:Core.Time_enum.of_int
+               ~int_of_t:Conv.To_int.u32)) buf in
+       let detail = Decode.u32 buf in
+       let sourceid = Decode.u16 buf in
+       let valuators_len = Conv.To_int.u16 (Decode.u16 buf) in
+       let flags =
+         ((Decode.u32 %> Conv.To_i32.u32) %>
+            Pointer_event_flags_mask.of_int32) buf in
+       Decode.pad buf 4;
+       (let valuator_mask =
+          (Decode.list ~item:Decode.u32) ~len:valuators_len buf in
+        let axisvalues =
+          (Decode.list ~item:decode_fp3232)
+            ~len:(Conv.sum_map
+                    ~f:(fun list_element_ref ->
+                          Conv.pop_count list_element_ref) valuator_mask) buf in
+        let axisvalues_raw =
+          (Decode.list ~item:decode_fp3232)
+            ~len:(Conv.sum_map
+                    ~f:(fun list_element_ref ->
+                          Conv.pop_count list_element_ref) valuator_mask) buf in
+        {
+          deviceid;
+          time;
+          detail;
+          sourceid;
+          flags;
+          valuator_mask;
+          axisvalues;
+          axisvalues_raw
+        }) : Event.Raw_button_press.t)
+    let decode_raw_button_release_event = decode_raw_button_press_event
+    let decode_raw_motion_event = decode_raw_button_press_event
+    let decode_touch_begin_event buf =
+      (let deviceid =
+         (Decode.u16 %>
+            (Conv.alt_enum ~enum_of_int:Device_enum.of_int
+               ~int_of_t:Conv.To_int.u16)) buf in
+       let time =
+         (Decode.u32 %>
+            (Conv.alt_enum ~enum_of_int:Core.Time_enum.of_int
+               ~int_of_t:Conv.To_int.u32)) buf in
+       let detail = Decode.u32 buf in
+       let root = Decode.xid buf in
+       let event = Decode.xid buf in
+       let child = Decode.xid buf in
+       let root_x = Decode.i32 buf in
+       let root_y = Decode.i32 buf in
+       let event_x = Decode.i32 buf in
+       let event_y = Decode.i32 buf in
+       let buttons_len = Conv.To_int.u16 (Decode.u16 buf) in
+       let valuators_len = Conv.To_int.u16 (Decode.u16 buf) in
+       let sourceid =
+         (Decode.u16 %>
+            (Conv.alt_enum ~enum_of_int:Device_enum.of_int
+               ~int_of_t:Conv.To_int.u16)) buf in
+       Decode.pad buf 2;
+       (let flags =
+          ((Decode.u32 %> Conv.To_i32.u32) %> Touch_event_flags_mask.of_int32)
+            buf in
+        let mods = decode_modifier_info buf in
+        let group = decode_group_info buf in
+        let button_mask = (Decode.list ~item:Decode.u32) ~len:buttons_len buf in
+        let valuator_mask =
+          (Decode.list ~item:Decode.u32) ~len:valuators_len buf in
+        let axisvalues =
+          (Decode.list ~item:decode_fp3232)
+            ~len:(Conv.sum_map
+                    ~f:(fun list_element_ref ->
+                          Conv.pop_count list_element_ref) valuator_mask) buf in
+        {
+          deviceid;
+          time;
+          detail;
+          root;
+          event;
+          child;
+          root_x;
+          root_y;
+          event_x;
+          event_y;
+          sourceid;
+          flags;
+          mods;
+          group;
+          button_mask;
+          valuator_mask;
+          axisvalues
+        }) : Event.Touch_begin.t)
+    let decode_touch_update_event = decode_touch_begin_event
+    let decode_touch_end_event = decode_touch_begin_event
+    let decode_touch_ownership_event buf =
+      (let deviceid =
+         (Decode.u16 %>
+            (Conv.alt_enum ~enum_of_int:Device_enum.of_int
+               ~int_of_t:Conv.To_int.u16)) buf in
+       let time =
+         (Decode.u32 %>
+            (Conv.alt_enum ~enum_of_int:Core.Time_enum.of_int
+               ~int_of_t:Conv.To_int.u32)) buf in
+       let touchid = Decode.u32 buf in
+       let root = Decode.xid buf in
+       let event = Decode.xid buf in
+       let child = Decode.xid buf in
+       let sourceid =
+         (Decode.u16 %>
+            (Conv.alt_enum ~enum_of_int:Device_enum.of_int
+               ~int_of_t:Conv.To_int.u16)) buf in
+       Decode.pad buf 2;
+       (let flags =
+          ((Decode.u32 %> Conv.To_int.u32) %>
+             Touch_ownership_flags_enum.of_int) buf in
+        Decode.pad buf 8;
+        { deviceid; time; touchid; root; event; child; sourceid; flags }) : 
+      Event.Touch_ownership.t)
+    let decode_raw_touch_begin_event buf =
+      (let deviceid =
+         (Decode.u16 %>
+            (Conv.alt_enum ~enum_of_int:Device_enum.of_int
+               ~int_of_t:Conv.To_int.u16)) buf in
+       let time =
+         (Decode.u32 %>
+            (Conv.alt_enum ~enum_of_int:Core.Time_enum.of_int
+               ~int_of_t:Conv.To_int.u32)) buf in
+       let detail = Decode.u32 buf in
+       let sourceid = Decode.u16 buf in
+       let valuators_len = Conv.To_int.u16 (Decode.u16 buf) in
+       let flags =
+         ((Decode.u32 %> Conv.To_i32.u32) %> Touch_event_flags_mask.of_int32)
+           buf in
+       Decode.pad buf 4;
+       (let valuator_mask =
+          (Decode.list ~item:Decode.u32) ~len:valuators_len buf in
+        let axisvalues =
+          (Decode.list ~item:decode_fp3232)
+            ~len:(Conv.sum_map
+                    ~f:(fun list_element_ref ->
+                          Conv.pop_count list_element_ref) valuator_mask) buf in
+        let axisvalues_raw =
+          (Decode.list ~item:decode_fp3232)
+            ~len:(Conv.sum_map
+                    ~f:(fun list_element_ref ->
+                          Conv.pop_count list_element_ref) valuator_mask) buf in
+        {
+          deviceid;
+          time;
+          detail;
+          sourceid;
+          flags;
+          valuator_mask;
+          axisvalues;
+          axisvalues_raw
+        }) : Event.Raw_touch_begin.t)
+    let decode_raw_touch_update_event = decode_raw_touch_begin_event
+    let decode_raw_touch_end_event = decode_raw_touch_begin_event
+    let decode_barrier_hit_event buf =
+      (let deviceid =
+         (Decode.u16 %>
+            (Conv.alt_enum ~enum_of_int:Device_enum.of_int
+               ~int_of_t:Conv.To_int.u16)) buf in
+       let time =
+         (Decode.u32 %>
+            (Conv.alt_enum ~enum_of_int:Core.Time_enum.of_int
+               ~int_of_t:Conv.To_int.u32)) buf in
+       let eventid = Decode.u32 buf in
+       let root = Decode.xid buf in
+       let event = Decode.xid buf in
+       let barrier = Decode.xid buf in
+       let dtime = Decode.u32 buf in
+       let flags =
+         ((Decode.u32 %> Conv.To_i32.u32) %> Barrier_flags_mask.of_int32) buf in
+       let sourceid =
+         (Decode.u16 %>
+            (Conv.alt_enum ~enum_of_int:Device_enum.of_int
+               ~int_of_t:Conv.To_int.u16)) buf in
+       Decode.pad buf 2;
+       (let root_x = Decode.i32 buf in
+        let root_y = Decode.i32 buf in
+        let dx = decode_fp3232 buf in
+        let dy = decode_fp3232 buf in
+        {
+          deviceid;
+          time;
+          eventid;
+          root;
+          event;
+          barrier;
+          dtime;
+          flags;
+          sourceid;
+          root_x;
+          root_y;
+          dx;
+          dy
+        }) : Event.Barrier_hit.t)
+    let decode_barrier_leave_event = decode_barrier_hit_event
     let decode_device_error buf = (Decode.align buf 32; () : Error.Device.t)
     let decode_event_error buf = (Decode.align buf 32; () : Error.Event.t)
     let decode_mode_error buf = (Decode.align buf 32; () : Error.Mode.t)
@@ -1876,6 +3110,14 @@ module Xprint_codec =
        (let desc_len = Conv.To_int.u32 (Decode.u32 buf) in
         let description = Decode.string ~len:desc_len buf in
         Decode.align buf 4; { name; description }) : printer)
+    let decode_notify_event buf =
+      (let detail = Decode.u8 buf in
+       let context = Decode.xid buf in
+       let cancel = Decode.bool buf in { detail; context; cancel } : 
+      Event.Notify.t)
+    let decode_attribut_notify_event buf =
+      (let detail = Decode.u8 buf in
+       let context = Decode.xid buf in { detail; context } : Event.Attribut_notify.t)
     let decode_bad_context_error buf =
       (Decode.align buf 32; () : Error.Bad_context.t)
     let decode_bad_sequence_error buf =
@@ -2032,6 +3274,21 @@ module Xv_codec =
       (Decode.align buf 32; () : Error.Bad_encoding.t)
     let decode_bad_control_error buf =
       (Decode.align buf 32; () : Error.Bad_control.t)
+    let decode_video_notify_event buf =
+      (let reason =
+         ((Decode.byte %> Conv.To_int.byte) %>
+            Video_notify_reason_enum.of_int) buf in
+       let time = Decode.u32 buf in
+       let drawable = Decode.xid buf in
+       let port = Decode.xid buf in { reason; time; drawable; port } : 
+      Event.Video_notify.t)
+    let decode_port_notify_event buf =
+      (Decode.pad buf 1;
+       (let time = Decode.u32 buf in
+        let port = Decode.xid buf in
+        let attribute = Decode.xid buf in
+        let value = Decode.i32 buf in { time; port; attribute; value }) : 
+      Event.Port_notify.t)
     let decode_error ~number  buf =
       (Decode.pad buf 4;
        (match number with
