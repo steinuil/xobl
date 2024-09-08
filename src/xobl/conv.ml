@@ -5,7 +5,7 @@ let alt_enum ~int_of_t ~enum_of_int t =
   | exception Invalid_argument _ -> `Alt t
 
 module To_int = struct
-  let bool = function true -> 1 | false -> 0
+  let[@inline] bool = function true -> 1 | false -> 0
   let i8 = Fun.id
   let u8 = Fun.id
   let i16 = Fun.id
@@ -22,11 +22,11 @@ module To_int = struct
   let void = Char.code
   let byte = Char.code
   let file_descr _ = failwith "should not happen"
-  let xid (Types.Xid i) = u32 i
+  let[@inline] xid (Types.Xid i) = u32 i
 end
 
 module To_i32 = struct
-  let bool = function true -> Optint.one | false -> Optint.zero
+  let[@inline] bool = function true -> Optint.one | false -> Optint.zero
   let i8 = Optint.of_int
   let u8 = Optint.of_int
   let i16 = Optint.of_int
@@ -34,11 +34,11 @@ module To_i32 = struct
   let i32 = Fun.id
   let u32 = Fun.id
   let u64 = Optint.of_int64
-  let char i = Char.code i |> Optint.of_int
+  let[@inline] char i = Char.code i |> Optint.of_int
   let void = char
   let byte = char
   let file_descr _ = failwith "should not happen"
-  let xid (Types.Xid i) = i
+  let[@inline] xid (Types.Xid i) = i
 end
 
 (* module To_int64 = struct
