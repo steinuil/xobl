@@ -919,9 +919,18 @@ module Codecs = struct
         let fields = e_struct_fields ~ctx ~loc fields in
         [%expr fun buf : [%t Typ.constr type_ []] -> [%e fields]]
 
-  let e_event ~ctx ~loc name fields =
+  (* TODO xge needs to be handled in another way *)
+  let e_event ~ctx ~loc { name; fields; no_sequence_number; _ } =
     let type_ =
       Ldot (Ldot (Lident "Event", Ident.caml name), "t") |> with_loc ~loc
+    in
+    let fields =
+      match fields with
+      | [] -> Printf.ksprintf unexpected "event with no fields: %s" name
+      | fields when no_sequence_number -> pad_field 1 :: fields
+      | first :: rest ->
+          (* TODO this doesn't always work. See the fucking KeymapNotify event *)
+          pad_field 1 :: first :: pad_field 2 :: rest |> collapse_padding
     in
     let fields = e_struct_fields ~ctx ~loc fields in
     [%expr fun buf : [%t Typ.constr type_ []] -> [%e fields]]
@@ -983,10 +992,11 @@ module Codecs = struct
         [%stri
           let [%p p_id ~loc ~prefix:"decode" ~suffix:"error" name] = [%e body]]
         :: []
-    | Event { name; fields; _ } ->
-        let body = e_event ~ctx ~loc name fields in
+    | Event ev ->
+        let body = e_event ~ctx ~loc ev in
         [%stri
-          let [%p p_id ~loc ~prefix:"decode" ~suffix:"event" name] = [%e body]]
+          let [%p p_id ~loc ~prefix:"decode" ~suffix:"event" ev.name] =
+            [%e body]]
         :: []
     | Event_copy { name; event; _ } ->
         let body = e_ident ~ctx ~loc ~prefix:"decode" ~suffix:"event" event in
