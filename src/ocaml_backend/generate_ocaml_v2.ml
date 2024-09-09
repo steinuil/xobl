@@ -906,34 +906,49 @@ module Codecs = struct
             ()]
     | [] -> Printf.ksprintf unexpected "error with no fields: %s" name
     | fields ->
-        (* Errors include:
-           - a 0x0 byte to indicate that this is an error
-           - the error code (1 byte)
-           - the 2 LSB of the request sequence number (2 bytes)
-           - a field (4 bytes)
-           - minor opcode (2 bytes)
-           - major opcode (1 byte)
-           The first four bytes are not specified so we add some padding.
-        *)
         let fields = fields @ [ pad_align 32 ] |> collapse_padding in
         let fields = e_struct_fields ~ctx ~loc fields in
         [%expr fun buf : [%t Typ.constr type_ []] -> [%e fields]]
 
-  (* TODO xge needs to be handled in another way *)
+  (* TODO xge needs to be handled in another way.
+     https://www.x.org/releases/X11R7.7/doc/xextproto/geproto.html *)
   let e_event ~ctx ~loc { name; fields; no_sequence_number; _ } =
     let type_ =
       Ldot (Ldot (Lident "Event", Ident.caml name), "t") |> with_loc ~loc
     in
     let fields =
+      (* Event fields:
+         1 - event number
+         1 - a field
+         2 - sequence number (unless no-sequence-number is true)
+         * - any other fields *)
       match fields with
       | [] -> Printf.ksprintf unexpected "event with no fields: %s" name
       | fields when no_sequence_number -> pad_field 1 :: fields
       | first :: rest ->
-          (* TODO this doesn't always work. See the fucking KeymapNotify event *)
           pad_field 1 :: first :: pad_field 2 :: rest |> collapse_padding
     in
     let fields = e_struct_fields ~ctx ~loc fields in
     [%expr fun buf : [%t Typ.constr type_ []] -> [%e fields]]
+
+  let e_reply ~ctx ~loc name fields =
+    let type_ =
+      Ldot (Ldot (Lident (Ident.caml name), "Reply"), "t") |> with_loc ~loc
+    in
+    let result = e_result_fields_record ~loc fields in
+    (* Reply format:
+       1 - 0x01 (reply)
+       1 - a field
+       2 - sequence number
+       4 - reply length
+       * - rest
+
+       Some reply fields need to know the whole length of the reply to
+       compute list fields. *)
+    (* TODO fix this *)
+    let fields = fields in
+    let body = e_fields ~ctx ~loc fields result in
+    [%expr fun buf : [%t Typ.constr type_ []] -> [%e body]]
 
   let e_variant ~ctx ~loc name items external_params =
     let type_ = t_id ~parent:(Ident.caml name) ~loc "t" in
@@ -1003,7 +1018,13 @@ module Codecs = struct
         [%stri
           let [%p p_id ~loc ~prefix:"decode" ~suffix:"event" name] = [%e body]]
         :: []
-    | _ -> []
+    | Request { name; reply = Some fields; _ } ->
+        let body = e_reply ~ctx ~loc name fields in
+        [%stri
+          let [%p p_id ~loc ~prefix:"decode" ~suffix:"reply" name] = [%e body]]
+        :: []
+    | Type_alias _ | Struct _ | Event_struct _ | Enum _ | Mask _ | Request _ ->
+        []
 
   let stri_protocol ~loc proto =
     let declarations, ctx =
@@ -1095,6 +1116,18 @@ module Codecs = struct
       in
       Exp.match_ ~loc (e_id ~loc "name") (items @ [ default ])
     in
+    (* Error structure:
+       1 - 0x0 to indicate that this is an error
+       1 - the error code
+       2 - the 2 LSB of the request sequence number
+       4 - a field
+       2 - minor opcode
+       1 - major opcode
+       * - rest
+
+       The fields start from after the fourth byte and include 3 bytes of padding
+       for the minor and major opcode (some errors included them as named fields but
+       we remove them in pass 3) *)
     [%stri
       let decode_error
           ~(extensions :
