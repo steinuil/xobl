@@ -945,10 +945,14 @@ module Codecs = struct
 
        Some reply fields need to know the whole length of the reply to
        compute list fields. *)
-    (* TODO fix this *)
-    let fields = fields in
+    let fields =
+      match fields with
+      | [] -> Printf.ksprintf unexpected "reply with no fields: %s" name
+      | first :: rest ->
+          pad_field 1 :: first :: pad_field 6 :: rest |> collapse_padding
+    in
     let body = e_fields ~ctx ~loc fields result in
-    [%expr fun buf : [%t Typ.constr type_ []] -> [%e body]]
+    [%expr fun ~(length : int) buf : [%t Typ.constr type_ []] -> [%e body]]
 
   let e_variant ~ctx ~loc name items external_params =
     let type_ = t_id ~parent:(Ident.caml name) ~loc "t" in
@@ -979,6 +983,16 @@ module Codecs = struct
         [%expr fun buf ~tag [%p param] : [%t type_] -> [%e body]]
     | _ -> not_implemented "multiple param_refs"
 
+  let rec e_external_params ~loc body = function
+    | [] -> body
+    | first :: rest ->
+        let body =
+          Exp.fun_ ~loc (Labelled first.ep_name) None
+            (p_id ~prefix:"ext" ~loc first.ep_name)
+            body
+        in
+        e_external_params ~loc body rest
+
   let stri_declaration ~ctx ~loc = function
     | Struct { name; fields; external_params = [] } ->
         let result = e_result_fields_record ~loc fields in
@@ -988,6 +1002,16 @@ module Codecs = struct
           let [%p p_id ~loc ~prefix:"decode" name] =
            fun buf : [%t result_t] -> [%e body]]
         :: []
+    | Struct { name; fields; external_params } ->
+        let result = e_result_fields_record ~loc fields in
+        let body = e_fields ~ctx ~loc fields result in
+        let result_t = t_id ~loc name in
+        let params =
+          e_external_params ~loc
+            [%expr fun buf : [%t result_t] -> [%e body]]
+            external_params
+        in
+        [%stri let [%p p_id ~loc ~prefix:"decode" name] = [%e params]] :: []
     | Type_alias { name; type_ } when primitive_of_type type_ = None ->
         let body = e_type ~ctx ~loc type_ in
         [%stri let [%p p_id ~loc ~prefix:"decode" name] = [%e body]] :: []
@@ -1023,8 +1047,7 @@ module Codecs = struct
         [%stri
           let [%p p_id ~loc ~prefix:"decode" ~suffix:"reply" name] = [%e body]]
         :: []
-    | Type_alias _ | Struct _ | Event_struct _ | Enum _ | Mask _ | Request _ ->
-        []
+    | Type_alias _ | Event_struct _ | Enum _ | Mask _ | Request _ -> []
 
   let stri_protocol ~loc proto =
     let declarations, ctx =
@@ -1170,6 +1193,7 @@ module Codecs = struct
     [%str
       [@@@ocamlformat "disable"]
       [@@@ocaml.warning "-33"]
+      [@@@ocaml.warning "-27"]
 
       open Util
       open Protocol]
