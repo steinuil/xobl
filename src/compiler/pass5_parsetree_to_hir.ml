@@ -381,7 +381,7 @@ let rec conv_variant_field ~cond ~cases enclosing_fields (curr_module, xcbs) =
               | Hir.Field_optional { name; _ } ->
                   Some name
               | Hir.Field_pad _ | Hir.Field_variant_tag _
-              | Hir.Field_optional_mask _ ->
+              | Hir.Field_optional_mask _ | Hir.Field_virtual_len _ ->
                   None)
           in
           let external_params = conv_external_params xcbs external_params in
@@ -656,6 +656,20 @@ let conv_declaration (curr_module, xcbs) = function
       in
       let { fields = reply_fields; variant_types = v2 } =
         conv_fields_without_external_params reply.fields (curr_module, xcbs)
+      in
+      let fields =
+        if name = "QueryTextExtents" && opcode = 48 then
+          Hir.(
+            Field_virtual_len
+              {
+                name = "string_len";
+                type_ = Type_primitive Card16;
+                list = "string";
+                list_type =
+                  Type_ref ({ id_module = "xproto"; id_name = "CHAR2B" }, None);
+              })
+          :: fields
+        else fields
       in
       Hir.Request
         { name; opcode; combine_adjacent; fields; reply = Some reply_fields }

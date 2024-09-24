@@ -113,6 +113,12 @@ type field =
       (** Contains the mask that indicates whether the optional fields
           associated are present or not in the struct.
           Should be hidden in the public API. *)
+  | Field_virtual_len of {
+      name : string;
+      type_ : type_;
+      list : string;
+      list_type : type_;
+    }
 [@@deriving show, sexp]
 
 type variant_item = {

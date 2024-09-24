@@ -1,3 +1,4 @@
+(*
 open Ppxlib
 open Xobl_compiler.Hir
 module Ident = Casing.OCaml
@@ -642,3 +643,4 @@ module Decode = struct
     let decls = vb_declaration ~ctx ~loc decl in
     List.map (fun decl -> Ast_helper.Str.value ~loc Nonrecursive [ decl ]) decls
 end
+*)

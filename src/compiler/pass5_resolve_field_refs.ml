@@ -12,7 +12,17 @@ let rec in_expression fields = function
   | Unop (op, e) -> Unop (op, in_expression fields e)
   | Field_ref { field; type_ = None } ->
       let type_ = find_field_type fields field in
-      let type_ = match type_ with Some t -> t | None -> failwith field in
+      let type_ =
+        match type_ with
+        | Some t -> t
+        | None when field = "length" ->
+            { ft_type = Type_primitive Card16; ft_allowed = None }
+        | None when field = "string_len" ->
+            { ft_type = Type_primitive Card16; ft_allowed = None }
+        | None when field = "num_class_info" ->
+            { ft_type = Type_primitive Card8; ft_allowed = None }
+        | None -> failwith field
+      in
       Field_ref { field; type_ = Some type_.ft_type }
   | Sum_of { field; by_expr = Some expr } ->
       Sum_of { field; by_expr = Some (in_expression fields expr) }
@@ -34,6 +44,9 @@ let rec in_field fields = function
             { cs_name; cs_cond; cs_fields })
       in
       Field_switch { sw_name; sw_cond; sw_cases }
+  | Field_list { name; type_; length = Some length } ->
+      let length = in_expression fields length in
+      Field_list { name; type_; length = Some length }
   | f -> f
 
 and in_fields fields = List.map (in_field fields) fields
@@ -73,14 +86,16 @@ let in_declaration decl =
   | Struct { name; fields } ->
       let fields = in_fields fields in
       Struct { name; fields }
-  | Request { name; opcode; combine_adjacent; fields; reply; doc } ->
-      let fields = in_fields fields in
-      let reply =
-        Option.map
-          (fun { fields; doc } -> { fields = in_fields fields; doc })
-          reply
-      in
-      Request { name; opcode; combine_adjacent; fields; reply; doc }
+  | Request { name; opcode; combine_adjacent; fields; reply; doc } -> (
+      try
+        let fields = in_fields fields in
+        let reply =
+          Option.map
+            (fun { fields; doc } -> { fields = in_fields fields; doc })
+            reply
+        in
+        Request { name; opcode; combine_adjacent; fields; reply; doc }
+      with Failure n -> Printf.ksprintf failwith "%s %s" name n)
 
 let resolve_field_refs xcbs =
   ListLabels.map xcbs ~f:(function
