@@ -47,7 +47,13 @@ let fix_dri2_attachments_length = function
                    {
                      name = "attachments";
                      type_;
-                     length = Some (Parsetree.Field_ref "count");
+                     length =
+                       Some
+                         (Parsetree.Field_ref
+                            {
+                              field = "count";
+                              type_ = Some (Type_primitive Card32);
+                            });
                    }
              | f -> f)
       in

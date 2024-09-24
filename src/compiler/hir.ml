@@ -39,7 +39,7 @@ type type_ =
 type expression =
   | Binop of binop * expression * expression
   | Unop of unop * expression
-  | Field_ref of string
+  | Field_ref of { field : string; type_ : type_ }
   (* The field's type should probably be resolved so that when outputting
      expressions we know which conversion function to use when the type of the
      field is not compatible with that of the length, i.e. card32. *)

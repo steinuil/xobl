@@ -54,7 +54,13 @@ let xproto_clientmessage_to_switch decls =
                      Field_switch
                        {
                          sw_name = "data";
-                         sw_cond = Cond_eq (Field_ref "format");
+                         sw_cond =
+                           Cond_eq
+                             (Field_ref
+                                {
+                                  field = "format";
+                                  type_ = Some (Type_primitive Int8);
+                                });
                          sw_cases =
                            union
                            |> List.map (function
@@ -197,7 +203,13 @@ let randr_notify_to_switch decls =
                      Field_switch
                        {
                          sw_name = "u";
-                         sw_cond = Cond_eq (Field_ref "subCode");
+                         sw_cond =
+                           Cond_eq
+                             (Field_ref
+                                {
+                                  field = "subCode";
+                                  type_ = Some (Type_primitive Int8);
+                                });
                          sw_cases =
                            union
                            |> List.map (function

@@ -130,7 +130,7 @@ type type_ = Type_primitive of prim | Type_ref of ident
 type expression =
   | Binop of binop * expression * expression
   | Unop of unop * expression
-  | Field_ref of string
+  | Field_ref of { field : string; type_ : type_ option }
   | Param_ref of { param : string; type_ : type_ }
   | Enum_ref of { enum : ident; item : string }
   | Pop_count of expression

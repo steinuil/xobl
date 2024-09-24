@@ -83,7 +83,7 @@ let mk_event_copy name event ev_number =
 let mk_error_copy name error er_number = Error_copy { name; error; er_number }
 let mk_binop (op, (e1, e2)) = Binop (op, e1, e2)
 let mk_unop (op, expr) = Unop (op, expr)
-let mk_field_ref field = Field_ref field
+let mk_field_ref field = Field_ref { field; type_ = None }
 let mk_param_ref (type_, param) = Param_ref { param; type_ }
 let mk_enum_ref (enum, item) = Enum_ref { enum; item }
 let mk_pop_count expr = Pop_count expr

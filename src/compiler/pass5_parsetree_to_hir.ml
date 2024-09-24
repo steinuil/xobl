@@ -53,7 +53,8 @@ let rec conv_expression ctx = function
   | Parsetree.Binop (op, e1, e2) ->
       Hir.Binop (op, conv_expression ctx e1, conv_expression ctx e2)
   | Unop (op, e) -> Hir.Unop (op, conv_expression ctx e)
-  | Field_ref f -> Hir.Field_ref f
+  | Field_ref { field; type_ } ->
+      Hir.Field_ref { field; type_ = conv_type ctx (Option.get type_) }
   | Param_ref { param; type_ } ->
       Hir.Param_ref { param; type_ = conv_type ctx type_ }
   | Enum_ref { enum; item } -> Hir.Enum_ref { enum = conv_ident enum; item }
@@ -78,7 +79,7 @@ let conv_field_type ctx Parsetree.{ ft_type; ft_allowed } =
     }
 
 (** Invert a simple expression containing a single field_ref. *)
-let invert_expression expr =
+let invert_expression ctx expr =
   let rec invert = function
     | Parsetree.Binop (Add, e1, e2) ->
         let e1, is_var1 = invert e1 in
@@ -101,16 +102,28 @@ let invert_expression expr =
     | Unop (Bit_not, e) ->
         let e, is_var = invert e in
         (Hir.(Unop (Bit_not, e)), is_var)
-    | Field_ref f -> (Hir.Field_ref f, true)
+    | Field_ref { field; type_ = Some type_ } ->
+        (Hir.Field_ref { field; type_ = conv_type ctx type_ }, true)
     | Expr_value n -> (Hir.Expr_value n, false)
     | Expr_bit b -> (Hir.Expr_bit b, false)
     | e -> failwith (Parsetree.show_expression e)
   in
   invert expr |> fst
 
+(*
 let%test _ =
-  invert_expression Parsetree.(Binop (Add, Expr_value 4L, Field_ref "test"))
-  = Hir.(Binop (Sub, Field_ref "test", Expr_value 4L))
+  invert_expression
+    Parsetree.(
+      Binop
+        ( Add,
+          Expr_value 4L,
+          Field_ref { field = "test"; type_ = Some (Type_primitive Int8) } ))
+  = Hir.(
+      Binop
+        ( Sub,
+          Field_ref { field = "test"; type_ = Type_primitive Int8 },
+          Expr_value 4L ))
+          *)
 
 (** Because event structs use these despite everything else just using the
     [file_name]. *)
@@ -167,7 +180,7 @@ let rec collect_fields_in_expression = function
       let& e2, v2 = collect_fields_in_expression e2 in
       Some (e1 @ e2, v1 + v2)
   | Unop (Bit_not, e) -> collect_fields_in_expression e
-  | Field_ref f -> Some ([ f ], 0)
+  | Field_ref { field; _ } -> Some ([ field ], 0)
   | Expr_value _ -> Some ([], 1)
   | Binop (_, _, _)
   (* The  *)
@@ -194,7 +207,7 @@ type lists_cache = {
 
     Here we collect all the invertible lists indexed by the list's field name
     and its length field's name. *)
-let collect_invertible_lists fields =
+let collect_invertible_lists ctx fields =
   ListLabels.filter_map fields ~f:(function
     | Parsetree.Field_list
         { length = Some e; name = list_name; type_ = list_type } -> (
@@ -203,7 +216,7 @@ let collect_invertible_lists fields =
             (* TODO return error when find_map returns none *)
             ListLabels.find_map fields ~f:(function
               | Parsetree.Field { name; _ } when name = length_field ->
-                  let inverted_expr = invert_expression e in
+                  let inverted_expr = invert_expression ctx e in
                   let l =
                     { inverted_expr; type_ = list_type.ft_type; list_name }
                   in
@@ -374,7 +387,8 @@ let rec conv_variant_field ~cond ~cases enclosing_fields (curr_module, xcbs) =
           let external_params = conv_external_params xcbs external_params in
           let fields, external_params =
             let fix_param_refs = function
-              | Hir.Field_ref f when not (List.mem f field_names) ->
+              | Hir.Field_ref { field = f; _ } when not (List.mem f field_names)
+                ->
                   let type_ =
                     ListExt.find_map_exn enclosing_fields ~f:(fun field ->
                         match field with
@@ -427,14 +441,19 @@ let rec conv_variant_field ~cond ~cases enclosing_fields (curr_module, xcbs) =
     - turn & switches into optional fields
     - convert the rest of the AST to Hir types *)
 and conv_fields fields (curr_module, xcbs) =
-  let lists, _ = collect_invertible_lists fields in
+  let lists, _ = collect_invertible_lists xcbs fields in
   let switches =
     ListLabels.filter_map fields ~f:(function
       | Parsetree.Field_switch
-          { sw_cond = Cond_eq (Field_ref c); sw_name; sw_cases } ->
+          { sw_cond = Cond_eq (Field_ref { field = c; _ }); sw_name; sw_cases }
+        ->
           Some (`Eq, c, sw_name, sw_cases)
       | Parsetree.Field_switch
-          { sw_cond = Cond_bit_and (Field_ref c); sw_name; sw_cases } ->
+          {
+            sw_cond = Cond_bit_and (Field_ref { field = c; _ });
+            sw_name;
+            sw_cases;
+          } ->
           Some (`Bit_and, c, sw_name, sw_cases)
       | _ -> None)
   in

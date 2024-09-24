@@ -16,6 +16,7 @@ let parsetree_to_hir xcbs =
     |> List.map Pass2_remove_unions.unions_to_switch
     |> List.map Pass3_fixes.apply_fixes
     |> Pass4_serializable_events.mark_eventstruct_events_as_serializable
+    |> Pass5_resolve_field_refs.resolve_field_refs
   in
   List.map (Pass5_parsetree_to_hir.elaborated_parsetree_to_hir xcbs) xcbs
   |> Sort_modules.sort_hir

@@ -1,3 +1,4 @@
+(*
 open Hir
 module Ident = Casing.OCaml
 
@@ -919,3 +920,4 @@ let gen_xcb out xcb =
       (list_sep "\n" (gen_declaration file_name)) out declarations
 
 let gen out xcbs = List.iter (gen_xcb out) xcbs
+*)
