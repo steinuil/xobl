@@ -783,7 +783,7 @@ module Codecs = struct
           [%e e_binop ~loc op] [%e e_expression ?it ~loc e1]
             [%e e_expression ?it ~loc e2]]
     | Unop (Bit_not, e) -> [%expr lnot [%e e_expression ?it ~loc e]]
-    | Field_ref f -> (
+    | Field_ref { field = f; type_ = _ } -> (
         match it with None -> e_id ~loc f | Some it -> e_id ~loc ~parent:it f)
     | List_element_ref -> (
         match it with

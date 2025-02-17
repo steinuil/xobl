@@ -95,7 +95,8 @@ let in_declaration decl =
             reply
         in
         Request { name; opcode; combine_adjacent; fields; reply; doc }
-      with Failure n -> Printf.ksprintf failwith "%s %s" name n)
+      with Failure field ->
+        Printf.ksprintf failwith "field `%s` in request `%s`" field name)
 
 let resolve_field_refs xcbs =
   ListLabels.map xcbs ~f:(function
