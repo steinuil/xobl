@@ -1,7 +1,7 @@
-; (library
-;  (name xobl_eio)
-;  (public_name xobl.eio)
-;  (inline_tests)
-;  (libraries sexplib eio logs xobl.protocol xobl unix)
-;  (preprocess
-;   (pps ppx_inline_test ppx_sexp_conv ppx_expect)))
+(library
+ (name xobl_eio)
+ (public_name xobl.eio)
+ (inline_tests)
+ (libraries sexplib eio logs xobl unix)
+ (preprocess
+  (pps ppx_inline_test ppx_sexp_conv ppx_expect)))

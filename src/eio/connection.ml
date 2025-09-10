@@ -151,7 +151,7 @@ module Xid_seed = struct
         else (
           seed.last <- Int32.add seed.last seed.inc;
           let xid = Int32.logor seed.last seed.base in
-          Xobl_protocol.X11_types.Xid.of_int (Int32.to_int xid)))
+          Xobl.X11.Xid (Int32.to_int xid)))
 end
 
 module Connection = struct
@@ -160,7 +160,7 @@ module Connection = struct
     xid_seed : Xid_seed.t;
     cookie_reactor : Cookie_reactor.t;
     event_stream : Bytes.t Eio.Stream.t;
-    display_info : Xobl_protocol.Xproto.setup;
+    display_info : Xobl.X11.Protocol.Core.setup;
     screen : int;
   }
 
@@ -175,8 +175,9 @@ module Connection = struct
 
   let ( let& ) = Option.bind
 
-  let get_socker_params env display =
-    let open Xobl in
+  let get_socket_params env display =
+    let module Display_name = Xobl.X11.Display_name in
+    let module Xauth = Xobl.X11.Xauthority in
     function
     | Display_name.Unix_domain_socket path ->
         let localhost = Unix.gethostname () in
@@ -184,7 +185,7 @@ module Connection = struct
           let& xauth_path = Xauth.path_from_env () in
           let xauth_path = Eio.Path.(Eio.Stdenv.fs env / xauth_path) in
           try
-            Eio.Path.load xauth_path |> Xauth.parse
+            Eio.Path.load xauth_path |> Xauth.of_string
             |> Xauth.select_best ~family:Xauth.Family.Local ~address:localhost
                  ~display
           with Eio.Io _ -> None

@@ -154,13 +154,13 @@ let%test "pop_from_start returns the first item of the ring buffer" =
   push_back b 2;
   pop_front b = 1
 
-(* let%test "pop_from_start shifts the ring buffer" =
-   let b = create 4 0 in
-   push_back b 1;
-   push_back b 2;
-   pop_front b |> ignore;
-   realloc b 4;
-   b.buf = [| 2; 0; 0; 0 |] *)
+let%test "pop_from_start shifts the ring buffer" =
+  let b = create 4 0 in
+  push_back b 1;
+  push_back b 2;
+  pop_front b |> ignore;
+  realloc b 4;
+  b.buf = [| 2; 0; 0; 0 |]
 
 let%test "pop_from_start respects array bounds" =
   let b = create 4 0 in
