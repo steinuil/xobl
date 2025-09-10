@@ -12,17 +12,15 @@ let hex_string_of_bytes bytes =
     bytes;
   Bytes.unsafe_to_string b
 
-let bit n = Optint.shift_right_logical Optint.one n
+let bit n = Int.shift_right_logical Int.one n
 
 module Mask_impl () : Types.Mask = struct
-  type t = Optint.t
+  type t = int [@@deriving sexp]
 
-  let ( & ) a b = Optint.logand a b <> Optint.zero
-  let ( || ) = Optint.logor
+  let ( & ) a b = Int.logand a b <> Int.zero
+  let ( || ) = Int.logor
   let of_int32 = Fun.id
   let to_int32 = Fun.id
-  let sexp_of_t n = Optint.to_unsigned_int32 n |> sexp_of_int32
-  let t_of_sexp n = int32_of_sexp n |> Optint.of_unsigned_int32
 end
 
 let[@inline] ( %> ) f g x = g (f x)

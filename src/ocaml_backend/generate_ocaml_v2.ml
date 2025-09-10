@@ -20,7 +20,7 @@ let is_field_visible = function
   | Field_optional _ ->
       true
   | Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _
-  | Field_optional_mask _ ->
+  | Field_optional_mask _ | Field_virtual_len _ ->
       false
 
 let visible_fields = List.filter is_field_visible
@@ -36,7 +36,7 @@ let name_of_field = function
   | Field_variant_tag { field_name = name; _ }
   | Field_optional_mask { name; _ } ->
       Some name
-  | Field_pad _ -> None
+  | Field_pad _ | Field_virtual_len _ -> None
 
 let names_of_visible_fields fields =
   visible_fields fields |> List.filter_map name_of_field
@@ -231,7 +231,7 @@ module Protocol = struct
         let t = t_field_type ~ctx ~loc type_ in
         [%type: [%t t] option]
     | ( Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _
-      | Field_optional_mask _ ) as f ->
+      | Field_optional_mask _ | Field_virtual_len _ ) as f ->
         Format.ksprintf unexpected "field is not visible:\n%s" (show_field f)
 
   let t_fields ~ctx ~loc fields =
@@ -329,9 +329,8 @@ module Protocol = struct
               ListLabels.map values ~f:(fun (name, value) ->
                   [%stri
                     let [%p p_id ~loc name] : t =
-                      of_int32
-                        (Optint.of_int [%e e_int ~loc (Int64.to_int value)])])
-          | None_value -> [%str let none : t = of_int32 Optint.zero]
+                      of_int32 [%e e_int ~loc (Int64.to_int value)]])
+          | None_value -> [%str let none : t = of_int32 0]
         in
         stri_module ~loc ~suffix:"mask" name
           (([%stri include Mask_impl ()] :: items) @ values)
@@ -511,7 +510,7 @@ module Protocol = struct
         let name = Ident.snake name in
         Optional name
     | ( Field_expr _ | Field_pad _ | Field_list_length _ | Field_variant_tag _
-      | Field_optional_mask _ ) as f ->
+      | Field_optional_mask _ | Field_virtual_len _ ) as f ->
         Format.ksprintf unexpected "field is not visible:\n%s" (show_field f)
 
   let e_make_request ~loc fields =
@@ -762,6 +761,12 @@ module Codecs = struct
         ft_allowed = None;
       } ->
         [%expr Decode.utf16_string]
+    | {
+        ft_type =
+          Type_ref ({ id_module = "xinput"; id_name = "DeviceTimeCoord" }, None);
+        ft_allowed = None;
+      } ->
+        [%expr Decode.list ~item:(decode_device_time_coord ~num_axes)]
     | t -> (
         match primitive_of_type t.ft_type with
         | Some Char | Some Void -> [%expr Decode.string]
@@ -783,14 +788,24 @@ module Codecs = struct
           [%e e_binop ~loc op] [%e e_expression ?it ~loc e1]
             [%e e_expression ?it ~loc e2]]
     | Unop (Bit_not, e) -> [%expr lnot [%e e_expression ?it ~loc e]]
-    | Field_ref { field = f; type_ = _ } -> (
-        match it with None -> e_id ~loc f | Some it -> e_id ~loc ~parent:it f)
+    | Field_ref { field = "flags"; type_ = _ } ->
+        [%expr Clock_flag_mask.to_int32 flags]
+    | Field_ref { field = f; type_ = _ } ->
+        let id =
+          match it with
+          | None -> e_id ~loc f
+          | Some it -> e_id ~loc ~parent:it f
+        in
+        [%expr [%e id]]
     | List_element_ref -> (
         match it with
         | None -> unexpected "List_element_ref outside of a Sum_of expression"
         | Some it -> e_id ~loc it)
     | Enum_ref _ -> unexpected "Enum_ref"
-    | Param_ref { param = name; type_ = _ } -> e_id ~prefix:"ext" ~loc name
+    | Param_ref { param = name; type_ } ->
+        let id = e_id ~prefix:"ext" ~loc name in
+        let int_encoder = e_prim_to_int ~loc (prim_of_type_exn type_) in
+        [%expr [%e int_encoder] [%e id]]
     | Pop_count e -> [%expr Conv.pop_count [%e e_expression ?it ~loc e]]
     | Expr_value v -> e_int (Int64.to_int v)
     | Expr_bit b -> [%expr 1 lsl [%e e_int b]]
@@ -816,14 +831,13 @@ module Codecs = struct
         [ `Let (name, [%expr [%e decode_ls] ~len:[%e len] buf]) ]
     | Field_list_length { name; type_; expr = None; _ } ->
         let body = e_type ~ctx ~loc type_ in
-        let int_of_t = prim_of_type_exn type_ |> e_prim_to_int ~loc in
-        [ `Let (name, [%expr [%e int_of_t] ([%e body] buf)]) ]
+        (* let int_of_t = prim_of_type_exn type_ |> e_prim_to_int ~loc in *)
+        [ `Let (name, [%expr [%e body] buf]) ]
     | Field_list_length { name; type_; expr = Some expr; _ } ->
         let body = e_type ~ctx ~loc type_ in
-        let int_of_t = prim_of_type_exn type_ |> e_prim_to_int ~loc in
+        (* let int_of_t = prim_of_type_exn type_ |> e_prim_to_int ~loc in *)
         [
-          `Let (name, [%expr [%e int_of_t] ([%e body] buf)]);
-          `Let (name, e_expression ~loc expr);
+          `Let (name, [%expr [%e body] buf]); `Let (name, e_expression ~loc expr);
         ]
     | Field_list { name; type_; length = Some length } ->
         let len = e_expression ~loc length in

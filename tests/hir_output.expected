@@ -254,8 +254,11 @@
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
       (Field_pad (pad (Pad_bytes 5)) (serialize false))
       (Field_list_length (name length) (type_ (Type_primitive Card16))
-       (expr ((Binop Div (Field_ref length) (Expr_value 4)))) (list reason)
-       (list_type (Type_primitive Char)))
+       (expr
+        ((Binop Div
+          (Field_ref (field length) (type_ (Type_primitive Card16)))
+          (Expr_value 4))))
+       (list reason) (list_type (Type_primitive Char)))
       (Field_list_simple (name reason)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
        (length length))))
@@ -1665,7 +1668,10 @@
       (Field_list (name data)
        (type_ ((ft_type (Type_primitive Void)) (ft_allowed ())))
        (length
-        ((Binop Div (Binop Mul (Field_ref data_len) (Field_ref format))
+        ((Binop Div
+          (Binop Mul
+           (Field_ref (field data_len) (type_ (Type_primitive Card32)))
+           (Field_ref (field format) (type_ (Type_primitive Card8))))
           (Expr_value 8)))))))
     (reply ())))
   (Request
@@ -1719,8 +1725,11 @@
        (Field_list (name value)
         (type_ ((ft_type (Type_primitive Void)) (ft_allowed ())))
         (length
-         ((Binop Mul (Field_ref value_len)
-           (Binop Div (Field_ref format) (Expr_value 8)))))))))))
+         ((Binop Mul
+           (Field_ref (field value_len) (type_ (Type_primitive Card32)))
+           (Binop Div
+            (Field_ref (field format) (type_ (Type_primitive Card8)))
+            (Expr_value 8)))))))))))
   (Request
    ((name ListProperties) (opcode 21) (combine_adjacent true)
     (fields
@@ -2376,9 +2385,15 @@
   (Request
    ((name QueryTextExtents) (opcode 48) (combine_adjacent true)
     (fields
-     ((Field_expr (name odd_length)
+     ((Field_virtual_len (name string_len) (type_ (Type_primitive Card16))
+       (list string)
+       (list_type (Type_ref ((id_module xproto) (id_name CHAR2B)) ())))
+      (Field_expr (name odd_length)
        (type_ ((ft_type (Type_primitive Bool)) (ft_allowed ())))
-       (expr (Binop Bit_and (Field_ref string_len) (Expr_value 1))))
+       (expr
+        (Binop Bit_and
+         (Field_ref (field string_len) (type_ (Type_primitive Card16)))
+         (Expr_value 1))))
       (Field (name font)
        (type_
         ((ft_type (Type_ref ((id_module xproto) (id_name FONTABLE)) (Xid)))
@@ -3171,7 +3186,10 @@
        (Field_pad (pad (Pad_bytes 20)) (serialize false))
        (Field_list (name data)
         (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-        (length ((Binop Mul (Field_ref length) (Expr_value 4))))))))))
+        (length
+         ((Binop Mul
+           (Field_ref (field length) (type_ (Type_primitive Card16)))
+           (Expr_value 4))))))))))
   (Request
    ((name PolyText8) (opcode 74) (combine_adjacent true)
     (fields
@@ -3754,8 +3772,10 @@
         ((ft_type (Type_ref ((id_module xproto) (id_name KEYSYM)) (Card32)))
          (ft_allowed ())))
        (length
-        ((Binop Mul (Field_ref keycode_count)
-          (Field_ref keysyms_per_keycode)))))))
+        ((Binop Mul
+          (Field_ref (field keycode_count) (type_ (Type_primitive Card8)))
+          (Field_ref (field keysyms_per_keycode)
+           (type_ (Type_primitive Card8)))))))))
     (reply ())))
   (Request
    ((name GetKeyboardMapping) (opcode 101) (combine_adjacent true)
@@ -3775,7 +3795,7 @@
         (type_
          ((ft_type (Type_ref ((id_module xproto) (id_name KEYSYM)) (Card32)))
           (ft_allowed ())))
-        (length ((Field_ref length)))))))))
+        (length ((Field_ref (field length) (type_ (Type_primitive Card16)))))))))))
   (Mask
    ((name KB)
     (items
@@ -4063,7 +4083,11 @@
     (fields
      ((Field_list_length (name keycodes_per_modifier)
        (type_ (Type_primitive Card8))
-       (expr ((Binop Div (Field_ref keycodes_per_modifier) (Expr_value 8))))
+       (expr
+        ((Binop Div
+          (Field_ref (field keycodes_per_modifier)
+           (type_ (Type_primitive Card8)))
+          (Expr_value 8))))
        (list keycodes)
        (list_type (Type_ref ((id_module xproto) (id_name KEYCODE)) (Card8))))
       (Field_list_simple (name keycodes)
@@ -4083,7 +4107,11 @@
     (reply
      (((Field_list_length (name keycodes_per_modifier)
         (type_ (Type_primitive Card8))
-        (expr ((Binop Div (Field_ref keycodes_per_modifier) (Expr_value 8))))
+        (expr
+         ((Binop Div
+           (Field_ref (field keycodes_per_modifier)
+            (type_ (Type_primitive Card8)))
+           (Expr_value 8))))
         (list keycodes)
         (list_type (Type_ref ((id_module xproto) (id_name KEYCODE)) (Card8))))
        (Field_pad (pad (Pad_bytes 24)) (serialize false))
@@ -5585,7 +5613,10 @@
         (Field_pad (pad (Pad_bytes 8)) (serialize false))
         (Field_list (name cursor_image)
          (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-         (length ((Binop Mul (Field_ref width) (Field_ref height))))))))))
+         (length
+          ((Binop Mul
+            (Field_ref (field width) (type_ (Type_primitive Card16)))
+            (Field_ref (field height) (type_ (Type_primitive Card16))))))))))))
    (Type_alias ((name REGION) (type_ (Type_primitive Xid))))
    (Error ((name BadRegion) (number 0) (fields ())))
    (Enum ((name Region) (items ((None 0)))))
@@ -5794,7 +5825,10 @@
          (type_
           ((ft_type (Type_ref ((id_module xproto) (id_name RECTANGLE)) ()))
            (ft_allowed ())))
-         (length ((Binop Div (Field_ref length) (Expr_value 2))))))))))
+         (length
+          ((Binop Div
+            (Field_ref (field length) (type_ (Type_primitive Card16)))
+            (Expr_value 2))))))))))
    (Request
     ((name SetGCClipRegion) (opcode 20) (combine_adjacent true)
      (fields
@@ -5914,7 +5948,10 @@
         (Field_pad (pad (Pad_bytes 2)) (serialize false))
         (Field_list (name cursor_image)
          (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-         (length ((Binop Mul (Field_ref width) (Field_ref height)))))
+         (length
+          ((Binop Mul
+            (Field_ref (field width) (type_ (Type_primitive Card16)))
+            (Field_ref (field height) (type_ (Type_primitive Card16)))))))
         (Field_list_simple (name name)
          (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
          (length nbytes)))))))
@@ -6407,9 +6444,13 @@
          (length
           ((Binop Sub
             (Binop Bit_and
-             (Binop Add (Field_ref driver_name_length) (Expr_value 3))
+             (Binop Add
+              (Field_ref (field driver_name_length)
+               (type_ (Type_primitive Card32)))
+              (Expr_value 3))
              (Unop Bit_not (Expr_value 3)))
-            (Field_ref driver_name_length)))))
+            (Field_ref (field driver_name_length)
+             (type_ (Type_primitive Card32)))))))
         (Field_list_simple (name device_name)
          (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
          (length device_name_length)))))))
@@ -7252,7 +7293,8 @@
         (Field_pad (pad (Pad_bytes 16)) (serialize false))
         (Field_list (name property_list)
          (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-         (length ((Field_ref length)))))))))
+         (length
+          ((Field_ref (field length) (type_ (Type_primitive Card16)))))))))))
    (Request
     ((name DestroyGLXPixmap) (opcode 15) (combine_adjacent true)
      (fields
@@ -7297,7 +7339,10 @@
          (length ((Expr_value 24))))
         (Field_list (name data2)
          (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-         (length ((Binop Mul (Field_ref length) (Expr_value 4))))))))))
+         (length
+          ((Binop Mul
+            (Field_ref (field length) (type_ (Type_primitive Card16)))
+            (Expr_value 4))))))))))
    (Request
     ((name QueryExtensionsString) (opcode 18) (combine_adjacent true)
      (fields
@@ -7352,7 +7397,8 @@
         (Field_pad (pad (Pad_bytes 16)) (serialize false))
         (Field_list (name property_list)
          (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-         (length ((Field_ref length)))))))))
+         (length
+          ((Field_ref (field length) (type_ (Type_primitive Card16)))))))))))
    (Request
     ((name CreatePixmap) (opcode 22) (combine_adjacent true)
      (fields
@@ -7371,7 +7417,10 @@
          ((ft_type (Type_ref ((id_module glx) (id_name PIXMAP)) (Xid)))
           (ft_allowed ()))))
        (Field_list_length (name num_attribs) (type_ (Type_primitive Card32))
-        (expr ((Binop Div (Field_ref num_attribs) (Expr_value 2))))
+        (expr
+         ((Binop Div
+           (Field_ref (field num_attribs) (type_ (Type_primitive Card32)))
+           (Expr_value 2))))
         (list attribs) (list_type (Type_primitive Card32)))
        (Field_list_simple (name attribs)
         (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
@@ -7418,7 +7467,10 @@
      (reply
       (((Field_pad (pad (Pad_bytes 1)) (serialize false))
         (Field_list_length (name num_attribs) (type_ (Type_primitive Card32))
-         (expr ((Binop Div (Field_ref num_attribs) (Expr_value 2))))
+         (expr
+          ((Binop Div
+            (Field_ref (field num_attribs) (type_ (Type_primitive Card32)))
+            (Expr_value 2))))
          (list attribs) (list_type (Type_primitive Card32)))
         (Field_pad (pad (Pad_bytes 20)) (serialize false))
         (Field_list_simple (name attribs)
@@ -7466,7 +7518,10 @@
          ((ft_type (Type_ref ((id_module glx) (id_name PBUFFER)) (Xid)))
           (ft_allowed ()))))
        (Field_list_length (name num_attribs) (type_ (Type_primitive Card32))
-        (expr ((Binop Div (Field_ref num_attribs) (Expr_value 2))))
+        (expr
+         ((Binop Div
+           (Field_ref (field num_attribs) (type_ (Type_primitive Card32)))
+           (Expr_value 2))))
         (list attribs) (list_type (Type_primitive Card32)))
        (Field_list_simple (name attribs)
         (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
@@ -7490,7 +7545,10 @@
      (reply
       (((Field_pad (pad (Pad_bytes 1)) (serialize false))
         (Field_list_length (name num_attribs) (type_ (Type_primitive Card32))
-         (expr ((Binop Div (Field_ref num_attribs) (Expr_value 2))))
+         (expr
+          ((Binop Div
+            (Field_ref (field num_attribs) (type_ (Type_primitive Card32)))
+            (Expr_value 2))))
          (list attribs) (list_type (Type_primitive Card32)))
         (Field_pad (pad (Pad_bytes 20)) (serialize false))
         (Field_list_simple (name attribs)
@@ -7504,7 +7562,10 @@
          ((ft_type (Type_ref ((id_module glx) (id_name DRAWABLE)) (Xid)))
           (ft_allowed ()))))
        (Field_list_length (name num_attribs) (type_ (Type_primitive Card32))
-        (expr ((Binop Div (Field_ref num_attribs) (Expr_value 2))))
+        (expr
+         ((Binop Div
+           (Field_ref (field num_attribs) (type_ (Type_primitive Card32)))
+           (Expr_value 2))))
         (list attribs) (list_type (Type_primitive Card32)))
        (Field_list_simple (name attribs)
         (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
@@ -7528,7 +7589,10 @@
          ((ft_type (Type_ref ((id_module glx) (id_name WINDOW)) (Xid)))
           (ft_allowed ()))))
        (Field_list_length (name num_attribs) (type_ (Type_primitive Card32))
-        (expr ((Binop Div (Field_ref num_attribs) (Expr_value 2))))
+        (expr
+         ((Binop Div
+           (Field_ref (field num_attribs) (type_ (Type_primitive Card32)))
+           (Expr_value 2))))
         (list attribs) (list_type (Type_primitive Card32)))
        (Field_list_simple (name attribs)
         (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
@@ -7550,7 +7614,10 @@
        (Field (name minor_version)
         (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
        (Field_list_length (name num_versions) (type_ (Type_primitive Card32))
-        (expr ((Binop Div (Field_ref num_versions) (Expr_value 2))))
+        (expr
+         ((Binop Div
+           (Field_ref (field num_versions) (type_ (Type_primitive Card32)))
+           (Expr_value 2))))
         (list gl_versions) (list_type (Type_primitive Card32)))
        (Field_list_length (name gl_str_len) (type_ (Type_primitive Card32))
         (expr ()) (list gl_extension_string)
@@ -7589,7 +7656,10 @@
         (type_ ((ft_type (Type_primitive Bool)) (ft_allowed ()))))
        (Field_pad (pad (Pad_bytes 3)) (serialize false))
        (Field_list_length (name num_attribs) (type_ (Type_primitive Card32))
-        (expr ((Binop Div (Field_ref num_attribs) (Expr_value 2))))
+        (expr
+         ((Binop Div
+           (Field_ref (field num_attribs) (type_ (Type_primitive Card32)))
+           (Expr_value 2))))
         (list attribs) (list_type (Type_primitive Card32)))
        (Field_list_simple (name attribs)
         (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
@@ -7603,7 +7673,10 @@
        (Field (name minor_version)
         (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
        (Field_list_length (name num_versions) (type_ (Type_primitive Card32))
-        (expr ((Binop Div (Field_ref num_versions) (Expr_value 3))))
+        (expr
+         ((Binop Div
+           (Field_ref (field num_versions) (type_ (Type_primitive Card32)))
+           (Expr_value 3))))
         (list gl_versions) (list_type (Type_primitive Card32)))
        (Field_list_length (name gl_str_len) (type_ (Type_primitive Card32))
         (expr ()) (list gl_extension_string)
@@ -7785,7 +7858,10 @@
         (Field_pad (pad (Pad_bytes 24)) (serialize false))
         (Field_list (name data)
          (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-         (length ((Binop Mul (Field_ref length) (Expr_value 4))))))))))
+         (length
+          ((Binop Mul
+            (Field_ref (field length) (type_ (Type_primitive Card16)))
+            (Expr_value 4))))))))))
    (Request
     ((name GetBooleanv) (opcode 112) (combine_adjacent true)
      (fields
@@ -7824,7 +7900,10 @@
          (type_
           ((ft_type (Type_ref ((id_module glx) (id_name FLOAT64)) (Double)))
            (ft_allowed ())))
-         (length ((Binop Div (Field_ref length) (Expr_value 2))))))))))
+         (length
+          ((Binop Div
+            (Field_ref (field length) (type_ (Type_primitive Card16)))
+            (Expr_value 2))))))))))
    (Request
     ((name GetDoublev) (opcode 114) (combine_adjacent true)
      (fields
@@ -8174,7 +8253,10 @@
         (Field_pad (pad (Pad_bytes 24)) (serialize false))
         (Field_list (name data)
          (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-         (length ((Binop Mul (Field_ref length) (Expr_value 4))))))))))
+         (length
+          ((Binop Mul
+            (Field_ref (field length) (type_ (Type_primitive Card16)))
+            (Expr_value 4))))))))))
    (Request
     ((name GetString) (opcode 129) (combine_adjacent true)
      (fields
@@ -8354,7 +8436,10 @@
         (Field_pad (pad (Pad_bytes 4)) (serialize false))
         (Field_list (name data)
          (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-         (length ((Binop Mul (Field_ref length) (Expr_value 4))))))))))
+         (length
+          ((Binop Mul
+            (Field_ref (field length) (type_ (Type_primitive Card16)))
+            (Expr_value 4))))))))))
    (Request
     ((name GetTexParameterfv) (opcode 136) (combine_adjacent true)
      (fields
@@ -8524,7 +8609,10 @@
         (Field_pad (pad (Pad_bytes 20)) (serialize false))
         (Field_list (name data)
          (type_ ((ft_type (Type_primitive Bool)) (ft_allowed ())))
-         (length ((Binop Mul (Field_ref length) (Expr_value 4))))))))))
+         (length
+          ((Binop Mul
+            (Field_ref (field length) (type_ (Type_primitive Card16)))
+            (Expr_value 4))))))))))
    (Request
     ((name DeleteTextures) (opcode 144) (combine_adjacent true)
      (fields
@@ -8554,7 +8642,8 @@
         (Field_pad (pad (Pad_bytes 24)) (serialize false))
         (Field_list (name data)
          (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-         (length ((Field_ref length)))))))))
+         (length
+          ((Field_ref (field length) (type_ (Type_primitive Card16)))))))))))
    (Request
     ((name IsTexture) (opcode 146) (combine_adjacent true)
      (fields
@@ -8595,7 +8684,10 @@
         (Field_pad (pad (Pad_bytes 12)) (serialize false))
         (Field_list (name data)
          (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-         (length ((Binop Mul (Field_ref length) (Expr_value 4))))))))))
+         (length
+          ((Binop Mul
+            (Field_ref (field length) (type_ (Type_primitive Card16)))
+            (Expr_value 4))))))))))
    (Request
     ((name GetColorTableParameterfv) (opcode 148) (combine_adjacent true)
      (fields
@@ -8673,7 +8765,10 @@
         (Field_pad (pad (Pad_bytes 8)) (serialize false))
         (Field_list (name data)
          (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-         (length ((Binop Mul (Field_ref length) (Expr_value 4))))))))))
+         (length
+          ((Binop Mul
+            (Field_ref (field length) (type_ (Type_primitive Card16)))
+            (Expr_value 4))))))))))
    (Request
     ((name GetConvolutionParameterfv) (opcode 151) (combine_adjacent true)
      (fields
@@ -8751,7 +8846,10 @@
         (Field_pad (pad (Pad_bytes 8)) (serialize false))
         (Field_list (name rows_and_cols)
          (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-         (length ((Binop Mul (Field_ref length) (Expr_value 4))))))))))
+         (length
+          ((Binop Mul
+            (Field_ref (field length) (type_ (Type_primitive Card16)))
+            (Expr_value 4))))))))))
    (Request
     ((name GetHistogram) (opcode 154) (combine_adjacent true)
      (fields
@@ -8778,7 +8876,10 @@
         (Field_pad (pad (Pad_bytes 12)) (serialize false))
         (Field_list (name data)
          (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-         (length ((Binop Mul (Field_ref length) (Expr_value 4))))))))))
+         (length
+          ((Binop Mul
+            (Field_ref (field length) (type_ (Type_primitive Card16)))
+            (Expr_value 4))))))))))
    (Request
     ((name GetHistogramParameterfv) (opcode 155) (combine_adjacent true)
      (fields
@@ -8853,7 +8954,10 @@
         (Field_pad (pad (Pad_bytes 24)) (serialize false))
         (Field_list (name data)
          (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-         (length ((Binop Mul (Field_ref length) (Expr_value 4))))))))))
+         (length
+          ((Binop Mul
+            (Field_ref (field length) (type_ (Type_primitive Card16)))
+            (Expr_value 4))))))))))
    (Request
     ((name GetMinmaxParameterfv) (opcode 158) (combine_adjacent true)
      (fields
@@ -8925,7 +9029,10 @@
         (Field_pad (pad (Pad_bytes 12)) (serialize false))
         (Field_list (name data)
          (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-         (length ((Binop Mul (Field_ref length) (Expr_value 4))))))))))
+         (length
+          ((Binop Mul
+            (Field_ref (field length) (type_ (Type_primitive Card16)))
+            (Expr_value 4))))))))))
    (Request
     ((name DeleteQueriesARB) (opcode 161) (combine_adjacent true)
      (fields
@@ -8955,7 +9062,8 @@
         (Field_pad (pad (Pad_bytes 24)) (serialize false))
         (Field_list (name data)
          (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-         (length ((Field_ref length)))))))))
+         (length
+          ((Field_ref (field length) (type_ (Type_primitive Card16)))))))))))
    (Request
     ((name IsQueryARB) (opcode 163) (combine_adjacent true)
      (fields
@@ -9221,7 +9329,10 @@
          (type_
           ((ft_type (Type_ref ((id_module randr) (id_name RefreshRates)) ()))
            (ft_allowed ())))
-         (length ((Binop Sub (Field_ref nInfo) (Field_ref nSizes))))))))))
+         (length
+          ((Binop Sub
+            (Field_ref (field nInfo) (type_ (Type_primitive Card16)))
+            (Field_ref (field nSizes) (type_ (Type_primitive Card16))))))))))))
    (Request
     ((name GetScreenSizeRange) (opcode 6) (combine_adjacent true)
      (fields
@@ -9460,7 +9571,8 @@
         (Field_pad (pad (Pad_bytes 21)) (serialize false))
         (Field_list (name validValues)
          (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-         (length ((Field_ref length)))))))))
+         (length
+          ((Field_ref (field length) (type_ (Type_primitive Card16)))))))))))
    (Request
     ((name ConfigureOutputProperty) (opcode 12) (combine_adjacent true)
      (fields
@@ -9509,7 +9621,10 @@
        (Field_list (name data)
         (type_ ((ft_type (Type_primitive Void)) (ft_allowed ())))
         (length
-         ((Binop Div (Binop Mul (Field_ref num_units) (Field_ref format))
+         ((Binop Div
+           (Binop Mul
+            (Field_ref (field num_units) (type_ (Type_primitive Card32)))
+            (Field_ref (field format) (type_ (Type_primitive Card8))))
            (Expr_value 8)))))))
      (reply ())))
    (Request
@@ -9565,8 +9680,11 @@
         (Field_list (name data)
          (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
          (length
-          ((Binop Mul (Field_ref num_items)
-            (Binop Div (Field_ref format) (Expr_value 8)))))))))))
+          ((Binop Mul
+            (Field_ref (field num_items) (type_ (Type_primitive Card32)))
+            (Binop Div
+             (Field_ref (field format) (type_ (Type_primitive Card8)))
+             (Expr_value 8)))))))))))
    (Request
     ((name CreateMode) (opcode 16) (combine_adjacent true)
      (fields
@@ -10185,7 +10303,8 @@
         (Field_pad (pad (Pad_bytes 21)) (serialize false))
         (Field_list (name valid_values)
          (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-         (length ((Field_ref length)))))))))
+         (length
+          ((Field_ref (field length) (type_ (Type_primitive Card16)))))))))))
    (Request
     ((name ConfigureProviderProperty) (opcode 38) (combine_adjacent true)
      (fields
@@ -10231,8 +10350,11 @@
        (Field_list (name data)
         (type_ ((ft_type (Type_primitive Void)) (ft_allowed ())))
         (length
-         ((Binop Mul (Field_ref num_items)
-           (Binop Div (Field_ref format) (Expr_value 8))))))))
+         ((Binop Mul
+           (Field_ref (field num_items) (type_ (Type_primitive Card32)))
+           (Binop Div
+            (Field_ref (field format) (type_ (Type_primitive Card8)))
+            (Expr_value 8))))))))
      (reply ())))
    (Request
     ((name DeleteProviderProperty) (opcode 40) (combine_adjacent true)
@@ -10285,8 +10407,11 @@
         (Field_list (name data)
          (type_ ((ft_type (Type_primitive Void)) (ft_allowed ())))
          (length
-          ((Binop Mul (Field_ref num_items)
-            (Binop Div (Field_ref format) (Expr_value 8)))))))))))
+          ((Binop Mul
+            (Field_ref (field num_items) (type_ (Type_primitive Card32)))
+            (Binop Div
+             (Field_ref (field format) (type_ (Type_primitive Card8)))
+             (Expr_value 8)))))))))))
    (Event
     ((name ScreenChangeNotify) (number 0) (is_generic false)
      (is_serializable false) (no_sequence_number false)
@@ -11687,7 +11812,10 @@
         (Field_pad (pad (Pad_bytes 8)) (serialize false))
         (Field_list (name data)
          (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-         (length ((Binop Mul (Field_ref length) (Expr_value 4))))))))))
+         (length
+          ((Binop Mul
+            (Field_ref (field length) (type_ (Type_primitive Card16)))
+            (Expr_value 4))))))))))
    (Request
     ((name DisableContext) (opcode 6) (combine_adjacent true)
      (fields
@@ -11747,8 +11875,11 @@
          ((ft_type (Type_ref ((id_module res) (id_name ClientIdSpec)) ()))
           (ft_allowed ()))))
        (Field_list_length (name length) (type_ (Type_primitive Card32))
-        (expr ((Binop Mul (Field_ref length) (Expr_value 4)))) (list value)
-        (list_type (Type_primitive Card32)))
+        (expr
+         ((Binop Mul
+           (Field_ref (field length) (type_ (Type_primitive Card32)))
+           (Expr_value 4))))
+        (list value) (list_type (Type_primitive Card32)))
        (Field_list_simple (name value)
         (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
         (length length))))
@@ -12782,9 +12913,12 @@
          (length
           ((Binop Sub
             (Binop Bit_and
-             (Binop Add (Field_ref vendor_length) (Expr_value 3))
+             (Binop Add
+              (Field_ref (field vendor_length)
+               (type_ (Type_primitive Card8)))
+              (Expr_value 3))
              (Unop Bit_not (Expr_value 3)))
-            (Field_ref vendor_length)))))
+            (Field_ref (field vendor_length) (type_ (Type_primitive Card8)))))))
         (Field_list_simple (name model)
          (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
          (length model_length)))))))
@@ -13060,8 +13194,10 @@
          (length
           ((Binop Mul
             (Binop Sub (Expr_value 1)
-             (Binop Bit_and (Field_ref flags) (Expr_value 1)))
-            (Field_ref clocks))))))))))
+             (Binop Bit_and
+              (Field_ref (field flags) (type_ (Type_primitive Card32)))
+              (Expr_value 1)))
+            (Field_ref (field clocks) (type_ (Type_primitive Card32))))))))))))
    (Request
     ((name SetClientVersion) (opcode 14) (combine_adjacent true)
      (fields
@@ -13114,17 +13250,26 @@
         (Field_list (name red)
          (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
          (length
-          ((Binop Bit_and (Binop Add (Field_ref size) (Expr_value 1))
+          ((Binop Bit_and
+            (Binop Add
+             (Field_ref (field size) (type_ (Type_primitive Card16)))
+             (Expr_value 1))
             (Unop Bit_not (Expr_value 1))))))
         (Field_list (name green)
          (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
          (length
-          ((Binop Bit_and (Binop Add (Field_ref size) (Expr_value 1))
+          ((Binop Bit_and
+            (Binop Add
+             (Field_ref (field size) (type_ (Type_primitive Card16)))
+             (Expr_value 1))
             (Unop Bit_not (Expr_value 1))))))
         (Field_list (name blue)
          (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
          (length
-          ((Binop Bit_and (Binop Add (Field_ref size) (Expr_value 1))
+          ((Binop Bit_and
+            (Binop Add
+             (Field_ref (field size) (type_ (Type_primitive Card16)))
+             (Expr_value 1))
             (Unop Bit_not (Expr_value 1)))))))))))
    (Request
     ((name SetGammaRamp) (opcode 18) (combine_adjacent true)
@@ -13136,17 +13281,26 @@
        (Field_list (name red)
         (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
         (length
-         ((Binop Bit_and (Binop Add (Field_ref size) (Expr_value 1))
+         ((Binop Bit_and
+           (Binop Add
+            (Field_ref (field size) (type_ (Type_primitive Card16)))
+            (Expr_value 1))
            (Unop Bit_not (Expr_value 1))))))
        (Field_list (name green)
         (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
         (length
-         ((Binop Bit_and (Binop Add (Field_ref size) (Expr_value 1))
+         ((Binop Bit_and
+           (Binop Add
+            (Field_ref (field size) (type_ (Type_primitive Card16)))
+            (Expr_value 1))
            (Unop Bit_not (Expr_value 1))))))
        (Field_list (name blue)
         (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
         (length
-         ((Binop Bit_and (Binop Add (Field_ref size) (Expr_value 1))
+         ((Binop Bit_and
+           (Binop Add
+            (Field_ref (field size) (type_ (Type_primitive Card16)))
+            (Expr_value 1))
            (Unop Bit_not (Expr_value 1))))))))
      (reply ())))
    (Request
@@ -13496,7 +13650,10 @@
           ((ft_type (Type_ref ((id_module xinput) (id_name InputInfo)) ()))
            (ft_allowed ())))
          (length
-          ((Sum_of (field devices) (by_expr ((Field_ref num_class_info)))))))
+          ((Sum_of (field devices)
+            (by_expr
+             ((Field_ref (field num_class_info)
+               (type_ (Type_primitive Card8)))))))))
         (Field_list_simple (name names)
          (type_
           ((ft_type (Type_ref ((id_module xproto) (id_name STR)) ()))
@@ -14459,7 +14616,8 @@
           ((ft_type
             (Type_ref ((id_module xproto) (id_name KEYSYM)) (Card32)))
            (ft_allowed ())))
-         (length ((Field_ref length)))))))))
+         (length
+          ((Field_ref (field length) (type_ (Type_primitive Card16)))))))))))
    (Request
     ((name ChangeDeviceKeyMapping) (opcode 25) (combine_adjacent true)
      (fields
@@ -14478,8 +14636,10 @@
          ((ft_type (Type_ref ((id_module xproto) (id_name KEYSYM)) (Card32)))
           (ft_allowed ())))
         (length
-         ((Binop Mul (Field_ref keycode_count)
-           (Field_ref keysyms_per_keycode)))))))
+         ((Binop Mul
+           (Field_ref (field keycode_count) (type_ (Type_primitive Card8)))
+           (Field_ref (field keysyms_per_keycode)
+            (type_ (Type_primitive Card8)))))))))
      (reply ())))
    (Request
     ((name GetDeviceModifierMapping) (opcode 26) (combine_adjacent true)
@@ -14493,7 +14653,10 @@
         (Field_list_length (name keycodes_per_modifier)
          (type_ (Type_primitive Card8))
          (expr
-          ((Binop Div (Field_ref keycodes_per_modifier) (Expr_value 8))))
+          ((Binop Div
+            (Field_ref (field keycodes_per_modifier)
+             (type_ (Type_primitive Card8)))
+            (Expr_value 8))))
          (list keymaps) (list_type (Type_primitive Card8)))
         (Field_pad (pad (Pad_bytes 23)) (serialize false))
         (Field_list_simple (name keymaps)
@@ -14506,7 +14669,11 @@
         (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
        (Field_list_length (name keycodes_per_modifier)
         (type_ (Type_primitive Card8))
-        (expr ((Binop Div (Field_ref keycodes_per_modifier) (Expr_value 8))))
+        (expr
+         ((Binop Div
+           (Field_ref (field keycodes_per_modifier)
+            (type_ (Type_primitive Card8)))
+           (Expr_value 8))))
         (list keymaps) (list_type (Type_primitive Card8)))
        (Field_pad (pad (Pad_bytes 2)) (serialize false))
        (Field_list_simple (name keymaps)
@@ -15620,7 +15787,10 @@
        (Field_list (name state)
         (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
         (length
-         ((Binop Div (Binop Add (Field_ref num_buttons) (Expr_value 31))
+         ((Binop Div
+           (Binop Add
+            (Field_ref (field num_buttons) (type_ (Type_primitive Card16)))
+            (Expr_value 31))
            (Expr_value 32)))))
        (Field_list_simple (name labels)
         (type_
@@ -15766,7 +15936,11 @@
           (Field_list (name state)
            (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
            (length
-            ((Binop Div (Binop Add (Field_ref num_buttons) (Expr_value 31))
+            ((Binop Div
+              (Binop Add
+               (Field_ref (field num_buttons)
+                (type_ (Type_primitive Card16)))
+               (Expr_value 31))
               (Expr_value 32)))))
           (Field_list_simple (name labels)
            (type_
@@ -18991,7 +19165,8 @@
         (Field_pad (pad (Pad_bytes 20)) (serialize false))
         (Field_list (name priv_data)
          (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-         (length ((Field_ref length)))))))))
+         (length
+          ((Field_ref (field length) (type_ (Type_primitive Card16)))))))))))
    (Request
     ((name DestroyContext) (opcode 3) (combine_adjacent true)
      (fields
@@ -19016,7 +19191,8 @@
         (Field_pad (pad (Pad_bytes 24)) (serialize false))
         (Field_list (name priv_data)
          (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-         (length ((Field_ref length)))))))))
+         (length
+          ((Field_ref (field length) (type_ (Type_primitive Card16)))))))))))
    (Request
     ((name DestroySurface) (opcode 5) (combine_adjacent true)
      (fields
@@ -19058,7 +19234,8 @@
         (Field_pad (pad (Pad_bytes 12)) (serialize false))
         (Field_list (name priv_data)
          (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-         (length ((Field_ref length)))))))))
+         (length
+          ((Field_ref (field length) (type_ (Type_primitive Card16)))))))))))
    (Request
     ((name DestroySubpicture) (opcode 7) (combine_adjacent true)
      (fields

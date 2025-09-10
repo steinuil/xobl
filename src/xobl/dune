@@ -9,7 +9,7 @@
   decode
   encode
   protocol
-  ;; codec
+  codec
   authorization
   xauthority
   display_name

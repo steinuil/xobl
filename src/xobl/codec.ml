@@ -52,7 +52,7 @@ module Core_codec =
     let decode_depth buf =
       (let depth = Decode.u8 buf in
        Decode.pad buf 1;
-       (let visuals_len = Conv.To_int.u16 (Decode.u16 buf) in
+       (let visuals_len = Decode.u16 buf in
         Decode.pad buf 4;
         (let visuals =
            (Decode.list ~item:decode_visualtype) ~len:visuals_len buf in
@@ -75,7 +75,7 @@ module Core_codec =
          ((Decode.byte %> Conv.To_int.byte) %> Backing_store_enum.of_int) buf in
        let save_unders = Decode.bool buf in
        let root_depth = Decode.u8 buf in
-       let allowed_depths_len = Conv.To_int.u8 (Decode.u8 buf) in
+       let allowed_depths_len = Decode.u8 buf in
        let allowed_depths =
          (Decode.list ~item:decode_depth) ~len:allowed_depths_len buf in
        {
@@ -101,10 +101,8 @@ module Core_codec =
        Decode.pad buf 1;
        (let protocol_major_version = Decode.u16 buf in
         let protocol_minor_version = Decode.u16 buf in
-        let authorization_protocol_name_len =
-          Conv.To_int.u16 (Decode.u16 buf) in
-        let authorization_protocol_data_len =
-          Conv.To_int.u16 (Decode.u16 buf) in
+        let authorization_protocol_name_len = Decode.u16 buf in
+        let authorization_protocol_data_len = Decode.u16 buf in
         Decode.pad buf 2;
         (let authorization_protocol_name =
            Decode.string ~len:authorization_protocol_name_len buf in
@@ -121,7 +119,7 @@ module Core_codec =
           }))) : setup_request)
     let decode_setup_failed buf =
       (let status = Decode.u8 buf in
-       let reason_len = Conv.To_int.u8 (Decode.u8 buf) in
+       let reason_len = Decode.u8 buf in
        let protocol_major_version = Decode.u16 buf in
        let protocol_minor_version = Decode.u16 buf in
        let length = Decode.u16 buf in
@@ -136,7 +134,7 @@ module Core_codec =
     let decode_setup_authenticate buf =
       (let status = Decode.u8 buf in
        Decode.pad buf 5;
-       (let length = Conv.To_int.u16 (Decode.u16 buf) in
+       (let length = Decode.u16 buf in
         let length = length / 4 in
         let reason = Decode.string ~len:length buf in { status; reason }) : 
       setup_authenticate)
@@ -150,10 +148,10 @@ module Core_codec =
         let resource_id_base = Decode.u32 buf in
         let resource_id_mask = Decode.u32 buf in
         let motion_buffer_size = Decode.u32 buf in
-        let vendor_len = Conv.To_int.u16 (Decode.u16 buf) in
+        let vendor_len = Decode.u16 buf in
         let maximum_request_length = Decode.u16 buf in
-        let roots_len = Conv.To_int.u8 (Decode.u8 buf) in
-        let pixmap_formats_len = Conv.To_int.u8 (Decode.u8 buf) in
+        let roots_len = Decode.u8 buf in
+        let pixmap_formats_len = Decode.u8 buf in
         let image_byte_order =
           ((Decode.u8 %> Conv.To_int.u8) %> Image_order_enum.of_int) buf in
         let bitmap_format_bit_order =
@@ -675,7 +673,7 @@ module Core_codec =
           (Decode.xid %>
              (Conv.alt_enum ~enum_of_int:Window_enum.of_int
                 ~int_of_t:Conv.To_int.xid)) buf in
-        let children_len = Conv.To_int.u16 (Decode.u16 buf) in
+        let children_len = Decode.u16 buf in
         Decode.pad buf 14;
         (let children = (Decode.list ~item:Decode.xid) ~len:children_len buf in
          { root; parent; children })) : Query_tree.Reply.t)
@@ -688,7 +686,7 @@ module Core_codec =
         atom) : Intern_atom.Reply.t)
     let decode_get_atom_name_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let name_len = Conv.To_int.u16 (Decode.u16 buf) in
+       (let name_len = Decode.u16 buf in
         Decode.pad buf 22;
         (let name = Decode.string ~len:name_len buf in name)) : Get_atom_name.Reply.t)
     let decode_get_property_reply ~length:(length : int)  buf =
@@ -703,7 +701,7 @@ module Core_codec =
           { format; type_; bytes_after; value_len; value }))) : Get_property.Reply.t)
     let decode_list_properties_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let atoms_len = Conv.To_int.u16 (Decode.u16 buf) in
+       (let atoms_len = Decode.u16 buf in
         Decode.pad buf 22;
         (let atoms = (Decode.list ~item:Decode.xid) ~len:atoms_len buf in
          atoms)) : List_properties.Reply.t)
@@ -748,7 +746,7 @@ module Core_codec =
       timecoord)
     let decode_get_motion_events_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let events_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let events_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let events =
            (Decode.list ~item:decode_timecoord) ~len:events_len buf in
@@ -805,7 +803,7 @@ module Core_codec =
          (let min_char_or_byte2 = Decode.u16 buf in
           let max_char_or_byte2 = Decode.u16 buf in
           let default_char = Decode.u16 buf in
-          let properties_len = Conv.To_int.u16 (Decode.u16 buf) in
+          let properties_len = Decode.u16 buf in
           let draw_direction =
             ((Decode.byte %> Conv.To_int.byte) %> Font_draw_enum.of_int) buf in
           let min_byte1 = Decode.u8 buf in
@@ -813,7 +811,7 @@ module Core_codec =
           let all_chars_exist = Decode.bool buf in
           let font_ascent = Decode.i16 buf in
           let font_descent = Decode.i16 buf in
-          let char_infos_len = Conv.To_int.u32 (Decode.u32 buf) in
+          let char_infos_len = Decode.u32 buf in
           let properties =
             (Decode.list ~item:decode_fontprop) ~len:properties_len buf in
           let char_infos =
@@ -856,17 +854,17 @@ module Core_codec =
            overall_right
          })) : Query_text_extents.Reply.t)
     let decode_str buf =
-      (let name_len = Conv.To_int.u8 (Decode.u8 buf) in
+      (let name_len = Decode.u8 buf in
        let name = Decode.string ~len:name_len buf in name : str)
     let decode_list_fonts_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let names_len = Conv.To_int.u16 (Decode.u16 buf) in
+       (let names_len = Decode.u16 buf in
         Decode.pad buf 22;
         (let names = (Decode.list ~item:decode_str) ~len:names_len buf in
          names)) : List_fonts.Reply.t)
     let decode_list_fonts_with_info_reply ~length:(length : int)  buf =
       (Decode.pad buf 1;
-       (let name_len = Conv.To_int.u8 (Decode.u8 buf) in
+       (let name_len = Decode.u8 buf in
         Decode.pad buf 6;
         (let min_bounds = decode_charinfo buf in
          Decode.pad buf 4;
@@ -875,7 +873,7 @@ module Core_codec =
           (let min_char_or_byte2 = Decode.u16 buf in
            let max_char_or_byte2 = Decode.u16 buf in
            let default_char = Decode.u16 buf in
-           let properties_len = Conv.To_int.u16 (Decode.u16 buf) in
+           let properties_len = Decode.u16 buf in
            let draw_direction =
              ((Decode.byte %> Conv.To_int.byte) %> Font_draw_enum.of_int) buf in
            let min_byte1 = Decode.u8 buf in
@@ -905,7 +903,7 @@ module Core_codec =
            })))) : List_fonts_with_info.Reply.t)
     let decode_get_font_path_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let path_len = Conv.To_int.u16 (Decode.u16 buf) in
+       (let path_len = Decode.u16 buf in
         Decode.pad buf 22;
         (let path = (Decode.list ~item:decode_str) ~len:path_len buf in path)) : 
       Get_font_path.Reply.t)
@@ -924,7 +922,7 @@ module Core_codec =
           { depth; visual; data }))) : Get_image.Reply.t)
     let decode_list_installed_colormaps_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let cmaps_len = Conv.To_int.u16 (Decode.u16 buf) in
+       (let cmaps_len = Decode.u16 buf in
         Decode.pad buf 22;
         (let cmaps = (Decode.list ~item:Decode.xid) ~len:cmaps_len buf in
          cmaps)) : List_installed_colormaps.Reply.t)
@@ -956,15 +954,15 @@ module Core_codec =
         }) : Alloc_named_color.Reply.t)
     let decode_alloc_color_cells_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let pixels_len = Conv.To_int.u16 (Decode.u16 buf) in
-        let masks_len = Conv.To_int.u16 (Decode.u16 buf) in
+       (let pixels_len = Decode.u16 buf in
+        let masks_len = Decode.u16 buf in
         Decode.pad buf 20;
         (let pixels = (Decode.list ~item:Decode.u32) ~len:pixels_len buf in
          let masks = (Decode.list ~item:Decode.u32) ~len:masks_len buf in
          { pixels; masks })) : Alloc_color_cells.Reply.t)
     let decode_alloc_color_planes_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let pixels_len = Conv.To_int.u16 (Decode.u16 buf) in
+       (let pixels_len = Decode.u16 buf in
         Decode.pad buf 2;
         (let red_mask = Decode.u32 buf in
          let green_mask = Decode.u32 buf in
@@ -987,7 +985,7 @@ module Core_codec =
       rgb)
     let decode_query_colors_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let colors_len = Conv.To_int.u16 (Decode.u16 buf) in
+       (let colors_len = Decode.u16 buf in
         Decode.pad buf 22;
         (let colors = (Decode.list ~item:decode_rgb) ~len:colors_len buf in
          colors)) : Query_colors.Reply.t)
@@ -1020,7 +1018,7 @@ module Core_codec =
         { present; major_opcode; first_event; first_error }) : Query_extension.Reply.t)
     let decode_list_extensions_reply ~length:(length : int)  buf =
       (Decode.pad buf 1;
-       (let names_len = Conv.To_int.u8 (Decode.u8 buf) in
+       (let names_len = Decode.u8 buf in
         Decode.pad buf 30;
         (let names = (Decode.list ~item:decode_str) ~len:names_len buf in
          names)) : List_extensions.Reply.t)
@@ -1073,7 +1071,7 @@ module Core_codec =
     let decode_host buf =
       (let family = ((Decode.u8 %> Conv.To_int.u8) %> Family_enum.of_int) buf in
        Decode.pad buf 1;
-       (let address_len = Conv.To_int.u16 (Decode.u16 buf) in
+       (let address_len = Decode.u16 buf in
         let address = (Decode.list ~item:Decode.byte) ~len:address_len buf in
         Decode.align buf 4; { family; address }) : host)
     let decode_list_hosts_reply ~length:(length : int)  buf =
@@ -1082,7 +1080,7 @@ module Core_codec =
           ((Decode.byte %> Conv.To_int.byte) %> Access_control_enum.of_int)
             buf in
         Decode.pad buf 6;
-        (let hosts_len = Conv.To_int.u16 (Decode.u16 buf) in
+        (let hosts_len = Decode.u16 buf in
          Decode.pad buf 22;
          (let hosts = (Decode.list ~item:decode_host) ~len:hosts_len buf in
           { mode; hosts }))) : List_hosts.Reply.t)
@@ -1094,7 +1092,7 @@ module Core_codec =
         Decode.pad buf 6; status) : Set_pointer_mapping.Reply.t)
     let decode_get_pointer_mapping_reply ~length:(length : int)  buf =
       (Decode.pad buf 1;
-       (let map_len = Conv.To_int.u8 (Decode.u8 buf) in
+       (let map_len = Decode.u8 buf in
         Decode.pad buf 30;
         (let map = (Decode.list ~item:Decode.u8) ~len:map_len buf in map)) : 
       Get_pointer_mapping.Reply.t)
@@ -1106,7 +1104,7 @@ module Core_codec =
         Decode.pad buf 6; status) : Set_modifier_mapping.Reply.t)
     let decode_get_modifier_mapping_reply ~length:(length : int)  buf =
       (Decode.pad buf 1;
-       (let keycodes_per_modifier = Conv.To_int.u8 (Decode.u8 buf) in
+       (let keycodes_per_modifier = Decode.u8 buf in
         let keycodes_per_modifier = keycodes_per_modifier / 8 in
         Decode.pad buf 30;
         (let keycodes =
@@ -1196,13 +1194,13 @@ module Render_codec =
     let decode_pictdepth buf =
       (let depth = Decode.u8 buf in
        Decode.pad buf 1;
-       (let num_visuals = Conv.To_int.u16 (Decode.u16 buf) in
+       (let num_visuals = Decode.u16 buf in
         Decode.pad buf 4;
         (let visuals =
            (Decode.list ~item:decode_pictvisual) ~len:num_visuals buf in
          { depth; visuals })) : pictdepth)
     let decode_pictscreen buf =
-      (let num_depths = Conv.To_int.u32 (Decode.u32 buf) in
+      (let num_depths = Decode.u32 buf in
        let fallback = Decode.xid buf in
        let depths = (Decode.list ~item:decode_pictdepth) ~len:num_depths buf in
        { fallback; depths } : pictscreen)
@@ -1249,11 +1247,11 @@ module Render_codec =
         Decode.pad buf 16; { major_version; minor_version }) : Query_version.Reply.t)
     let decode_query_pict_formats_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_formats = Conv.To_int.u32 (Decode.u32 buf) in
-        let num_screens = Conv.To_int.u32 (Decode.u32 buf) in
+       (let num_formats = Decode.u32 buf in
+        let num_screens = Decode.u32 buf in
         let num_depths = Decode.u32 buf in
         let num_visuals = Decode.u32 buf in
-        let num_subpixel = Conv.To_int.u32 (Decode.u32 buf) in
+        let num_subpixel = Decode.u32 buf in
         Decode.pad buf 4;
         (let formats =
            (Decode.list ~item:decode_pictforminfo) ~len:num_formats buf in
@@ -1267,7 +1265,7 @@ module Render_codec =
       Query_pict_formats.Reply.t)
     let decode_query_pict_index_values_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_values = Conv.To_int.u32 (Decode.u32 buf) in
+       (let num_values = Decode.u32 buf in
         Decode.pad buf 20;
         (let values =
            (Decode.list ~item:decode_indexvalue) ~len:num_values buf in
@@ -1295,8 +1293,8 @@ module Render_codec =
        } : transform)
     let decode_query_filters_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_aliases = Conv.To_int.u32 (Decode.u32 buf) in
-        let num_filters = Conv.To_int.u32 (Decode.u32 buf) in
+       (let num_aliases = Decode.u32 buf in
+        let num_filters = Decode.u32 buf in
         Decode.pad buf 16;
         (let aliases = (Decode.list ~item:Decode.u16) ~len:num_aliases buf in
          let filters =
@@ -1389,7 +1387,7 @@ module Shape_codec =
           ((Decode.byte %> Conv.To_int.byte) %>
              Core.Clip_ordering_enum.of_int) buf in
         Decode.pad buf 6;
-        (let rectangles_len = Conv.To_int.u32 (Decode.u32 buf) in
+        (let rectangles_len = Decode.u32 buf in
          Decode.pad buf 20;
          (let rectangles =
             (Decode.list ~item:Core_codec.decode_rectangle)
@@ -1466,7 +1464,7 @@ module Xfixes_codec =
           (Decode.xid %>
              (Conv.alt_enum ~enum_of_int:Core.Atom_enum.of_int
                 ~int_of_t:Conv.To_int.xid)) buf in
-        let nbytes = Conv.To_int.u16 (Decode.u16 buf) in
+        let nbytes = Decode.u16 buf in
         Decode.pad buf 18;
         (let name = Decode.string ~len:nbytes buf in { atom; name })) : 
       Get_cursor_name.Reply.t)
@@ -1483,7 +1481,7 @@ module Xfixes_codec =
           (Decode.xid %>
              (Conv.alt_enum ~enum_of_int:Core.Atom_enum.of_int
                 ~int_of_t:Conv.To_int.xid)) buf in
-        let nbytes = Conv.To_int.u16 (Decode.u16 buf) in
+        let nbytes = Decode.u16 buf in
         Decode.pad buf 2;
         (let cursor_image =
            (Decode.list ~item:Decode.u32) ~len:(width * height) buf in
@@ -1606,8 +1604,8 @@ module Dri2_codec =
         { major_version; minor_version }) : Query_version.Reply.t)
     let decode_connect_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let driver_name_length = Conv.To_int.u32 (Decode.u32 buf) in
-        let device_name_length = Conv.To_int.u32 (Decode.u32 buf) in
+       (let driver_name_length = Decode.u32 buf in
+        let device_name_length = Decode.u32 buf in
         Decode.pad buf 16;
         (let driver_name = Decode.string ~len:driver_name_length buf in
          let alignment_pad =
@@ -1623,7 +1621,7 @@ module Dri2_codec =
       (Decode.pad buf 8;
        (let width = Decode.u32 buf in
         let height = Decode.u32 buf in
-        let count = Conv.To_int.u32 (Decode.u32 buf) in
+        let count = Decode.u32 buf in
         Decode.pad buf 12;
         (let buffers = (Decode.list ~item:decode_dri2_buffer) ~len:count buf in
          { width; height; buffers })) : Get_buffers.Reply.t)
@@ -1633,7 +1631,7 @@ module Dri2_codec =
       (Decode.pad buf 8;
        (let width = Decode.u32 buf in
         let height = Decode.u32 buf in
-        let count = Conv.To_int.u32 (Decode.u32 buf) in
+        let count = Decode.u32 buf in
         Decode.pad buf 12;
         (let buffers = (Decode.list ~item:decode_dri2_buffer) ~len:count buf in
          { width; height; buffers })) : Get_buffers_with_format.Reply.t)
@@ -1733,8 +1731,8 @@ module Dri3_codec =
          Decode.pad buf 24; { nfd; fence_fd })) : Fd_from_fence.Reply.t)
     let decode_get_supported_modifiers_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_window_modifiers = Conv.To_int.u32 (Decode.u32 buf) in
-        let num_screen_modifiers = Conv.To_int.u32 (Decode.u32 buf) in
+       (let num_window_modifiers = Decode.u32 buf in
+        let num_screen_modifiers = Decode.u32 buf in
         Decode.pad buf 16;
         (let window_modifiers =
            (Decode.list ~item:Decode.u64) ~len:num_window_modifiers buf in
@@ -1743,7 +1741,7 @@ module Dri3_codec =
          { window_modifiers; screen_modifiers })) : Get_supported_modifiers.Reply.t)
     let decode_buffers_from_pixmap_reply ~length:(length : int)  buf =
       (Decode.pad buf 1;
-       (let nfd = Conv.To_int.u8 (Decode.u8 buf) in
+       (let nfd = Decode.u8 buf in
         Decode.pad buf 6;
         (let width = Decode.u16 buf in
          let height = Decode.u16 buf in
@@ -1865,7 +1863,7 @@ module Glx_codec =
       Query_extensions_string.Reply.t)
     let decode_query_server_string_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let str_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let str_len = Decode.u32 buf in
         Decode.pad buf 16;
         (let string = Decode.string ~len:str_len buf in string)) : Query_server_string.Reply.t)
     let decode_get_fb_configs_reply ~length:(length : int)  buf =
@@ -1877,7 +1875,7 @@ module Glx_codec =
          { num_f_b_configs; num_properties; property_list })) : Get_fb_configs.Reply.t)
     let decode_query_context_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_attribs = Conv.To_int.u32 (Decode.u32 buf) in
+       (let num_attribs = Decode.u32 buf in
         let num_attribs = num_attribs / 2 in
         Decode.pad buf 20;
         (let attribs = (Decode.list ~item:Decode.u32) ~len:num_attribs buf in
@@ -1888,7 +1886,7 @@ module Glx_codec =
       Make_context_current.Reply.t)
     let decode_get_drawable_attributes_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_attribs = Conv.To_int.u32 (Decode.u32 buf) in
+       (let num_attribs = Decode.u32 buf in
         let num_attribs = num_attribs / 2 in
         Decode.pad buf 20;
         (let attribs = (Decode.list ~item:Decode.u32) ~len:num_attribs buf in
@@ -1899,7 +1897,7 @@ module Glx_codec =
     let decode_render_mode_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
        (let ret_val = Decode.u32 buf in
-        let n = Conv.To_int.u32 (Decode.u32 buf) in
+        let n = Decode.u32 buf in
         let new_mode = Decode.u32 buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.u32) ~len:n buf in
@@ -1912,7 +1910,7 @@ module Glx_codec =
         data) : Read_pixels.Reply.t)
     let decode_get_booleanv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.bool buf in
         Decode.pad buf 15;
         (let data = (Decode.list ~item:Decode.bool) ~len:n buf in
@@ -1923,7 +1921,7 @@ module Glx_codec =
         data) : Get_clip_plane.Reply.t)
     let decode_get_doublev_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.double buf in
         Decode.pad buf 8;
         (let data = (Decode.list ~item:Decode.double) ~len:n buf in
@@ -1932,84 +1930,84 @@ module Glx_codec =
       (Decode.pad buf 8; (let error = Decode.i32 buf in error) : Get_error.Reply.t)
     let decode_get_floatv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.float buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.float) ~len:n buf in
          { datum; data })) : Get_floatv.Reply.t)
     let decode_get_integerv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.i32 buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.i32) ~len:n buf in
          { datum; data })) : Get_integerv.Reply.t)
     let decode_get_lightfv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.float buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.float) ~len:n buf in
          { datum; data })) : Get_lightfv.Reply.t)
     let decode_get_lightiv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.i32 buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.i32) ~len:n buf in
          { datum; data })) : Get_lightiv.Reply.t)
     let decode_get_mapdv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.double buf in
         Decode.pad buf 8;
         (let data = (Decode.list ~item:Decode.double) ~len:n buf in
          { datum; data })) : Get_mapdv.Reply.t)
     let decode_get_mapfv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.float buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.float) ~len:n buf in
          { datum; data })) : Get_mapfv.Reply.t)
     let decode_get_mapiv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.i32 buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.i32) ~len:n buf in
          { datum; data })) : Get_mapiv.Reply.t)
     let decode_get_materialfv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.float buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.float) ~len:n buf in
          { datum; data })) : Get_materialfv.Reply.t)
     let decode_get_materialiv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.i32 buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.i32) ~len:n buf in
          { datum; data })) : Get_materialiv.Reply.t)
     let decode_get_pixel_mapfv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.float buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.float) ~len:n buf in
          { datum; data })) : Get_pixel_mapfv.Reply.t)
     let decode_get_pixel_mapuiv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.u32 buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.u32) ~len:n buf in
          { datum; data })) : Get_pixel_mapuiv.Reply.t)
     let decode_get_pixel_mapusv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.u16 buf in
         Decode.pad buf 16;
         (let data = (Decode.list ~item:Decode.u16) ~len:n buf in
@@ -2020,40 +2018,40 @@ module Glx_codec =
         data) : Get_polygon_stipple.Reply.t)
     let decode_get_string_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         Decode.pad buf 16; (let string = Decode.string ~len:n buf in string)) : 
       Get_string.Reply.t)
     let decode_get_tex_envfv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.float buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.float) ~len:n buf in
          { datum; data })) : Get_tex_envfv.Reply.t)
     let decode_get_tex_enviv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.i32 buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.i32) ~len:n buf in
          { datum; data })) : Get_tex_enviv.Reply.t)
     let decode_get_tex_gendv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.double buf in
         Decode.pad buf 8;
         (let data = (Decode.list ~item:Decode.double) ~len:n buf in
          { datum; data })) : Get_tex_gendv.Reply.t)
     let decode_get_tex_genfv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.float buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.float) ~len:n buf in
          { datum; data })) : Get_tex_genfv.Reply.t)
     let decode_get_tex_geniv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.i32 buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.i32) ~len:n buf in
@@ -2068,28 +2066,28 @@ module Glx_codec =
          { width; height; depth; data })) : Get_tex_image.Reply.t)
     let decode_get_tex_parameterfv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.float buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.float) ~len:n buf in
          { datum; data })) : Get_tex_parameterfv.Reply.t)
     let decode_get_tex_parameteriv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.i32 buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.i32) ~len:n buf in
          { datum; data })) : Get_tex_parameteriv.Reply.t)
     let decode_get_tex_level_parameterfv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.float buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.float) ~len:n buf in
          { datum; data })) : Get_tex_level_parameterfv.Reply.t)
     let decode_get_tex_level_parameteriv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.i32 buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.i32) ~len:n buf in
@@ -2122,7 +2120,7 @@ module Glx_codec =
     let decode_get_color_table_parameterfv_reply ~length:(length : int)  buf
       =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.float buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.float) ~len:n buf in
@@ -2130,7 +2128,7 @@ module Glx_codec =
     let decode_get_color_table_parameteriv_reply ~length:(length : int)  buf
       =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.i32 buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.i32) ~len:n buf in
@@ -2145,7 +2143,7 @@ module Glx_codec =
     let decode_get_convolution_parameterfv_reply ~length:(length : int)  buf
       =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.float buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.float) ~len:n buf in
@@ -2153,7 +2151,7 @@ module Glx_codec =
     let decode_get_convolution_parameteriv_reply ~length:(length : int)  buf
       =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.i32 buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.i32) ~len:n buf in
@@ -2174,14 +2172,14 @@ module Glx_codec =
          { width; data })) : Get_histogram.Reply.t)
     let decode_get_histogram_parameterfv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.float buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.float) ~len:n buf in
          { datum; data })) : Get_histogram_parameterfv.Reply.t)
     let decode_get_histogram_parameteriv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.i32 buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.i32) ~len:n buf in
@@ -2192,14 +2190,14 @@ module Glx_codec =
         data) : Get_minmax.Reply.t)
     let decode_get_minmax_parameterfv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.float buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.float) ~len:n buf in
          { datum; data })) : Get_minmax_parameterfv.Reply.t)
     let decode_get_minmax_parameteriv_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.i32 buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.i32) ~len:n buf in
@@ -2220,21 +2218,21 @@ module Glx_codec =
       Is_query_arb.Reply.t)
     let decode_get_queryiv_arb_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.i32 buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.i32) ~len:n buf in
          { datum; data })) : Get_queryiv_arb.Reply.t)
     let decode_get_query_objectiv_arb_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.i32 buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.i32) ~len:n buf in
          { datum; data })) : Get_query_objectiv_arb.Reply.t)
     let decode_get_query_objectuiv_arb_reply ~length:(length : int)  buf =
       (Decode.pad buf 12;
-       (let n = Conv.To_int.u32 (Decode.u32 buf) in
+       (let n = Decode.u32 buf in
         let datum = Decode.u32 buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.u32) ~len:n buf in
@@ -2298,7 +2296,7 @@ module Randr_codec =
        let mheight = Decode.u16 buf in { width; height; mwidth; mheight } : 
       screen_size)
     let decode_refresh_rates buf =
-      (let n_rates = Conv.To_int.u16 (Decode.u16 buf) in
+      (let n_rates = Decode.u16 buf in
        let rates = (Decode.list ~item:Decode.u16) ~len:n_rates buf in rates : 
       refresh_rates)
     let decode_query_version_reply ~length:(length : int)  buf =
@@ -2328,7 +2326,7 @@ module Randr_codec =
         (let root = Decode.xid buf in
          let timestamp = Decode.u32 buf in
          let config_timestamp = Decode.u32 buf in
-         let n_sizes = Conv.To_int.u16 (Decode.u16 buf) in
+         let n_sizes = Decode.u16 buf in
          let size_id = Decode.u16 buf in
          let rotation =
            ((Decode.u16 %> Conv.To_i32.u16) %> Rotation_mask.of_int32) buf in
@@ -2393,10 +2391,10 @@ module Randr_codec =
       (Decode.pad buf 8;
        (let timestamp = Decode.u32 buf in
         let config_timestamp = Decode.u32 buf in
-        let num_crtcs = Conv.To_int.u16 (Decode.u16 buf) in
-        let num_outputs = Conv.To_int.u16 (Decode.u16 buf) in
-        let num_modes = Conv.To_int.u16 (Decode.u16 buf) in
-        let names_len = Conv.To_int.u16 (Decode.u16 buf) in
+        let num_crtcs = Decode.u16 buf in
+        let num_outputs = Decode.u16 buf in
+        let num_modes = Decode.u16 buf in
+        let names_len = Decode.u16 buf in
         Decode.pad buf 8;
         (let crtcs = (Decode.list ~item:Decode.xid) ~len:num_crtcs buf in
          let outputs = (Decode.list ~item:Decode.xid) ~len:num_outputs buf in
@@ -2418,11 +2416,11 @@ module Randr_codec =
          let subpixel_order =
            ((Decode.u8 %> Conv.To_int.u8) %> Render.Sub_pixel_enum.of_int)
              buf in
-         let num_crtcs = Conv.To_int.u16 (Decode.u16 buf) in
-         let num_modes = Conv.To_int.u16 (Decode.u16 buf) in
+         let num_crtcs = Decode.u16 buf in
+         let num_modes = Decode.u16 buf in
          let num_preferred = Decode.u16 buf in
-         let num_clones = Conv.To_int.u16 (Decode.u16 buf) in
-         let name_len = Conv.To_int.u16 (Decode.u16 buf) in
+         let num_clones = Decode.u16 buf in
+         let name_len = Decode.u16 buf in
          let crtcs = (Decode.list ~item:Decode.xid) ~len:num_crtcs buf in
          let modes = (Decode.list ~item:Decode.xid) ~len:num_modes buf in
          let clones = (Decode.list ~item:Decode.xid) ~len:num_clones buf in
@@ -2443,7 +2441,7 @@ module Randr_codec =
          })) : Get_output_info.Reply.t)
     let decode_list_output_properties_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_atoms = Conv.To_int.u16 (Decode.u16 buf) in
+       (let num_atoms = Decode.u16 buf in
         Decode.pad buf 22;
         (let atoms = (Decode.list ~item:Decode.xid) ~len:num_atoms buf in
          atoms)) : List_output_properties.Reply.t)
@@ -2488,8 +2486,8 @@ module Randr_codec =
            ((Decode.u16 %> Conv.To_i32.u16) %> Rotation_mask.of_int32) buf in
          let rotations =
            ((Decode.u16 %> Conv.To_i32.u16) %> Rotation_mask.of_int32) buf in
-         let num_outputs = Conv.To_int.u16 (Decode.u16 buf) in
-         let num_possible_outputs = Conv.To_int.u16 (Decode.u16 buf) in
+         let num_outputs = Decode.u16 buf in
+         let num_possible_outputs = Decode.u16 buf in
          let outputs = (Decode.list ~item:Decode.xid) ~len:num_outputs buf in
          let possible =
            (Decode.list ~item:Decode.xid) ~len:num_possible_outputs buf in
@@ -2518,7 +2516,7 @@ module Randr_codec =
        (let size = Decode.u16 buf in Decode.pad buf 22; size) : Get_crtc_gamma_size.Reply.t)
     let decode_get_crtc_gamma_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let size = Conv.To_int.u16 (Decode.u16 buf) in
+       (let size = Decode.u16 buf in
         Decode.pad buf 22;
         (let red = (Decode.list ~item:Decode.u16) ~len:size buf in
          let green = (Decode.list ~item:Decode.u16) ~len:size buf in
@@ -2529,10 +2527,10 @@ module Randr_codec =
       (Decode.pad buf 8;
        (let timestamp = Decode.u32 buf in
         let config_timestamp = Decode.u32 buf in
-        let num_crtcs = Conv.To_int.u16 (Decode.u16 buf) in
-        let num_outputs = Conv.To_int.u16 (Decode.u16 buf) in
-        let num_modes = Conv.To_int.u16 (Decode.u16 buf) in
-        let names_len = Conv.To_int.u16 (Decode.u16 buf) in
+        let num_crtcs = Decode.u16 buf in
+        let num_outputs = Decode.u16 buf in
+        let num_modes = Decode.u16 buf in
+        let names_len = Decode.u16 buf in
         Decode.pad buf 8;
         (let crtcs = (Decode.list ~item:Decode.xid) ~len:num_crtcs buf in
          let outputs = (Decode.list ~item:Decode.xid) ~len:num_outputs buf in
@@ -2547,10 +2545,10 @@ module Randr_codec =
         Decode.pad buf 3;
         (let current_transform = Render_codec.decode_transform buf in
          Decode.pad buf 4;
-         (let pending_len = Conv.To_int.u16 (Decode.u16 buf) in
-          let pending_nparams = Conv.To_int.u16 (Decode.u16 buf) in
-          let current_len = Conv.To_int.u16 (Decode.u16 buf) in
-          let current_nparams = Conv.To_int.u16 (Decode.u16 buf) in
+         (let pending_len = Decode.u16 buf in
+          let pending_nparams = Decode.u16 buf in
+          let current_len = Decode.u16 buf in
+          let current_nparams = Decode.u16 buf in
           let pending_filter_name = Decode.string ~len:pending_len buf in
           Decode.align buf 4;
           (let pending_params =
@@ -2614,7 +2612,7 @@ module Randr_codec =
     let decode_get_providers_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
        (let timestamp = Decode.u32 buf in
-        let num_providers = Conv.To_int.u16 (Decode.u16 buf) in
+        let num_providers = Decode.u16 buf in
         Decode.pad buf 18;
         (let providers =
            (Decode.list ~item:Decode.xid) ~len:num_providers buf in
@@ -2627,10 +2625,10 @@ module Randr_codec =
          let capabilities =
            ((Decode.u32 %> Conv.To_i32.u32) %>
               Provider_capability_mask.of_int32) buf in
-         let num_crtcs = Conv.To_int.u16 (Decode.u16 buf) in
-         let num_outputs = Conv.To_int.u16 (Decode.u16 buf) in
-         let num_associated_providers = Conv.To_int.u16 (Decode.u16 buf) in
-         let name_len = Conv.To_int.u16 (Decode.u16 buf) in
+         let num_crtcs = Decode.u16 buf in
+         let num_outputs = Decode.u16 buf in
+         let num_associated_providers = Decode.u16 buf in
+         let name_len = Decode.u16 buf in
          Decode.pad buf 8;
          (let crtcs = (Decode.list ~item:Decode.xid) ~len:num_crtcs buf in
           let outputs = (Decode.list ~item:Decode.xid) ~len:num_outputs buf in
@@ -2651,7 +2649,7 @@ module Randr_codec =
           }))) : Get_provider_info.Reply.t)
     let decode_list_provider_properties_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_atoms = Conv.To_int.u16 (Decode.u16 buf) in
+       (let num_atoms = Decode.u16 buf in
         Decode.pad buf 22;
         (let atoms = (Decode.list ~item:Decode.xid) ~len:num_atoms buf in
          atoms)) : List_provider_properties.Reply.t)
@@ -2771,7 +2769,7 @@ module Randr_codec =
       (let name = Decode.xid buf in
        let primary = Decode.bool buf in
        let automatic = Decode.bool buf in
-       let n_output = Conv.To_int.u16 (Decode.u16 buf) in
+       let n_output = Decode.u16 buf in
        let x = Decode.i16 buf in
        let y = Decode.i16 buf in
        let width = Decode.u16 buf in
@@ -2794,7 +2792,7 @@ module Randr_codec =
     let decode_get_monitors_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
        (let timestamp = Decode.u32 buf in
-        let n_monitors = Conv.To_int.u32 (Decode.u32 buf) in
+        let n_monitors = Decode.u32 buf in
         let n_outputs = Decode.u32 buf in
         Decode.pad buf 12;
         (let monitors =
@@ -2848,7 +2846,7 @@ module Sync_codec =
     let decode_systemcounter buf =
       (let counter = Decode.xid buf in
        let resolution = decode_int64 buf in
-       let name_len = Conv.To_int.u16 (Decode.u16 buf) in
+       let name_len = Decode.u16 buf in
        let name = Decode.string ~len:name_len buf in
        Decode.align buf 4; { counter; resolution; name } : systemcounter)
     let decode_trigger buf =
@@ -2876,7 +2874,7 @@ module Sync_codec =
         Decode.pad buf 22; { major_version; minor_version }) : Initialize.Reply.t)
     let decode_list_system_counters_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let counters_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let counters_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let counters =
            (Decode.list ~item:decode_systemcounter) ~len:counters_len buf in
@@ -3097,7 +3095,7 @@ module Record_codec =
        } : range)
     let decode_client_info buf =
       (let client_resource = Decode.u32 buf in
-       let num_ranges = Conv.To_int.u32 (Decode.u32 buf) in
+       let num_ranges = Decode.u32 buf in
        let ranges = (Decode.list ~item:decode_range) ~len:num_ranges buf in
        { client_resource; ranges } : client_info)
     let decode_bad_context_error buf =
@@ -3114,7 +3112,7 @@ module Record_codec =
         Decode.pad buf 6;
         (let element_header = Decode.u8 buf in
          Decode.pad buf 3;
-         (let num_intercepted_clients = Conv.To_int.u32 (Decode.u32 buf) in
+         (let num_intercepted_clients = Decode.u32 buf in
           Decode.pad buf 16;
           (let intercepted_clients =
              (Decode.list ~item:decode_client_info)
@@ -3165,7 +3163,7 @@ module Res_codec =
        { client; mask } : client_id_spec)
     let decode_client_id_value buf =
       (let spec = decode_client_id_spec buf in
-       let length = Conv.To_int.u32 (Decode.u32 buf) in
+       let length = Decode.u32 buf in
        let length = length * 4 in
        let value = (Decode.list ~item:Decode.u32) ~len:length buf in
        { spec; value } : client_id_value)
@@ -3180,7 +3178,7 @@ module Res_codec =
        { spec; bytes; ref_count; use_count } : resource_size_spec)
     let decode_resource_size_value buf =
       (let size = decode_resource_size_spec buf in
-       let num_cross_references = Conv.To_int.u32 (Decode.u32 buf) in
+       let num_cross_references = Decode.u32 buf in
        let cross_references =
          (Decode.list ~item:decode_resource_size_spec)
            ~len:num_cross_references buf in
@@ -3192,13 +3190,13 @@ module Res_codec =
       Query_version.Reply.t)
     let decode_query_clients_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_clients = Conv.To_int.u32 (Decode.u32 buf) in
+       (let num_clients = Decode.u32 buf in
         Decode.pad buf 20;
         (let clients = (Decode.list ~item:decode_client) ~len:num_clients buf in
          clients)) : Query_clients.Reply.t)
     let decode_query_client_resources_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_types = Conv.To_int.u32 (Decode.u32 buf) in
+       (let num_types = Decode.u32 buf in
         Decode.pad buf 20;
         (let types = (Decode.list ~item:decode_type) ~len:num_types buf in
          types)) : Query_client_resources.Reply.t)
@@ -3209,14 +3207,14 @@ module Res_codec =
       Query_client_pixmap_bytes.Reply.t)
     let decode_query_client_ids_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_ids = Conv.To_int.u32 (Decode.u32 buf) in
+       (let num_ids = Decode.u32 buf in
         Decode.pad buf 20;
         (let ids =
            (Decode.list ~item:decode_client_id_value) ~len:num_ids buf in
          ids)) : Query_client_ids.Reply.t)
     let decode_query_resource_bytes_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_sizes = Conv.To_int.u32 (Decode.u32 buf) in
+       (let num_sizes = Decode.u32 buf in
         Decode.pad buf 20;
         (let sizes =
            (Decode.list ~item:decode_resource_size_value) ~len:num_sizes buf in
@@ -3338,7 +3336,7 @@ module Xc_misc_codec =
         let count = Decode.u32 buf in { start_id; count }) : Get_xid_range.Reply.t)
     let decode_get_xid_list_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let ids_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let ids_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let ids = (Decode.list ~item:Decode.u32) ~len:ids_len buf in ids)) : 
       Get_xid_list.Reply.t)
@@ -3395,7 +3393,7 @@ module Xf86dri_codec =
       (Decode.pad buf 8;
        (let sarea_handle_low = Decode.u32 buf in
         let sarea_handle_high = Decode.u32 buf in
-        let bus_id_len = Conv.To_int.u32 (Decode.u32 buf) in
+        let bus_id_len = Decode.u32 buf in
         Decode.pad buf 12;
         (let bus_id = Decode.string ~len:bus_id_len buf in
          { sarea_handle_low; sarea_handle_high; bus_id })) : Open_connection.Reply.t)
@@ -3404,7 +3402,7 @@ module Xf86dri_codec =
        (let client_driver_major_version = Decode.u32 buf in
         let client_driver_minor_version = Decode.u32 buf in
         let client_driver_patch_version = Decode.u32 buf in
-        let client_driver_name_len = Conv.To_int.u32 (Decode.u32 buf) in
+        let client_driver_name_len = Decode.u32 buf in
         Decode.pad buf 8;
         (let client_driver_name =
            Decode.string ~len:client_driver_name_len buf in
@@ -3429,10 +3427,10 @@ module Xf86dri_codec =
         let drawable_origin_y = Decode.i16 buf in
         let drawable_size_w = Decode.i16 buf in
         let drawable_size_h = Decode.i16 buf in
-        let num_clip_rects = Conv.To_int.u32 (Decode.u32 buf) in
+        let num_clip_rects = Decode.u32 buf in
         let back_x = Decode.i16 buf in
         let back_y = Decode.i16 buf in
-        let num_back_clip_rects = Conv.To_int.u32 (Decode.u32 buf) in
+        let num_back_clip_rects = Decode.u32 buf in
         let clip_rects =
           (Decode.list ~item:decode_drm_clip_rect) ~len:num_clip_rects buf in
         let back_clip_rects =
@@ -3457,7 +3455,7 @@ module Xf86dri_codec =
         let framebuffer_origin_offset = Decode.u32 buf in
         let framebuffer_size = Decode.u32 buf in
         let framebuffer_stride = Decode.u32 buf in
-        let device_private_size = Conv.To_int.u32 (Decode.u32 buf) in
+        let device_private_size = Decode.u32 buf in
         let device_private =
           (Decode.list ~item:Decode.u32) ~len:device_private_size buf in
         {
@@ -3531,7 +3529,7 @@ module Xf86vidmode_codec =
         (let flags =
            ((Decode.u32 %> Conv.To_i32.u32) %> Mode_flag_mask.of_int32) buf in
          Decode.pad buf 12;
-         (let privsize = Conv.To_int.u32 (Decode.u32 buf) in
+         (let privsize = Decode.u32 buf in
           let private_ = (Decode.list ~item:Decode.u8) ~len:privsize buf in
           {
             dotclock;
@@ -3549,10 +3547,10 @@ module Xf86vidmode_codec =
           }))) : Get_mode_line.Reply.t)
     let decode_get_monitor_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let vendor_length = Conv.To_int.u8 (Decode.u8 buf) in
-        let model_length = Conv.To_int.u8 (Decode.u8 buf) in
-        let num_hsync = Conv.To_int.u8 (Decode.u8 buf) in
-        let num_vsync = Conv.To_int.u8 (Decode.u8 buf) in
+       (let vendor_length = Decode.u8 buf in
+        let model_length = Decode.u8 buf in
+        let num_hsync = Decode.u8 buf in
+        let num_vsync = Decode.u8 buf in
         Decode.pad buf 20;
         (let hsync = (Decode.list ~item:Decode.u32) ~len:num_hsync buf in
          let vsync = (Decode.list ~item:Decode.u32) ~len:num_vsync buf in
@@ -3564,7 +3562,7 @@ module Xf86vidmode_codec =
          { hsync; vsync; vendor; alignment_pad; model })) : Get_monitor.Reply.t)
     let decode_get_all_mode_lines_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let modecount = Conv.To_int.u32 (Decode.u32 buf) in
+       (let modecount = Decode.u32 buf in
         Decode.pad buf 20;
         (let modeinfo =
            (Decode.list ~item:decode_mode_info) ~len:modecount buf in
@@ -3585,7 +3583,8 @@ module Xf86vidmode_codec =
         Decode.pad buf 12;
         (let clock =
            (Decode.list ~item:Decode.u32)
-             ~len:((1 - (flags land 1)) * clocks) buf in
+             ~len:((1 - ((Clock_flag_mask.to_int32 flags) land 1)) * clocks)
+             buf in
          { flags; clocks; maxclocks; clock })) : Get_dot_clocks.Reply.t)
     let decode_get_gamma_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
@@ -3684,7 +3683,7 @@ module Xinerama_codec =
       (Decode.pad buf 8; (let state = Decode.u32 buf in state) : Is_active.Reply.t)
     let decode_query_screens_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let number = Conv.To_int.u32 (Decode.u32 buf) in
+       (let number = Decode.u32 buf in
         Decode.pad buf 20;
         (let screen_info =
            (Decode.list ~item:decode_screen_info) ~len:number buf in
@@ -3742,7 +3741,7 @@ module Xinput_codec =
       (let class_id =
          ((Decode.u8 %> Conv.To_int.u8) %> Input_class_enum.of_int) buf in
        let len = Decode.u8 buf in
-       let axes_len = Conv.To_int.u8 (Decode.u8 buf) in
+       let axes_len = Decode.u8 buf in
        let mode =
          ((Decode.u8 %> Conv.To_int.u8) %> Valuator_mode_enum.of_int) buf in
        let motion_size = Decode.u32 buf in
@@ -3757,7 +3756,7 @@ module Xinput_codec =
            (Decode.pad buf 2; `Key { min_keycode; max_keycode; num_keys })
        | 1 -> let num_buttons = Decode.u16 buf in `Button num_buttons
        | 2 ->
-           let axes_len = Conv.To_int.u8 (Decode.u8 buf) in
+           let axes_len = Decode.u8 buf in
            let mode =
              ((Decode.u8 %> Conv.To_int.u8) %> Valuator_mode_enum.of_int) buf in
            let motion_size = Decode.u32 buf in
@@ -3771,13 +3770,13 @@ module Xinput_codec =
        let info = decode_input_class_variant ~tag:info_tag buf in
        { len; info } : input_info)
     let decode_device_name buf =
-      (let len = Conv.To_int.u8 (Decode.u8 buf) in
+      (let len = Decode.u8 buf in
        let string = Decode.string ~len buf in string : device_name)
     let decode_list_input_devices_reply ~length:(length : int)  buf =
       (Decode.pad buf 1;
        (let xi_reply_type = Decode.u8 buf in
         Decode.pad buf 6;
-        (let devices_len = Conv.To_int.u8 (Decode.u8 buf) in
+        (let devices_len = Decode.u8 buf in
          Decode.pad buf 23;
          (let devices =
             (Decode.list ~item:decode_device_info) ~len:devices_len buf in
@@ -3799,7 +3798,7 @@ module Xinput_codec =
       (Decode.pad buf 1;
        (let xi_reply_type = Decode.u8 buf in
         Decode.pad buf 6;
-        (let num_classes = Conv.To_int.u8 (Decode.u8 buf) in
+        (let num_classes = Decode.u8 buf in
          Decode.pad buf 23;
          (let class_info =
             (Decode.list ~item:decode_input_class_info) ~len:num_classes buf in
@@ -3817,8 +3816,8 @@ module Xinput_codec =
       (Decode.pad buf 1;
        (let xi_reply_type = Decode.u8 buf in
         Decode.pad buf 6;
-        (let num_this_classes = Conv.To_int.u16 (Decode.u16 buf) in
-         let num_all_classes = Conv.To_int.u16 (Decode.u16 buf) in
+        (let num_this_classes = Decode.u16 buf in
+         let num_all_classes = Decode.u16 buf in
          Decode.pad buf 20;
          (let this_classes =
             (Decode.list ~item:Decode.u32) ~len:num_this_classes buf in
@@ -3830,25 +3829,28 @@ module Xinput_codec =
       (Decode.pad buf 1;
        (let xi_reply_type = Decode.u8 buf in
         Decode.pad buf 6;
-        (let num_classes = Conv.To_int.u16 (Decode.u16 buf) in
+        (let num_classes = Decode.u16 buf in
          Decode.pad buf 22;
          (let classes = (Decode.list ~item:Decode.u32) ~len:num_classes buf in
           { xi_reply_type; classes }))) : Get_device_dont_propagate_list.Reply.t)
     let decode_device_time_coord ~num_axes:ext_num_axes  buf =
       (let time = Decode.u32 buf in
-       let axisvalues = (Decode.list ~item:Decode.i32) ~len:ext_num_axes buf in
+       let axisvalues =
+         (Decode.list ~item:Decode.i32) ~len:(Conv.To_int.u8 ext_num_axes)
+           buf in
        { time; axisvalues } : device_time_coord)
     let decode_get_device_motion_events_reply ~length:(length : int)  buf =
       (Decode.pad buf 1;
        (let xi_reply_type = Decode.u8 buf in
         Decode.pad buf 6;
-        (let num_events = Conv.To_int.u32 (Decode.u32 buf) in
+        (let num_events = Decode.u32 buf in
          let num_axes = Decode.u8 buf in
          let device_mode =
            ((Decode.u8 %> Conv.To_int.u8) %> Valuator_mode_enum.of_int) buf in
          Decode.pad buf 18;
          (let events =
-            (Decode.list ~item:decode_device_time_coord) ~len:num_events buf in
+            (Decode.list ~item:(decode_device_time_coord ~num_axes))
+              ~len:num_events buf in
           { xi_reply_type; num_axes; device_mode; events }))) : Get_device_motion_events.Reply.t)
     let decode_change_keyboard_device_reply ~length:(length : int)  buf =
       (Decode.pad buf 1;
@@ -3942,7 +3944,7 @@ module Xinput_codec =
        let feedback_id = Decode.u8 buf in
        let len = Decode.u16 buf in
        let max_symbols = Decode.u16 buf in
-       let num_keysyms = Conv.To_int.u16 (Decode.u16 buf) in
+       let num_keysyms = Decode.u16 buf in
        let keysyms = (Decode.list ~item:Decode.u32) ~len:num_keysyms buf in
        { class_id; feedback_id; len; max_symbols; keysyms } : string_feedback_state)
     let decode_bell_feedback_state buf =
@@ -3994,7 +3996,7 @@ module Xinput_codec =
              `Pointer { accel_num; accel_denom; threshold }))
        | 2 ->
            let max_symbols = Decode.u16 buf in
-           let num_keysyms = Conv.To_int.u16 (Decode.u16 buf) in
+           let num_keysyms = Decode.u16 buf in
            let keysyms = (Decode.list ~item:Decode.u32) ~len:num_keysyms buf in
            `String { max_symbols; keysyms }
        | 3 ->
@@ -4023,7 +4025,7 @@ module Xinput_codec =
       (Decode.pad buf 1;
        (let xi_reply_type = Decode.u8 buf in
         Decode.pad buf 6;
-        (let num_feedbacks = Conv.To_int.u16 (Decode.u16 buf) in
+        (let num_feedbacks = Decode.u16 buf in
          Decode.pad buf 22;
          (let feedbacks =
             (Decode.list ~item:decode_feedback_state) ~len:num_feedbacks buf in
@@ -4077,7 +4079,7 @@ module Xinput_codec =
        let feedback_id = Decode.u8 buf in
        let len = Decode.u16 buf in
        Decode.pad buf 2;
-       (let num_keysyms = Conv.To_int.u16 (Decode.u16 buf) in
+       (let num_keysyms = Decode.u16 buf in
         let keysyms = (Decode.list ~item:Decode.u32) ~len:num_keysyms buf in
         { class_id; feedback_id; len; keysyms }) : string_feedback_ctl)
     let decode_bell_feedback_ctl buf =
@@ -4117,7 +4119,7 @@ module Xinput_codec =
       (Decode.pad buf 1;
        (let xi_reply_type = Decode.u8 buf in
         Decode.pad buf 6;
-        (let keycodes_per_modifier = Conv.To_int.u8 (Decode.u8 buf) in
+        (let keycodes_per_modifier = Decode.u8 buf in
          let keycodes_per_modifier = keycodes_per_modifier / 8 in
          Decode.pad buf 23;
          (let keymaps =
@@ -4136,7 +4138,7 @@ module Xinput_codec =
       (Decode.pad buf 1;
        (let xi_reply_type = Decode.u8 buf in
         Decode.pad buf 6;
-        (let map_size = Conv.To_int.u8 (Decode.u8 buf) in
+        (let map_size = Decode.u8 buf in
          Decode.pad buf 23;
          (let map = (Decode.list ~item:Decode.u8) ~len:map_size buf in
           Decode.align buf 4; { xi_reply_type; map }))) : Get_device_button_mapping.Reply.t)
@@ -4168,7 +4170,7 @@ module Xinput_codec =
       (let class_id =
          ((Decode.u8 %> Conv.To_int.u8) %> Input_class_enum.of_int) buf in
        let len = Decode.u8 buf in
-       let num_valuators = Conv.To_int.u8 (Decode.u8 buf) in
+       let num_valuators = Decode.u8 buf in
        let mode =
          ((Decode.u8 %> Conv.To_i32.u8) %> Valuator_state_mode_mask.of_int32)
            buf in
@@ -4183,7 +4185,7 @@ module Xinput_codec =
       (Decode.pad buf 1;
        (let xi_reply_type = Decode.u8 buf in
         Decode.pad buf 6;
-        (let num_classes = Conv.To_int.u8 (Decode.u8 buf) in
+        (let num_classes = Decode.u8 buf in
          Decode.pad buf 23;
          (let classes =
             (Decode.list ~item:decode_input_state) ~len:num_classes buf in
@@ -4200,7 +4202,7 @@ module Xinput_codec =
       (let control_id =
          ((Decode.u16 %> Conv.To_int.u16) %> Device_control_enum.of_int) buf in
        let len = Decode.u16 buf in
-       let num_valuators = Conv.To_int.u32 (Decode.u32 buf) in
+       let num_valuators = Decode.u32 buf in
        let resolution_values =
          (Decode.list ~item:Decode.u32) ~len:num_valuators buf in
        let resolution_min =
@@ -4269,7 +4271,7 @@ module Xinput_codec =
     let decode_device_control_variant buf ~tag  =
       (match tag with
        | 1 ->
-           let num_valuators = Conv.To_int.u32 (Decode.u32 buf) in
+           let num_valuators = Decode.u32 buf in
            let resolution_values =
              (Decode.list ~item:Decode.u32) ~len:num_valuators buf in
            let resolution_min =
@@ -4334,7 +4336,7 @@ module Xinput_codec =
          ((Decode.u16 %> Conv.To_int.u16) %> Device_control_enum.of_int) buf in
        let len = Decode.u16 buf in
        let first_valuator = Decode.u8 buf in
-       let num_valuators = Conv.To_int.u8 (Decode.u8 buf) in
+       let num_valuators = Decode.u8 buf in
        Decode.pad buf 2;
        (let resolution_values =
           (Decode.list ~item:Decode.u32) ~len:num_valuators buf in
@@ -4413,20 +4415,26 @@ module Xinput_codec =
       (Decode.pad buf 1;
        (let xi_reply_type = Decode.u8 buf in
         Decode.pad buf 6;
-        (let num_atoms = Conv.To_int.u16 (Decode.u16 buf) in
+        (let num_atoms = Decode.u16 buf in
          Decode.pad buf 22;
          (let atoms = (Decode.list ~item:Decode.xid) ~len:num_atoms buf in
           { xi_reply_type; atoms }))) : List_device_properties.Reply.t)
     let decode_property_format_variant buf ~tag  ext_num_items =
       (match tag with
        | 8 ->
-           let data8 = (Decode.list ~item:Decode.u8) ~len:ext_num_items buf in
+           let data8 =
+             (Decode.list ~item:Decode.u8)
+               ~len:(Conv.To_int.u32 ext_num_items) buf in
            (Decode.align buf 4; `Property_8_bits data8)
        | 16 ->
-           let data16 = (Decode.list ~item:Decode.u16) ~len:ext_num_items buf in
+           let data16 =
+             (Decode.list ~item:Decode.u16)
+               ~len:(Conv.To_int.u32 ext_num_items) buf in
            (Decode.align buf 4; `Property_16_bits data16)
        | 32 ->
-           let data32 = (Decode.list ~item:Decode.u32) ~len:ext_num_items buf in
+           let data32 =
+             (Decode.list ~item:Decode.u32)
+               ~len:(Conv.To_int.u32 ext_num_items) buf in
            `Property_32_bits data32
        | n -> invalid_arg ("Invalid enum value: " ^ (string_of_int n)) : 
       Property_format.t)
@@ -4466,7 +4474,7 @@ module Xinput_codec =
         let win_y = Decode.i32 buf in
         let same_screen = Decode.bool buf in
         Decode.pad buf 1;
-        (let buttons_len = Conv.To_int.u16 (Decode.u16 buf) in
+        (let buttons_len = Decode.u16 buf in
          let mods = decode_modifier_info buf in
          let group = decode_group_info buf in
          let buttons = (Decode.list ~item:Decode.u32) ~len:buttons_len buf in
@@ -4487,7 +4495,7 @@ module Xinput_codec =
          ((Decode.u16 %> Conv.To_int.u16) %>
             Hierarchy_change_type_enum.of_int) buf in
        let len = Decode.u16 buf in
-       let name_len = Conv.To_int.u16 (Decode.u16 buf) in
+       let name_len = Decode.u16 buf in
        let send_core = Decode.bool buf in
        let enable = Decode.bool buf in
        let name = Decode.string ~len:name_len buf in
@@ -4542,7 +4550,7 @@ module Xinput_codec =
     let decode_hierarchy_change_type_variant buf ~tag  =
       (match tag with
        | 1 ->
-           let name_len = Conv.To_int.u16 (Decode.u16 buf) in
+           let name_len = Decode.u16 buf in
            let send_core = Decode.bool buf in
            let enable = Decode.bool buf in
            let name = Decode.string ~len:name_len buf in
@@ -4602,7 +4610,7 @@ module Xinput_codec =
          (Decode.u16 %>
             (Conv.alt_enum ~enum_of_int:Device_enum.of_int
                ~int_of_t:Conv.To_int.u16)) buf in
-       let mask_len = Conv.To_int.u16 (Decode.u16 buf) in
+       let mask_len = Decode.u16 buf in
        let mask =
          (Decode.list
             ~item:((Decode.u32 %> Conv.To_i32.u32) %> Xi_event_mask.of_int32))
@@ -4619,7 +4627,7 @@ module Xinput_codec =
            buf in
        let len = Decode.u16 buf in
        let sourceid = Decode.u16 buf in
-       let num_buttons = Conv.To_int.u16 (Decode.u16 buf) in
+       let num_buttons = Decode.u16 buf in
        let state =
          (Decode.list ~item:Decode.u32) ~len:((num_buttons + 31) / 32) buf in
        let labels = (Decode.list ~item:Decode.xid) ~len:num_buttons buf in
@@ -4630,7 +4638,7 @@ module Xinput_codec =
            buf in
        let len = Decode.u16 buf in
        let sourceid = Decode.u16 buf in
-       let num_keys = Conv.To_int.u16 (Decode.u16 buf) in
+       let num_keys = Decode.u16 buf in
        let keys = (Decode.list ~item:Decode.u32) ~len:num_keys buf in
        { type_; len; sourceid; keys } : key_class)
     let decode_scroll_class buf =
@@ -4688,11 +4696,11 @@ module Xinput_codec =
     let decode_device_class_type_variant buf ~tag  =
       (match tag with
        | 0 ->
-           let num_keys = Conv.To_int.u16 (Decode.u16 buf) in
+           let num_keys = Decode.u16 buf in
            let keys = (Decode.list ~item:Decode.u32) ~len:num_keys buf in
            `Key keys
        | 1 ->
-           let num_buttons = Conv.To_int.u16 (Decode.u16 buf) in
+           let num_buttons = Decode.u16 buf in
            let state =
              (Decode.list ~item:Decode.u32) ~len:((num_buttons + 31) / 32)
                buf in
@@ -4742,8 +4750,8 @@ module Xinput_codec =
          (Decode.u16 %>
             (Conv.alt_enum ~enum_of_int:Device_enum.of_int
                ~int_of_t:Conv.To_int.u16)) buf in
-       let num_classes = Conv.To_int.u16 (Decode.u16 buf) in
-       let name_len = Conv.To_int.u16 (Decode.u16 buf) in
+       let num_classes = Decode.u16 buf in
+       let name_len = Decode.u16 buf in
        let enabled = Decode.bool buf in
        Decode.pad buf 1;
        (let name = Decode.string ~len:name_len buf in
@@ -4754,7 +4762,7 @@ module Xinput_codec =
       xi_device_info)
     let decode_query_device_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_infos = Conv.To_int.u16 (Decode.u16 buf) in
+       (let num_infos = Decode.u16 buf in
         Decode.pad buf 22;
         (let infos =
            (Decode.list ~item:decode_xi_device_info) ~len:num_infos buf in
@@ -4775,7 +4783,7 @@ module Xinput_codec =
        Decode.pad buf 3; { modifiers; status } : grab_modifier_info)
     let decode_passive_grab_device_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_modifiers = Conv.To_int.u16 (Decode.u16 buf) in
+       (let num_modifiers = Decode.u16 buf in
         Decode.pad buf 22;
         (let modifiers =
            (Decode.list ~item:decode_grab_modifier_info) ~len:num_modifiers
@@ -4783,7 +4791,7 @@ module Xinput_codec =
          modifiers)) : Passive_grab_device.Reply.t)
     let decode_list_properties_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_properties = Conv.To_int.u16 (Decode.u16 buf) in
+       (let num_properties = Decode.u16 buf in
         Decode.pad buf 22;
         (let properties =
            (Decode.list ~item:Decode.xid) ~len:num_properties buf in
@@ -4800,7 +4808,7 @@ module Xinput_codec =
          { type_; bytes_after; num_items; items })) : Get_property.Reply.t)
     let decode_get_selected_events_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_masks = Conv.To_int.u16 (Decode.u16 buf) in
+       (let num_masks = Decode.u16 buf in
         Decode.pad buf 22;
         (let masks = (Decode.list ~item:decode_event_mask) ~len:num_masks buf in
          masks)) : Get_selected_events.Reply.t)
@@ -4971,7 +4979,7 @@ module Xinput_codec =
            (Decode.u32 %>
               (Conv.alt_enum ~enum_of_int:Core.Time_enum.of_int
                  ~int_of_t:Conv.To_int.u32)) buf in
-         let num_classes = Conv.To_int.u16 (Decode.u16 buf) in
+         let num_classes = Decode.u16 buf in
          let sourceid =
            (Decode.u16 %>
               (Conv.alt_enum ~enum_of_int:Device_enum.of_int
@@ -5001,8 +5009,8 @@ module Xinput_codec =
          let root_y = Decode.i32 buf in
          let event_x = Decode.i32 buf in
          let event_y = Decode.i32 buf in
-         let buttons_len = Conv.To_int.u16 (Decode.u16 buf) in
-         let valuators_len = Conv.To_int.u16 (Decode.u16 buf) in
+         let buttons_len = Decode.u16 buf in
+         let valuators_len = Decode.u16 buf in
          let sourceid =
            (Decode.u16 %>
               (Conv.alt_enum ~enum_of_int:Device_enum.of_int
@@ -5062,8 +5070,8 @@ module Xinput_codec =
          let root_y = Decode.i32 buf in
          let event_x = Decode.i32 buf in
          let event_y = Decode.i32 buf in
-         let buttons_len = Conv.To_int.u16 (Decode.u16 buf) in
-         let valuators_len = Conv.To_int.u16 (Decode.u16 buf) in
+         let buttons_len = Decode.u16 buf in
+         let valuators_len = Decode.u16 buf in
          let sourceid =
            (Decode.u16 %>
               (Conv.alt_enum ~enum_of_int:Device_enum.of_int
@@ -5133,7 +5141,7 @@ module Xinput_codec =
          let event_y = Decode.i32 buf in
          let same_screen = Decode.bool buf in
          let focus = Decode.bool buf in
-         let buttons_len = Conv.To_int.u16 (Decode.u16 buf) in
+         let buttons_len = Decode.u16 buf in
          let mods = decode_modifier_info buf in
          let group = decode_group_info buf in
          let buttons = (Decode.list ~item:Decode.u32) ~len:buttons_len buf in
@@ -5188,7 +5196,7 @@ module Xinput_codec =
                  ~int_of_t:Conv.To_int.u32)) buf in
          let flags =
            ((Decode.u32 %> Conv.To_i32.u32) %> Hierarchy_mask.of_int32) buf in
-         let num_infos = Conv.To_int.u16 (Decode.u16 buf) in
+         let num_infos = Decode.u16 buf in
          Decode.pad buf 10;
          (let infos =
             (Decode.list ~item:decode_hierarchy_info) ~len:num_infos buf in
@@ -5221,7 +5229,7 @@ module Xinput_codec =
                  ~int_of_t:Conv.To_int.u32)) buf in
          let detail = Decode.u32 buf in
          let sourceid = Decode.u16 buf in
-         let valuators_len = Conv.To_int.u16 (Decode.u16 buf) in
+         let valuators_len = Decode.u16 buf in
          let flags =
            ((Decode.u32 %> Conv.To_i32.u32) %> Key_event_flags_mask.of_int32)
              buf in
@@ -5264,7 +5272,7 @@ module Xinput_codec =
                  ~int_of_t:Conv.To_int.u32)) buf in
          let detail = Decode.u32 buf in
          let sourceid = Decode.u16 buf in
-         let valuators_len = Conv.To_int.u16 (Decode.u16 buf) in
+         let valuators_len = Decode.u16 buf in
          let flags =
            ((Decode.u32 %> Conv.To_i32.u32) %>
               Pointer_event_flags_mask.of_int32) buf in
@@ -5314,8 +5322,8 @@ module Xinput_codec =
          let root_y = Decode.i32 buf in
          let event_x = Decode.i32 buf in
          let event_y = Decode.i32 buf in
-         let buttons_len = Conv.To_int.u16 (Decode.u16 buf) in
-         let valuators_len = Conv.To_int.u16 (Decode.u16 buf) in
+         let buttons_len = Decode.u16 buf in
+         let valuators_len = Decode.u16 buf in
          let sourceid =
            (Decode.u16 %>
               (Conv.alt_enum ~enum_of_int:Device_enum.of_int
@@ -5396,7 +5404,7 @@ module Xinput_codec =
                  ~int_of_t:Conv.To_int.u32)) buf in
          let detail = Decode.u32 buf in
          let sourceid = Decode.u16 buf in
-         let valuators_len = Conv.To_int.u16 (Decode.u16 buf) in
+         let valuators_len = Decode.u16 buf in
          let flags =
            ((Decode.u32 %> Conv.To_i32.u32) %>
               Touch_event_flags_mask.of_int32) buf in
@@ -5492,10 +5500,10 @@ module Xprint_codec =
   struct
     open Protocol.Xprint
     let decode_printer buf =
-      (let name_len = Conv.To_int.u32 (Decode.u32 buf) in
+      (let name_len = Decode.u32 buf in
        let name = Decode.string ~len:name_len buf in
        Decode.align buf 4;
-       (let desc_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let desc_len = Decode.u32 buf in
         let description = Decode.string ~len:desc_len buf in
         Decode.align buf 4; { name; description }) : printer)
     let decode_print_query_version_reply ~length:(length : int)  buf =
@@ -5505,7 +5513,7 @@ module Xprint_codec =
         { major_version; minor_version }) : Print_query_version.Reply.t)
     let decode_print_get_printer_list_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let list_count = Conv.To_int.u32 (Decode.u32 buf) in
+       (let list_count = Decode.u32 buf in
         Decode.pad buf 20;
         (let printers =
            (Decode.list ~item:decode_printer) ~len:list_count buf in
@@ -5520,7 +5528,7 @@ module Xprint_codec =
       (Decode.pad buf 8;
        (let status_code = Decode.u32 buf in
         let finished_flag = Decode.u32 buf in
-        let data_len = Conv.To_int.u32 (Decode.u32 buf) in
+        let data_len = Decode.u32 buf in
         Decode.pad buf 12;
         (let data = (Decode.list ~item:Decode.byte) ~len:data_len buf in
          { status_code; finished_flag; data })) : Print_get_document_data.Reply.t)
@@ -5531,13 +5539,13 @@ module Xprint_codec =
         { event_mask; all_events_mask }) : Print_input_selected.Reply.t)
     let decode_print_get_attributes_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let string_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let string_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let attributes = Decode.string ~len:string_len buf in attributes)) : 
       Print_get_attributes.Reply.t)
     let decode_print_get_one_attributes_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let value_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let value_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let value = Decode.string ~len:value_len buf in value)) : Print_get_one_attributes.Reply.t)
     let decode_print_get_page_dimensions_reply ~length:(length : int)  buf =
@@ -5558,7 +5566,7 @@ module Xprint_codec =
         }) : Print_get_page_dimensions.Reply.t)
     let decode_print_query_screens_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let list_count = Conv.To_int.u32 (Decode.u32 buf) in
+       (let list_count = Decode.u32 buf in
         Decode.pad buf 20;
         (let roots = (Decode.list ~item:Decode.xid) ~len:list_count buf in
          roots)) : Print_query_screens.Reply.t)
@@ -5607,32 +5615,32 @@ module Xselinux_codec =
       Query_version.Reply.t)
     let decode_get_device_create_context_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let context_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let context_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let context = Decode.string ~len:context_len buf in context)) : 
       Get_device_create_context.Reply.t)
     let decode_get_device_context_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let context_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let context_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let context = Decode.string ~len:context_len buf in context)) : 
       Get_device_context.Reply.t)
     let decode_get_window_create_context_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let context_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let context_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let context = Decode.string ~len:context_len buf in context)) : 
       Get_window_create_context.Reply.t)
     let decode_get_window_context_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let context_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let context_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let context = Decode.string ~len:context_len buf in context)) : 
       Get_window_context.Reply.t)
     let decode_list_item buf =
       (let name = Decode.xid buf in
-       let object_context_len = Conv.To_int.u32 (Decode.u32 buf) in
-       let data_context_len = Conv.To_int.u32 (Decode.u32 buf) in
+       let object_context_len = Decode.u32 buf in
+       let data_context_len = Decode.u32 buf in
        let object_context = Decode.string ~len:object_context_len buf in
        Decode.align buf 4;
        (let data_context = Decode.string ~len:data_context_len buf in
@@ -5641,31 +5649,31 @@ module Xselinux_codec =
     let decode_get_property_create_context_reply ~length:(length : int)  buf
       =
       (Decode.pad buf 8;
-       (let context_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let context_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let context = Decode.string ~len:context_len buf in context)) : 
       Get_property_create_context.Reply.t)
     let decode_get_property_use_context_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let context_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let context_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let context = Decode.string ~len:context_len buf in context)) : 
       Get_property_use_context.Reply.t)
     let decode_get_property_context_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let context_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let context_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let context = Decode.string ~len:context_len buf in context)) : 
       Get_property_context.Reply.t)
     let decode_get_property_data_context_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let context_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let context_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let context = Decode.string ~len:context_len buf in context)) : 
       Get_property_data_context.Reply.t)
     let decode_list_properties_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let properties_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let properties_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let properties =
            (Decode.list ~item:decode_list_item) ~len:properties_len buf in
@@ -5673,38 +5681,38 @@ module Xselinux_codec =
     let decode_get_selection_create_context_reply ~length:(length : int)  buf
       =
       (Decode.pad buf 8;
-       (let context_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let context_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let context = Decode.string ~len:context_len buf in context)) : 
       Get_selection_create_context.Reply.t)
     let decode_get_selection_use_context_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let context_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let context_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let context = Decode.string ~len:context_len buf in context)) : 
       Get_selection_use_context.Reply.t)
     let decode_get_selection_context_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let context_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let context_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let context = Decode.string ~len:context_len buf in context)) : 
       Get_selection_context.Reply.t)
     let decode_get_selection_data_context_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let context_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let context_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let context = Decode.string ~len:context_len buf in context)) : 
       Get_selection_data_context.Reply.t)
     let decode_list_selections_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let selections_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let selections_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let selections =
            (Decode.list ~item:decode_list_item) ~len:selections_len buf in
          selections)) : List_selections.Reply.t)
     let decode_get_client_context_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let context_len = Conv.To_int.u32 (Decode.u32 buf) in
+       (let context_len = Decode.u32 buf in
         Decode.pad buf 20;
         (let context = Decode.string ~len:context_len buf in context)) : 
       Get_client_context.Reply.t)
@@ -5745,9 +5753,9 @@ module Xv_codec =
       format)
     let decode_adaptor_info buf =
       (let base_id = Decode.xid buf in
-       let name_size = Conv.To_int.u16 (Decode.u16 buf) in
+       let name_size = Decode.u16 buf in
        let num_ports = Decode.u16 buf in
-       let num_formats = Conv.To_int.u16 (Decode.u16 buf) in
+       let num_formats = Decode.u16 buf in
        let type_ = ((Decode.u8 %> Conv.To_i32.u8) %> Type_mask.of_int32) buf in
        Decode.pad buf 1;
        (let name = Decode.string ~len:name_size buf in
@@ -5756,7 +5764,7 @@ module Xv_codec =
          { base_id; num_ports; type_; name; formats })) : adaptor_info)
     let decode_encoding_info buf =
       (let encoding = Decode.xid buf in
-       let name_size = Conv.To_int.u16 (Decode.u16 buf) in
+       let name_size = Decode.u16 buf in
        let width = Decode.u16 buf in
        let height = Decode.u16 buf in
        Decode.pad buf 2;
@@ -5768,8 +5776,8 @@ module Xv_codec =
       (let id = Decode.u32 buf in
        let width = Decode.u16 buf in
        let height = Decode.u16 buf in
-       let data_size = Conv.To_int.u32 (Decode.u32 buf) in
-       let num_planes = Conv.To_int.u32 (Decode.u32 buf) in
+       let data_size = Decode.u32 buf in
+       let num_planes = Decode.u32 buf in
        let pitches = (Decode.list ~item:Decode.u32) ~len:num_planes buf in
        let offsets = (Decode.list ~item:Decode.u32) ~len:num_planes buf in
        let data = (Decode.list ~item:Decode.u8) ~len:data_size buf in
@@ -5780,7 +5788,7 @@ module Xv_codec =
            buf in
        let min = Decode.i32 buf in
        let max = Decode.i32 buf in
-       let size = Conv.To_int.u32 (Decode.u32 buf) in
+       let size = Decode.u32 buf in
        let name = Decode.string ~len:size buf in
        Decode.align buf 4; { flags; min; max; name } : attribute_info)
     let decode_image_format_info buf =
@@ -5871,14 +5879,14 @@ module Xv_codec =
         let minor = Decode.u16 buf in { major; minor }) : Query_extension.Reply.t)
     let decode_query_adaptors_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_adaptors = Conv.To_int.u16 (Decode.u16 buf) in
+       (let num_adaptors = Decode.u16 buf in
         Decode.pad buf 22;
         (let info =
            (Decode.list ~item:decode_adaptor_info) ~len:num_adaptors buf in
          info)) : Query_adaptors.Reply.t)
     let decode_query_encodings_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_encodings = Conv.To_int.u16 (Decode.u16 buf) in
+       (let num_encodings = Decode.u16 buf in
         Decode.pad buf 22;
         (let info =
            (Decode.list ~item:decode_encoding_info) ~len:num_encodings buf in
@@ -5898,7 +5906,7 @@ module Xv_codec =
       (Decode.pad buf 8; (let value = Decode.i32 buf in value) : Get_port_attribute.Reply.t)
     let decode_query_port_attributes_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_attributes = Conv.To_int.u32 (Decode.u32 buf) in
+       (let num_attributes = Decode.u32 buf in
         let text_size = Decode.u32 buf in
         Decode.pad buf 16;
         (let attributes =
@@ -5906,14 +5914,14 @@ module Xv_codec =
          { text_size; attributes })) : Query_port_attributes.Reply.t)
     let decode_list_image_formats_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_formats = Conv.To_int.u32 (Decode.u32 buf) in
+       (let num_formats = Decode.u32 buf in
         Decode.pad buf 20;
         (let format =
            (Decode.list ~item:decode_image_format_info) ~len:num_formats buf in
          format)) : List_image_formats.Reply.t)
     let decode_query_image_attributes_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num_planes = Conv.To_int.u32 (Decode.u32 buf) in
+       (let num_planes = Decode.u32 buf in
         let data_size = Decode.u32 buf in
         let width = Decode.u16 buf in
         let height = Decode.u16 buf in
@@ -5961,7 +5969,7 @@ module Xvmc_codec =
         let minor = Decode.u32 buf in { major; minor }) : Query_version.Reply.t)
     let decode_list_surface_types_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num = Conv.To_int.u32 (Decode.u32 buf) in
+       (let num = Decode.u32 buf in
         Decode.pad buf 20;
         (let surfaces = (Decode.list ~item:decode_surface_info) ~len:num buf in
          surfaces)) : List_surface_types.Reply.t)
@@ -5997,7 +6005,7 @@ module Xvmc_codec =
          })) : Create_subpicture.Reply.t)
     let decode_list_subpicture_types_reply ~length:(length : int)  buf =
       (Decode.pad buf 8;
-       (let num = Conv.To_int.u32 (Decode.u32 buf) in
+       (let num = Decode.u32 buf in
         Decode.pad buf 20;
         (let types =
            (Decode.list ~item:Xv_codec.decode_image_format_info) ~len:num buf in

@@ -383,18 +383,19 @@
          (Field_pad (pad (Pad_bytes 16)) (serialize false))
          (Field_list (name driver_name)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref driver_name_length))))
+          (length ((Field_ref (field driver_name_length) (type_ ())))))
          (Field_list (name alignment_pad)
           (type_ ((ft_type (Type_primitive Void)) (ft_allowed ())))
           (length
            ((Binop Sub
              (Binop Bit_and
-              (Binop Add (Field_ref driver_name_length) (Expr_value 3))
+              (Binop Add (Field_ref (field driver_name_length) (type_ ()))
+               (Expr_value 3))
               (Unop Bit_not (Expr_value 3)))
-             (Field_ref driver_name_length)))))
+             (Field_ref (field driver_name_length) (type_ ()))))))
          (Field_list (name device_name)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref device_name_length))))))
+          (length ((Field_ref (field device_name_length) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name Authenticate) (opcode 2) (combine_adjacent true)
@@ -451,7 +452,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name DRI2Buffer))))
             (ft_allowed ())))
-          (length ((Field_ref count))))))
+          (length ((Field_ref (field count) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name CopyRegion) (opcode 6) (combine_adjacent true)
@@ -496,7 +497,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name DRI2Buffer))))
             (ft_allowed ())))
-          (length ((Field_ref count))))))
+          (length ((Field_ref (field count) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name SwapBuffers) (opcode 8) (combine_adjacent true)
@@ -804,10 +805,10 @@
          (Field_pad (pad (Pad_bytes 16)) (serialize false))
          (Field_list (name window_modifiers)
           (type_ ((ft_type (Type_primitive Card64)) (ft_allowed ())))
-          (length ((Field_ref num_window_modifiers))))
+          (length ((Field_ref (field num_window_modifiers) (type_ ())))))
          (Field_list (name screen_modifiers)
           (type_ ((ft_type (Type_primitive Card64)) (ft_allowed ())))
-          (length ((Field_ref num_screen_modifiers))))))
+          (length ((Field_ref (field num_screen_modifiers) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name PixmapFromBuffers) (opcode 7) (combine_adjacent true)
@@ -852,7 +853,7 @@
        (type_ ((ft_type (Type_primitive Card64)) (ft_allowed ()))))
       (Field_list (name buffers)
        (type_ ((ft_type (Type_primitive Fd)) (ft_allowed ())))
-       (length ((Field_ref num_buffers))))))
+       (length ((Field_ref (field num_buffers) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name BuffersFromPixmap) (opcode 8) (combine_adjacent true)
     (fields
@@ -878,13 +879,13 @@
          (Field_pad (pad (Pad_bytes 6)) (serialize false))
          (Field_list (name strides)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Field_ref nfd))))
+          (length ((Field_ref (field nfd) (type_ ())))))
          (Field_list (name offsets)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Field_ref nfd))))
+          (length ((Field_ref (field nfd) (type_ ())))))
          (Field_list (name buffers)
           (type_ ((ft_type (Type_primitive Fd)) (ft_allowed ())))
-          (length ((Field_ref nfd))))))
+          (length ((Field_ref (field nfd) (type_ ())))))))
        (doc ()))))
     (doc ())))))
 (Extension (name GenericEvent) (file_name ge)
@@ -1036,7 +1037,7 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name data)
        (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-       (length ((Field_ref data_len))))))
+       (length ((Field_ref (field data_len) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name CreateContext) (opcode 3) (combine_adjacent true)
     (fields
@@ -1223,7 +1224,7 @@
          (Field_pad (pad (Pad_bytes 16)) (serialize false))
          (Field_list (name property_list)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Field_ref length))))))
+          (length ((Field_ref (field length) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name DestroyGLXPixmap) (opcode 15) (combine_adjacent true)
@@ -1264,7 +1265,8 @@
           (length ((Expr_value 24))))
          (Field_list (name data2)
           (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-          (length ((Binop Mul (Field_ref length) (Expr_value 4)))))))
+          (length
+           ((Binop Mul (Field_ref (field length) (type_ ())) (Expr_value 4)))))))
        (doc ()))))
     (doc ()))
    (Request (name QueryExtensionsString) (opcode 18) (combine_adjacent true)
@@ -1295,7 +1297,7 @@
          (Field_pad (pad (Pad_bytes 16)) (serialize false))
          (Field_list (name string)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref str_len))))))
+          (length ((Field_ref (field str_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name ClientInfo) (opcode 20) (combine_adjacent true)
@@ -1308,7 +1310,7 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name string)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref str_len))))))
+       (length ((Field_ref (field str_len) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name GetFBConfigs) (opcode 21) (combine_adjacent true)
     (fields
@@ -1324,7 +1326,7 @@
          (Field_pad (pad (Pad_bytes 16)) (serialize false))
          (Field_list (name property_list)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Field_ref length))))))
+          (length ((Field_ref (field length) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name CreatePixmap) (opcode 22) (combine_adjacent true)
@@ -1347,7 +1349,9 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name attribs)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Binop Mul (Field_ref num_attribs) (Expr_value 2)))))))
+       (length
+        ((Binop Mul (Field_ref (field num_attribs) (type_ ()))
+          (Expr_value 2)))))))
     (reply ()) (doc ()))
    (Request (name DestroyPixmap) (opcode 23) (combine_adjacent true)
     (fields
@@ -1392,7 +1396,9 @@
          (Field_pad (pad (Pad_bytes 20)) (serialize false))
          (Field_list (name attribs)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Binop Mul (Field_ref num_attribs) (Expr_value 2)))))))
+          (length
+           ((Binop Mul (Field_ref (field num_attribs) (type_ ()))
+             (Expr_value 2)))))))
        (doc ()))))
     (doc ()))
    (Request (name MakeContextCurrent) (opcode 26) (combine_adjacent true)
@@ -1439,7 +1445,9 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name attribs)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Binop Mul (Field_ref num_attribs) (Expr_value 2)))))))
+       (length
+        ((Binop Mul (Field_ref (field num_attribs) (type_ ()))
+          (Expr_value 2)))))))
     (reply ()) (doc ()))
    (Request (name DestroyPbuffer) (opcode 28) (combine_adjacent true)
     (fields
@@ -1462,7 +1470,9 @@
          (Field_pad (pad (Pad_bytes 20)) (serialize false))
          (Field_list (name attribs)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Binop Mul (Field_ref num_attribs) (Expr_value 2)))))))
+          (length
+           ((Binop Mul (Field_ref (field num_attribs) (type_ ()))
+             (Expr_value 2)))))))
        (doc ()))))
     (doc ()))
    (Request (name ChangeDrawableAttributes) (opcode 30)
@@ -1476,7 +1486,9 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name attribs)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Binop Mul (Field_ref num_attribs) (Expr_value 2)))))))
+       (length
+        ((Binop Mul (Field_ref (field num_attribs) (type_ ()))
+          (Expr_value 2)))))))
     (reply ()) (doc ()))
    (Request (name CreateWindow) (opcode 31) (combine_adjacent true)
     (fields
@@ -1498,7 +1510,9 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name attribs)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Binop Mul (Field_ref num_attribs) (Expr_value 2)))))))
+       (length
+        ((Binop Mul (Field_ref (field num_attribs) (type_ ()))
+          (Expr_value 2)))))))
     (reply ()) (doc ()))
    (Request (name DeleteWindow) (opcode 32) (combine_adjacent true)
     (fields
@@ -1521,13 +1535,15 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name gl_versions)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Binop Mul (Field_ref num_versions) (Expr_value 2)))))
+       (length
+        ((Binop Mul (Field_ref (field num_versions) (type_ ()))
+          (Expr_value 2)))))
       (Field_list (name gl_extension_string)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref gl_str_len))))
+       (length ((Field_ref (field gl_str_len) (type_ ())))))
       (Field_list (name glx_extension_string)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref glx_str_len))))))
+       (length ((Field_ref (field glx_str_len) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name CreateContextAttribsARB) (opcode 34)
     (combine_adjacent true)
@@ -1553,7 +1569,9 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name attribs)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Binop Mul (Field_ref num_attribs) (Expr_value 2)))))))
+       (length
+        ((Binop Mul (Field_ref (field num_attribs) (type_ ()))
+          (Expr_value 2)))))))
     (reply ()) (doc ()))
    (Request (name SetClientInfo2ARB) (opcode 35) (combine_adjacent true)
     (fields
@@ -1569,13 +1587,15 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name gl_versions)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Binop Mul (Field_ref num_versions) (Expr_value 3)))))
+       (length
+        ((Binop Mul (Field_ref (field num_versions) (type_ ()))
+          (Expr_value 3)))))
       (Field_list (name gl_extension_string)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref gl_str_len))))
+       (length ((Field_ref (field gl_str_len) (type_ ())))))
       (Field_list (name glx_extension_string)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref glx_str_len))))))
+       (length ((Field_ref (field glx_str_len) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name NewList) (opcode 101) (combine_adjacent true)
     (fields
@@ -1661,7 +1681,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Enum (name RM)
@@ -1730,7 +1750,8 @@
          (Field_pad (pad (Pad_bytes 24)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-          (length ((Binop Mul (Field_ref length) (Expr_value 4)))))))
+          (length
+           ((Binop Mul (Field_ref (field length) (type_ ())) (Expr_value 4)))))))
        (doc ()))))
     (doc ()))
    (Request (name GetBooleanv) (opcode 112) (combine_adjacent true)
@@ -1752,7 +1773,7 @@
          (Field_pad (pad (Pad_bytes 15)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Bool)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetClipPlane) (opcode 113) (combine_adjacent true)
@@ -1771,7 +1792,8 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FLOAT64))))
             (ft_allowed ())))
-          (length ((Binop Div (Field_ref length) (Expr_value 2)))))))
+          (length
+           ((Binop Div (Field_ref (field length) (type_ ())) (Expr_value 2)))))))
        (doc ()))))
     (doc ()))
    (Request (name GetDoublev) (opcode 114) (combine_adjacent true)
@@ -1797,7 +1819,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FLOAT64))))
             (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetError) (opcode 115) (combine_adjacent true)
@@ -1836,7 +1858,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FLOAT32))))
             (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetIntegerv) (opcode 117) (combine_adjacent true)
@@ -1858,7 +1880,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetLightfv) (opcode 118) (combine_adjacent true)
@@ -1886,7 +1908,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FLOAT32))))
             (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetLightiv) (opcode 119) (combine_adjacent true)
@@ -1910,7 +1932,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetMapdv) (opcode 120) (combine_adjacent true)
@@ -1938,7 +1960,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FLOAT64))))
             (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetMapfv) (opcode 121) (combine_adjacent true)
@@ -1966,7 +1988,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FLOAT32))))
             (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetMapiv) (opcode 122) (combine_adjacent true)
@@ -1990,7 +2012,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetMaterialfv) (opcode 123) (combine_adjacent true)
@@ -2018,7 +2040,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FLOAT32))))
             (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetMaterialiv) (opcode 124) (combine_adjacent true)
@@ -2042,7 +2064,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetPixelMapfv) (opcode 125) (combine_adjacent true)
@@ -2068,7 +2090,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FLOAT32))))
             (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetPixelMapuiv) (opcode 126) (combine_adjacent true)
@@ -2090,7 +2112,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetPixelMapusv) (opcode 127) (combine_adjacent true)
@@ -2112,7 +2134,7 @@
          (Field_pad (pad (Pad_bytes 16)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetPolygonStipple) (opcode 128) (combine_adjacent true)
@@ -2129,7 +2151,8 @@
          (Field_pad (pad (Pad_bytes 24)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-          (length ((Binop Mul (Field_ref length) (Expr_value 4)))))))
+          (length
+           ((Binop Mul (Field_ref (field length) (type_ ())) (Expr_value 4)))))))
        (doc ()))))
     (doc ()))
    (Request (name GetString) (opcode 129) (combine_adjacent true)
@@ -2149,7 +2172,7 @@
          (Field_pad (pad (Pad_bytes 16)) (serialize false))
          (Field_list (name string)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetTexEnvfv) (opcode 130) (combine_adjacent true)
@@ -2177,7 +2200,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FLOAT32))))
             (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetTexEnviv) (opcode 131) (combine_adjacent true)
@@ -2201,7 +2224,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetTexGendv) (opcode 132) (combine_adjacent true)
@@ -2229,7 +2252,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FLOAT64))))
             (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetTexGenfv) (opcode 133) (combine_adjacent true)
@@ -2257,7 +2280,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FLOAT32))))
             (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetTexGeniv) (opcode 134) (combine_adjacent true)
@@ -2281,7 +2304,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetTexImage) (opcode 135) (combine_adjacent true)
@@ -2313,7 +2336,8 @@
          (Field_pad (pad (Pad_bytes 4)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-          (length ((Binop Mul (Field_ref length) (Expr_value 4)))))))
+          (length
+           ((Binop Mul (Field_ref (field length) (type_ ())) (Expr_value 4)))))))
        (doc ()))))
     (doc ()))
    (Request (name GetTexParameterfv) (opcode 136) (combine_adjacent true)
@@ -2341,7 +2365,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FLOAT32))))
             (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetTexParameteriv) (opcode 137) (combine_adjacent true)
@@ -2365,7 +2389,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetTexLevelParameterfv) (opcode 138)
@@ -2396,7 +2420,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FLOAT32))))
             (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetTexLevelParameteriv) (opcode 139)
@@ -2423,7 +2447,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name IsEnabled) (opcode 140) (combine_adjacent true)
@@ -2477,7 +2501,7 @@
        (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ()))))
       (Field_list (name textures)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref n))))))
+       (length ((Field_ref (field n) (type_ ())))))))
     (reply
      (((fields
         ((Field_pad (pad (Pad_bytes 1)) (serialize false))
@@ -2488,7 +2512,8 @@
          (Field_pad (pad (Pad_bytes 20)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Bool)) (ft_allowed ())))
-          (length ((Binop Mul (Field_ref length) (Expr_value 4)))))))
+          (length
+           ((Binop Mul (Field_ref (field length) (type_ ())) (Expr_value 4)))))))
        (doc ()))))
     (doc ()))
    (Request (name DeleteTextures) (opcode 144) (combine_adjacent true)
@@ -2501,7 +2526,7 @@
        (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ()))))
       (Field_list (name textures)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref n))))))
+       (length ((Field_ref (field n) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name GenTextures) (opcode 145) (combine_adjacent true)
     (fields
@@ -2517,7 +2542,7 @@
          (Field_pad (pad (Pad_bytes 24)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Field_ref length))))))
+          (length ((Field_ref (field length) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name IsTexture) (opcode 146) (combine_adjacent true)
@@ -2560,7 +2585,8 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-          (length ((Binop Mul (Field_ref length) (Expr_value 4)))))))
+          (length
+           ((Binop Mul (Field_ref (field length) (type_ ())) (Expr_value 4)))))))
        (doc ()))))
     (doc ()))
    (Request (name GetColorTableParameterfv) (opcode 148)
@@ -2589,7 +2615,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FLOAT32))))
             (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetColorTableParameteriv) (opcode 149)
@@ -2614,7 +2640,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetConvolutionFilter) (opcode 150) (combine_adjacent true)
@@ -2642,7 +2668,8 @@
          (Field_pad (pad (Pad_bytes 8)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-          (length ((Binop Mul (Field_ref length) (Expr_value 4)))))))
+          (length
+           ((Binop Mul (Field_ref (field length) (type_ ())) (Expr_value 4)))))))
        (doc ()))))
     (doc ()))
    (Request (name GetConvolutionParameterfv) (opcode 151)
@@ -2671,7 +2698,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FLOAT32))))
             (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetConvolutionParameteriv) (opcode 152)
@@ -2696,7 +2723,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetSeparableFilter) (opcode 153) (combine_adjacent true)
@@ -2724,7 +2751,8 @@
          (Field_pad (pad (Pad_bytes 8)) (serialize false))
          (Field_list (name rows_and_cols)
           (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-          (length ((Binop Mul (Field_ref length) (Expr_value 4)))))))
+          (length
+           ((Binop Mul (Field_ref (field length) (type_ ())) (Expr_value 4)))))))
        (doc ()))))
     (doc ()))
    (Request (name GetHistogram) (opcode 154) (combine_adjacent true)
@@ -2752,7 +2780,8 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-          (length ((Binop Mul (Field_ref length) (Expr_value 4)))))))
+          (length
+           ((Binop Mul (Field_ref (field length) (type_ ())) (Expr_value 4)))))))
        (doc ()))))
     (doc ()))
    (Request (name GetHistogramParameterfv) (opcode 155)
@@ -2781,7 +2810,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FLOAT32))))
             (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetHistogramParameteriv) (opcode 156)
@@ -2806,7 +2835,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetMinmax) (opcode 157) (combine_adjacent true)
@@ -2831,7 +2860,8 @@
          (Field_pad (pad (Pad_bytes 24)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-          (length ((Binop Mul (Field_ref length) (Expr_value 4)))))))
+          (length
+           ((Binop Mul (Field_ref (field length) (type_ ())) (Expr_value 4)))))))
        (doc ()))))
     (doc ()))
    (Request (name GetMinmaxParameterfv) (opcode 158) (combine_adjacent true)
@@ -2859,7 +2889,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FLOAT32))))
             (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetMinmaxParameteriv) (opcode 159) (combine_adjacent true)
@@ -2883,7 +2913,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetCompressedTexImageARB) (opcode 160)
@@ -2906,7 +2936,8 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-          (length ((Binop Mul (Field_ref length) (Expr_value 4)))))))
+          (length
+           ((Binop Mul (Field_ref (field length) (type_ ())) (Expr_value 4)))))))
        (doc ()))))
     (doc ()))
    (Request (name DeleteQueriesARB) (opcode 161) (combine_adjacent true)
@@ -2919,7 +2950,7 @@
        (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ()))))
       (Field_list (name ids)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref n))))))
+       (length ((Field_ref (field n) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name GenQueriesARB) (opcode 162) (combine_adjacent true)
     (fields
@@ -2935,7 +2966,7 @@
          (Field_pad (pad (Pad_bytes 24)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Field_ref length))))))
+          (length ((Field_ref (field length) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name IsQueryARB) (opcode 163) (combine_adjacent true)
@@ -2976,7 +3007,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetQueryObjectivARB) (opcode 165) (combine_adjacent true)
@@ -3000,7 +3031,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetQueryObjectuivARB) (opcode 166) (combine_adjacent true)
@@ -3024,7 +3055,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Field_ref n))))))
+          (length ((Field_ref (field n) (type_ ())))))))
        (doc ()))))
     (doc ())))))
 (Extension (name Present) (file_name present) (query_name Present)
@@ -3374,7 +3405,7 @@
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
       (Field_list (name rates)
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
-       (length ((Field_ref nRates)))))))
+       (length ((Field_ref (field nRates) (type_ ()))))))))
    (Request (name QueryVersion) (opcode 0) (combine_adjacent true)
     (fields
      ((Field (name major_version)
@@ -3505,12 +3536,14 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name ScreenSize))))
             (ft_allowed ())))
-          (length ((Field_ref nSizes))))
+          (length ((Field_ref (field nSizes) (type_ ())))))
          (Field_list (name rates)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name RefreshRates))))
             (ft_allowed ())))
-          (length ((Binop Sub (Field_ref nInfo) (Field_ref nSizes)))))))
+          (length
+           ((Binop Sub (Field_ref (field nInfo) (type_ ()))
+             (Field_ref (field nSizes) (type_ ()))))))))
        (doc ()))))
     (doc ()))
    (Request (name GetScreenSizeRange) (opcode 6) (combine_adjacent true)
@@ -3618,20 +3651,20 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name CRTC))))
             (ft_allowed ())))
-          (length ((Field_ref num_crtcs))))
+          (length ((Field_ref (field num_crtcs) (type_ ())))))
          (Field_list (name outputs)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name OUTPUT))))
             (ft_allowed ())))
-          (length ((Field_ref num_outputs))))
+          (length ((Field_ref (field num_outputs) (type_ ())))))
          (Field_list (name modes)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name ModeInfo))))
             (ft_allowed ())))
-          (length ((Field_ref num_modes))))
+          (length ((Field_ref (field num_modes) (type_ ())))))
          (Field_list (name names)
           (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-          (length ((Field_ref names_len))))))
+          (length ((Field_ref (field names_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Enum (name Connection)
@@ -3691,20 +3724,20 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name CRTC))))
             (ft_allowed ())))
-          (length ((Field_ref num_crtcs))))
+          (length ((Field_ref (field num_crtcs) (type_ ())))))
          (Field_list (name modes)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name MODE))))
             (ft_allowed ())))
-          (length ((Field_ref num_modes))))
+          (length ((Field_ref (field num_modes) (type_ ())))))
          (Field_list (name clones)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name OUTPUT))))
             (ft_allowed ())))
-          (length ((Field_ref num_clones))))
+          (length ((Field_ref (field num_clones) (type_ ())))))
          (Field_list (name name)
           (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-          (length ((Field_ref name_len))))))
+          (length ((Field_ref (field name_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name ListOutputProperties) (opcode 10) (combine_adjacent true)
@@ -3723,7 +3756,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name ATOM))))
             (ft_allowed ())))
-          (length ((Field_ref num_atoms))))))
+          (length ((Field_ref (field num_atoms) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name QueryOutputProperty) (opcode 11) (combine_adjacent true)
@@ -3748,7 +3781,7 @@
          (Field_pad (pad (Pad_bytes 21)) (serialize false))
          (Field_list (name validValues)
           (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-          (length ((Field_ref length))))))
+          (length ((Field_ref (field length) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name ConfigureOutputProperty) (opcode 12)
@@ -3797,7 +3830,9 @@
       (Field_list (name data)
        (type_ ((ft_type (Type_primitive Void)) (ft_allowed ())))
        (length
-        ((Binop Div (Binop Mul (Field_ref num_units) (Field_ref format))
+        ((Binop Div
+          (Binop Mul (Field_ref (field num_units) (type_ ()))
+           (Field_ref (field format) (type_ ())))
           (Expr_value 8)))))))
     (reply ()) (doc ()))
    (Request (name DeleteOutputProperty) (opcode 14) (combine_adjacent true)
@@ -3851,8 +3886,8 @@
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
           (length
-           ((Binop Mul (Field_ref num_items)
-             (Binop Div (Field_ref format) (Expr_value 8))))))))
+           ((Binop Mul (Field_ref (field num_items) (type_ ()))
+             (Binop Div (Field_ref (field format) (type_ ())) (Expr_value 8))))))))
        (doc ()))))
     (doc ()))
    (Request (name CreateMode) (opcode 16) (combine_adjacent true)
@@ -3955,12 +3990,12 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name OUTPUT))))
             (ft_allowed ())))
-          (length ((Field_ref num_outputs))))
+          (length ((Field_ref (field num_outputs) (type_ ())))))
          (Field_list (name possible)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name OUTPUT))))
             (ft_allowed ())))
-          (length ((Field_ref num_possible_outputs))))))
+          (length ((Field_ref (field num_possible_outputs) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name SetCrtcConfig) (opcode 21) (combine_adjacent true)
@@ -4037,13 +4072,13 @@
          (Field_pad (pad (Pad_bytes 22)) (serialize false))
          (Field_list (name red)
           (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
-          (length ((Field_ref size))))
+          (length ((Field_ref (field size) (type_ ())))))
          (Field_list (name green)
           (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
-          (length ((Field_ref size))))
+          (length ((Field_ref (field size) (type_ ())))))
          (Field_list (name blue)
           (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
-          (length ((Field_ref size))))))
+          (length ((Field_ref (field size) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name SetCrtcGamma) (opcode 24) (combine_adjacent true)
@@ -4057,13 +4092,13 @@
       (Field_pad (pad (Pad_bytes 2)) (serialize false))
       (Field_list (name red)
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
-       (length ((Field_ref size))))
+       (length ((Field_ref (field size) (type_ ())))))
       (Field_list (name green)
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
-       (length ((Field_ref size))))
+       (length ((Field_ref (field size) (type_ ())))))
       (Field_list (name blue)
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
-       (length ((Field_ref size))))))
+       (length ((Field_ref (field size) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name GetScreenResourcesCurrent) (opcode 25)
     (combine_adjacent true)
@@ -4096,20 +4131,20 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name CRTC))))
             (ft_allowed ())))
-          (length ((Field_ref num_crtcs))))
+          (length ((Field_ref (field num_crtcs) (type_ ())))))
          (Field_list (name outputs)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name OUTPUT))))
             (ft_allowed ())))
-          (length ((Field_ref num_outputs))))
+          (length ((Field_ref (field num_outputs) (type_ ())))))
          (Field_list (name modes)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name ModeInfo))))
             (ft_allowed ())))
-          (length ((Field_ref num_modes))))
+          (length ((Field_ref (field num_modes) (type_ ())))))
          (Field_list (name names)
           (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-          (length ((Field_ref names_len))))))
+          (length ((Field_ref (field names_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Enum (name Transform)
@@ -4132,7 +4167,7 @@
       (Field_pad (pad (Pad_bytes 2)) (serialize false))
       (Field_list (name filter_name)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref filter_len))))
+       (length ((Field_ref (field filter_len) (type_ ())))))
       (Field_pad (pad (Pad_align 4)) (serialize false))
       (Field_list (name filter_params)
        (type_
@@ -4171,22 +4206,22 @@
           (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
          (Field_list (name pending_filter_name)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref pending_len))))
+          (length ((Field_ref (field pending_len) (type_ ())))))
          (Field_pad (pad (Pad_align 4)) (serialize false))
          (Field_list (name pending_params)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FIXED))))
             (ft_allowed ())))
-          (length ((Field_ref pending_nparams))))
+          (length ((Field_ref (field pending_nparams) (type_ ())))))
          (Field_list (name current_filter_name)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref current_len))))
+          (length ((Field_ref (field current_len) (type_ ())))))
          (Field_pad (pad (Pad_align 4)) (serialize false))
          (Field_list (name current_params)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FIXED))))
             (ft_allowed ())))
-          (length ((Field_ref current_nparams))))))
+          (length ((Field_ref (field current_nparams) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetPanning) (opcode 28) (combine_adjacent true)
@@ -4325,7 +4360,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name PROVIDER))))
             (ft_allowed ())))
-          (length ((Field_ref num_providers))))))
+          (length ((Field_ref (field num_providers) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Enum (name ProviderCapability)
@@ -4369,23 +4404,23 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name CRTC))))
             (ft_allowed ())))
-          (length ((Field_ref num_crtcs))))
+          (length ((Field_ref (field num_crtcs) (type_ ())))))
          (Field_list (name outputs)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name OUTPUT))))
             (ft_allowed ())))
-          (length ((Field_ref num_outputs))))
+          (length ((Field_ref (field num_outputs) (type_ ())))))
          (Field_list (name associated_providers)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name PROVIDER))))
             (ft_allowed ())))
-          (length ((Field_ref num_associated_providers))))
+          (length ((Field_ref (field num_associated_providers) (type_ ())))))
          (Field_list (name associated_capability)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Field_ref num_associated_providers))))
+          (length ((Field_ref (field num_associated_providers) (type_ ())))))
          (Field_list (name name)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref name_len))))))
+          (length ((Field_ref (field name_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name SetProviderOffloadSink) (opcode 34) (combine_adjacent true)
@@ -4435,7 +4470,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name ATOM))))
             (ft_allowed ())))
-          (length ((Field_ref num_atoms))))))
+          (length ((Field_ref (field num_atoms) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name QueryProviderProperty) (opcode 37) (combine_adjacent true)
@@ -4460,7 +4495,7 @@
          (Field_pad (pad (Pad_bytes 21)) (serialize false))
          (Field_list (name valid_values)
           (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-          (length ((Field_ref length))))))
+          (length ((Field_ref (field length) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name ConfigureProviderProperty) (opcode 38)
@@ -4507,8 +4542,8 @@
       (Field_list (name data)
        (type_ ((ft_type (Type_primitive Void)) (ft_allowed ())))
        (length
-        ((Binop Mul (Field_ref num_items)
-          (Binop Div (Field_ref format) (Expr_value 8))))))))
+        ((Binop Mul (Field_ref (field num_items) (type_ ()))
+          (Binop Div (Field_ref (field format) (type_ ())) (Expr_value 8))))))))
     (reply ()) (doc ()))
    (Request (name DeleteProviderProperty) (opcode 40) (combine_adjacent true)
     (fields
@@ -4560,8 +4595,8 @@
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Void)) (ft_allowed ())))
           (length
-           ((Binop Mul (Field_ref num_items)
-             (Binop Div (Field_ref format) (Expr_value 8))))))))
+           ((Binop Mul (Field_ref (field num_items) (type_ ()))
+             (Binop Div (Field_ref (field format) (type_ ())) (Expr_value 8))))))))
        (doc ()))))
     (doc ()))
    (Event (name ScreenChangeNotify) (number 0) (is_generic false)
@@ -4776,7 +4811,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name OUTPUT))))
          (ft_allowed ())))
-       (length ((Field_ref nOutput)))))))
+       (length ((Field_ref (field nOutput) (type_ ()))))))))
    (Request (name GetMonitors) (opcode 42) (combine_adjacent true)
     (fields
      ((Field (name window)
@@ -4801,7 +4836,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name MonitorInfo))))
             (ft_allowed ())))
-          (length ((Field_ref nMonitors))))))
+          (length ((Field_ref (field nMonitors) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name SetMonitor) (opcode 43) (combine_adjacent true)
@@ -4844,12 +4879,12 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name CRTC))))
          (ft_allowed ())))
-       (length ((Field_ref num_crtcs))))
+       (length ((Field_ref (field num_crtcs) (type_ ())))))
       (Field_list (name outputs)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name OUTPUT))))
          (ft_allowed ())))
-       (length ((Field_ref num_outputs))))))
+       (length ((Field_ref (field num_outputs) (type_ ())))))))
     (reply
      (((fields
         ((Field (name nfd)
@@ -5010,7 +5045,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name Range))))
          (ft_allowed ())))
-       (length ((Field_ref num_ranges)))))))
+       (length ((Field_ref (field num_ranges) (type_ ()))))))))
    (Error (name BadContext) (number 0)
     (fields
      ((Field (name invalid_record)
@@ -5049,12 +5084,12 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name ClientSpec))))
          (ft_allowed ())))
-       (length ((Field_ref num_client_specs))))
+       (length ((Field_ref (field num_client_specs) (type_ ())))))
       (Field_list (name ranges)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name Range))))
          (ft_allowed ())))
-       (length ((Field_ref num_ranges))))))
+       (length ((Field_ref (field num_ranges) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name RegisterClients) (opcode 2) (combine_adjacent true)
     (fields
@@ -5075,12 +5110,12 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name ClientSpec))))
          (ft_allowed ())))
-       (length ((Field_ref num_client_specs))))
+       (length ((Field_ref (field num_client_specs) (type_ ())))))
       (Field_list (name ranges)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name Range))))
          (ft_allowed ())))
-       (length ((Field_ref num_ranges))))))
+       (length ((Field_ref (field num_ranges) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name UnregisterClients) (opcode 3) (combine_adjacent true)
     (fields
@@ -5094,7 +5129,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name ClientSpec))))
          (ft_allowed ())))
-       (length ((Field_ref num_client_specs))))))
+       (length ((Field_ref (field num_client_specs) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name GetContext) (opcode 4) (combine_adjacent true)
     (fields
@@ -5118,7 +5153,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name ClientInfo))))
             (ft_allowed ())))
-          (length ((Field_ref num_intercepted_clients))))))
+          (length ((Field_ref (field num_intercepted_clients) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name EnableContext) (opcode 5) (combine_adjacent true)
@@ -5147,7 +5182,8 @@
          (Field_pad (pad (Pad_bytes 8)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-          (length ((Binop Mul (Field_ref length) (Expr_value 4)))))))
+          (length
+           ((Binop Mul (Field_ref (field length) (type_ ())) (Expr_value 4)))))))
        (doc ()))))
     (doc ()))
    (Request (name DisableContext) (opcode 6) (combine_adjacent true)
@@ -5294,7 +5330,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name PICTVISUAL))))
          (ft_allowed ())))
-       (length ((Field_ref num_visuals)))))))
+       (length ((Field_ref (field num_visuals) (type_ ()))))))))
    (Struct (name PICTSCREEN)
     (fields
      ((Field (name num_depths)
@@ -5307,7 +5343,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name PICTDEPTH))))
          (ft_allowed ())))
-       (length ((Field_ref num_depths)))))))
+       (length ((Field_ref (field num_depths) (type_ ()))))))))
    (Struct (name INDEXVALUE)
     (fields
      ((Field (name pixel)
@@ -5432,17 +5468,17 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name PICTFORMINFO))))
             (ft_allowed ())))
-          (length ((Field_ref num_formats))))
+          (length ((Field_ref (field num_formats) (type_ ())))))
          (Field_list (name screens)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name PICTSCREEN))))
             (ft_allowed ())))
-          (length ((Field_ref num_screens))))
+          (length ((Field_ref (field num_screens) (type_ ())))))
          (Field_list (name subpixels)
           (type_
            ((ft_type (Type_primitive Card32))
             (ft_allowed ((Allowed_enum ((id_module ()) (id_name SubPixel)))))))
-          (length ((Field_ref num_subpixel))))))
+          (length ((Field_ref (field num_subpixel) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name QueryPictIndexValues) (opcode 2) (combine_adjacent true)
@@ -5461,7 +5497,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name INDEXVALUE))))
             (ft_allowed ())))
-          (length ((Field_ref num_values))))))
+          (length ((Field_ref (field num_values) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name CreatePicture) (opcode 4) (combine_adjacent true)
@@ -5483,7 +5519,8 @@
         ((ft_type (Type_primitive Card32))
          (ft_allowed ((Allowed_mask ((id_module ()) (id_name CP))))))))
       (Field_switch
-       ((sw_name value_list) (sw_cond (Cond_bit_and (Field_ref value_mask)))
+       ((sw_name value_list)
+        (sw_cond (Cond_bit_and (Field_ref (field value_mask) (type_ ()))))
         (sw_cases
          (((cs_name ())
            (cs_cond
@@ -5600,7 +5637,8 @@
         ((ft_type (Type_primitive Card32))
          (ft_allowed ((Allowed_mask ((id_module ()) (id_name CP))))))))
       (Field_switch
-       ((sw_name value_list) (sw_cond (Cond_bit_and (Field_ref value_mask)))
+       ((sw_name value_list)
+        (sw_cond (Cond_bit_and (Field_ref (field value_mask) (type_ ()))))
         (sw_cases
          (((cs_name ())
            (cs_cond
@@ -5921,12 +5959,12 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name glyphids)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref glyphs_len))))
+       (length ((Field_ref (field glyphs_len) (type_ ())))))
       (Field_list (name glyphs)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name GLYPHINFO))))
          (ft_allowed ())))
-       (length ((Field_ref glyphs_len))))
+       (length ((Field_ref (field glyphs_len) (type_ ())))))
       (Field_list (name data)
        (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ()))) (length ()))))
     (reply ()) (doc ()))
@@ -6133,12 +6171,12 @@
          (Field_pad (pad (Pad_bytes 16)) (serialize false))
          (Field_list (name aliases)
           (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
-          (length ((Field_ref num_aliases))))
+          (length ((Field_ref (field num_aliases) (type_ ())))))
          (Field_list (name filters)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name STR))))
             (ft_allowed ())))
-          (length ((Field_ref num_filters))))))
+          (length ((Field_ref (field num_filters) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name SetPictureFilter) (opcode 30) (combine_adjacent true)
@@ -6152,7 +6190,7 @@
       (Field_pad (pad (Pad_bytes 2)) (serialize false))
       (Field_list (name filter)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref filter_len))))
+       (length ((Field_ref (field filter_len) (type_ ())))))
       (Field_pad (pad (Pad_align 4)) (serialize false))
       (Field_list (name values)
        (type_
@@ -6251,12 +6289,12 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name FIXED))))
          (ft_allowed ())))
-       (length ((Field_ref num_stops))))
+       (length ((Field_ref (field num_stops) (type_ ())))))
       (Field_list (name colors)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name COLOR))))
          (ft_allowed ())))
-       (length ((Field_ref num_stops))))))
+       (length ((Field_ref (field num_stops) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name CreateRadialGradient) (opcode 35) (combine_adjacent true)
     (fields
@@ -6286,12 +6324,12 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name FIXED))))
          (ft_allowed ())))
-       (length ((Field_ref num_stops))))
+       (length ((Field_ref (field num_stops) (type_ ())))))
       (Field_list (name colors)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name COLOR))))
          (ft_allowed ())))
-       (length ((Field_ref num_stops))))))
+       (length ((Field_ref (field num_stops) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name CreateConicalGradient) (opcode 36) (combine_adjacent true)
     (fields
@@ -6313,12 +6351,12 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name FIXED))))
          (ft_allowed ())))
-       (length ((Field_ref num_stops))))
+       (length ((Field_ref (field num_stops) (type_ ())))))
       (Field_list (name colors)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name COLOR))))
          (ft_allowed ())))
-       (length ((Field_ref num_stops))))))
+       (length ((Field_ref (field num_stops) (type_ ())))))))
     (reply ()) (doc ())))))
 (Extension (name Res) (file_name res) (query_name X-Resource)
  (multiword false) (version (1 2))
@@ -6360,7 +6398,8 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name value)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Binop Div (Field_ref length) (Expr_value 4))))))))
+       (length
+        ((Binop Div (Field_ref (field length) (type_ ())) (Expr_value 4))))))))
    (Struct (name ResourceIdSpec)
     (fields
      ((Field (name resource)
@@ -6391,7 +6430,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name ResourceSizeSpec))))
          (ft_allowed ())))
-       (length ((Field_ref num_cross_references)))))))
+       (length ((Field_ref (field num_cross_references) (type_ ()))))))))
    (Request (name QueryVersion) (opcode 0) (combine_adjacent true)
     (fields
      ((Field (name client_major)
@@ -6419,7 +6458,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name Client))))
             (ft_allowed ())))
-          (length ((Field_ref num_clients))))))
+          (length ((Field_ref (field num_clients) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name QueryClientResources) (opcode 2) (combine_adjacent true)
@@ -6436,7 +6475,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name Type))))
             (ft_allowed ())))
-          (length ((Field_ref num_types))))))
+          (length ((Field_ref (field num_types) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name QueryClientPixmapBytes) (opcode 3) (combine_adjacent true)
@@ -6460,7 +6499,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name ClientIdSpec))))
          (ft_allowed ())))
-       (length ((Field_ref num_specs))))))
+       (length ((Field_ref (field num_specs) (type_ ())))))))
     (reply
      (((fields
         ((Field_pad (pad (Pad_bytes 1)) (serialize false))
@@ -6471,7 +6510,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name ClientIdValue))))
             (ft_allowed ())))
-          (length ((Field_ref num_ids))))))
+          (length ((Field_ref (field num_ids) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name QueryResourceBytes) (opcode 5) (combine_adjacent true)
@@ -6484,7 +6523,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name ResourceIdSpec))))
          (ft_allowed ())))
-       (length ((Field_ref num_specs))))))
+       (length ((Field_ref (field num_specs) (type_ ())))))))
     (reply
      (((fields
         ((Field_pad (pad (Pad_bytes 1)) (serialize false))
@@ -6495,7 +6534,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name ResourceSizeValue))))
             (ft_allowed ())))
-          (length ((Field_ref num_sizes))))))
+          (length ((Field_ref (field num_sizes) (type_ ())))))))
        (doc ()))))
     (doc ())))))
 (Extension (name ScreenSaver) (file_name screensaver)
@@ -6600,7 +6639,8 @@
         ((ft_type (Type_primitive Card32))
          (ft_allowed ((Allowed_mask ((id_module ()) (id_name CW))))))))
       (Field_switch
-       ((sw_name value_list) (sw_cond (Cond_bit_and (Field_ref value_mask)))
+       ((sw_name value_list)
+        (sw_cond (Cond_bit_and (Field_ref (field value_mask) (type_ ()))))
         (sw_cases
          (((cs_name ())
            (cs_cond
@@ -7002,7 +7042,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name RECTANGLE))))
             (ft_allowed ())))
-          (length ((Field_ref rectangles_len))))))
+          (length ((Field_ref (field rectangles_len) (type_ ())))))))
        (doc ()))))
     (doc ())))))
 (Extension (name Shm) (file_name shm) (query_name MIT-SHM) (multiword false)
@@ -7235,7 +7275,7 @@
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
       (Field_list (name name)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref name_len))))
+       (length ((Field_ref (field name_len) (type_ ())))))
       (Field_pad (pad (Pad_align 4)) (serialize false)))))
    (Struct (name TRIGGER)
     (fields
@@ -7309,7 +7349,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name SYSTEMCOUNTER))))
             (ft_allowed ())))
-          (length ((Field_ref counters_len))))))
+          (length ((Field_ref (field counters_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name CreateCounter) (opcode 2) (combine_adjacent true)
@@ -7386,7 +7426,8 @@
         ((ft_type (Type_primitive Card32))
          (ft_allowed ((Allowed_mask ((id_module ()) (id_name CA))))))))
       (Field_switch
-       ((sw_name value_list) (sw_cond (Cond_bit_and (Field_ref value_mask)))
+       ((sw_name value_list)
+        (sw_cond (Cond_bit_and (Field_ref (field value_mask) (type_ ()))))
         (sw_cases
          (((cs_name ())
            (cs_cond
@@ -7448,7 +7489,8 @@
         ((ft_type (Type_primitive Card32))
          (ft_allowed ((Allowed_mask ((id_module ()) (id_name CA))))))))
       (Field_switch
-       ((sw_name value_list) (sw_cond (Cond_bit_and (Field_ref value_mask)))
+       ((sw_name value_list)
+        (sw_cond (Cond_bit_and (Field_ref (field value_mask) (type_ ()))))
         (sw_cases
          (((cs_name ())
            (cs_cond
@@ -7701,7 +7743,7 @@
          (Field_pad (pad (Pad_bytes 20)) (serialize false))
          (Field_list (name ids)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Field_ref ids_len))))))
+          (length ((Field_ref (field ids_len) (type_ ())))))))
        (doc ()))))
     (doc ())))))
 (Extension (name Xevie) (file_name xevie) (query_name XEVIE)
@@ -7826,7 +7868,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name bus_id)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref bus_id_len))))))
+          (length ((Field_ref (field bus_id_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name CloseConnection) (opcode 3) (combine_adjacent true)
@@ -7852,7 +7894,7 @@
          (Field_pad (pad (Pad_bytes 8)) (serialize false))
          (Field_list (name client_driver_name)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref client_driver_name_len))))))
+          (length ((Field_ref (field client_driver_name_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name CreateContext) (opcode 5) (combine_adjacent true)
@@ -7930,12 +7972,12 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name DrmClipRect))))
             (ft_allowed ())))
-          (length ((Field_ref num_clip_rects))))
+          (length ((Field_ref (field num_clip_rects) (type_ ())))))
          (Field_list (name back_clip_rects)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name DrmClipRect))))
             (ft_allowed ())))
-          (length ((Field_ref num_back_clip_rects))))))
+          (length ((Field_ref (field num_back_clip_rects) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetDeviceInfo) (opcode 10) (combine_adjacent true)
@@ -7959,7 +8001,7 @@
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
          (Field_list (name device_private)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Field_ref device_private_size))))))
+          (length ((Field_ref (field device_private_size) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name AuthConnection) (opcode 11) (combine_adjacent true)
@@ -8075,7 +8117,7 @@
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
          (Field_list (name private)
           (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-          (length ((Field_ref privsize))))))
+          (length ((Field_ref (field privsize) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name ModModeLine) (opcode 2) (combine_adjacent true)
@@ -8110,7 +8152,7 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name private)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-       (length ((Field_ref privsize))))))
+       (length ((Field_ref (field privsize) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name SwitchMode) (opcode 3) (combine_adjacent true)
     (fields
@@ -8140,26 +8182,27 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name SYNCRANGE))))
             (ft_allowed ())))
-          (length ((Field_ref num_hsync))))
+          (length ((Field_ref (field num_hsync) (type_ ())))))
          (Field_list (name vsync)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name SYNCRANGE))))
             (ft_allowed ())))
-          (length ((Field_ref num_vsync))))
+          (length ((Field_ref (field num_vsync) (type_ ())))))
          (Field_list (name vendor)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref vendor_length))))
+          (length ((Field_ref (field vendor_length) (type_ ())))))
          (Field_list (name alignment_pad)
           (type_ ((ft_type (Type_primitive Void)) (ft_allowed ())))
           (length
            ((Binop Sub
              (Binop Bit_and
-              (Binop Add (Field_ref vendor_length) (Expr_value 3))
+              (Binop Add (Field_ref (field vendor_length) (type_ ()))
+               (Expr_value 3))
               (Unop Bit_not (Expr_value 3)))
-             (Field_ref vendor_length)))))
+             (Field_ref (field vendor_length) (type_ ()))))))
          (Field_list (name model)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref model_length))))))
+          (length ((Field_ref (field model_length) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name LockModeSwitch) (opcode 5) (combine_adjacent true)
@@ -8184,7 +8227,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name ModeInfo))))
             (ft_allowed ())))
-          (length ((Field_ref modecount))))))
+          (length ((Field_ref (field modecount) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name AddModeLine) (opcode 7) (combine_adjacent true)
@@ -8251,7 +8294,7 @@
       (Field_pad (pad (Pad_bytes 12)) (serialize false))
       (Field_list (name private)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-       (length ((Field_ref privsize))))))
+       (length ((Field_ref (field privsize) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name DeleteModeLine) (opcode 8) (combine_adjacent true)
     (fields
@@ -8289,7 +8332,7 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name private)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-       (length ((Field_ref privsize))))))
+       (length ((Field_ref (field privsize) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name ValidateModeLine) (opcode 9) (combine_adjacent true)
     (fields
@@ -8327,7 +8370,7 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name private)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-       (length ((Field_ref privsize))))))
+       (length ((Field_ref (field privsize) (type_ ())))))))
     (reply
      (((fields
         ((Field_pad (pad (Pad_bytes 1)) (serialize false))
@@ -8372,7 +8415,7 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name private)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-       (length ((Field_ref privsize))))))
+       (length ((Field_ref (field privsize) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name GetViewPort) (opcode 11) (combine_adjacent true)
     (fields
@@ -8422,8 +8465,9 @@
           (length
            ((Binop Mul
              (Binop Sub (Expr_value 1)
-              (Binop Bit_and (Field_ref flags) (Expr_value 1)))
-             (Field_ref clocks)))))))
+              (Binop Bit_and (Field_ref (field flags) (type_ ()))
+               (Expr_value 1)))
+             (Field_ref (field clocks) (type_ ()))))))))
        (doc ()))))
     (doc ()))
    (Request (name SetClientVersion) (opcode 14) (combine_adjacent true)
@@ -8478,17 +8522,20 @@
          (Field_list (name red)
           (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
           (length
-           ((Binop Bit_and (Binop Add (Field_ref size) (Expr_value 1))
+           ((Binop Bit_and
+             (Binop Add (Field_ref (field size) (type_ ())) (Expr_value 1))
              (Unop Bit_not (Expr_value 1))))))
          (Field_list (name green)
           (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
           (length
-           ((Binop Bit_and (Binop Add (Field_ref size) (Expr_value 1))
+           ((Binop Bit_and
+             (Binop Add (Field_ref (field size) (type_ ())) (Expr_value 1))
              (Unop Bit_not (Expr_value 1))))))
          (Field_list (name blue)
           (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
           (length
-           ((Binop Bit_and (Binop Add (Field_ref size) (Expr_value 1))
+           ((Binop Bit_and
+             (Binop Add (Field_ref (field size) (type_ ())) (Expr_value 1))
              (Unop Bit_not (Expr_value 1))))))))
        (doc ()))))
     (doc ()))
@@ -8501,17 +8548,20 @@
       (Field_list (name red)
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
        (length
-        ((Binop Bit_and (Binop Add (Field_ref size) (Expr_value 1))
+        ((Binop Bit_and
+          (Binop Add (Field_ref (field size) (type_ ())) (Expr_value 1))
           (Unop Bit_not (Expr_value 1))))))
       (Field_list (name green)
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
        (length
-        ((Binop Bit_and (Binop Add (Field_ref size) (Expr_value 1))
+        ((Binop Bit_and
+          (Binop Add (Field_ref (field size) (type_ ())) (Expr_value 1))
           (Unop Bit_not (Expr_value 1))))))
       (Field_list (name blue)
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
        (length
-        ((Binop Bit_and (Binop Add (Field_ref size) (Expr_value 1))
+        ((Binop Bit_and
+          (Binop Add (Field_ref (field size) (type_ ())) (Expr_value 1))
           (Unop Bit_not (Expr_value 1))))))))
     (reply ()) (doc ()))
    (Request (name GetGammaRampSize) (opcode 19) (combine_adjacent true)
@@ -8717,7 +8767,9 @@
          (Field_pad (pad (Pad_bytes 8)) (serialize false))
          (Field_list (name cursor_image)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Binop Mul (Field_ref width) (Field_ref height)))))))
+          (length
+           ((Binop Mul (Field_ref (field width) (type_ ()))
+             (Field_ref (field height) (type_ ()))))))))
        (doc ()))))
     (doc ()))
    (Xid REGION) (Error (name BadRegion) (number 0) (fields ()))
@@ -8913,7 +8965,8 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name RECTANGLE))))
             (ft_allowed ())))
-          (length ((Binop Div (Field_ref length) (Expr_value 2)))))))
+          (length
+           ((Binop Div (Field_ref (field length) (type_ ())) (Expr_value 2)))))))
        (doc ()))))
     (doc ()))
    (Request (name SetGCClipRegion) (opcode 20) (combine_adjacent true)
@@ -8977,7 +9030,7 @@
       (Field_pad (pad (Pad_bytes 2)) (serialize false))
       (Field_list (name name)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref nbytes))))))
+       (length ((Field_ref (field nbytes) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name GetCursorName) (opcode 24) (combine_adjacent true)
     (fields
@@ -8997,7 +9050,7 @@
          (Field_pad (pad (Pad_bytes 18)) (serialize false))
          (Field_list (name name)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref nbytes))))))
+          (length ((Field_ref (field nbytes) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetCursorImageAndName) (opcode 25) (combine_adjacent true)
@@ -9028,10 +9081,12 @@
          (Field_pad (pad (Pad_bytes 2)) (serialize false))
          (Field_list (name cursor_image)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Binop Mul (Field_ref width) (Field_ref height)))))
+          (length
+           ((Binop Mul (Field_ref (field width) (type_ ()))
+             (Field_ref (field height) (type_ ()))))))
          (Field_list (name name)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref nbytes))))))
+          (length ((Field_ref (field nbytes) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name ChangeCursor) (opcode 26) (combine_adjacent true)
@@ -9056,7 +9111,7 @@
       (Field_pad (pad (Pad_bytes 2)) (serialize false))
       (Field_list (name name)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref nbytes))))))
+       (length ((Field_ref (field nbytes) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name ExpandRegion) (opcode 28) (combine_adjacent true)
     (fields
@@ -9125,7 +9180,7 @@
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
       (Field_list (name devices)
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
-       (length ((Field_ref num_devices))))))
+       (length ((Field_ref (field num_devices) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name DeletePointerBarrier) (opcode 32) (combine_adjacent true)
     (fields
@@ -9238,7 +9293,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name ScreenInfo))))
             (ft_allowed ())))
-          (length ((Field_ref number))))))
+          (length ((Field_ref (field number) (type_ ())))))))
        (doc ()))))
     (doc ())))))
 (Extension (name Input) (file_name xinput) (query_name XInputExtension)
@@ -9262,7 +9317,7 @@
       (Field_pad (pad (Pad_bytes 2)) (serialize false))
       (Field_list (name name)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref name_len))))))
+       (length ((Field_ref (field name_len) (type_ ())))))))
     (reply
      (((fields
         ((Field (name xi_reply_type)
@@ -9364,7 +9419,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name AxisInfo))))
          (ft_allowed ())))
-       (length ((Field_ref axes_len)))))))
+       (length ((Field_ref (field axes_len) (type_ ()))))))))
    (Struct (name InputInfo)
     (fields
      ((Field (name class_id)
@@ -9374,7 +9429,8 @@
       (Field (name len)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
       (Field_switch
-       ((sw_name info) (sw_cond (Cond_eq (Field_ref class_id)))
+       ((sw_name info)
+        (sw_cond (Cond_eq (Field_ref (field class_id) (type_ ()))))
         (sw_cases
          (((cs_name (key))
            (cs_cond
@@ -9417,14 +9473,14 @@
               (type_
                ((ft_type (Type_ref ((id_module ()) (id_name AxisInfo))))
                 (ft_allowed ())))
-              (length ((Field_ref axes_len))))))))))))))
+              (length ((Field_ref (field axes_len) (type_ ())))))))))))))))
    (Struct (name DeviceName)
     (fields
      ((Field (name len)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
       (Field_list (name string)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref len)))))))
+       (length ((Field_ref (field len) (type_ ()))))))))
    (Request (name ListInputDevices) (opcode 2) (combine_adjacent true)
     (fields ())
     (reply
@@ -9438,18 +9494,19 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name DeviceInfo))))
             (ft_allowed ())))
-          (length ((Field_ref devices_len))))
+          (length ((Field_ref (field devices_len) (type_ ())))))
          (Field_list (name infos)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name InputInfo))))
             (ft_allowed ())))
           (length
-           ((Sum_of (field devices) (by_expr ((Field_ref num_class_info)))))))
+           ((Sum_of (field devices)
+             (by_expr ((Field_ref (field num_class_info) (type_ ()))))))))
          (Field_list (name names)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name STR))))
             (ft_allowed ())))
-          (length ((Field_ref devices_len))))
+          (length ((Field_ref (field devices_len) (type_ ())))))
          (Field_pad (pad (Pad_align 4)) (serialize false))))
        (doc ()))))
     (doc ()))
@@ -9480,7 +9537,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name InputClassInfo))))
             (ft_allowed ())))
-          (length ((Field_ref num_classes))))
+          (length ((Field_ref (field num_classes) (type_ ())))))
          (Field_pad (pad (Pad_align 4)) (serialize false))))
        (doc ()))))
     (doc ()))
@@ -9525,7 +9582,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name EventClass))))
          (ft_allowed ())))
-       (length ((Field_ref num_classes))))))
+       (length ((Field_ref (field num_classes) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name GetSelectedExtensionEvents) (opcode 7)
     (combine_adjacent true)
@@ -9547,12 +9604,12 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name EventClass))))
             (ft_allowed ())))
-          (length ((Field_ref num_this_classes))))
+          (length ((Field_ref (field num_this_classes) (type_ ())))))
          (Field_list (name all_classes)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name EventClass))))
             (ft_allowed ())))
-          (length ((Field_ref num_all_classes))))))
+          (length ((Field_ref (field num_all_classes) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Enum (name PropagateMode)
@@ -9577,7 +9634,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name EventClass))))
          (ft_allowed ())))
-       (length ((Field_ref num_classes))))))
+       (length ((Field_ref (field num_classes) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name GetDeviceDontPropagateList) (opcode 9)
     (combine_adjacent true)
@@ -9597,7 +9654,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name EventClass))))
             (ft_allowed ())))
-          (length ((Field_ref num_classes))))))
+          (length ((Field_ref (field num_classes) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Struct (name DeviceTimeCoord)
@@ -9640,7 +9697,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name DeviceTimeCoord))))
             (ft_allowed ())))
-          (length ((Field_ref num_events))))))
+          (length ((Field_ref (field num_events) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name ChangeKeyboardDevice) (opcode 11) (combine_adjacent true)
@@ -9710,7 +9767,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name EventClass))))
          (ft_allowed ())))
-       (length ((Field_ref num_classes))))))
+       (length ((Field_ref (field num_classes) (type_ ())))))))
     (reply
      (((fields
         ((Field (name xi_reply_type)
@@ -9773,7 +9830,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name EventClass))))
          (ft_allowed ())))
-       (length ((Field_ref num_classes))))))
+       (length ((Field_ref (field num_classes) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name UngrabDeviceKey) (opcode 16) (combine_adjacent true)
     (fields
@@ -9835,7 +9892,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name EventClass))))
          (ft_allowed ())))
-       (length ((Field_ref num_classes))))))
+       (length ((Field_ref (field num_classes) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name UngrabDeviceButton) (opcode 18) (combine_adjacent true)
     (fields
@@ -10015,7 +10072,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name KEYSYM))))
          (ft_allowed ())))
-       (length ((Field_ref num_keysyms)))))))
+       (length ((Field_ref (field num_keysyms) (type_ ()))))))))
    (Struct (name BellFeedbackState)
     (fields
      ((Field (name class_id)
@@ -10061,7 +10118,8 @@
       (Field (name len)
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
       (Field_switch
-       ((sw_name data) (sw_cond (Cond_eq (Field_ref class_id)))
+       ((sw_name data)
+        (sw_cond (Cond_eq (Field_ref (field class_id) (type_ ()))))
         (sw_cases
          (((cs_name (keyboard))
            (cs_cond
@@ -10111,7 +10169,7 @@
               (type_
                ((ft_type (Type_ref ((id_module ()) (id_name KEYSYM))))
                 (ft_allowed ())))
-              (length ((Field_ref num_keysyms)))))))
+              (length ((Field_ref (field num_keysyms) (type_ ()))))))))
           ((cs_name (integer))
            (cs_cond
             ((Enum_ref (enum ((id_module ()) (id_name FeedbackClass)))
@@ -10160,7 +10218,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name FeedbackState))))
             (ft_allowed ())))
-          (length ((Field_ref num_feedbacks))))))
+          (length ((Field_ref (field num_feedbacks) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Struct (name KbdFeedbackCtl)
@@ -10241,7 +10299,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name KEYSYM))))
          (ft_allowed ())))
-       (length ((Field_ref num_keysyms)))))))
+       (length ((Field_ref (field num_keysyms) (type_ ()))))))))
    (Struct (name BellFeedbackCtl)
     (fields
      ((Field (name class_id)
@@ -10287,7 +10345,8 @@
       (Field (name len)
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
       (Field_switch
-       ((sw_name data) (sw_cond (Cond_eq (Field_ref class_id)))
+       ((sw_name data)
+        (sw_cond (Cond_eq (Field_ref (field class_id) (type_ ()))))
         (sw_cases
          (((cs_name (keyboard))
            (cs_cond
@@ -10336,7 +10395,7 @@
               (type_
                ((ft_type (Type_ref ((id_module ()) (id_name KEYSYM))))
                 (ft_allowed ())))
-              (length ((Field_ref num_keysyms)))))))
+              (length ((Field_ref (field num_keysyms) (type_ ()))))))))
           ((cs_name (integer))
            (cs_cond
             ((Enum_ref (enum ((id_module ()) (id_name FeedbackClass)))
@@ -10413,7 +10472,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name KEYSYM))))
             (ft_allowed ())))
-          (length ((Field_ref length))))))
+          (length ((Field_ref (field length) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name ChangeDeviceKeyMapping) (opcode 25) (combine_adjacent true)
@@ -10433,8 +10492,8 @@
         ((ft_type (Type_ref ((id_module ()) (id_name KEYSYM))))
          (ft_allowed ())))
        (length
-        ((Binop Mul (Field_ref keycode_count)
-          (Field_ref keysyms_per_keycode)))))))
+        ((Binop Mul (Field_ref (field keycode_count) (type_ ()))
+          (Field_ref (field keysyms_per_keycode) (type_ ()))))))))
     (reply ()) (doc ()))
    (Request (name GetDeviceModifierMapping) (opcode 26)
     (combine_adjacent true)
@@ -10452,7 +10511,8 @@
          (Field_list (name keymaps)
           (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
           (length
-           ((Binop Mul (Field_ref keycodes_per_modifier) (Expr_value 8)))))))
+           ((Binop Mul (Field_ref (field keycodes_per_modifier) (type_ ()))
+             (Expr_value 8)))))))
        (doc ()))))
     (doc ()))
    (Request (name SetDeviceModifierMapping) (opcode 27)
@@ -10466,7 +10526,8 @@
       (Field_list (name keymaps)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
        (length
-        ((Binop Mul (Field_ref keycodes_per_modifier) (Expr_value 8)))))))
+        ((Binop Mul (Field_ref (field keycodes_per_modifier) (type_ ()))
+          (Expr_value 8)))))))
     (reply
      (((fields
         ((Field (name xi_reply_type)
@@ -10493,7 +10554,7 @@
          (Field_pad (pad (Pad_bytes 23)) (serialize false))
          (Field_list (name map)
           (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-          (length ((Field_ref map_size))))
+          (length ((Field_ref (field map_size) (type_ ())))))
          (Field_pad (pad (Pad_align 4)) (serialize false))))
        (doc ()))))
     (doc ()))
@@ -10506,7 +10567,7 @@
       (Field_pad (pad (Pad_bytes 2)) (serialize false))
       (Field_list (name map)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-       (length ((Field_ref map_size))))))
+       (length ((Field_ref (field map_size) (type_ ())))))))
     (reply
      (((fields
         ((Field (name xi_reply_type)
@@ -10567,7 +10628,7 @@
           ((Allowed_mask ((id_module ()) (id_name ValuatorStateModeMask))))))))
       (Field_list (name valuators)
        (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-       (length ((Field_ref num_valuators)))))))
+       (length ((Field_ref (field num_valuators) (type_ ()))))))))
    (Struct (name InputState)
     (fields
      ((Field (name class_id)
@@ -10577,7 +10638,8 @@
       (Field (name len)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
       (Field_switch
-       ((sw_name data) (sw_cond (Cond_eq (Field_ref class_id)))
+       ((sw_name data)
+        (sw_cond (Cond_eq (Field_ref (field class_id) (type_ ()))))
         (sw_cases
          (((cs_name (key))
            (cs_cond
@@ -10616,7 +10678,7 @@
                    ((id_module ()) (id_name ValuatorStateModeMask))))))))
              (Field_list (name valuators)
               (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-              (length ((Field_ref num_valuators))))))))))))))
+              (length ((Field_ref (field num_valuators) (type_ ())))))))))))))))
    (Request (name QueryDeviceState) (opcode 30) (combine_adjacent true)
     (fields
      ((Field (name device_id)
@@ -10633,7 +10695,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name InputState))))
             (ft_allowed ())))
-          (length ((Field_ref num_classes))))))
+          (length ((Field_ref (field num_classes) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name DeviceBell) (opcode 32) (combine_adjacent true)
@@ -10658,7 +10720,7 @@
       (Field_pad (pad (Pad_bytes 1)) (serialize false))
       (Field_list (name valuators)
        (type_ ((ft_type (Type_primitive Int32)) (ft_allowed ())))
-       (length ((Field_ref num_valuators))))))
+       (length ((Field_ref (field num_valuators) (type_ ())))))))
     (reply
      (((fields
         ((Field (name xi_reply_type)
@@ -10690,13 +10752,13 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name resolution_values)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref num_valuators))))
+       (length ((Field_ref (field num_valuators) (type_ ())))))
       (Field_list (name resolution_min)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref num_valuators))))
+       (length ((Field_ref (field num_valuators) (type_ ())))))
       (Field_list (name resolution_max)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref num_valuators)))))))
+       (length ((Field_ref (field num_valuators) (type_ ()))))))))
    (Struct (name DeviceAbsCalibState)
     (fields
      ((Field (name control_id)
@@ -10779,7 +10841,8 @@
       (Field (name len)
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
       (Field_switch
-       ((sw_name data) (sw_cond (Cond_eq (Field_ref control_id)))
+       ((sw_name data)
+        (sw_cond (Cond_eq (Field_ref (field control_id) (type_ ()))))
         (sw_cases
          (((cs_name (resolution))
            (cs_cond
@@ -10790,13 +10853,13 @@
               (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
              (Field_list (name resolution_values)
               (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-              (length ((Field_ref num_valuators))))
+              (length ((Field_ref (field num_valuators) (type_ ())))))
              (Field_list (name resolution_min)
               (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-              (length ((Field_ref num_valuators))))
+              (length ((Field_ref (field num_valuators) (type_ ())))))
              (Field_list (name resolution_max)
               (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-              (length ((Field_ref num_valuators)))))))
+              (length ((Field_ref (field num_valuators) (type_ ()))))))))
           ((cs_name (abs_calib))
            (cs_cond
             ((Enum_ref (enum ((id_module ()) (id_name DeviceControl)))
@@ -10895,7 +10958,7 @@
       (Field_pad (pad (Pad_bytes 2)) (serialize false))
       (Field_list (name resolution_values)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref num_valuators)))))))
+       (length ((Field_ref (field num_valuators) (type_ ()))))))))
    (Struct (name DeviceAbsCalibCtl)
     (fields
      ((Field (name control_id)
@@ -10976,7 +11039,8 @@
       (Field (name len)
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
       (Field_switch
-       ((sw_name data) (sw_cond (Cond_eq (Field_ref control_id)))
+       ((sw_name data)
+        (sw_cond (Cond_eq (Field_ref (field control_id) (type_ ()))))
         (sw_cases
          (((cs_name (resolution))
            (cs_cond
@@ -10990,7 +11054,7 @@
              (Field_pad (pad (Pad_bytes 2)) (serialize false))
              (Field_list (name resolution_values)
               (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-              (length ((Field_ref num_valuators)))))))
+              (length ((Field_ref (field num_valuators) (type_ ()))))))))
           ((cs_name (abs_calib))
            (cs_cond
             ((Enum_ref (enum ((id_module ()) (id_name DeviceControl)))
@@ -11087,7 +11151,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name ATOM))))
             (ft_allowed ())))
-          (length ((Field_ref num_atoms))))))
+          (length ((Field_ref (field num_atoms) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Enum (name PropertyFormat)
@@ -11120,7 +11184,8 @@
       (Field (name num_items)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_switch
-       ((sw_name items) (sw_cond (Cond_eq (Field_ref format)))
+       ((sw_name items)
+        (sw_cond (Cond_eq (Field_ref (field format) (type_ ()))))
         (sw_cases
          (((cs_name ())
            (cs_cond
@@ -11129,7 +11194,7 @@
            (cs_fields
             ((Field_list (name data8)
               (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-              (length ((Field_ref num_items))))
+              (length ((Field_ref (field num_items) (type_ ())))))
              (Field_pad (pad (Pad_align 4)) (serialize false)))))
           ((cs_name ())
            (cs_cond
@@ -11138,7 +11203,7 @@
            (cs_fields
             ((Field_list (name data16)
               (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
-              (length ((Field_ref num_items))))
+              (length ((Field_ref (field num_items) (type_ ())))))
              (Field_pad (pad (Pad_align 4)) (serialize false)))))
           ((cs_name ())
            (cs_cond
@@ -11147,7 +11212,7 @@
            (cs_fields
             ((Field_list (name data32)
               (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-              (length ((Field_ref num_items)))))))))))))
+              (length ((Field_ref (field num_items) (type_ ()))))))))))))))
     (reply ()) (doc ()))
    (Request (name DeleteDeviceProperty) (opcode 38) (combine_adjacent true)
     (fields
@@ -11199,7 +11264,8 @@
           (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
          (Field_pad (pad (Pad_bytes 10)) (serialize false))
          (Field_switch
-          ((sw_name items) (sw_cond (Cond_eq (Field_ref format)))
+          ((sw_name items)
+           (sw_cond (Cond_eq (Field_ref (field format) (type_ ()))))
            (sw_cases
             (((cs_name ())
               (cs_cond
@@ -11208,7 +11274,7 @@
               (cs_fields
                ((Field_list (name data8)
                  (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-                 (length ((Field_ref num_items))))
+                 (length ((Field_ref (field num_items) (type_ ())))))
                 (Field_pad (pad (Pad_align 4)) (serialize false)))))
              ((cs_name ())
               (cs_cond
@@ -11217,7 +11283,7 @@
               (cs_fields
                ((Field_list (name data16)
                  (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
-                 (length ((Field_ref num_items))))
+                 (length ((Field_ref (field num_items) (type_ ())))))
                 (Field_pad (pad (Pad_align 4)) (serialize false)))))
              ((cs_name ())
               (cs_cond
@@ -11226,7 +11292,7 @@
               (cs_fields
                ((Field_list (name data32)
                  (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-                 (length ((Field_ref num_items)))))))))))))
+                 (length ((Field_ref (field num_items) (type_ ()))))))))))))))
        (doc ()))))
     (doc ()))
    (Enum (name Device)
@@ -11304,7 +11370,7 @@
             (ft_allowed ()))))
          (Field_list (name buttons)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Field_ref buttons_len))))))
+          (length ((Field_ref (field buttons_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name XIWarpPointer) (opcode 41) (combine_adjacent true)
@@ -11383,7 +11449,7 @@
        (type_ ((ft_type (Type_primitive Bool)) (ft_allowed ()))))
       (Field_list (name name)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref name_len))))
+       (length ((Field_ref (field name_len) (type_ ())))))
       (Field_pad (pad (Pad_align 4)) (serialize false)))))
    (Struct (name RemoveMaster)
     (fields
@@ -11452,7 +11518,8 @@
       (Field (name len)
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
       (Field_switch
-       ((sw_name data) (sw_cond (Cond_eq (Field_ref type)))
+       ((sw_name data)
+        (sw_cond (Cond_eq (Field_ref (field type) (type_ ()))))
         (sw_cases
          (((cs_name (add_master))
            (cs_cond
@@ -11467,7 +11534,7 @@
               (type_ ((ft_type (Type_primitive Bool)) (ft_allowed ()))))
              (Field_list (name name)
               (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-              (length ((Field_ref name_len))))
+              (length ((Field_ref (field name_len) (type_ ())))))
              (Field_pad (pad (Pad_align 4)) (serialize false)))))
           ((cs_name (remove_master))
            (cs_cond
@@ -11530,7 +11597,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name HierarchyChange))))
          (ft_allowed ())))
-       (length ((Field_ref num_changes))))))
+       (length ((Field_ref (field num_changes) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name XISetClientPointer) (opcode 44) (combine_adjacent true)
     (fields
@@ -11591,7 +11658,7 @@
        (type_
         ((ft_type (Type_primitive Card32))
          (ft_allowed ((Allowed_mask ((id_module ()) (id_name XIEventMask)))))))
-       (length ((Field_ref mask_len)))))))
+       (length ((Field_ref (field mask_len) (type_ ()))))))))
    (Request (name XISelectEvents) (opcode 46) (combine_adjacent true)
     (fields
      ((Field (name window)
@@ -11605,7 +11672,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name EventMask))))
          (ft_allowed ())))
-       (length ((Field_ref num_mask))))))
+       (length ((Field_ref (field num_mask) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name XIQueryVersion) (opcode 47) (combine_adjacent true)
     (fields
@@ -11658,13 +11725,15 @@
       (Field_list (name state)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
        (length
-        ((Binop Div (Binop Add (Field_ref num_buttons) (Expr_value 31))
+        ((Binop Div
+          (Binop Add (Field_ref (field num_buttons) (type_ ()))
+           (Expr_value 31))
           (Expr_value 32)))))
       (Field_list (name labels)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name ATOM))))
          (ft_allowed ())))
-       (length ((Field_ref num_buttons)))))))
+       (length ((Field_ref (field num_buttons) (type_ ()))))))))
    (Struct (name KeyClass)
     (fields
      ((Field (name type)
@@ -11682,7 +11751,7 @@
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
       (Field_list (name keys)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref num_keys)))))))
+       (length ((Field_ref (field num_keys) (type_ ()))))))))
    (Struct (name ScrollClass)
     (fields
      ((Field (name type)
@@ -11783,7 +11852,8 @@
         ((ft_type (Type_ref ((id_module ()) (id_name DeviceId))))
          (ft_allowed ()))))
       (Field_switch
-       ((sw_name data) (sw_cond (Cond_eq (Field_ref type)))
+       ((sw_name data)
+        (sw_cond (Cond_eq (Field_ref (field type) (type_ ()))))
         (sw_cases
          (((cs_name (key))
            (cs_cond
@@ -11794,7 +11864,7 @@
               (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
              (Field_list (name keys)
               (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-              (length ((Field_ref num_keys)))))))
+              (length ((Field_ref (field num_keys) (type_ ()))))))))
           ((cs_name (button))
            (cs_cond
             ((Enum_ref (enum ((id_module ()) (id_name DeviceClassType)))
@@ -11806,13 +11876,14 @@
               (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
               (length
                ((Binop Div
-                 (Binop Add (Field_ref num_buttons) (Expr_value 31))
+                 (Binop Add (Field_ref (field num_buttons) (type_ ()))
+                  (Expr_value 31))
                  (Expr_value 32)))))
              (Field_list (name labels)
               (type_
                ((ft_type (Type_ref ((id_module ()) (id_name ATOM))))
                 (ft_allowed ())))
-              (length ((Field_ref num_buttons)))))))
+              (length ((Field_ref (field num_buttons) (type_ ()))))))))
           ((cs_name (valuator))
            (cs_cond
             ((Enum_ref (enum ((id_module ()) (id_name DeviceClassType)))
@@ -11901,13 +11972,13 @@
       (Field_pad (pad (Pad_bytes 1)) (serialize false))
       (Field_list (name name)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref name_len))))
+       (length ((Field_ref (field name_len) (type_ ())))))
       (Field_pad (pad (Pad_align 4)) (serialize false))
       (Field_list (name classes)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name DeviceClass))))
          (ft_allowed ())))
-       (length ((Field_ref num_classes)))))))
+       (length ((Field_ref (field num_classes) (type_ ()))))))))
    (Request (name XIQueryDevice) (opcode 48) (combine_adjacent true)
     (fields
      ((Field (name deviceid)
@@ -11925,7 +11996,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name XIDeviceInfo))))
             (ft_allowed ())))
-          (length ((Field_ref num_infos))))))
+          (length ((Field_ref (field num_infos) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name XISetFocus) (opcode 49) (combine_adjacent true)
@@ -11998,7 +12069,7 @@
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
       (Field_list (name mask)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref mask_len))))))
+       (length ((Field_ref (field mask_len) (type_ ())))))))
     (reply
      (((fields
         ((Field_pad (pad (Pad_bytes 1)) (serialize false))
@@ -12116,10 +12187,10 @@
       (Field_pad (pad (Pad_bytes 2)) (serialize false))
       (Field_list (name mask)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref mask_len))))
+       (length ((Field_ref (field mask_len) (type_ ())))))
       (Field_list (name modifiers)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref num_modifiers))))))
+       (length ((Field_ref (field num_modifiers) (type_ ())))))))
     (reply
      (((fields
         ((Field_pad (pad (Pad_bytes 1)) (serialize false))
@@ -12130,7 +12201,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name GrabModifierInfo))))
             (ft_allowed ())))
-          (length ((Field_ref num_modifiers))))))
+          (length ((Field_ref (field num_modifiers) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name XIPassiveUngrabDevice) (opcode 55) (combine_adjacent true)
@@ -12154,7 +12225,7 @@
       (Field_pad (pad (Pad_bytes 3)) (serialize false))
       (Field_list (name modifiers)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref num_modifiers))))))
+       (length ((Field_ref (field num_modifiers) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name XIListProperties) (opcode 56) (combine_adjacent true)
     (fields
@@ -12173,7 +12244,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name ATOM))))
             (ft_allowed ())))
-          (length ((Field_ref num_properties))))))
+          (length ((Field_ref (field num_properties) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name XIChangeProperty) (opcode 57) (combine_adjacent true)
@@ -12202,7 +12273,8 @@
       (Field (name num_items)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_switch
-       ((sw_name items) (sw_cond (Cond_eq (Field_ref format)))
+       ((sw_name items)
+        (sw_cond (Cond_eq (Field_ref (field format) (type_ ()))))
         (sw_cases
          (((cs_name ())
            (cs_cond
@@ -12211,7 +12283,7 @@
            (cs_fields
             ((Field_list (name data8)
               (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-              (length ((Field_ref num_items))))
+              (length ((Field_ref (field num_items) (type_ ())))))
              (Field_pad (pad (Pad_align 4)) (serialize false)))))
           ((cs_name ())
            (cs_cond
@@ -12220,7 +12292,7 @@
            (cs_fields
             ((Field_list (name data16)
               (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
-              (length ((Field_ref num_items))))
+              (length ((Field_ref (field num_items) (type_ ())))))
              (Field_pad (pad (Pad_align 4)) (serialize false)))))
           ((cs_name ())
            (cs_cond
@@ -12229,7 +12301,7 @@
            (cs_fields
             ((Field_list (name data32)
               (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-              (length ((Field_ref num_items)))))))))))))
+              (length ((Field_ref (field num_items) (type_ ()))))))))))))))
     (reply ()) (doc ()))
    (Request (name XIDeleteProperty) (opcode 58) (combine_adjacent true)
     (fields
@@ -12282,7 +12354,8 @@
              ((Allowed_enum ((id_module ()) (id_name PropertyFormat))))))))
          (Field_pad (pad (Pad_bytes 11)) (serialize false))
          (Field_switch
-          ((sw_name items) (sw_cond (Cond_eq (Field_ref format)))
+          ((sw_name items)
+           (sw_cond (Cond_eq (Field_ref (field format) (type_ ()))))
            (sw_cases
             (((cs_name ())
               (cs_cond
@@ -12291,7 +12364,7 @@
               (cs_fields
                ((Field_list (name data8)
                  (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-                 (length ((Field_ref num_items))))
+                 (length ((Field_ref (field num_items) (type_ ())))))
                 (Field_pad (pad (Pad_align 4)) (serialize false)))))
              ((cs_name ())
               (cs_cond
@@ -12300,7 +12373,7 @@
               (cs_fields
                ((Field_list (name data16)
                  (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ())))
-                 (length ((Field_ref num_items))))
+                 (length ((Field_ref (field num_items) (type_ ())))))
                 (Field_pad (pad (Pad_align 4)) (serialize false)))))
              ((cs_name ())
               (cs_cond
@@ -12309,7 +12382,7 @@
               (cs_fields
                ((Field_list (name data32)
                  (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-                 (length ((Field_ref num_items)))))))))))))
+                 (length ((Field_ref (field num_items) (type_ ()))))))))))))))
        (doc ()))))
     (doc ()))
    (Request (name XIGetSelectedEvents) (opcode 60) (combine_adjacent true)
@@ -12328,7 +12401,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name EventMask))))
             (ft_allowed ())))
-          (length ((Field_ref num_masks))))))
+          (length ((Field_ref (field num_masks) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Struct (name BarrierReleasePointerInfo)
@@ -12354,7 +12427,7 @@
         ((ft_type
           (Type_ref ((id_module ()) (id_name BarrierReleasePointerInfo))))
          (ft_allowed ())))
-       (length ((Field_ref num_barriers))))))
+       (length ((Field_ref (field num_barriers) (type_ ())))))))
     (reply ()) (doc ()))
    (Event (name DeviceValuator) (number 0) (is_generic false)
     (is_serializable false) (no_sequence_number false)
@@ -12637,7 +12710,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name DeviceClass))))
          (ft_allowed ())))
-       (length ((Field_ref num_classes))))))
+       (length ((Field_ref (field num_classes) (type_ ())))))))
     (doc ()))
    (Enum (name KeyEventFlags) (items ((KeyRepeat (Item_bit 16)))) (doc ()))
    (Event (name KeyPress) (number 2) (is_generic true)
@@ -12705,10 +12778,10 @@
          (ft_allowed ()))))
       (Field_list (name button_mask)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref buttons_len))))
+       (length ((Field_ref (field buttons_len) (type_ ())))))
       (Field_list (name valuator_mask)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref valuators_len))))
+       (length ((Field_ref (field valuators_len) (type_ ())))))
       (Field_list (name axisvalues)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name FP3232))))
@@ -12786,10 +12859,10 @@
          (ft_allowed ()))))
       (Field_list (name button_mask)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref buttons_len))))
+       (length ((Field_ref (field buttons_len) (type_ ())))))
       (Field_list (name valuator_mask)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref valuators_len))))
+       (length ((Field_ref (field valuators_len) (type_ ())))))
       (Field_list (name axisvalues)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name FP3232))))
@@ -12885,7 +12958,7 @@
          (ft_allowed ()))))
       (Field_list (name buttons)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref buttons_len))))))
+       (length ((Field_ref (field buttons_len) (type_ ())))))))
     (doc ()))
    (Event_copy (name Leave) (event ((id_module ()) (id_name Enter)))
     (ev_number 8) (is_serializable false))
@@ -12945,7 +13018,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name HierarchyInfo))))
          (ft_allowed ())))
-       (length ((Field_ref num_infos))))))
+       (length ((Field_ref (field num_infos) (type_ ())))))))
     (doc ()))
    (Enum (name PropertyFlag)
     (items
@@ -13001,7 +13074,7 @@
       (Field_pad (pad (Pad_bytes 4)) (serialize false))
       (Field_list (name valuator_mask)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref valuators_len))))
+       (length ((Field_ref (field valuators_len) (type_ ())))))
       (Field_list (name axisvalues)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name FP3232))))
@@ -13047,7 +13120,7 @@
       (Field_pad (pad (Pad_bytes 4)) (serialize false))
       (Field_list (name valuator_mask)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref valuators_len))))
+       (length ((Field_ref (field valuators_len) (type_ ())))))
       (Field_list (name axisvalues)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name FP3232))))
@@ -13138,10 +13211,10 @@
          (ft_allowed ()))))
       (Field_list (name button_mask)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref buttons_len))))
+       (length ((Field_ref (field buttons_len) (type_ ())))))
       (Field_list (name valuator_mask)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref valuators_len))))
+       (length ((Field_ref (field valuators_len) (type_ ())))))
       (Field_list (name axisvalues)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name FP3232))))
@@ -13220,7 +13293,7 @@
       (Field_pad (pad (Pad_bytes 4)) (serialize false))
       (Field_list (name valuator_mask)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref valuators_len))))
+       (length ((Field_ref (field valuators_len) (type_ ())))))
       (Field_list (name axisvalues)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name FP3232))))
@@ -13325,12 +13398,12 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name EventForSend))))
          (ft_allowed ())))
-       (length ((Field_ref num_events))))
+       (length ((Field_ref (field num_events) (type_ ())))))
       (Field_list (name classes)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name EventClass))))
          (ft_allowed ())))
-       (length ((Field_ref num_classes))))))
+       (length ((Field_ref (field num_classes) (type_ ())))))))
     (reply ()) (doc ()))
    (Error (name Device) (number 0) (fields ()))
    (Error (name Event) (number 1) (fields ()))
@@ -13605,14 +13678,15 @@
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
       (Field_list (name string)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref length))))
+       (length ((Field_ref (field length) (type_ ())))))
       (Field_list (name alignment_pad)
        (type_ ((ft_type (Type_primitive Void)) (ft_allowed ())))
        (length
         ((Binop Sub
-          (Binop Bit_and (Binop Add (Field_ref length) (Expr_value 5))
+          (Binop Bit_and
+           (Binop Add (Field_ref (field length) (type_ ())) (Expr_value 5))
            (Unop Bit_not (Expr_value 3)))
-          (Binop Add (Field_ref length) (Expr_value 2)))))))))
+          (Binop Add (Field_ref (field length) (type_ ())) (Expr_value 2)))))))))
    (Struct (name KTMapEntry)
     (fields
      ((Field (name active)
@@ -13657,12 +13731,14 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name KTMapEntry))))
          (ft_allowed ())))
-       (length ((Field_ref nMapEntries))))
+       (length ((Field_ref (field nMapEntries) (type_ ())))))
       (Field_list (name preserve)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name ModDef))))
          (ft_allowed ())))
-       (length ((Binop Mul (Field_ref hasPreserve) (Field_ref nMapEntries))))))))
+       (length
+        ((Binop Mul (Field_ref (field hasPreserve) (type_ ()))
+          (Field_ref (field nMapEntries) (type_ ())))))))))
    (Struct (name KeySymMap)
     (fields
      ((Field_list (name kt_index)
@@ -13678,7 +13754,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name KEYSYM))))
          (ft_allowed ())))
-       (length ((Field_ref nSyms)))))))
+       (length ((Field_ref (field nSyms) (type_ ()))))))))
    (Struct (name CommonBehavior)
     (fields
      ((Field (name type)
@@ -13848,12 +13924,14 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name KTSetMapEntry))))
          (ft_allowed ())))
-       (length ((Field_ref nMapEntries))))
+       (length ((Field_ref (field nMapEntries) (type_ ())))))
       (Field_list (name preserve_entries)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name KTSetMapEntry))))
          (ft_allowed ())))
-       (length ((Binop Mul (Field_ref preserve) (Field_ref nMapEntries))))))))
+       (length
+        ((Binop Mul (Field_ref (field preserve) (type_ ()))
+          (Field_ref (field nMapEntries) (type_ ())))))))))
    (Typedef (name STRING8) (type_ (Type_primitive Char)))
    (Struct (name Outline)
     (fields
@@ -13866,7 +13944,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name POINT))))
          (ft_allowed ())))
-       (length ((Field_ref nPoints)))))))
+       (length ((Field_ref (field nPoints) (type_ ()))))))))
    (Struct (name Shape)
     (fields
      ((Field (name name)
@@ -13884,7 +13962,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name Outline))))
          (ft_allowed ())))
-       (length ((Field_ref nOutlines)))))))
+       (length ((Field_ref (field nOutlines) (type_ ()))))))))
    (Struct (name Key)
     (fields
      ((Field_list (name name)
@@ -13921,7 +13999,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name OverlayKey))))
          (ft_allowed ())))
-       (length ((Field_ref nKeys)))))))
+       (length ((Field_ref (field nKeys) (type_ ()))))))))
    (Struct (name Overlay)
     (fields
      ((Field (name name)
@@ -13935,7 +14013,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name OverlayRow))))
          (ft_allowed ())))
-       (length ((Field_ref nRows)))))))
+       (length ((Field_ref (field nRows) (type_ ()))))))))
    (Struct (name Row)
     (fields
      ((Field (name top)
@@ -13950,7 +14028,7 @@
       (Field_list (name keys)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name Key)))) (ft_allowed ())))
-       (length ((Field_ref nKeys)))))))
+       (length ((Field_ref (field nKeys) (type_ ()))))))))
    (Enum (name DoodadType)
     (items
      ((Outline (Item_value 1)) (Solid (Item_value 2)) (Text (Item_value 3))
@@ -13966,7 +14044,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name STRING8))))
          (ft_allowed ())))
-       (length ((Field_ref length))))
+       (length ((Field_ref (field length) (type_ ())))))
       (Field_pad (pad (Pad_align 2)) (serialize false)))))
    (Struct (name DeviceLedInfo)
     (fields
@@ -13990,12 +14068,12 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name ATOM))))
          (ft_allowed ())))
-       (length ((Pop_count (Field_ref namesPresent)))))
+       (length ((Pop_count (Field_ref (field namesPresent) (type_ ()))))))
       (Field_list (name maps)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name IndicatorMap))))
          (ft_allowed ())))
-       (length ((Pop_count (Field_ref mapsPresent))))))))
+       (length ((Pop_count (Field_ref (field mapsPresent) (type_ ())))))))))
    (Enum (name Error)
     (items
      ((BadDevice (Item_value 255)) (BadClass (Item_value 254))
@@ -14542,9 +14620,9 @@
        ((sw_name details)
         (sw_cond
          (Cond_bit_and
-          (Binop Bit_and (Field_ref affectWhich)
-           (Binop Bit_and (Unop Bit_not (Field_ref clear))
-            (Unop Bit_not (Field_ref selectAll))))))
+          (Binop Bit_and (Field_ref (field affectWhich) (type_ ()))
+           (Binop Bit_and (Unop Bit_not (Field_ref (field clear) (type_ ())))
+            (Unop Bit_not (Field_ref (field selectAll) (type_ ())))))))
         (sw_cases
          (((cs_name ())
            (cs_cond
@@ -15149,7 +15227,8 @@
            ((ft_type (Type_primitive Card16))
             (ft_allowed ((Allowed_mask ((id_module ()) (id_name VMod))))))))
          (Field_switch
-          ((sw_name map) (sw_cond (Cond_bit_and (Field_ref present)))
+          ((sw_name map)
+           (sw_cond (Cond_bit_and (Field_ref (field present) (type_ ()))))
            (sw_cases
             (((cs_name ())
               (cs_cond
@@ -15160,7 +15239,7 @@
                  (type_
                   ((ft_type (Type_ref ((id_module ()) (id_name KeyType))))
                    (ft_allowed ())))
-                 (length ((Field_ref nTypes)))))))
+                 (length ((Field_ref (field nTypes) (type_ ()))))))))
              ((cs_name ())
               (cs_cond
                ((Enum_ref (enum ((id_module ()) (id_name MapPart)))
@@ -15170,7 +15249,7 @@
                  (type_
                   ((ft_type (Type_ref ((id_module ()) (id_name KeySymMap))))
                    (ft_allowed ())))
-                 (length ((Field_ref nKeySyms)))))))
+                 (length ((Field_ref (field nKeySyms) (type_ ()))))))))
              ((cs_name ())
               (cs_cond
                ((Enum_ref (enum ((id_module ()) (id_name MapPart)))
@@ -15178,13 +15257,13 @@
               (cs_fields
                ((Field_list (name acts_rtrn_count)
                  (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-                 (length ((Field_ref nKeyActions))))
+                 (length ((Field_ref (field nKeyActions) (type_ ())))))
                 (Field_pad (pad (Pad_align 4)) (serialize true))
                 (Field_list (name acts_rtrn_acts)
                  (type_
                   ((ft_type (Type_ref ((id_module ()) (id_name Action))))
                    (ft_allowed ())))
-                 (length ((Field_ref totalActions)))))))
+                 (length ((Field_ref (field totalActions) (type_ ()))))))))
              ((cs_name ())
               (cs_cond
                ((Enum_ref (enum ((id_module ()) (id_name MapPart)))
@@ -15195,7 +15274,7 @@
                   ((ft_type
                     (Type_ref ((id_module ()) (id_name SetBehavior))))
                    (ft_allowed ())))
-                 (length ((Field_ref totalKeyBehaviors)))))))
+                 (length ((Field_ref (field totalKeyBehaviors) (type_ ()))))))))
              ((cs_name ())
               (cs_cond
                ((Enum_ref (enum ((id_module ()) (id_name MapPart)))
@@ -15206,7 +15285,8 @@
                   ((ft_type (Type_primitive Card8))
                    (ft_allowed
                     ((Allowed_mask ((id_module ()) (id_name ModMask)))))))
-                 (length ((Pop_count (Field_ref virtualMods)))))
+                 (length
+                  ((Pop_count (Field_ref (field virtualMods) (type_ ()))))))
                 (Field_pad (pad (Pad_align 4)) (serialize true)))))
              ((cs_name ())
               (cs_cond
@@ -15218,7 +15298,7 @@
                   ((ft_type
                     (Type_ref ((id_module ()) (id_name SetExplicit))))
                    (ft_allowed ())))
-                 (length ((Field_ref totalKeyExplicit))))
+                 (length ((Field_ref (field totalKeyExplicit) (type_ ())))))
                 (Field_pad (pad (Pad_align 4)) (serialize true)))))
              ((cs_name ())
               (cs_cond
@@ -15229,7 +15309,7 @@
                  (type_
                   ((ft_type (Type_ref ((id_module ()) (id_name KeyModMap))))
                    (ft_allowed ())))
-                 (length ((Field_ref totalModMapKeys))))
+                 (length ((Field_ref (field totalModMapKeys) (type_ ())))))
                 (Field_pad (pad (Pad_align 4)) (serialize true)))))
              ((cs_name ())
               (cs_cond
@@ -15240,7 +15320,7 @@
                  (type_
                   ((ft_type (Type_ref ((id_module ()) (id_name KeyVModMap))))
                    (ft_allowed ())))
-                 (length ((Field_ref totalVModMapKeys)))))))))))))
+                 (length ((Field_ref (field totalVModMapKeys) (type_ ()))))))))))))))
        (doc ()))))
     (doc ()))
    (Request (name SetMap) (opcode 9) (combine_adjacent true)
@@ -15322,7 +15402,8 @@
         ((ft_type (Type_primitive Card16))
          (ft_allowed ((Allowed_mask ((id_module ()) (id_name VMod))))))))
       (Field_switch
-       ((sw_name values) (sw_cond (Cond_bit_and (Field_ref present)))
+       ((sw_name values)
+        (sw_cond (Cond_bit_and (Field_ref (field present) (type_ ()))))
         (sw_cases
          (((cs_name ())
            (cs_cond
@@ -15333,7 +15414,7 @@
               (type_
                ((ft_type (Type_ref ((id_module ()) (id_name SetKeyType))))
                 (ft_allowed ())))
-              (length ((Field_ref nTypes)))))))
+              (length ((Field_ref (field nTypes) (type_ ()))))))))
           ((cs_name ())
            (cs_cond
             ((Enum_ref (enum ((id_module ()) (id_name MapPart)))
@@ -15343,7 +15424,7 @@
               (type_
                ((ft_type (Type_ref ((id_module ()) (id_name KeySymMap))))
                 (ft_allowed ())))
-              (length ((Field_ref nKeySyms)))))))
+              (length ((Field_ref (field nKeySyms) (type_ ()))))))))
           ((cs_name ())
            (cs_cond
             ((Enum_ref (enum ((id_module ()) (id_name MapPart)))
@@ -15351,13 +15432,13 @@
            (cs_fields
             ((Field_list (name actionsCount)
               (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-              (length ((Field_ref nKeyActions))))
+              (length ((Field_ref (field nKeyActions) (type_ ())))))
              (Field_pad (pad (Pad_align 4)) (serialize false))
              (Field_list (name actions)
               (type_
                ((ft_type (Type_ref ((id_module ()) (id_name Action))))
                 (ft_allowed ())))
-              (length ((Field_ref totalActions)))))))
+              (length ((Field_ref (field totalActions) (type_ ()))))))))
           ((cs_name ())
            (cs_cond
             ((Enum_ref (enum ((id_module ()) (id_name MapPart)))
@@ -15367,7 +15448,7 @@
               (type_
                ((ft_type (Type_ref ((id_module ()) (id_name SetBehavior))))
                 (ft_allowed ())))
-              (length ((Field_ref totalKeyBehaviors)))))))
+              (length ((Field_ref (field totalKeyBehaviors) (type_ ()))))))))
           ((cs_name ())
            (cs_cond
             ((Enum_ref (enum ((id_module ()) (id_name MapPart)))
@@ -15375,7 +15456,8 @@
            (cs_fields
             ((Field_list (name vmods)
               (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-              (length ((Pop_count (Field_ref virtualMods)))))
+              (length
+               ((Pop_count (Field_ref (field virtualMods) (type_ ()))))))
              (Field_pad (pad (Pad_align 4)) (serialize false)))))
           ((cs_name ())
            (cs_cond
@@ -15386,7 +15468,7 @@
               (type_
                ((ft_type (Type_ref ((id_module ()) (id_name SetExplicit))))
                 (ft_allowed ())))
-              (length ((Field_ref totalKeyExplicit)))))))
+              (length ((Field_ref (field totalKeyExplicit) (type_ ()))))))))
           ((cs_name ())
            (cs_cond
             ((Enum_ref (enum ((id_module ()) (id_name MapPart)))
@@ -15396,7 +15478,7 @@
               (type_
                ((ft_type (Type_ref ((id_module ()) (id_name KeyModMap))))
                 (ft_allowed ())))
-              (length ((Field_ref totalModMapKeys)))))))
+              (length ((Field_ref (field totalModMapKeys) (type_ ()))))))))
           ((cs_name ())
            (cs_cond
             ((Enum_ref (enum ((id_module ()) (id_name MapPart)))
@@ -15406,7 +15488,7 @@
               (type_
                ((ft_type (Type_ref ((id_module ()) (id_name KeyVModMap))))
                 (ft_allowed ())))
-              (length ((Field_ref totalVModMapKeys)))))))))))))
+              (length ((Field_ref (field totalVModMapKeys) (type_ ()))))))))))))))
     (reply ()) (doc ()))
    (Request (name GetCompatMap) (opcode 10) (combine_adjacent true)
     (fields
@@ -15445,12 +15527,12 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name SymInterpret))))
             (ft_allowed ())))
-          (length ((Field_ref nSIRtrn))))
+          (length ((Field_ref (field nSIRtrn) (type_ ())))))
          (Field_list (name group_rtrn)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name ModDef))))
             (ft_allowed ())))
-          (length ((Pop_count (Field_ref groupsRtrn)))))))
+          (length ((Pop_count (Field_ref (field groupsRtrn) (type_ ()))))))))
        (doc ()))))
     (doc ()))
    (Request (name SetCompatMap) (opcode 11) (combine_adjacent true)
@@ -15477,12 +15559,12 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name SymInterpret))))
          (ft_allowed ())))
-       (length ((Field_ref nSI))))
+       (length ((Field_ref (field nSI) (type_ ())))))
       (Field_list (name groupMaps)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name ModDef))))
          (ft_allowed ())))
-       (length ((Pop_count (Field_ref groups)))))))
+       (length ((Pop_count (Field_ref (field groups) (type_ ()))))))))
     (reply ()) (doc ()))
    (Request (name GetIndicatorState) (opcode 12) (combine_adjacent true)
     (fields
@@ -15524,7 +15606,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name IndicatorMap))))
             (ft_allowed ())))
-          (length ((Pop_count (Field_ref which)))))))
+          (length ((Pop_count (Field_ref (field which) (type_ ()))))))))
        (doc ()))))
     (doc ()))
    (Request (name SetIndicatorMap) (opcode 14) (combine_adjacent true)
@@ -15540,7 +15622,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name IndicatorMap))))
          (ft_allowed ())))
-       (length ((Pop_count (Field_ref which)))))))
+       (length ((Pop_count (Field_ref (field which) (type_ ()))))))))
     (reply ()) (doc ()))
    (Request (name GetNamedIndicator) (opcode 15) (combine_adjacent true)
     (fields
@@ -15730,7 +15812,8 @@
           (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
          (Field_pad (pad (Pad_bytes 4)) (serialize false))
          (Field_switch
-          ((sw_name valueList) (sw_cond (Cond_bit_and (Field_ref which)))
+          ((sw_name valueList)
+           (sw_cond (Cond_bit_and (Field_ref (field which) (type_ ()))))
            (sw_cases
             (((cs_name ())
               (cs_cond
@@ -15795,7 +15878,7 @@
                  (type_
                   ((ft_type (Type_ref ((id_module ()) (id_name ATOM))))
                    (ft_allowed ())))
-                 (length ((Field_ref nTypes)))))))
+                 (length ((Field_ref (field nTypes) (type_ ()))))))))
              ((cs_name ())
               (cs_cond
                ((Enum_ref (enum ((id_module ()) (id_name NameDetail)))
@@ -15803,7 +15886,7 @@
               (cs_fields
                ((Field_list (name nLevelsPerType)
                  (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-                 (length ((Field_ref nTypes))))
+                 (length ((Field_ref (field nTypes) (type_ ())))))
                 (Field_pad (pad (Pad_align 4)) (serialize true))
                 (Field_list (name ktLevelNames)
                  (type_
@@ -15819,7 +15902,8 @@
                  (type_
                   ((ft_type (Type_ref ((id_module ()) (id_name ATOM))))
                    (ft_allowed ())))
-                 (length ((Pop_count (Field_ref indicators))))))))
+                 (length
+                  ((Pop_count (Field_ref (field indicators) (type_ ())))))))))
              ((cs_name ())
               (cs_cond
                ((Enum_ref (enum ((id_module ()) (id_name NameDetail)))
@@ -15829,7 +15913,8 @@
                  (type_
                   ((ft_type (Type_ref ((id_module ()) (id_name ATOM))))
                    (ft_allowed ())))
-                 (length ((Pop_count (Field_ref virtualMods))))))))
+                 (length
+                  ((Pop_count (Field_ref (field virtualMods) (type_ ())))))))))
              ((cs_name ())
               (cs_cond
                ((Enum_ref (enum ((id_module ()) (id_name NameDetail)))
@@ -15839,7 +15924,8 @@
                  (type_
                   ((ft_type (Type_ref ((id_module ()) (id_name ATOM))))
                    (ft_allowed ())))
-                 (length ((Pop_count (Field_ref groupNames))))))))
+                 (length
+                  ((Pop_count (Field_ref (field groupNames) (type_ ())))))))))
              ((cs_name ())
               (cs_cond
                ((Enum_ref (enum ((id_module ()) (id_name NameDetail)))
@@ -15849,7 +15935,7 @@
                  (type_
                   ((ft_type (Type_ref ((id_module ()) (id_name KeyName))))
                    (ft_allowed ())))
-                 (length ((Field_ref nKeys)))))))
+                 (length ((Field_ref (field nKeys) (type_ ()))))))))
              ((cs_name ())
               (cs_cond
                ((Enum_ref (enum ((id_module ()) (id_name NameDetail)))
@@ -15859,7 +15945,7 @@
                  (type_
                   ((ft_type (Type_ref ((id_module ()) (id_name KeyAlias))))
                    (ft_allowed ())))
-                 (length ((Field_ref nKeyAliases)))))))
+                 (length ((Field_ref (field nKeyAliases) (type_ ()))))))))
              ((cs_name ())
               (cs_cond
                ((Enum_ref (enum ((id_module ()) (id_name NameDetail)))
@@ -15869,7 +15955,7 @@
                  (type_
                   ((ft_type (Type_ref ((id_module ()) (id_name ATOM))))
                    (ft_allowed ())))
-                 (length ((Field_ref nRadioGroups)))))))))))))
+                 (length ((Field_ref (field nRadioGroups) (type_ ()))))))))))))))
        (doc ()))))
     (doc ()))
    (Request (name SetNames) (opcode 18) (combine_adjacent true)
@@ -15914,7 +16000,8 @@
       (Field (name totalKTLevelNames)
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
       (Field_switch
-       ((sw_name values) (sw_cond (Cond_bit_and (Field_ref which)))
+       ((sw_name values)
+        (sw_cond (Cond_bit_and (Field_ref (field which) (type_ ()))))
         (sw_cases
          (((cs_name ())
            (cs_cond
@@ -15979,7 +16066,7 @@
               (type_
                ((ft_type (Type_ref ((id_module ()) (id_name ATOM))))
                 (ft_allowed ())))
-              (length ((Field_ref nTypes)))))))
+              (length ((Field_ref (field nTypes) (type_ ()))))))))
           ((cs_name ())
            (cs_cond
             ((Enum_ref (enum ((id_module ()) (id_name NameDetail)))
@@ -15987,7 +16074,7 @@
            (cs_fields
             ((Field_list (name nLevelsPerType)
               (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-              (length ((Field_ref nTypes))))
+              (length ((Field_ref (field nTypes) (type_ ())))))
              (Field_pad (pad (Pad_align 4)) (serialize false))
              (Field_list (name ktLevelNames)
               (type_
@@ -16003,7 +16090,8 @@
               (type_
                ((ft_type (Type_ref ((id_module ()) (id_name ATOM))))
                 (ft_allowed ())))
-              (length ((Pop_count (Field_ref indicators))))))))
+              (length
+               ((Pop_count (Field_ref (field indicators) (type_ ())))))))))
           ((cs_name ())
            (cs_cond
             ((Enum_ref (enum ((id_module ()) (id_name NameDetail)))
@@ -16013,7 +16101,8 @@
               (type_
                ((ft_type (Type_ref ((id_module ()) (id_name ATOM))))
                 (ft_allowed ())))
-              (length ((Pop_count (Field_ref virtualMods))))))))
+              (length
+               ((Pop_count (Field_ref (field virtualMods) (type_ ())))))))))
           ((cs_name ())
            (cs_cond
             ((Enum_ref (enum ((id_module ()) (id_name NameDetail)))
@@ -16023,7 +16112,8 @@
               (type_
                ((ft_type (Type_ref ((id_module ()) (id_name ATOM))))
                 (ft_allowed ())))
-              (length ((Pop_count (Field_ref groupNames))))))))
+              (length
+               ((Pop_count (Field_ref (field groupNames) (type_ ())))))))))
           ((cs_name ())
            (cs_cond
             ((Enum_ref (enum ((id_module ()) (id_name NameDetail)))
@@ -16033,7 +16123,7 @@
               (type_
                ((ft_type (Type_ref ((id_module ()) (id_name KeyName))))
                 (ft_allowed ())))
-              (length ((Field_ref nKeys)))))))
+              (length ((Field_ref (field nKeys) (type_ ()))))))))
           ((cs_name ())
            (cs_cond
             ((Enum_ref (enum ((id_module ()) (id_name NameDetail)))
@@ -16043,7 +16133,7 @@
               (type_
                ((ft_type (Type_ref ((id_module ()) (id_name KeyAlias))))
                 (ft_allowed ())))
-              (length ((Field_ref nKeyAliases)))))))
+              (length ((Field_ref (field nKeyAliases) (type_ ()))))))))
           ((cs_name ())
            (cs_cond
             ((Enum_ref (enum ((id_module ()) (id_name NameDetail)))
@@ -16053,7 +16143,7 @@
               (type_
                ((ft_type (Type_ref ((id_module ()) (id_name ATOM))))
                 (ft_allowed ())))
-              (length ((Field_ref nRadioGroups)))))))))))))
+              (length ((Field_ref (field nRadioGroups) (type_ ()))))))))))))))
     (reply ()) (doc ()))
    (Request (name PerClientFlags) (opcode 21) (combine_adjacent true)
     (fields
@@ -16140,32 +16230,32 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name Listing))))
             (ft_allowed ())))
-          (length ((Field_ref nKeymaps))))
+          (length ((Field_ref (field nKeymaps) (type_ ())))))
          (Field_list (name keycodes)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name Listing))))
             (ft_allowed ())))
-          (length ((Field_ref nKeycodes))))
+          (length ((Field_ref (field nKeycodes) (type_ ())))))
          (Field_list (name types)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name Listing))))
             (ft_allowed ())))
-          (length ((Field_ref nTypes))))
+          (length ((Field_ref (field nTypes) (type_ ())))))
          (Field_list (name compatMaps)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name Listing))))
             (ft_allowed ())))
-          (length ((Field_ref nCompatMaps))))
+          (length ((Field_ref (field nCompatMaps) (type_ ())))))
          (Field_list (name symbols)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name Listing))))
             (ft_allowed ())))
-          (length ((Field_ref nSymbols))))
+          (length ((Field_ref (field nSymbols) (type_ ())))))
          (Field_list (name geometries)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name Listing))))
             (ft_allowed ())))
-          (length ((Field_ref nGeometries))))))
+          (length ((Field_ref (field nGeometries) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetKbdByName) (opcode 23) (combine_adjacent true)
@@ -16213,7 +16303,8 @@
              ((Allowed_mask ((id_module ()) (id_name GBNDetail))))))))
          (Field_pad (pad (Pad_bytes 16)) (serialize false))
          (Field_switch
-          ((sw_name replies) (sw_cond (Cond_bit_and (Field_ref reported)))
+          ((sw_name replies)
+           (sw_cond (Cond_bit_and (Field_ref (field reported) (type_ ()))))
            (sw_cases
             (((cs_name (types))
               (cs_cond
@@ -16307,7 +16398,9 @@
                    (ft_allowed
                     ((Allowed_mask ((id_module ()) (id_name VMod))))))))
                 (Field_switch
-                 ((sw_name map) (sw_cond (Cond_bit_and (Field_ref present)))
+                 ((sw_name map)
+                  (sw_cond
+                   (Cond_bit_and (Field_ref (field present) (type_ ()))))
                   (sw_cases
                    (((cs_name ())
                      (cs_cond
@@ -16319,7 +16412,7 @@
                          ((ft_type
                            (Type_ref ((id_module ()) (id_name KeyType))))
                           (ft_allowed ())))
-                        (length ((Field_ref nTypes)))))))
+                        (length ((Field_ref (field nTypes) (type_ ()))))))))
                     ((cs_name ())
                      (cs_cond
                       ((Enum_ref (enum ((id_module ()) (id_name MapPart)))
@@ -16330,7 +16423,7 @@
                          ((ft_type
                            (Type_ref ((id_module ()) (id_name KeySymMap))))
                           (ft_allowed ())))
-                        (length ((Field_ref nKeySyms)))))))
+                        (length ((Field_ref (field nKeySyms) (type_ ()))))))))
                     ((cs_name ())
                      (cs_cond
                       ((Enum_ref (enum ((id_module ()) (id_name MapPart)))
@@ -16339,14 +16432,15 @@
                       ((Field_list (name acts_rtrn_count)
                         (type_
                          ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-                        (length ((Field_ref nKeyActions))))
+                        (length ((Field_ref (field nKeyActions) (type_ ())))))
                        (Field_pad (pad (Pad_align 4)) (serialize false))
                        (Field_list (name acts_rtrn_acts)
                         (type_
                          ((ft_type
                            (Type_ref ((id_module ()) (id_name Action))))
                           (ft_allowed ())))
-                        (length ((Field_ref totalActions)))))))
+                        (length
+                         ((Field_ref (field totalActions) (type_ ()))))))))
                     ((cs_name ())
                      (cs_cond
                       ((Enum_ref (enum ((id_module ()) (id_name MapPart)))
@@ -16357,7 +16451,8 @@
                          ((ft_type
                            (Type_ref ((id_module ()) (id_name SetBehavior))))
                           (ft_allowed ())))
-                        (length ((Field_ref totalKeyBehaviors)))))))
+                        (length
+                         ((Field_ref (field totalKeyBehaviors) (type_ ()))))))))
                     ((cs_name ())
                      (cs_cond
                       ((Enum_ref (enum ((id_module ()) (id_name MapPart)))
@@ -16368,7 +16463,9 @@
                          ((ft_type (Type_primitive Card8))
                           (ft_allowed
                            ((Allowed_mask ((id_module ()) (id_name ModMask)))))))
-                        (length ((Pop_count (Field_ref virtualMods)))))
+                        (length
+                         ((Pop_count
+                           (Field_ref (field virtualMods) (type_ ()))))))
                        (Field_pad (pad (Pad_align 4)) (serialize false)))))
                     ((cs_name ())
                      (cs_cond
@@ -16380,7 +16477,8 @@
                          ((ft_type
                            (Type_ref ((id_module ()) (id_name SetExplicit))))
                           (ft_allowed ())))
-                        (length ((Field_ref totalKeyExplicit))))
+                        (length
+                         ((Field_ref (field totalKeyExplicit) (type_ ())))))
                        (Field_pad (pad (Pad_align 4)) (serialize false)))))
                     ((cs_name ())
                      (cs_cond
@@ -16392,7 +16490,8 @@
                          ((ft_type
                            (Type_ref ((id_module ()) (id_name KeyModMap))))
                           (ft_allowed ())))
-                        (length ((Field_ref totalModMapKeys))))
+                        (length
+                         ((Field_ref (field totalModMapKeys) (type_ ())))))
                        (Field_pad (pad (Pad_align 4)) (serialize false)))))
                     ((cs_name ())
                      (cs_cond
@@ -16404,7 +16503,8 @@
                          ((ft_type
                            (Type_ref ((id_module ()) (id_name KeyVModMap))))
                           (ft_allowed ())))
-                        (length ((Field_ref totalVModMapKeys))))))))))))))
+                        (length
+                         ((Field_ref (field totalVModMapKeys) (type_ ())))))))))))))))
              ((cs_name (compat_map))
               (cs_cond
                ((Enum_ref (enum ((id_module ()) (id_name GBNDetail)))
@@ -16436,12 +16536,13 @@
                   ((ft_type
                     (Type_ref ((id_module ()) (id_name SymInterpret))))
                    (ft_allowed ())))
-                 (length ((Field_ref nSIRtrn))))
+                 (length ((Field_ref (field nSIRtrn) (type_ ())))))
                 (Field_list (name group_rtrn)
                  (type_
                   ((ft_type (Type_ref ((id_module ()) (id_name ModDef))))
                    (ft_allowed ())))
-                 (length ((Pop_count (Field_ref groupsRtrn))))))))
+                 (length
+                  ((Pop_count (Field_ref (field groupsRtrn) (type_ ())))))))))
              ((cs_name (indicator_maps))
               (cs_cond
                ((Enum_ref (enum ((id_module ()) (id_name GBNDetail)))
@@ -16467,7 +16568,7 @@
                   ((ft_type
                     (Type_ref ((id_module ()) (id_name IndicatorMap))))
                    (ft_allowed ())))
-                 (length ((Field_ref nIndicators)))))))
+                 (length ((Field_ref (field nIndicators) (type_ ()))))))))
              ((cs_name (key_names))
               (cs_cond
                ((Enum_ref (enum ((id_module ()) (id_name GBNDetail)))
@@ -16525,7 +16626,8 @@
                 (Field_pad (pad (Pad_bytes 4)) (serialize false))
                 (Field_switch
                  ((sw_name valueList)
-                  (sw_cond (Cond_bit_and (Field_ref which)))
+                  (sw_cond
+                   (Cond_bit_and (Field_ref (field which) (type_ ()))))
                   (sw_cases
                    (((cs_name ())
                      (cs_cond
@@ -16597,7 +16699,7 @@
                          ((ft_type
                            (Type_ref ((id_module ()) (id_name ATOM))))
                           (ft_allowed ())))
-                        (length ((Field_ref nTypes)))))))
+                        (length ((Field_ref (field nTypes) (type_ ()))))))))
                     ((cs_name ())
                      (cs_cond
                       ((Enum_ref (enum ((id_module ()) (id_name NameDetail)))
@@ -16606,7 +16708,7 @@
                       ((Field_list (name nLevelsPerType)
                         (type_
                          ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-                        (length ((Field_ref nTypes))))
+                        (length ((Field_ref (field nTypes) (type_ ())))))
                        (Field_pad (pad (Pad_align 4)) (serialize false))
                        (Field_list (name ktLevelNames)
                         (type_
@@ -16625,7 +16727,9 @@
                          ((ft_type
                            (Type_ref ((id_module ()) (id_name ATOM))))
                           (ft_allowed ())))
-                        (length ((Pop_count (Field_ref indicators))))))))
+                        (length
+                         ((Pop_count
+                           (Field_ref (field indicators) (type_ ())))))))))
                     ((cs_name ())
                      (cs_cond
                       ((Enum_ref (enum ((id_module ()) (id_name NameDetail)))
@@ -16636,7 +16740,9 @@
                          ((ft_type
                            (Type_ref ((id_module ()) (id_name ATOM))))
                           (ft_allowed ())))
-                        (length ((Pop_count (Field_ref virtualMods))))))))
+                        (length
+                         ((Pop_count
+                           (Field_ref (field virtualMods) (type_ ())))))))))
                     ((cs_name ())
                      (cs_cond
                       ((Enum_ref (enum ((id_module ()) (id_name NameDetail)))
@@ -16647,7 +16753,9 @@
                          ((ft_type
                            (Type_ref ((id_module ()) (id_name ATOM))))
                           (ft_allowed ())))
-                        (length ((Pop_count (Field_ref groupNames))))))))
+                        (length
+                         ((Pop_count
+                           (Field_ref (field groupNames) (type_ ())))))))))
                     ((cs_name ())
                      (cs_cond
                       ((Enum_ref (enum ((id_module ()) (id_name NameDetail)))
@@ -16658,7 +16766,7 @@
                          ((ft_type
                            (Type_ref ((id_module ()) (id_name KeyName))))
                           (ft_allowed ())))
-                        (length ((Field_ref nKeys)))))))
+                        (length ((Field_ref (field nKeys) (type_ ()))))))))
                     ((cs_name ())
                      (cs_cond
                       ((Enum_ref (enum ((id_module ()) (id_name NameDetail)))
@@ -16669,7 +16777,7 @@
                          ((ft_type
                            (Type_ref ((id_module ()) (id_name KeyAlias))))
                           (ft_allowed ())))
-                        (length ((Field_ref nKeyAliases)))))))
+                        (length ((Field_ref (field nKeyAliases) (type_ ()))))))))
                     ((cs_name ())
                      (cs_cond
                       ((Enum_ref (enum ((id_module ()) (id_name NameDetail)))
@@ -16680,7 +16788,8 @@
                          ((ft_type
                            (Type_ref ((id_module ()) (id_name ATOM))))
                           (ft_allowed ())))
-                        (length ((Field_ref nRadioGroups))))))))))))))
+                        (length
+                         ((Field_ref (field nRadioGroups) (type_ ())))))))))))))))
              ((cs_name (geometry))
               (cs_cond
                ((Enum_ref (enum ((id_module ()) (id_name GBNDetail)))
@@ -16805,18 +16914,18 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name STRING8))))
             (ft_allowed ())))
-          (length ((Field_ref nameLen))))
+          (length ((Field_ref (field nameLen) (type_ ())))))
          (Field_pad (pad (Pad_align 4)) (serialize false))
          (Field_list (name btnActions)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name Action))))
             (ft_allowed ())))
-          (length ((Field_ref nBtnsRtrn))))
+          (length ((Field_ref (field nBtnsRtrn) (type_ ())))))
          (Field_list (name leds)
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name DeviceLedInfo))))
             (ft_allowed ())))
-          (length ((Field_ref nDeviceLedFBs))))))
+          (length ((Field_ref (field nDeviceLedFBs) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name SetDeviceInfo) (opcode 25) (combine_adjacent true)
@@ -16839,12 +16948,12 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name Action))))
          (ft_allowed ())))
-       (length ((Field_ref nBtns))))
+       (length ((Field_ref (field nBtns) (type_ ())))))
       (Field_list (name leds)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name DeviceLedInfo))))
          (ft_allowed ())))
-       (length ((Field_ref nDeviceLedFBs))))))
+       (length ((Field_ref (field nDeviceLedFBs) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name SetDebuggingFlags) (opcode 101) (combine_adjacent true)
     (fields
@@ -16863,7 +16972,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name STRING8))))
          (ft_allowed ())))
-       (length ((Field_ref msgLength))))))
+       (length ((Field_ref (field msgLength) (type_ ())))))))
     (reply
      (((fields
         ((Field_pad (pad (Pad_bytes 1)) (serialize false))
@@ -17358,7 +17467,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name STRING8))))
          (ft_allowed ())))
-       (length ((Field_ref nameLen))))
+       (length ((Field_ref (field nameLen) (type_ ())))))
       (Field_pad (pad (Pad_align 4)) (serialize false))
       (Field (name descLen)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
@@ -17366,7 +17475,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name STRING8))))
          (ft_allowed ())))
-       (length ((Field_ref descLen))))
+       (length ((Field_ref (field descLen) (type_ ())))))
       (Field_pad (pad (Pad_align 4)) (serialize false)))))
    (Xid PCONTEXT)
    (Enum (name GetDoc)
@@ -17411,12 +17520,12 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name STRING8))))
          (ft_allowed ())))
-       (length ((Field_ref printerNameLen))))
+       (length ((Field_ref (field printerNameLen) (type_ ())))))
       (Field_list (name locale)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name STRING8))))
          (ft_allowed ())))
-       (length ((Field_ref localeLen))))))
+       (length ((Field_ref (field localeLen) (type_ ())))))))
     (reply
      (((fields
         ((Field_pad (pad (Pad_bytes 1)) (serialize false))
@@ -17427,7 +17536,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name PRINTER))))
             (ft_allowed ())))
-          (length ((Field_ref listCount))))))
+          (length ((Field_ref (field listCount) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name PrintRehashPrinterList) (opcode 20) (combine_adjacent true)
@@ -17444,12 +17553,12 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name STRING8))))
          (ft_allowed ())))
-       (length ((Field_ref printerNameLen))))
+       (length ((Field_ref (field printerNameLen) (type_ ())))))
       (Field_list (name locale)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name STRING8))))
          (ft_allowed ())))
-       (length ((Field_ref localeLen))))))
+       (length ((Field_ref (field localeLen) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name PrintSetContext) (opcode 3) (combine_adjacent true)
     (fields
@@ -17515,17 +17624,17 @@
        (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
       (Field_list (name data)
        (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-       (length ((Field_ref len_data))))
+       (length ((Field_ref (field len_data) (type_ ())))))
       (Field_list (name doc_format)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name STRING8))))
          (ft_allowed ())))
-       (length ((Field_ref len_fmt))))
+       (length ((Field_ref (field len_fmt) (type_ ())))))
       (Field_list (name options)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name STRING8))))
          (ft_allowed ())))
-       (length ((Field_ref len_options))))))
+       (length ((Field_ref (field len_options) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name PrintGetDocumentData) (opcode 12) (combine_adjacent true)
     (fields
@@ -17547,7 +17656,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name data)
           (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-          (length ((Field_ref dataLen))))))
+          (length ((Field_ref (field dataLen) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name PrintStartPage) (opcode 13) (combine_adjacent true)
@@ -17606,7 +17715,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name STRING8))))
             (ft_allowed ())))
-          (length ((Field_ref stringLen))))))
+          (length ((Field_ref (field stringLen) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name PrintGetOneAttributes) (opcode 19) (combine_adjacent true)
@@ -17624,7 +17733,7 @@
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name STRING8))))
          (ft_allowed ())))
-       (length ((Field_ref nameLen))))))
+       (length ((Field_ref (field nameLen) (type_ ())))))))
     (reply
      (((fields
         ((Field_pad (pad (Pad_bytes 1)) (serialize false))
@@ -17635,7 +17744,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name STRING8))))
             (ft_allowed ())))
-          (length ((Field_ref valueLen))))))
+          (length ((Field_ref (field valueLen) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name PrintSetAttributes) (opcode 18) (combine_adjacent true)
@@ -17692,7 +17801,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name WINDOW))))
             (ft_allowed ())))
-          (length ((Field_ref listCount))))))
+          (length ((Field_ref (field listCount) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name PrintSetImageResolution) (opcode 23)
@@ -17850,7 +17959,7 @@
       (type_
        ((ft_type (Type_ref ((id_module ()) (id_name VISUALTYPE))))
         (ft_allowed ())))
-      (length ((Field_ref visuals_len)))))))
+      (length ((Field_ref (field visuals_len) (type_ ()))))))))
   (Enum (name EventMask)
    (items
     ((NoEvent (Item_value 0)) (KeyPress (Item_bit 0))
@@ -17920,7 +18029,7 @@
       (type_
        ((ft_type (Type_ref ((id_module ()) (id_name DEPTH))))
         (ft_allowed ())))
-      (length ((Field_ref allowed_depths_len)))))))
+      (length ((Field_ref (field allowed_depths_len) (type_ ()))))))))
   (Struct (name SetupRequest)
    (fields
     ((Field (name byte_order)
@@ -17937,11 +18046,13 @@
      (Field_pad (pad (Pad_bytes 2)) (serialize false))
      (Field_list (name authorization_protocol_name)
       (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-      (length ((Field_ref authorization_protocol_name_len))))
+      (length
+       ((Field_ref (field authorization_protocol_name_len) (type_ ())))))
      (Field_pad (pad (Pad_align 4)) (serialize false))
      (Field_list (name authorization_protocol_data)
       (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-      (length ((Field_ref authorization_protocol_data_len))))
+      (length
+       ((Field_ref (field authorization_protocol_data_len) (type_ ())))))
      (Field_pad (pad (Pad_align 4)) (serialize false)))))
   (Struct (name SetupFailed)
    (fields
@@ -17957,7 +18068,7 @@
       (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
      (Field_list (name reason)
       (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-      (length ((Field_ref reason_len)))))))
+      (length ((Field_ref (field reason_len) (type_ ()))))))))
   (Struct (name SetupAuthenticate)
    (fields
     ((Field (name status)
@@ -17967,7 +18078,8 @@
       (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
      (Field_list (name reason)
       (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-      (length ((Binop Mul (Field_ref length) (Expr_value 4))))))))
+      (length
+       ((Binop Mul (Field_ref (field length) (type_ ())) (Expr_value 4))))))))
   (Enum (name ImageOrder)
    (items ((LSBFirst (Item_value 0)) (MSBFirst (Item_value 1)))) (doc ()))
   (Struct (name Setup)
@@ -18020,18 +18132,18 @@
      (Field_pad (pad (Pad_bytes 4)) (serialize false))
      (Field_list (name vendor)
       (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-      (length ((Field_ref vendor_len))))
+      (length ((Field_ref (field vendor_len) (type_ ())))))
      (Field_pad (pad (Pad_align 4)) (serialize false))
      (Field_list (name pixmap_formats)
       (type_
        ((ft_type (Type_ref ((id_module ()) (id_name FORMAT))))
         (ft_allowed ())))
-      (length ((Field_ref pixmap_formats_len))))
+      (length ((Field_ref (field pixmap_formats_len) (type_ ())))))
      (Field_list (name roots)
       (type_
        ((ft_type (Type_ref ((id_module ()) (id_name SCREEN))))
         (ft_allowed ())))
-      (length ((Field_ref roots_len)))))))
+      (length ((Field_ref (field roots_len) (type_ ()))))))))
   (Enum (name ModMask)
    (items
     ((Shift (Item_bit 0)) (Lock (Item_bit 1)) (Control (Item_bit 2))
@@ -18876,7 +18988,8 @@
        ((ft_type (Type_primitive Card32))
         (ft_allowed ((Allowed_mask ((id_module ()) (id_name CW))))))))
      (Field_switch
-      ((sw_name value_list) (sw_cond (Cond_bit_and (Field_ref value_mask)))
+      ((sw_name value_list)
+       (sw_cond (Cond_bit_and (Field_ref (field value_mask) (type_ ()))))
        (sw_cases
         (((cs_name ())
           (cs_cond
@@ -19019,7 +19132,8 @@
        ((ft_type (Type_primitive Card32))
         (ft_allowed ((Allowed_mask ((id_module ()) (id_name CW))))))))
      (Field_switch
-      ((sw_name value_list) (sw_cond (Cond_bit_and (Field_ref value_mask)))
+      ((sw_name value_list)
+       (sw_cond (Cond_bit_and (Field_ref (field value_mask) (type_ ()))))
        (sw_cases
         (((cs_name ())
           (cs_cond
@@ -19321,7 +19435,8 @@
         (ft_allowed ((Allowed_mask ((id_module ()) (id_name ConfigWindow))))))))
      (Field_pad (pad (Pad_bytes 2)) (serialize false))
      (Field_switch
-      ((sw_name value_list) (sw_cond (Cond_bit_and (Field_ref value_mask)))
+      ((sw_name value_list)
+       (sw_cond (Cond_bit_and (Field_ref (field value_mask) (type_ ()))))
        (sw_cases
         (((cs_name ())
           (cs_cond
@@ -19447,7 +19562,7 @@
          (type_
           ((ft_type (Type_ref ((id_module ()) (id_name WINDOW))))
            (ft_allowed ())))
-         (length ((Field_ref children_len))))))
+         (length ((Field_ref (field children_len) (type_ ())))))))
       (doc (Doc)))))
    (doc (Doc)))
   (Request (name InternAtom) (opcode 16) (combine_adjacent true)
@@ -19459,7 +19574,7 @@
      (Field_pad (pad (Pad_bytes 2)) (serialize false))
      (Field_list (name name)
       (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-      (length ((Field_ref name_len))))))
+      (length ((Field_ref (field name_len) (type_ ())))))))
    (reply
     (((fields
        ((Field_pad (pad (Pad_bytes 1)) (serialize false))
@@ -19483,7 +19598,7 @@
         (Field_pad (pad (Pad_bytes 22)) (serialize false))
         (Field_list (name name)
          (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-         (length ((Field_ref name_len))))))
+         (length ((Field_ref (field name_len) (type_ ())))))))
       (doc ()))))
    (doc ()))
   (Enum (name PropMode)
@@ -19515,7 +19630,9 @@
      (Field_list (name data)
       (type_ ((ft_type (Type_primitive Void)) (ft_allowed ())))
       (length
-       ((Binop Div (Binop Mul (Field_ref data_len) (Field_ref format))
+       ((Binop Div
+         (Binop Mul (Field_ref (field data_len) (type_ ()))
+          (Field_ref (field format) (type_ ())))
          (Expr_value 8)))))))
    (reply ()) (doc (Doc)))
   (Request (name DeleteProperty) (opcode 19) (combine_adjacent true)
@@ -19566,8 +19683,8 @@
         (Field_list (name value)
          (type_ ((ft_type (Type_primitive Void)) (ft_allowed ())))
          (length
-          ((Binop Mul (Field_ref value_len)
-            (Binop Div (Field_ref format) (Expr_value 8))))))))
+          ((Binop Mul (Field_ref (field value_len) (type_ ()))
+            (Binop Div (Field_ref (field format) (type_ ())) (Expr_value 8))))))))
       (doc (Doc)))))
    (doc (Doc)))
   (Request (name ListProperties) (opcode 21) (combine_adjacent true)
@@ -19587,7 +19704,7 @@
          (type_
           ((ft_type (Type_ref ((id_module ()) (id_name ATOM))))
            (ft_allowed ())))
-         (length ((Field_ref atoms_len))))))
+         (length ((Field_ref (field atoms_len) (type_ ())))))))
       (doc ()))))
    (doc ()))
   (Request (name SetSelectionOwner) (opcode 22) (combine_adjacent true)
@@ -19971,7 +20088,7 @@
          (type_
           ((ft_type (Type_ref ((id_module ()) (id_name TIMECOORD))))
            (ft_allowed ())))
-         (length ((Field_ref events_len))))))
+         (length ((Field_ref (field events_len) (type_ ())))))))
       (doc ()))))
    (doc ()))
   (Request (name TranslateCoordinates) (opcode 40) (combine_adjacent true)
@@ -20085,7 +20202,7 @@
      (Field_pad (pad (Pad_bytes 2)) (serialize false))
      (Field_list (name name)
       (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-      (length ((Field_ref name_len))))))
+      (length ((Field_ref (field name_len) (type_ ())))))))
    (reply ()) (doc (Doc)))
   (Request (name CloseFont) (opcode 46) (combine_adjacent true)
    (fields
@@ -20166,19 +20283,21 @@
          (type_
           ((ft_type (Type_ref ((id_module ()) (id_name FONTPROP))))
            (ft_allowed ())))
-         (length ((Field_ref properties_len))))
+         (length ((Field_ref (field properties_len) (type_ ())))))
         (Field_list (name char_infos)
          (type_
           ((ft_type (Type_ref ((id_module ()) (id_name CHARINFO))))
            (ft_allowed ())))
-         (length ((Field_ref char_infos_len))))))
+         (length ((Field_ref (field char_infos_len) (type_ ())))))))
       (doc (Doc)))))
    (doc (Doc)))
   (Request (name QueryTextExtents) (opcode 48) (combine_adjacent true)
    (fields
     ((Field_expr (name odd_length)
       (type_ ((ft_type (Type_primitive Bool)) (ft_allowed ())))
-      (expr (Binop Bit_and (Field_ref string_len) (Expr_value 1))))
+      (expr
+       (Binop Bit_and (Field_ref (field string_len) (type_ ()))
+        (Expr_value 1))))
      (Field (name font)
       (type_
        ((ft_type (Type_ref ((id_module ()) (id_name FONTABLE))))
@@ -20216,7 +20335,7 @@
       (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
      (Field_list (name name)
       (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-      (length ((Field_ref name_len)))))))
+      (length ((Field_ref (field name_len) (type_ ()))))))))
   (Request (name ListFonts) (opcode 49) (combine_adjacent true)
    (fields
     ((Field_pad (pad (Pad_bytes 1)) (serialize false))
@@ -20226,7 +20345,7 @@
       (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
      (Field_list (name pattern)
       (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-      (length ((Field_ref pattern_len))))))
+      (length ((Field_ref (field pattern_len) (type_ ())))))))
    (reply
     (((fields
        ((Field_pad (pad (Pad_bytes 1)) (serialize false))
@@ -20237,7 +20356,7 @@
          (type_
           ((ft_type (Type_ref ((id_module ()) (id_name STR))))
            (ft_allowed ())))
-         (length ((Field_ref names_len))))))
+         (length ((Field_ref (field names_len) (type_ ())))))))
       (doc (Doc)))))
    (doc (Doc)))
   (Request (name ListFontsWithInfo) (opcode 50) (combine_adjacent true)
@@ -20249,7 +20368,7 @@
       (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
      (Field_list (name pattern)
       (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-      (length ((Field_ref pattern_len))))))
+      (length ((Field_ref (field pattern_len) (type_ ())))))))
    (reply
     (((fields
        ((Field (name name_len)
@@ -20292,10 +20411,10 @@
          (type_
           ((ft_type (Type_ref ((id_module ()) (id_name FONTPROP))))
            (ft_allowed ())))
-         (length ((Field_ref properties_len))))
+         (length ((Field_ref (field properties_len) (type_ ())))))
         (Field_list (name name)
          (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-         (length ((Field_ref name_len))))))
+         (length ((Field_ref (field name_len) (type_ ())))))))
       (doc (Doc)))))
    (doc (Doc)))
   (Request (name SetFontPath) (opcode 51) (combine_adjacent true)
@@ -20307,7 +20426,7 @@
      (Field_list (name font)
       (type_
        ((ft_type (Type_ref ((id_module ()) (id_name STR)))) (ft_allowed ())))
-      (length ((Field_ref font_qty))))))
+      (length ((Field_ref (field font_qty) (type_ ())))))))
    (reply ()) (doc ()))
   (Request (name GetFontPath) (opcode 52) (combine_adjacent true) (fields ())
    (reply
@@ -20320,7 +20439,7 @@
          (type_
           ((ft_type (Type_ref ((id_module ()) (id_name STR))))
            (ft_allowed ())))
-         (length ((Field_ref path_len))))))
+         (length ((Field_ref (field path_len) (type_ ())))))))
       (doc ()))))
    (doc ()))
   (Request (name CreatePixmap) (opcode 53) (combine_adjacent true)
@@ -20415,7 +20534,8 @@
        ((ft_type (Type_primitive Card32))
         (ft_allowed ((Allowed_mask ((id_module ()) (id_name GC))))))))
      (Field_switch
-      ((sw_name value_list) (sw_cond (Cond_bit_and (Field_ref value_mask)))
+      ((sw_name value_list)
+       (sw_cond (Cond_bit_and (Field_ref (field value_mask) (type_ ()))))
        (sw_cases
         (((cs_name ())
           (cs_cond
@@ -20611,7 +20731,8 @@
        ((ft_type (Type_primitive Card32))
         (ft_allowed ((Allowed_mask ((id_module ()) (id_name GC))))))))
      (Field_switch
-      ((sw_name value_list) (sw_cond (Cond_bit_and (Field_ref value_mask)))
+      ((sw_name value_list)
+       (sw_cond (Cond_bit_and (Field_ref (field value_mask) (type_ ()))))
        (sw_cases
         (((cs_name ())
           (cs_cond
@@ -20824,7 +20945,7 @@
       (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
      (Field_list (name dashes)
       (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-      (length ((Field_ref dashes_len))))))
+      (length ((Field_ref (field dashes_len) (type_ ())))))))
    (reply ()) (doc ()))
   (Enum (name ClipOrdering)
    (items
@@ -21166,7 +21287,8 @@
         (Field_pad (pad (Pad_bytes 20)) (serialize false))
         (Field_list (name data)
          (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-         (length ((Binop Mul (Field_ref length) (Expr_value 4)))))))
+         (length
+          ((Binop Mul (Field_ref (field length) (type_ ())) (Expr_value 4)))))))
       (doc ()))))
    (doc ()))
   (Request (name PolyText8) (opcode 74) (combine_adjacent true)
@@ -21223,7 +21345,7 @@
       (type_ ((ft_type (Type_primitive Int16)) (ft_allowed ()))))
      (Field_list (name string)
       (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-      (length ((Field_ref string_len))))))
+      (length ((Field_ref (field string_len) (type_ ())))))))
    (reply ()) (doc (Doc)))
   (Request (name ImageText16) (opcode 77) (combine_adjacent true)
    (fields
@@ -21245,7 +21367,7 @@
       (type_
        ((ft_type (Type_ref ((id_module ()) (id_name CHAR2B))))
         (ft_allowed ())))
-      (length ((Field_ref string_len))))))
+      (length ((Field_ref (field string_len) (type_ ())))))))
    (reply ()) (doc (Doc)))
   (Enum (name ColormapAlloc)
    (items ((None (Item_value 0)) (All (Item_value 1)))) (doc ()))
@@ -21322,7 +21444,7 @@
          (type_
           ((ft_type (Type_ref ((id_module ()) (id_name COLORMAP))))
            (ft_allowed ())))
-         (length ((Field_ref cmaps_len))))))
+         (length ((Field_ref (field cmaps_len) (type_ ())))))))
       (doc ()))))
    (doc ()))
   (Request (name AllocColor) (opcode 84) (combine_adjacent true)
@@ -21365,7 +21487,7 @@
      (Field_pad (pad (Pad_bytes 2)) (serialize false))
      (Field_list (name name)
       (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-      (length ((Field_ref name_len))))))
+      (length ((Field_ref (field name_len) (type_ ())))))))
    (reply
     (((fields
        ((Field_pad (pad (Pad_bytes 1)) (serialize false))
@@ -21407,10 +21529,10 @@
         (Field_pad (pad (Pad_bytes 20)) (serialize false))
         (Field_list (name pixels)
          (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-         (length ((Field_ref pixels_len))))
+         (length ((Field_ref (field pixels_len) (type_ ())))))
         (Field_list (name masks)
          (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-         (length ((Field_ref masks_len))))))
+         (length ((Field_ref (field masks_len) (type_ ())))))))
       (doc ()))))
    (doc ()))
   (Request (name AllocColorPlanes) (opcode 87) (combine_adjacent true)
@@ -21444,7 +21566,7 @@
         (Field_pad (pad (Pad_bytes 8)) (serialize false))
         (Field_list (name pixels)
          (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-         (length ((Field_ref pixels_len))))))
+         (length ((Field_ref (field pixels_len) (type_ ())))))))
       (doc ()))))
    (doc ()))
   (Request (name FreeColors) (opcode 88) (combine_adjacent true)
@@ -21508,7 +21630,7 @@
      (Field_pad (pad (Pad_bytes 2)) (serialize false))
      (Field_list (name name)
       (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-      (length ((Field_ref name_len))))))
+      (length ((Field_ref (field name_len) (type_ ())))))))
    (reply ()) (doc ()))
   (Struct (name RGB)
    (fields
@@ -21539,7 +21661,7 @@
          (type_
           ((ft_type (Type_ref ((id_module ()) (id_name RGB))))
            (ft_allowed ())))
-         (length ((Field_ref colors_len))))))
+         (length ((Field_ref (field colors_len) (type_ ())))))))
       (doc ()))))
    (doc ()))
   (Request (name LookupColor) (opcode 92) (combine_adjacent true)
@@ -21554,7 +21676,7 @@
      (Field_pad (pad (Pad_bytes 2)) (serialize false))
      (Field_list (name name)
       (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-      (length ((Field_ref name_len))))))
+      (length ((Field_ref (field name_len) (type_ ())))))))
    (reply
     (((fields
        ((Field_pad (pad (Pad_bytes 1)) (serialize false))
@@ -21701,7 +21823,7 @@
      (Field_pad (pad (Pad_bytes 2)) (serialize false))
      (Field_list (name name)
       (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-      (length ((Field_ref name_len))))))
+      (length ((Field_ref (field name_len) (type_ ())))))))
    (reply
     (((fields
        ((Field_pad (pad (Pad_bytes 1)) (serialize false))
@@ -21726,7 +21848,7 @@
          (type_
           ((ft_type (Type_ref ((id_module ()) (id_name STR))))
            (ft_allowed ())))
-         (length ((Field_ref names_len))))))
+         (length ((Field_ref (field names_len) (type_ ())))))))
       (doc ()))))
    (doc ()))
   (Request (name ChangeKeyboardMapping) (opcode 100) (combine_adjacent true)
@@ -21745,7 +21867,8 @@
        ((ft_type (Type_ref ((id_module ()) (id_name KEYSYM))))
         (ft_allowed ())))
       (length
-       ((Binop Mul (Field_ref keycode_count) (Field_ref keysyms_per_keycode)))))))
+       ((Binop Mul (Field_ref (field keycode_count) (type_ ()))
+         (Field_ref (field keysyms_per_keycode) (type_ ()))))))))
    (reply ()) (doc ()))
   (Request (name GetKeyboardMapping) (opcode 101) (combine_adjacent true)
    (fields
@@ -21765,7 +21888,7 @@
          (type_
           ((ft_type (Type_ref ((id_module ()) (id_name KEYSYM))))
            (ft_allowed ())))
-         (length ((Field_ref length))))))
+         (length ((Field_ref (field length) (type_ ())))))))
       (doc ()))))
    (doc ()))
   (Enum (name KB)
@@ -21788,7 +21911,8 @@
        ((ft_type (Type_primitive Card32))
         (ft_allowed ((Allowed_mask ((id_module ()) (id_name KB))))))))
      (Field_switch
-      ((sw_name value_list) (sw_cond (Cond_bit_and (Field_ref value_mask)))
+      ((sw_name value_list)
+       (sw_cond (Cond_bit_and (Field_ref (field value_mask) (type_ ()))))
        (sw_cases
         (((cs_name ())
           (cs_cond
@@ -21977,7 +22101,7 @@
       (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
      (Field_list (name address)
       (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-      (length ((Field_ref address_len))))))
+      (length ((Field_ref (field address_len) (type_ ())))))))
    (reply ()) (doc ()))
   (Struct (name HOST)
    (fields
@@ -21990,7 +22114,7 @@
       (type_ ((ft_type (Type_primitive Card16)) (ft_allowed ()))))
      (Field_list (name address)
       (type_ ((ft_type (Type_primitive Byte)) (ft_allowed ())))
-      (length ((Field_ref address_len))))
+      (length ((Field_ref (field address_len) (type_ ())))))
      (Field_pad (pad (Pad_align 4)) (serialize false)))))
   (Request (name ListHosts) (opcode 110) (combine_adjacent true) (fields ())
    (reply
@@ -22007,7 +22131,7 @@
          (type_
           ((ft_type (Type_ref ((id_module ()) (id_name HOST))))
            (ft_allowed ())))
-         (length ((Field_ref hosts_len))))))
+         (length ((Field_ref (field hosts_len) (type_ ())))))))
       (doc ()))))
    (doc ()))
   (Enum (name AccessControl)
@@ -22055,7 +22179,7 @@
      (Field_list (name atoms)
       (type_
        ((ft_type (Type_ref ((id_module ()) (id_name ATOM)))) (ft_allowed ())))
-      (length ((Field_ref atoms_len))))))
+      (length ((Field_ref (field atoms_len) (type_ ())))))))
    (reply ()) (doc ()))
   (Enum (name ScreenSaver)
    (items ((Reset (Item_value 0)) (Active (Item_value 1)))) (doc ()))
@@ -22076,7 +22200,7 @@
       (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ()))))
      (Field_list (name map)
       (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-      (length ((Field_ref map_len))))))
+      (length ((Field_ref (field map_len) (type_ ())))))))
    (reply
     (((fields
        ((Field (name status)
@@ -22095,7 +22219,7 @@
         (Field_pad (pad (Pad_bytes 24)) (serialize false))
         (Field_list (name map)
          (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-         (length ((Field_ref map_len))))))
+         (length ((Field_ref (field map_len) (type_ ())))))))
       (doc ()))))
    (doc ()))
   (Enum (name MapIndex)
@@ -22112,7 +22236,9 @@
       (type_
        ((ft_type (Type_ref ((id_module ()) (id_name KEYCODE))))
         (ft_allowed ())))
-      (length ((Binop Mul (Field_ref keycodes_per_modifier) (Expr_value 8)))))))
+      (length
+       ((Binop Mul (Field_ref (field keycodes_per_modifier) (type_ ()))
+         (Expr_value 8)))))))
    (reply
     (((fields
        ((Field (name status)
@@ -22134,7 +22260,8 @@
           ((ft_type (Type_ref ((id_module ()) (id_name KEYCODE))))
            (ft_allowed ())))
          (length
-          ((Binop Mul (Field_ref keycodes_per_modifier) (Expr_value 8)))))))
+          ((Binop Mul (Field_ref (field keycodes_per_modifier) (type_ ()))
+            (Expr_value 8)))))))
       (doc ()))))
    (doc ()))
   (Request (name NoOperation) (opcode 127) (combine_adjacent true)
@@ -22164,7 +22291,7 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name context)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref context_len))))))
+       (length ((Field_ref (field context_len) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name GetDeviceCreateContext) (opcode 2) (combine_adjacent true)
     (fields ())
@@ -22176,7 +22303,7 @@
          (Field_pad (pad (Pad_bytes 20)) (serialize false))
          (Field_list (name context)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref context_len))))))
+          (length ((Field_ref (field context_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name SetDeviceContext) (opcode 3) (combine_adjacent true)
@@ -22187,7 +22314,7 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name context)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref context_len))))))
+       (length ((Field_ref (field context_len) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name GetDeviceContext) (opcode 4) (combine_adjacent true)
     (fields
@@ -22201,7 +22328,7 @@
          (Field_pad (pad (Pad_bytes 20)) (serialize false))
          (Field_list (name context)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref context_len))))))
+          (length ((Field_ref (field context_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name SetWindowCreateContext) (opcode 5) (combine_adjacent true)
@@ -22210,7 +22337,7 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name context)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref context_len))))))
+       (length ((Field_ref (field context_len) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name GetWindowCreateContext) (opcode 6) (combine_adjacent true)
     (fields ())
@@ -22222,7 +22349,7 @@
          (Field_pad (pad (Pad_bytes 20)) (serialize false))
          (Field_list (name context)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref context_len))))))
+          (length ((Field_ref (field context_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetWindowContext) (opcode 7) (combine_adjacent true)
@@ -22239,7 +22366,7 @@
          (Field_pad (pad (Pad_bytes 20)) (serialize false))
          (Field_list (name context)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref context_len))))))
+          (length ((Field_ref (field context_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Struct (name ListItem)
@@ -22254,11 +22381,11 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name object_context)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref object_context_len))))
+       (length ((Field_ref (field object_context_len) (type_ ())))))
       (Field_pad (pad (Pad_align 4)) (serialize false))
       (Field_list (name data_context)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref data_context_len))))
+       (length ((Field_ref (field data_context_len) (type_ ())))))
       (Field_pad (pad (Pad_align 4)) (serialize false)))))
    (Request (name SetPropertyCreateContext) (opcode 8)
     (combine_adjacent true)
@@ -22267,7 +22394,7 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name context)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref context_len))))))
+       (length ((Field_ref (field context_len) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name GetPropertyCreateContext) (opcode 9)
     (combine_adjacent true) (fields ())
@@ -22279,7 +22406,7 @@
          (Field_pad (pad (Pad_bytes 20)) (serialize false))
          (Field_list (name context)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref context_len))))))
+          (length ((Field_ref (field context_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name SetPropertyUseContext) (opcode 10) (combine_adjacent true)
@@ -22288,7 +22415,7 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name context)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref context_len))))))
+       (length ((Field_ref (field context_len) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name GetPropertyUseContext) (opcode 11) (combine_adjacent true)
     (fields ())
@@ -22300,7 +22427,7 @@
          (Field_pad (pad (Pad_bytes 20)) (serialize false))
          (Field_list (name context)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref context_len))))))
+          (length ((Field_ref (field context_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetPropertyContext) (opcode 12) (combine_adjacent true)
@@ -22321,7 +22448,7 @@
          (Field_pad (pad (Pad_bytes 20)) (serialize false))
          (Field_list (name context)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref context_len))))))
+          (length ((Field_ref (field context_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetPropertyDataContext) (opcode 13) (combine_adjacent true)
@@ -22342,7 +22469,7 @@
          (Field_pad (pad (Pad_bytes 20)) (serialize false))
          (Field_list (name context)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref context_len))))))
+          (length ((Field_ref (field context_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name ListProperties) (opcode 14) (combine_adjacent true)
@@ -22361,7 +22488,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name ListItem))))
             (ft_allowed ())))
-          (length ((Field_ref properties_len))))))
+          (length ((Field_ref (field properties_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name SetSelectionCreateContext) (opcode 15)
@@ -22371,7 +22498,7 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name context)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref context_len))))))
+       (length ((Field_ref (field context_len) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name GetSelectionCreateContext) (opcode 16)
     (combine_adjacent true) (fields ())
@@ -22383,7 +22510,7 @@
          (Field_pad (pad (Pad_bytes 20)) (serialize false))
          (Field_list (name context)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref context_len))))))
+          (length ((Field_ref (field context_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name SetSelectionUseContext) (opcode 17) (combine_adjacent true)
@@ -22392,7 +22519,7 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name context)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref context_len))))))
+       (length ((Field_ref (field context_len) (type_ ())))))))
     (reply ()) (doc ()))
    (Request (name GetSelectionUseContext) (opcode 18) (combine_adjacent true)
     (fields ())
@@ -22404,7 +22531,7 @@
          (Field_pad (pad (Pad_bytes 20)) (serialize false))
          (Field_list (name context)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref context_len))))))
+          (length ((Field_ref (field context_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetSelectionContext) (opcode 19) (combine_adjacent true)
@@ -22421,7 +22548,7 @@
          (Field_pad (pad (Pad_bytes 20)) (serialize false))
          (Field_list (name context)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref context_len))))))
+          (length ((Field_ref (field context_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetSelectionDataContext) (opcode 20)
@@ -22439,7 +22566,7 @@
          (Field_pad (pad (Pad_bytes 20)) (serialize false))
          (Field_list (name context)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref context_len))))))
+          (length ((Field_ref (field context_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name ListSelections) (opcode 21) (combine_adjacent true)
@@ -22454,7 +22581,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name ListItem))))
             (ft_allowed ())))
-          (length ((Field_ref selections_len))))))
+          (length ((Field_ref (field selections_len) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GetClientContext) (opcode 22) (combine_adjacent true)
@@ -22469,7 +22596,7 @@
          (Field_pad (pad (Pad_bytes 20)) (serialize false))
          (Field_list (name context)
           (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-          (length ((Field_ref context_len))))))
+          (length ((Field_ref (field context_len) (type_ ())))))))
        (doc ()))))
     (doc ())))))
 (Extension (name Test) (file_name xtest) (query_name XTEST) (multiword false)
@@ -22601,13 +22728,13 @@
       (Field_pad (pad (Pad_bytes 1)) (serialize false))
       (Field_list (name name)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref name_size))))
+       (length ((Field_ref (field name_size) (type_ ())))))
       (Field_pad (pad (Pad_align 4)) (serialize false))
       (Field_list (name formats)
        (type_
         ((ft_type (Type_ref ((id_module ()) (id_name Format))))
          (ft_allowed ())))
-       (length ((Field_ref num_formats)))))))
+       (length ((Field_ref (field num_formats) (type_ ()))))))))
    (Struct (name EncodingInfo)
     (fields
      ((Field (name encoding)
@@ -22627,7 +22754,7 @@
          (ft_allowed ()))))
       (Field_list (name name)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref name_size))))
+       (length ((Field_ref (field name_size) (type_ ())))))
       (Field_pad (pad (Pad_align 4)) (serialize false)))))
    (Struct (name Image)
     (fields
@@ -22643,13 +22770,13 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name pitches)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref num_planes))))
+       (length ((Field_ref (field num_planes) (type_ ())))))
       (Field_list (name offsets)
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-       (length ((Field_ref num_planes))))
+       (length ((Field_ref (field num_planes) (type_ ())))))
       (Field_list (name data)
        (type_ ((ft_type (Type_primitive Card8)) (ft_allowed ())))
-       (length ((Field_ref data_size)))))))
+       (length ((Field_ref (field data_size) (type_ ()))))))))
    (Struct (name AttributeInfo)
     (fields
      ((Field (name flags)
@@ -22665,7 +22792,7 @@
        (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ()))))
       (Field_list (name name)
        (type_ ((ft_type (Type_primitive Char)) (ft_allowed ())))
-       (length ((Field_ref size))))
+       (length ((Field_ref (field size) (type_ ())))))
       (Field_pad (pad (Pad_align 4)) (serialize false)))))
    (Struct (name ImageFormatInfo)
     (fields
@@ -22801,7 +22928,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name AdaptorInfo))))
             (ft_allowed ())))
-          (length ((Field_ref num_adaptors))))))
+          (length ((Field_ref (field num_adaptors) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name QueryEncodings) (opcode 2) (combine_adjacent true)
@@ -22820,7 +22947,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name EncodingInfo))))
             (ft_allowed ())))
-          (length ((Field_ref num_encodings))))))
+          (length ((Field_ref (field num_encodings) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name GrabPort) (opcode 3) (combine_adjacent true)
@@ -23082,7 +23209,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name AttributeInfo))))
             (ft_allowed ())))
-          (length ((Field_ref num_attributes))))))
+          (length ((Field_ref (field num_attributes) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name ListImageFormats) (opcode 16) (combine_adjacent true)
@@ -23101,7 +23228,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name ImageFormatInfo))))
             (ft_allowed ())))
-          (length ((Field_ref num_formats))))))
+          (length ((Field_ref (field num_formats) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name QueryImageAttributes) (opcode 17) (combine_adjacent true)
@@ -23130,10 +23257,10 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name pitches)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Field_ref num_planes))))
+          (length ((Field_ref (field num_planes) (type_ ())))))
          (Field_list (name offsets)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Field_ref num_planes))))))
+          (length ((Field_ref (field num_planes) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name PutImage) (opcode 18) (combine_adjacent true)
@@ -23274,7 +23401,7 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name SurfaceInfo))))
             (ft_allowed ())))
-          (length ((Field_ref num))))))
+          (length ((Field_ref (field num) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name CreateContext) (opcode 2) (combine_adjacent true)
@@ -23309,7 +23436,7 @@
          (Field_pad (pad (Pad_bytes 20)) (serialize false))
          (Field_list (name priv_data)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Field_ref length))))))
+          (length ((Field_ref (field length) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name DestroyContext) (opcode 3) (combine_adjacent true)
@@ -23335,7 +23462,7 @@
          (Field_pad (pad (Pad_bytes 24)) (serialize false))
          (Field_list (name priv_data)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Field_ref length))))))
+          (length ((Field_ref (field length) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name DestroySurface) (opcode 5) (combine_adjacent true)
@@ -23378,7 +23505,7 @@
          (Field_pad (pad (Pad_bytes 12)) (serialize false))
          (Field_list (name priv_data)
           (type_ ((ft_type (Type_primitive Card32)) (ft_allowed ())))
-          (length ((Field_ref length))))))
+          (length ((Field_ref (field length) (type_ ())))))))
        (doc ()))))
     (doc ()))
    (Request (name DestroySubpicture) (opcode 7) (combine_adjacent true)
@@ -23408,6 +23535,6 @@
           (type_
            ((ft_type (Type_ref ((id_module ()) (id_name ImageFormatInfo))))
             (ft_allowed ())))
-          (length ((Field_ref num))))))
+          (length ((Field_ref (field num) (type_ ())))))))
        (doc ()))))
     (doc ())))))

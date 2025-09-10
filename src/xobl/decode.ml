@@ -23,8 +23,11 @@ let i8 = decode Bytes.get_int8 ~size:1
 let u8 = decode Bytes.get_uint8 ~size:1
 let i16 = decode Bytes.get_int16_le ~size:2
 let u16 = decode Bytes.get_uint16_le ~size:2
-let i32 cur = decode Bytes.get_int32_le ~size:4 cur |> Optint.of_int32
-let u32 cur = decode Bytes.get_int32_le ~size:4 cur |> Optint.of_unsigned_int32
+let i32 cur = decode Bytes.get_int32_le ~size:4 cur |> Int32.to_int
+
+let u32 cur =
+  decode Bytes.get_int32_le ~size:4 cur |> Int32.unsigned_to_int |> Option.get
+
 let u64 = decode Bytes.get_int64_le ~size:8
 let float cur = decode Bytes.get_int32_le ~size:4 cur |> Int32.float_of_bits
 let double cur = u64 cur |> Int64.float_of_bits

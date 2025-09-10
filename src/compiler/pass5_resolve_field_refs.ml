@@ -21,6 +21,8 @@ let rec in_expression fields = function
             { ft_type = Type_primitive Card16; ft_allowed = None }
         | None when field = "num_class_info" ->
             { ft_type = Type_primitive Card8; ft_allowed = None }
+        | None when field = "num_items" ->
+            { ft_type = Type_primitive Card32; ft_allowed = None }
         | None -> failwith field
       in
       Field_ref { field; type_ = Some type_.ft_type }

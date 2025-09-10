@@ -111,7 +111,7 @@ module Core =
         let (property_change : t) = of_int32 (bit 22)
         let (color_map_change : t) = of_int32 (bit 23)
         let (owner_grab_button : t) = of_int32 (bit 24)
-        let none : t = of_int32 Optint.zero
+        let none : t = of_int32 0
       end
     module Backing_store_enum =
       struct
@@ -6569,7 +6569,7 @@ module Glx =
         let (gl_list_bit : t) = of_int32 (bit 17)
         let (gl_texture_bit : t) = of_int32 (bit 18)
         let (gl_scissor_bit : t) = of_int32 (bit 19)
-        let (gl_all_attrib_bits : t) = of_int32 (Optint.of_int 16777215)
+        let (gl_all_attrib_bits : t) = of_int32 16777215
       end
     module Rm_enum =
       struct
@@ -9580,7 +9580,7 @@ module Present =
         let (complete_notify : t) = of_int32 (bit 1)
         let (idle_notify : t) = of_int32 (bit 2)
         let (redirect_notify : t) = of_int32 (bit 3)
-        let none : t = of_int32 Optint.zero
+        let none : t = of_int32 0
       end
     module Option_mask =
       struct
@@ -9589,7 +9589,7 @@ module Present =
         let (copy : t) = of_int32 (bit 1)
         let (ust : t) = of_int32 (bit 2)
         let (suboptimal : t) = of_int32 (bit 3)
-        let none : t = of_int32 Optint.zero
+        let none : t = of_int32 0
       end
     module Capability_mask =
       struct
@@ -9597,7 +9597,7 @@ module Present =
         let (async : t) = of_int32 (bit 0)
         let (fence : t) = of_int32 (bit 1)
         let (ust : t) = of_int32 (bit 2)
-        let none : t = of_int32 Optint.zero
+        let none : t = of_int32 0
       end
     module Complete_kind_enum =
       struct
@@ -14096,7 +14096,7 @@ module Xprint =
         include (Mask_impl)(struct  end)
         let (print_mask : t) = of_int32 (bit 0)
         let (attribute_mask : t) = of_int32 (bit 1)
-        let none : t = of_int32 Optint.zero
+        let none : t = of_int32 0
       end
     module Detail_enum =
       struct

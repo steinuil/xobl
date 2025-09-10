@@ -144,7 +144,9 @@ let%expect_test _ =
          ((ft_type (Type_ref ((id_module (xproto)) (id_name ATOM))))
           (ft_allowed ()))))
        (Field_switch
-        ((sw_name data) (sw_cond (Cond_eq (Field_ref format)))
+        ((sw_name data)
+         (sw_cond
+          (Cond_eq (Field_ref (field format) (type_ ((Type_primitive Int8))))))
          (sw_cases
           (((cs_name ())
             (cs_cond
@@ -304,7 +306,9 @@ let%expect_test _ =
          ((ft_type (Type_primitive Card8))
           (ft_allowed ((Allowed_enum ((id_module (randr)) (id_name Notify))))))))
        (Field_switch
-        ((sw_name u) (sw_cond (Cond_eq (Field_ref subCode)))
+        ((sw_name u)
+         (sw_cond
+          (Cond_eq (Field_ref (field subCode) (type_ ((Type_primitive Int8))))))
          (sw_cases
           (((cs_name ())
             (cs_cond

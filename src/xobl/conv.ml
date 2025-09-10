@@ -10,8 +10,8 @@ module To_int = struct
   let u8 = Fun.id
   let i16 = Fun.id
   let u16 = Fun.id
-  let i32 = Optint.to_int
-  let u32 = Optint.to_int
+  let i32 = Fun.id
+  let u32 = Fun.id
 
   let u64 i =
     match Int64.unsigned_to_int i with
@@ -26,15 +26,15 @@ module To_int = struct
 end
 
 module To_i32 = struct
-  let[@inline] bool = function true -> Optint.one | false -> Optint.zero
-  let i8 = Optint.of_int
-  let u8 = Optint.of_int
-  let i16 = Optint.of_int
-  let u16 = Optint.of_int
+  let[@inline] bool = function true -> Int.one | false -> Int.zero
+  let i8 = Fun.id
+  let u8 = Fun.id
+  let i16 = Fun.id
+  let u16 = Fun.id
   let i32 = Fun.id
   let u32 = Fun.id
-  let u64 = Optint.of_int64
-  let[@inline] char i = Char.code i |> Optint.of_int
+  let u64 i = Int64.unsigned_to_int i |> Option.get
+  let[@inline] char i = Char.code i
   let void = char
   let byte = char
   let file_descr _ = failwith "should not happen"
@@ -61,15 +61,12 @@ let sum = List.fold_left ( + ) 0
 
 (* These two functions only take optints because they're only ever used for masks. *)
 let sum_map ~f ls =
-  List.fold_left (fun acc item -> Optint.add acc (f item)) Optint.zero ls
-  |> Optint.to_int
+  List.fold_left (fun acc item -> Int.add acc (f item)) Int.zero ls
 
 let pop_count n =
-  let open Optint.Infix in
   let rec iter pos acc =
-    if pos > Optint.of_int 31 then acc
-    else if n land (Optint.one lsl Optint.to_int pos) <> Optint.zero then
-      iter (pos + Optint.one) acc + Optint.one
-    else iter (pos + Optint.one) acc
+    if pos > 31 then acc
+    else if n land (1 lsl pos) <> 0 then iter (pos + 1) acc + 1
+    else iter (pos + 1) acc
   in
-  iter Optint.zero Optint.zero
+  iter 0 0
